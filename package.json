@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node backend/index.js", 
     "test": "echo \"Error: no test specified\" && exit 1", 
-    "heroku-postbuild": "cd frontend && npm install && npm run build"
+    "heroku-postbuild": "cd frontend && npm install && npm run build",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
   },
   "keywords": [],
   "author": "",
