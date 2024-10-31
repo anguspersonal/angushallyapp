@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend for the angushallyappV1 project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",  
+    "test": "echo \"Error: no test specified\" && exit 1", 
+    "heroku-postbuild": "cd ../frontend && npm install && npm run build" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1" 
+  },
+  "engines": {
+    "node": "14.x" 
+  }
+}
+
