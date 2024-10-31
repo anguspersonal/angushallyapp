@@ -1,20 +1,29 @@
 const express = require('express');
 const cors = require('cors');
+
+
 const app = express();
+const path = require('path');
 const port = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Sample route
-app.get('/', (req, res) => {
-    res.send('API is running');
+
+
+// Serve static files from the frontend build directory
+app.use(express.static(path.join(__dirname, '../frontend/dist'))); // Adjust if your build directory is different
+
+// Your API routes would go here
+app.get('/api/some-route', (req, res) => {
+    res.json({ message: 'API is working!' });
 });
 
-// Define other routes
-// const userRoutes = require('./routes/users');
-// app.use('/api/users', userRoutes);
+// Fallback to serve the frontend app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
 
 // Start the server
 app.listen(port, () => {
