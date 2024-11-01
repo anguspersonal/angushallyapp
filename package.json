@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "angushallyappV1",
   "version": "1.0.0",
   "description": "Backend for the angushallyappV1 project",
   "main": "index.js",
@@ -21,4 +21,6 @@
     "node": "14.x" 
   }
 }
+
+
 
