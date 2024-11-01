@@ -29,10 +29,12 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  justify-content: center;
+  align-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
+
 
 h1 {
   font-size: 3.2em;
@@ -69,4 +71,20 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.photoWrapper {
+  width: 100px; /* Set the desired width */
+  height: 100px; /* Set the desired height */
+  overflow: hidden; /* Hide the overflow to crop the image */
+  border-radius: 50%; /* Optional: Make the wrapper circular */
+  box-shadow: 0 0 0 2px #1a1a1a; /* Optional: Add a border around the image */
+}
+
+#profilePhoto {
+  width: 100%; /* Ensure the image covers the wrapper */
+  height: 100%; /* Ensure the image covers the wrapper */
+  object-fit: cover; /* Crop the image to fit the container */
+  object-position: 20% 80%; /* Adjust the position of the image within the container */
+  transform: scale(1.5); /* Zoom in on the image */
 }
