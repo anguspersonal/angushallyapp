@@ -7,11 +7,10 @@
     "start": "node backend/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "heroku-postbuild": "cd frontend && npm install && npm run build",
-    "dev": "concurrently \"node backend/index.js\" \"cd frontend && vite --host\"",
+    "dev": "node backend/index.js",
     "dev:frontend": "cd frontend && vite --host",
     "dev:backend": "node backend/index.js",
-    "build": "vite build",
-    "serve": "vite preview"
+    "build": "cd frontend && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
