@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Node modules
-node_modules/
+node_modules
 
 # Environment variables
 .env
