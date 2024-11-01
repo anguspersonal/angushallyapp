@@ -1,7 +1,7 @@
 {
-  "name": "angushallyappV1-Backend",
+  "name": "angushallyappv1",
   "version": "1.0.0",
-  "description": "Backend for the angushallyappV1 project",
+  "description": "angushallyappV1 project",
   "main": "index.js",
   "scripts": {
     "start": "node backend/index.js",
@@ -18,8 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "concurrently": "^7.0.0",
-    "express": "^4.21.1",
-    "vite": "^5.4.10"
+    "express": "^4.21.1"
   },
   "engines": {
     "node": "14.x"
