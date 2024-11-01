@@ -22,6 +22,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -29,12 +30,24 @@ a:hover {
 body {
   margin: 0;
   display: flex;
+  flex: column;
   justify-content: center;
   align-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
 
+.row{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.column{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 h1 {
   font-size: 3.2em;
