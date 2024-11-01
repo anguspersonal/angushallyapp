@@ -1,5 +1,5 @@
 {
-  "name": "angushallyappV1",
+  "name": "angushallyappV1-Backend",
   "version": "1.0.0",
   "description": "Backend for the angushallyappV1 project",
   "main": "index.js",
@@ -7,7 +7,9 @@
     "start": "node backend/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "heroku-postbuild": "cd frontend && npm install && npm run build",
-    "dev": "vite",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "vite",
+    "dev:backend": "node backend/index.js",
     "build": "vite build",
     "serve": "vite preview"
   },
@@ -15,12 +17,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "concurrently": "^7.0.0"
   },
   "engines": {
     "node": "14.x"
-  },
-  "devDependencies": {
-    "concurrently": "^9.0.1"
   }
 }
+
+
