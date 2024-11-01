@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "heroku-postbuild": "cd frontend && npm install && npm run build",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "dev:frontend": "vite",
+    "dev:frontend": "vite --host",
     "dev:backend": "node backend/index.js",
     "build": "vite build",
     "serve": "vite preview"
