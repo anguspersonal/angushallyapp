@@ -1,98 +1,203 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Style Sheet */
 
+/* Import Styles*/
+@import url('https://fonts.googleapis.com/css2?family=Caveat&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+/*Root Styles----------------------------------------------------*/
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Ubuntu", sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  color-scheme: light dark; /* Indicates support for both color schemes */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Define color variables for light theme --------------------*/
+  --primary-color: #384C37; /* Primary color */
+  --secondary-color: #88A5BC; /* Secondary color */
+  --background-color: #F4F0EB; /* Background color */
+  --text-color: #5C5F57; /* Text color */
+  --accent-color: #E1C8BC; /* Accent color */
+  --button-background-color:#88A5BC; /* Button background color */
+  --button-text-color: #F4F0EB; /* Button text color */
+  --button-border-color: #F4F0EB; /* Button border color */
 
+  /* Set the default color scheme */
+  color: var(--text-color);
+  background-color: var(--background-color);
+
+  /* Set the default font styles */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Create global CSS variables */
+  --header-height: 60px;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/* Dark theme -----------------------------------------------------*/
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #384C37; /* Primary color */
+    --secondary-color: #88A5BC; /* Secondary color */
+    --background-color: #A1A79E; /* Dark background color */
+    --text-color: #F4F0EB; /* Light text color */
+    --accent-color: #E1C8BC; /* Accent color */
+    --button-background-color: #384C37; /* Button background color */
+    --button-text-color: #F4F0EB; /* Button text color */
+    --button-border-color: #384C37; /* Button border color */
+  }
 }
 
-a:hover {
-  color: #535bf2;
-}
+/* Global Styles  -----------------------------------------------------*/
 
-body {
-  margin: 0;
+  body {
+    margin: 0;
+    padding-top: var(--header-height);
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+
+  div {
+    box-sizing: border-box;
+  }
+
+  /* Style links */
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+    background-color: transparent;
+  }
+
+  a:hover,
+  a:active,
+  a:focus {
+    color: var(--accent-color);
+    outline: none;
+  }
+
+
+  /*Style buttons and nav buttons*/
+  a.button,
+  button {
+    background-color: var(--button-background-color);
+    color: var(--button-text-color);
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    border-radius: 8px;
+    font-weight: 500;
+    min-width: 75px;
+    font-family: inherit;
+    text-align: center;
+    text-decoration: none; /* Remove underline from links */
+    display: inline-block; /* Ensure the link behaves like a button */
+  }
+  
+  /* Add hover and focus styles to buttons and nav buttons */
+  a.button:hover,
+  button:hover,
+  a.button:focus,
+  button:focus,
+  a.button:focus-visible,
+  button:focus-visible {
+    background-color: var(--button-border-color);
+    color: var(--accent-color);
+    outline: 4px auto var(--primary-color);
+  }
+
+  h1 {
+    font-size: 3.4em;
+    line-height: 1.1;
+    color: var(--primary-color);
+  }
+
+  h2 {
+    font-size: 2.8em;
+    line-height: 1.1;
+  }
+  
+  h3 {
+    font-size: 2.4em;
+    line-height: 1.1;
+  }
+
+/* Classes  ----------------------------------------------------------*/
+  .row{
+    margin: 1em;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2em;
+  }
+
+  .column{
+    margin: 1em;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .centre_stage{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ensure the container takes up the full height of the viewport */
+  }
+
+
+  .photoWrapper {
+    width: 200px; /* Set the desired width */
+    height: 200px; /* Set the desired height */
+    overflow: hidden; /* Hide the overflow to crop the image */
+    border-radius: 50%; /* Optional: Make the wrapper circular */
+    box-shadow: 0 0 0 2px var(--secondary-color); /* Optional: Add a border around the image */
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .nav-link::before {
+    content: attr(data-emoji);
+    margin-right: 10px; /* Adjust the space between the emoji and text */
+  }
+
+/*Combined Classes -------------------------------------------------------*/
+.row.nav-buttons {
   display: flex;
-  flex: column;
-  justify-content: center;
+  flex-direction: row;
+  width: 500px;
+  flex-direction: row;
   align-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: space-evenly;
 }
 
-.row{
+/*Components ----------------------------------------------------------*/
+.header {
+  position: fixed;
+  top: 0px;
+  left: 0;
+  right: 0;
+  margin-bottom: 1em;
+  width: 100%;
+  height: var(--header-height);
+  background-color: var(--secondary-color);
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+  z-index: 1000; /* Ensure the header is above other content */
 }
 
-.column{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
-.photoWrapper {
-  width: 100px; /* Set the desired width */
-  height: 100px; /* Set the desired height */
-  overflow: hidden; /* Hide the overflow to crop the image */
-  border-radius: 50%; /* Optional: Make the wrapper circular */
-  box-shadow: 0 0 0 2px #1a1a1a; /* Optional: Add a border around the image */
-}
+/* ID's  ----------------------------------------------------------*/
 
 #profilePhoto {
   width: 100%; /* Ensure the image covers the wrapper */
@@ -100,4 +205,10 @@ button:focus-visible {
   object-fit: cover; /* Crop the image to fit the container */
   object-position: 20% 80%; /* Adjust the position of the image within the container */
   transform: scale(1.5); /* Zoom in on the image */
+}
+
+#headerLogo {
+  font-size: calc(0.5 * var(--header-height));
+  width: 800px;
+  margin-left: 1em;
 }
