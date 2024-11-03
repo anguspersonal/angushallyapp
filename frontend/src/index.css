@@ -209,6 +209,5 @@
 
 #headerLogo {
   font-size: calc(0.5 * var(--header-height));
-  width: 800px;
   margin-left: 1em;
 }
