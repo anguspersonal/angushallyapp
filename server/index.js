@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
+const { Client } = require('pg');
 
 const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
@@ -24,6 +25,27 @@ if (!isDev && cluster.isMaster) {
 
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
+
+  // Database API Routes
+  app.get('api/db', async (req, res) => {
+    const client = new Client({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false
+      },
+    });
+
+    try {
+      await client.connect();
+      const result = await client.query('SELECT table_schema,table_name FROM information_schema.tables;');
+      res.json(result.rows); // send the result as JSON
+    } catch (err) {
+      console.error('Database query error: ',err);
+      res.status(500).send('Database query error: ' , err);
+    } finally {
+      client.end();
+    }
+  });
 
   // Answer API requests.
   app.get('/api', function (req, res) {
