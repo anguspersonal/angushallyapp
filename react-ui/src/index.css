@@ -1,0 +1,344 @@
+/* Style Sheet */
+
+/* Import Styles*/
+@import url('https://fonts.googleapis.com/css2?family=Caveat&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+/*Root Styles----------------------------------------------------*/
+:root {
+  font-family: "Ubuntu", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  /* Indicates support for both color schemes */
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+
+  /* Define color variables for light theme --------------------*/
+  --primary-color: #384C37;
+  /* Primary color */
+  --secondary-color: #88A5BC;
+  /* Secondary color */
+  --background-color: #F4F0EB;
+  /* Background color */
+  --text-color: #5C5F57;
+  /* Text color */
+  --accent-color: #E1C8BC;
+  /* Accent color */
+  --button-background-color: #88A5BC;
+  /* Button background color */
+  --button-text-color: #F4F0EB;
+  /* Button text color */
+  --button-border-color: #F4F0EB;
+  /* Button border color */
+
+  /* Set the default color scheme */
+  color: var(--text-color);
+  background-color: var(--background-color);
+
+  /* Set the default font styles */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Create global CSS variables */
+  --header-height: 60px;
+}
+
+/* Dark theme -----------------------------------------------------*/
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #384C37;
+    /* Primary color */
+    --secondary-color: #88A5BC;
+    /* Secondary color */
+    --background-color: #A1A79E;
+    /* Dark background color */
+    --text-color: #F4F0EB;
+    /* Light text color */
+    --accent-color: #E1C8BC;
+    /* Accent color */
+    --button-background-color: #384C37;
+    /* Button background color */
+    --button-text-color: #F4F0EB;
+    /* Button text color */
+    --button-border-color: #384C37;
+    /* Button border color */
+  }
+}
+
+/* Responsive Screen width ----------------------------------------*/
+@media (max-width: 600px) {
+  .nav-link {
+    visibility: hidden;
+  }
+}
+
+/* Global Styles  -----------------------------------------------------*/
+
+body {
+  margin: 0;
+  padding-top: var(--header-height);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+/* Main Page styling --------------------------------------------------------*/
+.Page {
+  margin-top: var(--header-height);
+  padding: 20px;
+}
+
+
+
+/* Navigation styling -----------------------------------------------------*/
+nav {
+  display: flex;
+  justify-content: right;
+  gap: 20px;
+  /* Adjust the gap between links as needed */
+}
+
+nav a {
+  text-decoration: none;
+  color: black;
+  /* Adjust the color as needed */
+  padding: 10px;
+}
+
+nav a:hover {
+  color: blue;
+  /* Adjust the hover color as needed */
+}
+
+/*Logo Styling ---------------------------------------------------------*/
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Adjecent Sibling Combinator: The CSS selector p + p is an adjacent sibling combinator. 
+  It selects all <p> elements that are immediately preceded by another <p> element.
+   In other words, it targets paragraphs that directly follow another paragraph. */
+p+p {
+  margin-top: 0;
+}
+
+/* Style links ------------------------------------------------------------------------------*/
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  background-color: transparent;
+}
+
+a:hover,
+a:active,
+a:focus {
+  color: var(--accent-color);
+  outline: none;
+}
+
+
+/*Style buttons and nav buttons*/
+a.button,
+button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  border-radius: 8px;
+  font-weight: 500;
+  min-width: 75px;
+  font-family: inherit;
+  text-align: center;
+  text-decoration: none;
+  /* Remove underline from links */
+  display: inline-block;
+  /* Ensure the link behaves like a button */
+}
+
+/* Add hover and focus styles to buttons and nav buttons */
+a.button:hover,
+button:hover,
+a.button:focus,
+button:focus,
+a.button:focus-visible,
+button:focus-visible {
+  background-color: var(--button-border-color);
+  color: var(--accent-color);
+  outline: 4px auto var(--primary-color);
+}
+
+h1 {
+  font-size: 3.4em;
+  line-height: 1.1;
+  color: var(--primary-color);
+}
+
+h2 {
+  font-size: 2.8em;
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: 2.4em;
+  line-height: 1.1;
+}
+
+/* Classes  ----------------------------------------------------------*/
+.row {
+  margin: 1em;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2em;
+}
+
+.column {
+  margin: 1em;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.centre_stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  /* Ensure the container takes up the full height of the viewport */
+}
+
+
+.photoWrapper {
+  width: 200px;
+  /* Set the desired width */
+  height: 200px;
+  /* Set the desired height */
+  overflow: hidden;
+  /* Hide the overflow to crop the image */
+  border-radius: 50%;
+  /* Optional: Make the wrapper circular */
+  box-shadow: 0 0 0 2px var(--secondary-color);
+  /* Optional: Add a border around the image */
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-link::before {
+  content: attr(data-emoji);
+  margin-right: 10px;
+  /* Adjust the space between the emoji and text */
+}
+
+/*Combined Classes -------------------------------------------------------*/
+.row.nav-buttons {
+  display: flex;
+  flex-direction: row;
+  width: 500px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+/*Components ----------------------------------------------------------*/
+
+.Header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin-bottom: 1em;
+  width: 100%;
+  z-index: 1000;
+  padding: 10px 0;
+  color: white;
+  height: var(--header-height);
+  background-color: var(--secondary-color);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+}
+
+/* ID's  ----------------------------------------------------------*/
+
+#profilePhoto {
+  width: 100%;
+  /* Ensure the image covers the wrapper */
+  height: 100%;
+  /* Ensure the image covers the wrapper */
+  object-fit: cover;
+  /* Crop the image to fit the container */
+  object-position: 20% 80%;
+  /* Adjust the position of the image within the container */
+  transform: scale(1.5);
+  /* Zoom in on the image */
+}
+
+#headerLogo {
+  font-size: calc(0.5 * var(--header-height));
+  margin-left: 1em;
+}

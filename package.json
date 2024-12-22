@@ -1,25 +1,30 @@
 {
-  "name": "angushallyappv1",
-  "version": "1.0.0",
-  "description": "angushallyappV1 project",
-  "main": "index.js",
-  "scripts": {
-    "start": "node backend/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "cd frontend && npm install && npm run build",
-    "dev": "node backend/index.js",
-    "dev:frontend": "cd frontend && vite --host",
-    "dev:backend": "node backend/index.js",
-    "build": "cd frontend && npm install && npm run build"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.21.1",
-    "pg": "^8.13.1"
-  },
+  "name": "heroku-cra-node",
+  "version": "3.0.0",
+  "description": "How to use create-react-app with a custom Node API on Heroku",
   "engines": {
-    "node": ">=16.0.0"
-  }
+    "node": "10.x"
+  },
+  "scripts": {
+    "start": "node server",
+    "build": "cd react-ui/ && npm install && npm run build"
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "react-ui/node_modules"
+  ],
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mars/heroku-cra-node.git"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "create-react-app",
+    "react"
+  ],
+  "license": "MIT"
 }
