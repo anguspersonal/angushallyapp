@@ -13,12 +13,16 @@
     "node_modules",
     "react-ui/node_modules"
   ],
+  "engines": {
+  "node": "10.x",
+  "npm": "6.x"
+},
   "dependencies": {
     "express": "^4.21.2"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mars/heroku-cra-node.git"
+    "url": "git+https://github.com/mars/heroku-cra-node.git"
   },
   "keywords": [
     "node",
@@ -26,5 +30,11 @@
     "create-react-app",
     "react"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "main": "index.js",
+  "author": "angushally",
+  "bugs": {
+    "url": "https://github.com/mars/heroku-cra-node/issues"
+  },
+  "homepage": "https://github.com/mars/heroku-cra-node#readme"
 }
