@@ -3,7 +3,8 @@
   "version": "3.0.0",
   "description": "How to use create-react-app with a custom Node API on Heroku",
   "engines": {
-    "node": "10.x"
+    "node": "10.x",
+    "npm": "6.x"
   },
   "scripts": {
     "start": "node server",
@@ -13,10 +14,6 @@
     "node_modules",
     "react-ui/node_modules"
   ],
-  "engines": {
-  "node": "10.x",
-  "npm": "6.x"
-},
   "dependencies": {
     "express": "^4.21.2"
   },
