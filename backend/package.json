@@ -1,8 +1,0 @@
-{
-  "name": "angushallyappv1-backend",
-  "version": "1.0.0",
-  "description": "Backend for the angushallyappV1 project",
-  "dependencies": {
-    "cors": "^2.8.5"
-  }
-}
