@@ -38,6 +38,7 @@ if (!isDev && cluster.isMaster) {
     try {
       await client.connect();
       const result = await client.query('SELECT table_schema,table_name FROM information_schema.tables;');
+      console.log("Connected to database");
       res.json(result.rows); // send the result as JSON
     } catch (err) {
       console.error('Database query error: ',err);
