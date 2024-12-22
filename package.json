@@ -3,8 +3,8 @@
   "version": "3.0.0",
   "description": "How to use create-react-app with a custom Node API on Heroku",
   "engines": {
-    "node": "16.x",
-    "npm": "6.x"
+    "node": "22.x",
+    "npm": "10.x"
   },
   "scripts": {
     "start": "node server",
