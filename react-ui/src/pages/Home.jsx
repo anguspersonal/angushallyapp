@@ -3,7 +3,7 @@ import '../index.css';
 
 function Home() {
   return (
-    <div className="main-content">
+    <div className='Page'>
       <div className='centre_stage'>
         <div className='photoWrapper'><img src="../angusprofile.jpg" alt="Angus Hally" id='profilePhoto' /></div>
         <h1>Welcome to Angus Hally's Website</h1>

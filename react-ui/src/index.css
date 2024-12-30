@@ -338,7 +338,9 @@ h3 {
   /* Zoom in on the image */
 }
 
-#headerLogo {
-  font-size: calc(0.5 * var(--header-height));
-  margin-left: 1em;
+#headerlogo {
+  /* font-size: calc(0.5 * var(--header-height));
+  margin-left: 1em; */
+  height: calc(1.5*var(--header-height));
 }
+
