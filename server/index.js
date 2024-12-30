@@ -3,9 +3,12 @@ const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 const { Client } = require('pg');
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); //Load environment variables from .env file
 
 const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
+
+console.log('TEST_VAR:', process.env.TEST_VAR);
 
 // Multi-process to utilize all CPU cores.
 if (!isDev && cluster.isMaster) {
@@ -30,16 +33,21 @@ if (!isDev && cluster.isMaster) {
   app.get('api/db', async (req, res) => {
     const client = new Client({
       connectionString: process.env.DATABASE_URL,
-      ssl: {
-        rejectUnauthorized: false
-      },
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     });
 
     try {
+      console.log('Connecting to database:', process.env.DATABASE_URL);
       await client.connect();
       const result = await client.query('SELECT table_schema,table_name FROM information_schema.tables;');
       console.log("Connected to database");
-      res.json(result.rows); // send the result as JSON
+
+      if(result.rows.length === 0) {
+        console.error('No data found in database');
+        res.status(404).send('No data found in database');
+      } else {
+        res.json(result.rows); // send the result as JSON
+      }
     } catch (err) {
       console.error('Database query error: ',err);
       res.status(500).send('Database query error: ' , err);
@@ -55,9 +63,9 @@ if (!isDev && cluster.isMaster) {
   });
 
   // All remaining requests return the React app, so it can handle routing.
-  app.get('*', function(request, response) {
-    response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-  });
+  // app.get('*', function(request, response) {
+  //   response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+  // });
 
   app.listen(PORT, function () {
     console.error(`Node ${isDev ? 'dev server' : 'cluster worker '+process.pid}: listening on port ${PORT}`);
