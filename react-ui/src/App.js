@@ -45,12 +45,12 @@ function App() {
   return (
       <Router>
         <div className="App">
+
           <Header />
-          
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
-              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog" element={<Blog message = {message}  isFetching={isFetching}/>} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/contact" element={<Contact />} />
             </Routes>
@@ -63,15 +63,4 @@ function App() {
 
 export default App;
 
-/* Boilerplate code from create-react-app 
 
-<header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>Angus App</h1>
-        <p>{'« '}<strong>
-          {isFetching
-            ? 'Fetching message from API'
-            : message}
-        </strong>{' »'}</p>
-      </header>
-*/

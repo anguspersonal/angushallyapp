@@ -1,9 +1,10 @@
 const express = require('express');
 const path = require('path');
+const { Client } = require('pg');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
-const { Client } = require('pg');
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); //Load environment variables from .env file
+const db = require('./db'); // Import the database module
 
 const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
@@ -29,30 +30,30 @@ if (!isDev && cluster.isMaster) {
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
-  // Database API Routes
-  app.get('api/db', async (req, res) => {
-    const client = new Client({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-    });
+  // Reusable function to create and connect the client 
+  const createClient = async () => {
+    const client = new Client(
+      { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false, }, });
+    await client.connect();
+    return client;
+  };
 
-    try {
-      console.log('Connecting to database:', process.env.DATABASE_URL);
-      await client.connect();
-      const result = await client.query('SELECT table_schema,table_name FROM information_schema.tables;');
-      console.log("Connected to database");
-
-      if(result.rows.length === 0) {
-        console.error('No data found in database');
-        res.status(404).send('No data found in database');
-      } else {
-        res.json(result.rows); // send the result as JSON
-      }
+  // Single route to handle dynamic queries 
+  app.get('/api/db/:table', async (req, res) => {
+    const table = req.params.table;
+    let queryText;
+    switch (table) {
+      case 'posts': queryText = 'SELECT * FROM public.posts ORDER BY id ASC';
+        break; 
+        // Add more cases for different tables or queries 
+        default: res.status(400).json({ error: 'Invalid table name' });
+        return;
+    } try {
+      const result = await db.query(queryText);
+      res.json(result);
     } catch (err) {
-      console.error('Database query error: ',err);
-      res.status(500).send('Database query error: ' , err);
-    } finally {
-      client.end();
+      console.error('Database query error: ', err);
+      res.status(500).json({ error: 'Database query error', message: err.message });
     }
   });
 
@@ -63,11 +64,11 @@ if (!isDev && cluster.isMaster) {
   });
 
   // All remaining requests return the React app, so it can handle routing.
-  // app.get('*', function(request, response) {
-  //   response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-  // });
+  app.get('*', function (request, response) {
+    response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+  });
 
   app.listen(PORT, function () {
-    console.error(`Node ${isDev ? 'dev server' : 'cluster worker '+process.pid}: listening on port ${PORT}`);
+    console.error(`Node ${isDev ? 'dev server' : 'cluster worker ' + process.pid}: listening on port ${PORT}`);
   });
 }
