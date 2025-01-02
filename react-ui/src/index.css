@@ -292,6 +292,58 @@ h3 {
   /* Adjust the space between the emoji and text */
 }
 
+
+/* Grid Styles ----------------------------------------------------------*/
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.grid-item {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.grid-item h2 {
+  margin-top: 0;
+}
+
+.grid-item p {
+  color: #777;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  /* Adjust the max-width as needed */
+}
+
+.truncate-two-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* Number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  /* Adjust as needed */
+}
+
+/* Optional: Apply specific truncation rules for headings and paragraphs if needed */
+h2.truncate {
+  /* max-width: 1000px; */
+}
+
+p.truncate {
+  /* max-width: 1000px; */
+}
+
 /*Combined Classes -------------------------------------------------------*/
 .row.nav-buttons {
   display: flex;
@@ -343,4 +395,3 @@ h3 {
   margin-left: 1em; */
   height: calc(1.5*var(--header-height));
 }
-

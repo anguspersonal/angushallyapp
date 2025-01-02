@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../index.css';
+import BlogSnippet from '../components/BlogSnippet';
 
 function Blog(props) {
   const [message, setMessage] = useState(props.message);
@@ -18,11 +19,12 @@ function Blog(props) {
   return (
     <div className='Page'>
       <h1>Blog</h1>
-      <ul>
+      <div class="grid-container">
         {posts.map((post, index) => (
-          <li key={index}>{post.title}</li> // Assuming posts have a title field
+          <BlogSnippet key={index} post={post}/>
         ))}
-      </ul>
+      
+      </div>
     </div>
   );
 }
