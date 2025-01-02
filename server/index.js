@@ -30,14 +30,6 @@ if (!isDev && cluster.isMaster) {
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
-  // Reusable function to create and connect the client 
-  const createClient = async () => {
-    const client = new Client(
-      { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false, }, });
-    await client.connect();
-    return client;
-  };
-
   // Single route to handle dynamic queries 
   app.get('/api/db/:table', async (req, res) => {
     const table = req.params.table;
