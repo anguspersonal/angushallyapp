@@ -47,27 +47,10 @@
   --header-height: 60px;
 }
 
-/* Dark theme -----------------------------------------------------*/
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-color: #384C37;
-    /* Primary color */
-    --secondary-color: #88A5BC;
-    /* Secondary color */
-    --background-color: #A1A79E;
-    /* Dark background color */
-    --text-color: #F4F0EB;
-    /* Light text color */
-    --accent-color: #E1C8BC;
-    /* Accent color */
-    --button-background-color: #384C37;
-    /* Button background color */
-    --button-text-color: #F4F0EB;
-    /* Button text color */
-    --button-border-color: #384C37;
-    /* Button border color */
-  }
-}
+/* Dark theme ----------------------------------------------------- */
+/* @media (prefers-color-scheme: dark) { :root { --primary-color: #384C37; --secondary-color: #88A5BC; --background-color: #A1A79E; --text-color: #F4F0EB; --accent-color: #E1C8BC; --button-background-color: #384C37; --button-text-color: #F4F0EB; --button-border-color: #384C37; } } */
+
+
 
 /* Responsive Screen width ----------------------------------------*/
 @media (max-width: 600px) {
@@ -225,18 +208,18 @@ button:focus-visible {
 
 h1 {
   font-size: 3.4em;
-  line-height: 1.1;
+  line-height: 1.3;
   color: var(--primary-color);
 }
 
 h2 {
   font-size: 2.8em;
-  line-height: 1.1;
+  line-height: 1.3;
 }
 
 h3 {
   font-size: 2.4em;
-  line-height: 1.1;
+  line-height: 1.3;
 }
 
 /* Classes  ----------------------------------------------------------*/

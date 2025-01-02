@@ -10,6 +10,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Blog from './pages/Blog';
 import Projects from './pages/Projects';
+import EatSafeUK from './pages/projectPages/EatSafeUK';
 
 function App() {
   //Set Use States  
@@ -45,7 +46,6 @@ function App() {
   return (
       <Router>
         <div className="App">
-
           <Header />
             <Routes>
               <Route path="/" element={<Home />} />
@@ -53,6 +53,7 @@ function App() {
               <Route path="/blog" element={<Blog message = {message}  isFetching={isFetching}/>} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/projects/EatSafeUK" element={<EatSafeUK />} />
             </Routes>
       <Footer />
     </div>

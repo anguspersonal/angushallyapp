@@ -13,6 +13,7 @@ function Header() {
                 <Link to="/about">About</Link>
                 <Link to="/blog">Blog</Link>
                 <Link to="/contact">Contact</Link>
+                <Link to="/projects">Projects</Link>
             </nav>
 
 
