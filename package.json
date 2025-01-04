@@ -10,14 +10,18 @@
     "start": "node server",
     "build": "cd react-ui/ && npm install && npm run build"
   },
+  "type": "commonjs",
   "cacheDirectories": [
     "node_modules",
     "react-ui/node_modules"
   ],
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
+    "@vis.gl/react-google-maps": "^1.4.2",
+    "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "fuse.js": "^7.0.0",
     "pg": "^8.13.1"
   },
   "repository": {

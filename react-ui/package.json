@@ -4,7 +4,10 @@
   "private": true,
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
+    "@vis.gl/react-google-maps": "^1.4.2",
     "and": "^0.0.3",
+    "axios": "^1.7.9",
+    "fuse.js": "^7.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router": "^7.0.2",
