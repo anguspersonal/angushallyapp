@@ -1,20 +1,17 @@
-import React from 'react';
+import React,  { useState }from 'react';
 import '../../index.css';
+import SearchBar from "../../components/GMapsSearchBar";
+import MapView from "../../components/GMapView";
+
 
 function EatSafeUK() {
+    const [searchResults, setSearchResults] = useState([]);
+
+
     return (
         <div className='Page'>
-            <div className='centre_stage'>
-                <h1>Eat Safe UK</h1>
-                <iframe
-                    width="600"
-                    height="450"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    allowFullScreen
-                    src="https://www.google.com/maps/embed/v1/search?q=London%2C%20UK&key=AIzaSyDdhQk6bRYyzo7I7jLr4Wcg7fvKaBKbOpg"
-                ></iframe>
-            </div>
+            <SearchBar onSearchResults={setSearchResults} />
+            <MapView searchResults={searchResults} />
         </div>
     );
 }
