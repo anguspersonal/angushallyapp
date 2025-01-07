@@ -1,0 +1,154 @@
+{
+  "?xml": "",
+  "FHRSEstablishment": {
+    "Header": {
+      "ExtractDate": "2024-12-14",
+      "ItemCount": 5,
+      "ReturnCode": "Success"
+    },
+    "EstablishmentCollection": {
+      "EstablishmentDetail": [
+        {
+          "FHRSID": 1073404,
+          "LocalAuthorityBusinessID": "FP53",
+          "BusinessName": "BaxterStorey Ltd",
+          "BusinessType": "Restaurant/Cafe/Canteen",
+          "BusinessTypeID": 1,
+          "AddressLine1": "Siemens Blade Factory",
+          "AddressLine2": "Alexandra Dock",
+          "AddressLine3": "Hull",
+          "PostCode": "HU9 1TA",
+          "RatingValue": 5,
+          "RatingKey": "fhrs_5_en-GB",
+          "RatingDate": "2024-07-30",
+          "LocalAuthorityCode": 626,
+          "LocalAuthorityName": "Hull and Goole Port",
+          "LocalAuthorityWebSite": "http://www.hullandgoolepha.gov.uk/",
+          "LocalAuthorityEmailAddress": "admin@hullandgoolepha.gov.uk",
+          "Scores": {
+            "Hygiene": 5,
+            "Structural": 5,
+            "ConfidenceInManagement": 5
+          },
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": {
+            "Longitude": -0.293038994073868,
+            "Latitude": 53.7461891174316
+          }
+        },
+        {
+          "FHRSID": 1073403,
+          "LocalAuthorityBusinessID": "FP47",
+          "BusinessName": "Humberside Offshore Training Association Ltd",
+          "BusinessType": "Restaurant/Cafe/Canteen",
+          "BusinessTypeID": 1,
+          "AddressLine1": "Humberside Offshore Training",
+          "AddressLine2": "Albert Dock",
+          "AddressLine3": "Hull",
+          "PostCode": "HU3 1AB",
+          "RatingValue": "AwaitingInspection",
+          "RatingKey": "fhrs_awaitinginspection_en-GB",
+          "RatingDate": "",
+          "LocalAuthorityCode": 626,
+          "LocalAuthorityName": "Hull and Goole Port",
+          "LocalAuthorityWebSite": "http://www.hullandgoolepha.gov.uk/",
+          "LocalAuthorityEmailAddress": "admin@hullandgoolepha.gov.uk",
+          "Scores": "",
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": {
+            "Longitude": -0.350008010864258,
+            "Latitude": 53.7494239807129
+          }
+        },
+        {
+          "FHRSID": 1541779,
+          "LocalAuthorityBusinessID": "FP69",
+          "BusinessName": "Olive Catering Ltd",
+          "BusinessType": "Restaurant/Cafe/Canteen",
+          "BusinessTypeID": 1,
+          "AddressLine1": "AAK International",
+          "AddressLine2": "King George Dock",
+          "AddressLine3": "Hull",
+          "PostCode": "HU9 5PX",
+          "RatingValue": 5,
+          "RatingKey": "fhrs_5_en-GB",
+          "RatingDate": "2024-11-27",
+          "LocalAuthorityCode": 626,
+          "LocalAuthorityName": "Hull and Goole Port",
+          "LocalAuthorityWebSite": "http://www.hullandgoolepha.gov.uk/",
+          "LocalAuthorityEmailAddress": "admin@hullandgoolepha.gov.uk",
+          "Scores": {
+            "Hygiene": 5,
+            "Structural": 5,
+            "ConfidenceInManagement": 5
+          },
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": ""
+        },
+        {
+          "FHRSID": 1073399,
+          "LocalAuthorityBusinessID": "FP27",
+          "BusinessName": "Pride of Hull",
+          "BusinessType": "Restaurant/Cafe/Canteen",
+          "BusinessTypeID": 1,
+          "AddressLine1": "Terminal 1",
+          "AddressLine2": "King George Dock",
+          "AddressLine3": "Hedon Road",
+          "AddressLine4": "Hull",
+          "PostCode": "HU9 5QR",
+          "RatingValue": 5,
+          "RatingKey": "fhrs_5_en-GB",
+          "RatingDate": "2024-03-20",
+          "LocalAuthorityCode": 626,
+          "LocalAuthorityName": "Hull and Goole Port",
+          "LocalAuthorityWebSite": "http://www.hullandgoolepha.gov.uk/",
+          "LocalAuthorityEmailAddress": "admin@hullandgoolepha.gov.uk",
+          "Scores": {
+            "Hygiene": 5,
+            "Structural": 5,
+            "ConfidenceInManagement": 5
+          },
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": {
+            "Longitude": -0.278809994459152,
+            "Latitude": 53.7488784790039
+          }
+        },
+        {
+          "FHRSID": 1073401,
+          "LocalAuthorityBusinessID": "FP44",
+          "BusinessName": "Pride of Rotterdam",
+          "BusinessType": "Restaurant/Cafe/Canteen",
+          "BusinessTypeID": 1,
+          "AddressLine1": "Terminal 1",
+          "AddressLine2": "King George Dock",
+          "AddressLine3": "Hedon Road",
+          "AddressLine4": "Hull",
+          "PostCode": "HU9 5QR",
+          "RatingValue": 4,
+          "RatingKey": "fhrs_4_en-GB",
+          "RatingDate": "2024-06-25",
+          "LocalAuthorityCode": 626,
+          "LocalAuthorityName": "Hull and Goole Port",
+          "LocalAuthorityWebSite": "http://www.hullandgoolepha.gov.uk/",
+          "LocalAuthorityEmailAddress": "admin@hullandgoolepha.gov.uk",
+          "Scores": {
+            "Hygiene": 10,
+            "Structural": 5,
+            "ConfidenceInManagement": 5
+          },
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": {
+            "Longitude": -0.278809994459152,
+            "Latitude": 53.7488784790039
+          }
+        }
+      ]
+    }
+  }
+}
