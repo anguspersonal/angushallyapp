@@ -1,0 +1,52 @@
+/* Prepare SQL query */
+INSERT INTO fsa.establishments (
+    fhrs_id,
+    local_authority_business_id,
+    business_name,
+    business_type,
+    business_type_id,
+    address_line_1,
+    address_line_2,
+    address_line_4,
+    post_code,
+    rating_value,
+    rating_key,
+    rating_date,
+    local_authority_code,
+    local_authority_name,
+    local_authority_website,
+    local_authority_email_address,
+    hygiene_score,
+    structural_score,
+    confidence_in_management,
+    scheme_type,
+    new_rating_pending,
+    longitude,
+    latitude
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23
+)
+ON CONFLICT (fhrs_id) DO UPDATE SET
+    local_authority_business_id = EXCLUDED.local_authority_business_id,
+    business_name = EXCLUDED.business_name,
+    business_type = EXCLUDED.business_type,
+    business_type_id = EXCLUDED.business_type_id,
+    address_line_1 = EXCLUDED.address_line_1,
+    address_line_2 = EXCLUDED.address_line_2,
+    address_line_4 = EXCLUDED.address_line_4,
+    post_code = EXCLUDED.post_code,
+    rating_value = EXCLUDED.rating_value,
+    rating_key = EXCLUDED.rating_key,
+    rating_date = EXCLUDED.rating_date,
+    local_authority_code = EXCLUDED.local_authority_code,
+    local_authority_name = EXCLUDED.local_authority_name,
+    local_authority_website = EXCLUDED.local_authority_website,
+    local_authority_email_address = EXCLUDED.local_authority_email_address,
+    hygiene_score = EXCLUDED.hygiene_score,
+    structural_score = EXCLUDED.structural_score,
+    confidence_in_management = EXCLUDED.confidence_in_management,
+    scheme_type = EXCLUDED.scheme_type,
+    new_rating_pending = EXCLUDED.new_rating_pending,
+    longitude = EXCLUDED.longitude,
+    latitude = EXCLUDED.latitude;
+`;

@@ -1,0 +1,151 @@
+{
+  "?xml": "",
+  "FHRSEstablishment": {
+    "Header": {
+      "ExtractDate": "2024-05-13",
+      "ItemCount": 5,
+      "ReturnCode": "Success"
+    },
+    "EstablishmentCollection": {
+      "EstablishmentDetail": [
+        {
+          "FHRSID": 1689009,
+          "LocalAuthorityBusinessID": 77692,
+          "BusinessName": "Border Force",
+          "BusinessType": "Other catering premises",
+          "BusinessTypeID": 7841,
+          "AddressLine1": "Teesport",
+          "AddressLine2": "Middlesbrough",
+          "AddressLine3": "TS6 7SA",
+          "RatingValue": 5,
+          "RatingKey": "fhrs_5_en-GB",
+          "RatingDate": "2023-12-12",
+          "LocalAuthorityCode": 648,
+          "LocalAuthorityName": "River Tees",
+          "LocalAuthorityWebSite": "http://www.teesporthealth.co.uk",
+          "LocalAuthorityEmailAddress": "port.health@redcar-cleveland.gov.uk",
+          "Scores": {
+            "Hygiene": 0,
+            "Structural": 0,
+            "ConfidenceInManagement": 0
+          },
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": ""
+        },
+        {
+          "FHRSID": 1018650,
+          "LocalAuthorityBusinessID": 70755,
+          "BusinessName": "Compass Group UK & Ireland Ltd",
+          "BusinessType": "Restaurant/Cafe/Canteen",
+          "BusinessTypeID": 1,
+          "AddressLine1": "Tees Dock Road",
+          "AddressLine2": "Grangetown",
+          "AddressLine3": "TS6 6UD",
+          "RatingValue": 5,
+          "RatingKey": "fhrs_5_en-GB",
+          "RatingDate": "2023-05-10",
+          "LocalAuthorityCode": 648,
+          "LocalAuthorityName": "River Tees",
+          "LocalAuthorityWebSite": "http://www.teesporthealth.co.uk",
+          "LocalAuthorityEmailAddress": "port.health@redcar-cleveland.gov.uk",
+          "Scores": {
+            "Hygiene": 0,
+            "Structural": 5,
+            "ConfidenceInManagement": 5
+          },
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": {
+            "Longitude": -1.14209,
+            "Latitude": 54.59476
+          }
+        },
+        {
+          "FHRSID": 1108162,
+          "LocalAuthorityBusinessID": 72819,
+          "BusinessName": "Tesco (Colleague Room)",
+          "BusinessType": "Restaurant/Cafe/Canteen",
+          "BusinessTypeID": 1,
+          "AddressLine1": "Dabholme Road",
+          "AddressLine2": "Teesport",
+          "AddressLine3": "TS6 6UD",
+          "RatingValue": 5,
+          "RatingKey": "fhrs_5_en-GB",
+          "RatingDate": "2023-05-17",
+          "LocalAuthorityCode": 648,
+          "LocalAuthorityName": "River Tees",
+          "LocalAuthorityWebSite": "http://www.teesporthealth.co.uk",
+          "LocalAuthorityEmailAddress": "port.health@redcar-cleveland.gov.uk",
+          "Scores": {
+            "Hygiene": 0,
+            "Structural": 5,
+            "ConfidenceInManagement": 5
+          },
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": {
+            "Longitude": -1.13874285522292,
+            "Latitude": 54.5983438607744
+          }
+        },
+        {
+          "FHRSID": 746361,
+          "LocalAuthorityBusinessID": 18560,
+          "BusinessName": "The Mission to Seafarers",
+          "BusinessType": "Pub/bar/nightclub",
+          "BusinessTypeID": 7843,
+          "AddressLine1": "Kinkerdale House",
+          "AddressLine2": "Tees Dock",
+          "AddressLine3": "TS6 6UD",
+          "RatingValue": 5,
+          "RatingKey": "fhrs_5_en-GB",
+          "RatingDate": "2022-04-25",
+          "LocalAuthorityCode": 648,
+          "LocalAuthorityName": "River Tees",
+          "LocalAuthorityWebSite": "http://www.teesporthealth.co.uk",
+          "LocalAuthorityEmailAddress": "port.health@redcar-cleveland.gov.uk",
+          "Scores": {
+            "Hygiene": 0,
+            "Structural": 0,
+            "ConfidenceInManagement": 0
+          },
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": {
+            "Longitude": -1.140322,
+            "Latitude": 54.6021014
+          }
+        },
+        {
+          "FHRSID": 1423646,
+          "LocalAuthorityBusinessID": 75724,
+          "BusinessName": "The Old Butchers at the Port",
+          "BusinessType": "Restaurant/Cafe/Canteen",
+          "BusinessTypeID": 1,
+          "AddressLine1": "Port of Middlesbrough",
+          "AddressLine2": "Riverside Park Road",
+          "AddressLine3": "TS2 1UT",
+          "RatingValue": 5,
+          "RatingKey": "fhrs_5_en-GB",
+          "RatingDate": "2023-06-07",
+          "LocalAuthorityCode": 648,
+          "LocalAuthorityName": "River Tees",
+          "LocalAuthorityWebSite": "http://www.teesporthealth.co.uk",
+          "LocalAuthorityEmailAddress": "port.health@redcar-cleveland.gov.uk",
+          "Scores": {
+            "Hygiene": 0,
+            "Structural": 5,
+            "ConfidenceInManagement": 0
+          },
+          "SchemeType": "FHRS",
+          "NewRatingPending": "False",
+          "Geocode": {
+            "Longitude": -1.2440184,
+            "Latitude": 54.5872637
+          }
+        }
+      ]
+    }
+  }
+}

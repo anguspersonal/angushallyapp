@@ -30,3 +30,4 @@ dist-ssr
 # Ignore local XML data files
 fsa-data-sync/fsa-establishment-data/
 *.xml
+*json
