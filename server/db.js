@@ -1,5 +1,3 @@
-console.log('DATABASE_URL in db.js:', process.env.DATABASE_URL);
-
 // db.js (Database Module)
 const { Pool } = require('pg');
 
