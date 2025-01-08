@@ -10,6 +10,7 @@ const db = require('./db'); // Import the database module
 
 const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
+// console.log(process.env.NODE_ENV,process.env.PORT);
 
 console.log('TEST_VAR:', process.env.TEST_VAR);
 
@@ -32,57 +33,6 @@ if (!isDev && cluster.isMaster) {
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
-  // Route to fetch food hygiene scores
-  app.get('/api/hygiene-score', async (req, res) => {
-    const { name, address } = req.query;
-
-    if (!name || !address) {
-        return res.status(400).json({ error: 'Name and address are required query parameters.' });
-    }
-
-    try {
-        // Fetch establishments from the UK Food Hygiene Ratings API
-        const response = await axios.get('https://api.ratings.food.gov.uk/establishments', {
-            headers: {
-                'x-api-version': '2',
-                'accept': 'application/json',
-            },
-        params: {
-          name, // Restaurant name
-          address, // Restaurant address
-        },
-        });
-
-        const establishments = response.data.establishments;
-
-        // If no establishments are found, return an error
-        if (establishments.length === 0) {
-            return res.status(404).json({ error: 'No hygiene score found for the specified name and address.' });
-        }
-
-        // Fuzzy matching using Fuse.js
-        const fuse = new Fuse(establishments, {
-            keys: ['BusinessName', 'AddressLine1', 'PostCode'],
-            includeScore: true,
-            threshold: 0.4, // Lower = stricter match
-        });
-
-        const searchResults = fuse.search(`${name} ${address}`);
-
-        if (searchResults.length > 0) {
-            // Return the best fuzzy match
-            return res.json(searchResults[0].item);
-        } else {
-            // If no fuzzy match is found, return all establishments for debugging
-            return res.status(300).json({ error: 'Multiple matches found but none are exact.', matches: establishments });
-        }
-    } catch (error) {
-        console.error('Error fetching hygiene score:', error);
-        res.status(500).json({ error: 'Failed to fetch hygiene score', message: error.message });
-    }
-});
-
-
   // Single route to handle dynamic queries
   app.get('/api/db/:table', async (req, res) => {
     const table = req.params.table;
@@ -90,7 +40,7 @@ if (!isDev && cluster.isMaster) {
     switch (table) {
       case 'posts': queryText = 'SELECT * FROM public.posts ORDER BY id ASC';
         break;
-        // Add more cases for different tables or queries 
+      // Add more cases for different tables or queries 
       default: res.status(400).json({ error: 'Invalid table name' });
         return;
     } try {
@@ -101,6 +51,10 @@ if (!isDev && cluster.isMaster) {
       res.status(500).json({ error: 'Database query error', message: err.message });
     }
   });
+
+  // Import and use the hygiene score route
+  // const hygieneScoreRoute = require('./routes/hygieneScore');
+  // app.use(hygieneScoreRoute);
 
   // Answer API requests.
   app.get('/api', function (req, res) {
