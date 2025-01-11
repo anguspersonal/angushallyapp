@@ -30,6 +30,9 @@ if (!isDev && cluster.isMaster) {
 } else {
   const app = express();
 
+   // Use body-parsing middleware
+   app.use(express.json());
+
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
@@ -52,9 +55,24 @@ if (!isDev && cluster.isMaster) {
     }
   });
 
-  // Import and use the hygiene score route
-  // const hygieneScoreRoute = require('./routes/hygieneScore');
-  // app.use(hygieneScoreRoute);
+  /**
+   * IMPORTANT NOTE 
+   * Import and use the hygiene score route 
+   * This is direct call to API. Use this SPARINGLY. 
+   * For most queries get hygiene call from database.
+   * Code below is for demonstration purposes only.
+   * const hygieneScoreRoute = require('./routes/hygieneScore');
+   * app.use(hygieneScoreRoute);
+
+  */
+
+  // Import and use the Google Places proxy route
+  const googlePlacesProxyRoute = require('./routes/googlePlacesProxy');
+  app.use(googlePlacesProxyRoute);
+
+  // Import and use the fuzzy search route
+  const fuzzySearchRoute = require('./routes/hygieneScoreRoute');
+  app.use(fuzzySearchRoute);
 
   // Answer API requests.
   app.get('/api', function (req, res) {

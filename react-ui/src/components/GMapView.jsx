@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Loader } from "@googlemaps/js-api-loader";
 import '../index.css'; // Import the CSS file
+import axios from 'axios';
+const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 const loader = new Loader({
     apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -10,6 +12,7 @@ const loader = new Loader({
 const GMapView = ({ searchResults }) => {
     const mapRef = useRef(null);
 
+    // Initialize the map and render markers for search results
     useEffect(() => {
         const initializeMap = async () => {
             try {
@@ -18,74 +21,123 @@ const GMapView = ({ searchResults }) => {
                     center: { lat: 51.509865, lng: -0.118092 }, // Default center (London)
                     zoom: 10,
                 });
-
+    
                 if (searchResults.length > 0) {
                     const bounds = new google.maps.LatLngBounds();
+                    console.log(`Found ${searchResults.length} places`);
+                    // Step 1: Render markers immediately
+                    const markerMap = {}; // Store markers keyed by postal code
+                    // We will need postcode for hygiene search, so search place details api
+                    // only create markers for places with valid postcodes
+                    const placeDetailsPromises = searchResults.map(async (place) => {
+                        const placeDetails = await getPlaceDetails(place.place_id);
+    
+                        if (placeDetails) {
+                            // Create a marker
+                            const marker = new google.maps.Marker({
+                                position: place.geometry.location,
+                                map: map,
+                                title: place.name,
+                            });
+    
+                            bounds.extend(marker.getPosition());
+    
+                            // Create an initial InfoWindow without the hygiene score
+                            const infoWindow = new google.maps.InfoWindow({
+                                content: `
+                                    <div>
+                                        <h3>${place.name}</h3>
+                                        <p>${place.formatted_address}</p>
+                                        <p><strong>Hygiene Rating:</strong> Loading...</p>
+                                    </div>
+                                `,
+                            });
+    
+                            marker.addListener("click", () => {
+                                infoWindow.open(map, marker);
+                            });
+    
+                            // Save the marker and InfoWindow to the map
+                            markerMap[placeDetails.postalCode] = { marker, infoWindow };
+                        }
+                            //create place plus postcode to return
+                            const placePlusPostcode = { ...place, postcode: placeDetails?.postalCode };
 
-                    searchResults.forEach(async (place) => {
-                        // const hygieneScore = await fetchHygieneScore(place.name, place.formatted_address);
-                        
-                        // Add markers for search results
-                        const marker = new google.maps.Marker({
-                            position: place.geometry.location,
-                            map: map,
-                            title: place.name,
-                        });
-
-                        // Extend the bounds to include each marker's position
-                        bounds.extend(marker.getPosition());
-
-                        // Create InfoWindow for each marker
-                        const infoWindow = new google.maps.InfoWindow({
-                            content: `
-                                <div>
-                                    <h3>${place.name}</h3>
-                                    <p>${place.formatted_address}</p>
-                                    <p><strong>Hygiene Rating:</strong> hygieneScore?.RatingValue/5 || 'N/A'</p>
-                                </div>
-                            `,
-                        });
-
-                        // Open InfoWindow on marker click
-                        marker.addListener("click", () => {
-                            infoWindow.open(map, marker);
-                        });
+                        return placePlusPostcode; // Return the postal code for batch search
                     });
-
-                    // Adjust the map's viewport to fit the bounds of all markers
+                    
+                    const placesPlusPostcodes = (await Promise.all(placeDetailsPromises)).filter(pc => pc); // Collect valid postcodes
+                    console.log("Places Plus Postcodes:");
+                    console.log(placesPlusPostcodes);
                     map.fitBounds(bounds);
-
-                    // Set a minimum zoom level
-                    const listener = google.maps.event.addListener(map, "idle", () => {
-                        if (map.getZoom() > 13) map.setZoom(13);
-                        google.maps.event.removeListener(listener);
+    
+                    // Step 2: Perform batch hygiene score search
+                    const hygieneScoresResponse = await axios.post('/api/hygieneScoreRoute', { places: placesPlusPostcodes });
+                    const hygieneScoresMap = hygieneScoresResponse.data; // Map of { postcode: hygieneScore }
+    
+                    // Step 3: Update markers with hygiene scores
+                    placesPlusPostcodes.forEach(postcode => {
+                        const { marker, infoWindow } = markerMap[postcode] || {};
+                        const hygieneScore = hygieneScoresMap[postcode] || 'N/A';
+    
+                        if (marker && infoWindow) {
+                            // Update InfoWindow content with hygiene score
+                            infoWindow.setContent(`
+                                <div>
+                                    <h3>${marker.getTitle()}</h3>
+                                    <p>${marker.getPosition()}</p>
+                                    <p><strong>Hygiene Rating:</strong> ${hygieneScore}/5</p>
+                                </div>
+                            `);
+                        }
                     });
                 }
             } catch (error) {
                 console.error("Error initializing map:", error);
             }
         };
-
         initializeMap();
     }, [searchResults]);
+    
 
-    // const fetchHygieneScore = async (name, address) => {
-    //     try {
-    //         const response = await fetch(`/api/hygiene-score?name=${encodeURIComponent(name)}&address=${encodeURIComponent(address)}`);
-    //         const data = await response.json();
-    //         if (response.ok) {
-    //             return data;
-    //         } else {
-    //             console.warn(`Hygiene score not found: ${data.error}`);
-    //             return null;
-    //         }
-    //     } catch (error) {
-    //         console.error("Failed to fetch hygiene score:", error);
-    //         return null;
-    //     }
-    // };
+    // Render the map
+    return (<div ref={mapRef} style={{ height: "500px", width: "100%" }}></div>);
+};
 
-    return <div ref={mapRef} style={{ height: "500px", width: "100%" }}></div>;
+const getPlaceDetails = async (placeId) => {
+    try {
+        const response = await fetch(`/api/google-places-details?place_id=${placeId}&key=${apiKey}`);
+        const data = await response.json();
+        if (response.ok) {
+            // Get the name, full address, and post code from the response
+            const postalCodeComponent = data.result.address_components.find(component => component.types.includes('postal_code'));
+            const placeDetails = { placeName: data.result.name, address: data.result.formatted_address, postalCode: postalCodeComponent ? postalCodeComponent.long_name : 'N/A' };
+            return placeDetails;
+        } else {
+            console.warn(`Post code not  for placeID${placeId}: ${data.error}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Failed to fetch details for placeID${placeId}:`, error);
+        return null;
+    }
+};
+
+// Use place details to do the fuzzy search on the database
+const fuzzySearchResult = async (place, placeDetails) => {
+    try {
+        const response = await axios.post('/api/hygieneScoreLookup', {
+            place: {
+                name: place.name,
+                addressline1: place.formatted_address,
+                postcode: placeDetails.postalCode
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Failed to perform fuzzy search for ${place.placeId}:`, error);
+        return null;
+    }
 };
 
 export default GMapView;
