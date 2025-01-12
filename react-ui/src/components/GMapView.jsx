@@ -38,6 +38,7 @@ const GMapView = ({ searchResults }) => {
                                 position: place.geometry.location,
                                 map: map,
                                 title: place.name,
+                                place_id: place.place_id,
                             });
     
                             bounds.extend(marker.getPosition());
@@ -58,10 +59,11 @@ const GMapView = ({ searchResults }) => {
                             });
     
                             // Save the marker and InfoWindow to the map
-                            markerMap[placeDetails.postalCode] = { marker, infoWindow };
+                            markerMap[place.place_id] = { marker, infoWindow };
+                            console.log(`Marker and InfoWindow created for placeID ${placeDetails.place_id}`);
                         }
                             //create place plus postcode to return
-                            const placePlusPostcode = { ...place, postcode: placeDetails?.postalCode };
+                            const placePlusPostcode = { ...place, postcode: placeDetails?.postcode };
 
                         return placePlusPostcode; // Return the postal code for batch search
                     });
@@ -72,25 +74,44 @@ const GMapView = ({ searchResults }) => {
                     map.fitBounds(bounds);
     
                     // Step 2: Perform batch hygiene score search
-                    const hygieneScoresResponse = await axios.post('/api/hygieneScoreRoute', { places: placesPlusPostcodes });
-                    const hygieneScoresMap = hygieneScoresResponse.data; // Map of { postcode: hygieneScore }
-    
-                    // Step 3: Update markers with hygiene scores
-                    placesPlusPostcodes.forEach(postcode => {
-                        const { marker, infoWindow } = markerMap[postcode] || {};
-                        const hygieneScore = hygieneScoresMap[postcode] || 'N/A';
-    
-                        if (marker && infoWindow) {
-                            // Update InfoWindow content with hygiene score
-                            infoWindow.setContent(`
-                                <div>
-                                    <h3>${marker.getTitle()}</h3>
-                                    <p>${marker.getPosition()}</p>
-                                    <p><strong>Hygiene Rating:</strong> ${hygieneScore}/5</p>
-                                </div>
-                            `);
+                    try {
+                        const hygieneScoresResponse = await axios.post('/api/hygieneScoreRoute', { places: placesPlusPostcodes });
+                        if (!hygieneScoresResponse.data) {
+                            console.warn("No hygiene scores found");
+                            return;
                         }
-                    });
+                        // console.log("Hygiene Scores Response:", hygieneScoresResponse.data);
+                        const hygieneScoresMap = hygieneScoresResponse.data; // Map of { postcode: hygieneScore }
+                        console.log("Hygiene Scores Map:", hygieneScoresMap); 
+                        console.log(`${placesPlusPostcodes.length} places found`);
+
+                        // Step 3: Update markers with hygiene scores
+                        placesPlusPostcodes.forEach(place => {
+                            // console.log("Place:", place);
+                            const { marker, infoWindow } = markerMap[place.place_id] || {};
+                            if (!marker || !infoWindow) {
+                                console.warn(`Marker or InfoWindow not found for placeID ${place.place_id}`);
+                            }
+                            // console log the place id you are looking for and the array of scores place ids to see if they match
+                            // console.log("Place ID:", place.place_id, "Scores:", hygieneScoresMap.map(score => score.place_id));
+                            const hygieneScore = hygieneScoresMap.find(score => score.place_id === place.place_id)?.rating_value_num || 'N/A';
+                            console.log("Hygiene Score:", hygieneScore);
+                            if (marker && infoWindow) {
+                                // Update InfoWindow content with hygiene score
+                                infoWindow.setContent(`
+                                    <div>
+                                        <h3>${marker.getTitle()}</h3>
+                                        <p>${place.formatted_address}</p>
+                                        <p><strong>Hygiene Rating:</strong> ${(hygieneScore !== 'N/A') ? `${hygieneScore}/5` : 'N/A'}</p>
+                                    </div>
+                                `);
+                            } else {
+                                console.warn(`Marker or InfoWindow not found for placeID ${place.place_id}`);
+                            }
+                        });
+                    } catch (error) {
+                        console.error("Error fetching hygiene scores:", error);
+                    }
                 }
             } catch (error) {
                 console.error("Error initializing map:", error);
@@ -111,31 +132,14 @@ const getPlaceDetails = async (placeId) => {
         if (response.ok) {
             // Get the name, full address, and post code from the response
             const postalCodeComponent = data.result.address_components.find(component => component.types.includes('postal_code'));
-            const placeDetails = { placeName: data.result.name, address: data.result.formatted_address, postalCode: postalCodeComponent ? postalCodeComponent.long_name : 'N/A' };
+            const placeDetails = { placeName: data.result.name, address: data.result.formatted_address, postcode: postalCodeComponent ? postalCodeComponent.long_name : 'N/A' };
             return placeDetails;
         } else {
-            console.warn(`Post code not  for placeID${placeId}: ${data.error}`);
+            console.warn(`Post code not found for placeID ${placeId}: ${data.error}`);
             return null;
         }
     } catch (error) {
-        console.error(`Failed to fetch details for placeID${placeId}:`, error);
-        return null;
-    }
-};
-
-// Use place details to do the fuzzy search on the database
-const fuzzySearchResult = async (place, placeDetails) => {
-    try {
-        const response = await axios.post('/api/hygieneScoreLookup', {
-            place: {
-                name: place.name,
-                addressline1: place.formatted_address,
-                postcode: placeDetails.postalCode
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error(`Failed to perform fuzzy search for ${place.placeId}:`, error);
+        console.error(`Failed to fetch details for placeID ${placeId}:`, error);
         return null;
     }
 };

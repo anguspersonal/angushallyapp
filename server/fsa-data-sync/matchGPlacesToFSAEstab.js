@@ -60,7 +60,7 @@ const performFuzzySearch = async (places, establishments, selectedFuseThresholdL
         });
 
         const validEstablishments = establishments.filter(establishment => establishment.address);
-
+        // console.log(`Valid establishments: `,validEstablishments);
 
     const searchNameAndAddress = new Fuse(validEstablishments,
         {
@@ -70,15 +70,18 @@ const performFuzzySearch = async (places, establishments, selectedFuseThresholdL
 
     for (const place of places) {
         const result = searchNameAndAddress.search({
-            name: place.name,
+            business_name: place.name,
             address: place.formatted_address
         });
-        if (result) {
-            results.push(result[0].item);
+        // console.log(`Search result for place ${place.name}, ${place.formatted_address}:`, result);
+        if (result && result.length > 0) {
+            const bestMatch = result[0].item;
+            const returnPlace = { ...place, ...bestMatch };
+            results.push(returnPlace);
+            console.log(`Matched: ${place.name} with ${bestMatch.business_name} Rating: ${bestMatch.rating_value_str}`);
         }
     }
 
-    console.log(`Matched: ${place.name} with ${bestMatch.name} Rating: ${bestMatch.rating}`);
 
     // Calculate the number of matches
     if (results.length > 0) {
@@ -89,6 +92,7 @@ const performFuzzySearch = async (places, establishments, selectedFuseThresholdL
         const thresholdSum = thresholdValues.reduce((sum, item) => sum + item.value, 0);
         const averageStrictness = Math.round(10 * thresholdSum / thresholdValues.length) / 10;
         console.log(`#Places: ${numberPlacesSearched} #Matches:${numberMatches} Matched:${percentageMatch}% Search Strictness ${averageStrictness}`);
+        // console.log(results);
     }
     return results;
 };

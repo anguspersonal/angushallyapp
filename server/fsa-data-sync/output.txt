@@ -1,0 +1,689 @@
+Search result for place Ocean Bells Coffee, 133 High St, Watford WD17 2ER, United Kingdom: []
+Search result for place Watford Cafe & Restaurant, 342 St Albans Rd, Watford WD24 6PQ, United Kingdom: []
+Search result for place The LP Cafe, 173 The Parade, Watford WD17 1NJ, United Kingdom: []
+Search result for place Junction Café & bistro, 101a St Albans Rd, Watford WD17 1RD, United Kingdom: []
+Search result for place Cafe De Lisboa Coffee Shop, Unit 3, 135 The Parade, High St, Watford WD17 1NA, United Kingdom: []
+Search result for place BloomsYard - Watford Station, 70 Cassiobury Park Ave, Watford WD18 7LE, United Kingdom: []
+Search result for place Simba Bru Coffee Roasters, 61A Sutton Rd, Watford WD17 2QE, United Kingdom: []
+Search result for place Tepsi, 183 St Albans Rd, Watford WD24 5BD, United Kingdom: []
+Search result for place Meriden kitchen restaurant, 162 York Way, Watford WD25 9EA, United Kingdom: []
+Search result for place Villiers Coffee House, 30A Villiers Rd, Oxhey, Watford WD19 4AH, United Kingdom: []
+Search result for place Courtlands Cafe, 133 Courtlands Dr, Watford WD24 5LL, United Kingdom: []
+Search result for place Cafe Bianco, 19-21 The Parade, Watford WD17 1LQ, United Kingdom: []
+Search result for place The Rhubarb Cafe, 168 Cassiobury Dr, Watford WD17 3AJ, United Kingdom: []
+Search result for place Kingswood cafe, 99 N Approach, Watford WD25 0EL, United Kingdom: []
+Search result for place The Daily Grind, 64b Queen's Rd, Watford WD17 2LA, United Kingdom: []
+Search result for place Alex’s Cafe, 38 Market St, Watford WD18 0PY, United Kingdom: []
+Search result for place Cedar Cafe, Hub, Cassiobury Pk, Watford WD17 3AR, United Kingdom: []
+Search result for place Flourish Craft Bakery, Unit 2 Garnett Cl, Watford WD24 7GL, United Kingdom: []
+Search result for place Bla Bla Café, 37 Clarendon Rd, Watford WD17 1JA, United Kingdom: []
+Search result for place Rustic Café, Station Approach, South Oxhey, Watford WD19 7DT, United Kingdom: []
+
+
+
+Valid establishments:  [
+  {
+    id: 260464,
+    business_name: 'Courtlands Cafe',
+    address: '133 Courtlands DriveWatford',
+    postcode: 'WD24 5LL',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260354,
+    business_name: 'Asvins Food And Wine',
+    address: '376 St Albans RoadWatford',
+    postcode: 'WD24 6PJ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260535,
+    business_name: 'Goodwood Parade Post Office',
+    address: '139 Courtlands DriveWatford',
+    postcode: 'WD24 5LL',
+    rating_value_str: 'Exempt',
+    rating_value_num: null
+  },
+  {
+    id: 260447,
+    business_name: 'Co-Op',
+    address: '174 Plover HouseYork WayHertfordshire',
+    postcode: 'WD25 9EA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260476,
+    business_name: 'Derwish BQ Restaurant',
+    address: '163 - 165 St Albans RoadWatford',
+    postcode: 'WD24 5BD',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260502,
+    business_name: 'F T Taylor',
+    address: '137 Courtlands DriveWatford',
+    postcode: 'WD24 5LL',
+    rating_value_str: 'Exempt',
+    rating_value_num: null
+  },
+  {
+    id: 260438,
+    business_name: 'Chiqizza / Persian Grill',
+    address: '160 Plover HouseYork WayHertfordshire',
+    postcode: 'WD25 9EA',
+    rating_value_str: '3',
+    rating_value_num: 3
+  },
+  {
+    id: 260504,
+    business_name: "FERO'S SANDWICH BAR LTD",
+    address: '422 St Albans RoadWatford',
+    postcode: 'WD24 6PJ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260521,
+    business_name: 'Ganesha',
+    address: '314 St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260449,
+    business_name: 'Corner Newsagent',
+    address: '454 St Albans RoadWatford',
+    postcode: 'WD24 6PJ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260607,
+    business_name: 'Island Box',
+    address: '332 St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: '3',
+    rating_value_num: 3
+  },
+  {
+    id: 260483,
+    business_name: 'Dragon Garden',
+    address: '125 Courtlands DriveWatford',
+    postcode: 'WD24 5LL',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260493,
+    business_name: 'Euro Convenience Store',
+    address: '46 Market StreetWatford',
+    postcode: 'WD18 0PY',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260503,
+    business_name: 'Feros Kitchen',
+    address: '422 St Albans RoadWatford',
+    postcode: 'WD24 6PJ',
+    rating_value_str: 'AwaitingInspection',
+    rating_value_num: null
+  },
+  {
+    id: 260682,
+    business_name: 'Market Tavern',
+    address: '28 Market StreetWatford',
+    postcode: 'WD18 0PY',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260533,
+    business_name: 'Glowinone',
+    address: '135 The Parade High StreetWatford',
+    postcode: 'WD17 1NA',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260527,
+    business_name: 'GILL BUTCHERS',
+    address: "Gill's Catering338 St Albans Road",
+    postcode: 'WD24 6PQ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260574,
+    business_name: 'Heriots Patisserie',
+    address: 'UM5 Atria Watford201 The Harlequin',
+    postcode: 'WD17 2UB',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260608,
+    business_name: 'Jamaica Blue',
+    address: 'Intu WatfordThe Centre Management SuiteWatford',
+    postcode: 'WD17 2UB',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260625,
+    business_name: "KELLY'S CARIBBEAN CUISINE LTD",
+    address: '167 St Albans RoadWatford',
+    postcode: 'WD24 5BD',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260696,
+    business_name: 'Meriden Fish Bar',
+    address: '164 Plover HouseYork WayHertfordshire',
+    postcode: 'WD25 9EA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260755,
+    business_name: 'Our Brothers',
+    address: '32 Market StreetWatford',
+    postcode: 'WD18 0PY',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260698,
+    business_name: 'Meriden Post Office',
+    address: '170 Plover HouseYork WayHertfordshire',
+    postcode: 'WD25 9EA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260746,
+    business_name: 'NW SUPERMARKET',
+    address: '334 - 336 St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260645,
+    business_name: 'Krantz Bakery',
+    address: '139 The Parade High StreetWatford',
+    postcode: 'WD17 1NA',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260674,
+    business_name: "Lola's Cupcakes Watford",
+    address: 'Intu WatfordThe Centre Management SuiteWatford',
+    postcode: 'WD17 2UB',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260742,
+    business_name: 'Nisa Supermarket',
+    address: '127 - 129 Courtlands DriveWatford',
+    postcode: 'WD24 5LL',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260697,
+    business_name: 'Meriden Kitchen',
+    address: '162 Plover HouseYork WayHertfordshire',
+    postcode: 'WD25 9EA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260649,
+    business_name: 'Lahore Restaurant',
+    address: '312 St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: '3',
+    rating_value_num: 3
+  },
+  {
+    id: 260720,
+    business_name: 'Namaste Watford',
+    address: '320 St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260856,
+    business_name: 'Spice Lounge',
+    address: '36 Market StreetWatford',
+    postcode: 'WD18 0PY',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260743,
+    business_name: 'Noa Grill & Lounge',
+    address: '328 St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260783,
+    business_name: 'Pizza GoGo',
+    address: '328A St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260823,
+    business_name: 'Rolls N Rice',
+    address: '350 St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: '3',
+    rating_value_num: 3
+  },
+  {
+    id: 260910,
+    business_name: 'The Anchor Fish Bar',
+    address: '185A St Albans RoadWatford',
+    postcode: 'WD24 5BD',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 261023,
+    business_name: 'Way4Save',
+    address: '179 - 181 St Albans RoadWatford',
+    postcode: 'WD24 5BD',
+    rating_value_str: '3',
+    rating_value_num: 3
+  },
+  {
+    id: 260947,
+    business_name: 'The Pond Post Office',
+    address: '145 The Parade High StreetWatford',
+    postcode: 'WD17 1NA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260987,
+    business_name: 'Viento Coffee Company Ltd',
+    address: '157B St Albans RoadWatford',
+    postcode: 'WD24 5BD',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 261009,
+    business_name: 'Watford BBQ',
+    address: '30 Market StreetWatford',
+    postcode: 'WD18 0PY',
+    rating_value_str: '1',
+    rating_value_num: 1
+  },
+  {
+    id: 261053,
+    business_name: 'Zara Mangal',
+    address: '40 Market StreetWatford',
+    postcode: 'WD18 0PY',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 261003,
+    business_name: 'Watford Cafe',
+    address: '342 St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: '3',
+    rating_value_num: 3
+  },
+  {
+    id: 260404,
+    business_name: 'Cafe De Lisboa',
+    address: '135 The Parade High StreetWatford',
+    postcode: 'WD17 1NA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260315,
+    business_name: '143 Bar',
+    address: '143 The Parade High StreetWatford',
+    postcode: 'WD17 1NA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260329,
+    business_name: "Alex's Restaurant",
+    address: '38 Market StreetWatford',
+    postcode: 'WD18 0PY',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260890,
+    business_name: 'Tapestry Cakes',
+    address: '44 Market StreetWatford',
+    postcode: 'WD18 0PY',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260898,
+    business_name: 'Tepsi',
+    address: '183 St Albans RoadWatford',
+    postcode: 'WD24 5BD',
+    rating_value_str: 'AwaitingInspection',
+    rating_value_num: null
+  },
+  {
+    id: 260984,
+    business_name: 'VAI ICE',
+    address: 'Intu WatfordThe Centre Management SuiteWatford',
+    postcode: 'WD17 2UB',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260932,
+    business_name: 'The LP Cafe',
+    address: '173 The Parade High StreetWatford',
+    postcode: 'WD17 1NJ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260973,
+    business_name: 'TR Cuisine/Wok Walk',
+    address: '157 The Parade High StreetWatford',
+    postcode: 'WD17 1NA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260966,
+    business_name: 'Tonis Greek Tavern',
+    address: '175 St Albans RoadWatford',
+    postcode: 'WD24 5BD',
+    rating_value_str: 'AwaitingInspection',
+    rating_value_num: null
+  },
+  {
+    id: 260960,
+    business_name: 'Thekaa',
+    address: '151 The Parade High StreetWatford',
+    postcode: 'WD17 1NA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260970,
+    business_name: 'Tops Pizza',
+    address: '155 The Parade High StreetWatford',
+    postcode: 'WD17 1NA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260980,
+    business_name: 'Tudorken Chemist',
+    address: '364 St Albans RoadWatford',
+    postcode: 'WD24 6PQ',
+    rating_value_str: 'Exempt',
+    rating_value_num: null
+  },
+  {
+    id: 261019,
+    business_name: 'Watford Social Club',
+    address: '70 - 72 Queens RoadWatford',
+    postcode: 'WD17 2LA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260945,
+    business_name: 'The Pizza Inno (Innovation)',
+    address: '167 - 169 The Parade High StreetWatford',
+    postcode: 'WD17 1NJ',
+    rating_value_str: 'AwaitingInspection',
+    rating_value_num: null
+  },
+  {
+    id: 260367,
+    business_name: 'Bee Zee Health & Beauty',
+    address: '23 - 37 The Parade High StreetWatford',
+    postcode: 'WD17 1LQ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260395,
+    business_name: 'Bulgarian Rose',
+    address: '80 Queens RoadWatford',
+    postcode: 'WD17 2LA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260359,
+    business_name: 'B And M Retail',
+    address: '23 - 33 The Parade High StreetWatford',
+    postcode: 'WD17 1LQ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260380,
+    business_name: 'Boots UK Ltd',
+    address: '147A High StreetWatford',
+    postcode: 'WD17 2ER',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260497,
+    business_name: 'Express Food Centre',
+    address: '101 St Albans RoadWatford',
+    postcode: 'WD17 1RD',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260606,
+    business_name: 'Italian Wood Fired Pizza',
+    address: '159 The Parade High StreetWatford',
+    postcode: 'WD17 1NJ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260401,
+    business_name: 'Cafe Bianco',
+    address: '19 - 21 The Parade High StreetWatford',
+    postcode: 'WD17 1LQ',
+    rating_value_str: '3',
+    rating_value_num: 3
+  },
+  {
+    id: 260508,
+    business_name: 'Flourish Cafe & Pizzeria',
+    address: 'Unit 2Garnett Close',
+    postcode: 'WD24 7GL',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260616,
+    business_name: 'JRC GLOBAL BUFFET',
+    address: 'Unit 223 - 33 The Parade High Street',
+    postcode: 'WD17 1LQ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260546,
+    business_name: 'Greggs',
+    address: '5 The Parade High StreetWatford',
+    postcode: 'WD17 1LQ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260615,
+    business_name: 'Johnnys Bar',
+    address: '94 - 96A Queens RoadWatford',
+    postcode: 'WD17 2LA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260619,
+    business_name: 'Junction Cafe',
+    address: '101A St Albans RoadWatford',
+    postcode: 'WD17 1RD',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260717,
+    business_name: 'Morrisons Daily',
+    address: '178 - 180 Cassiobury DriveWatford',
+    postcode: 'WD17 3AJ',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260763,
+    business_name: 'Panda Cuisine',
+    address: '185 The Parade High StreetWatford',
+    postcode: 'WD17 1NJ',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260794,
+    business_name: 'Prime Pizza And Grill Mama',
+    address: '171 The Parade High StreetWatford',
+    postcode: 'WD17 1NJ',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260747,
+    business_name: 'Ocean Bells Coffee Company',
+    address: 'Intu Watford133 High Street',
+    postcode: 'WD17 2ER',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260893,
+    business_name: 'Teasco',
+    address: '9 The Parade High StreetWatford',
+    postcode: 'WD17 1LQ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260781,
+    business_name: 'Pizza Express/Mac & Wings',
+    address: '137-139 High StreetWatford',
+    postcode: 'WD17 2ER',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260791,
+    business_name: 'Pret A Manger',
+    address: '1 The Parade High StreetWatford',
+    postcode: 'WD17 1LQ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260809,
+    business_name: 'Regina Margharita Pizzeria',
+    address: '121A St Albans RoadWatford',
+    postcode: 'WD17 1RD',
+    rating_value_str: '4',
+    rating_value_num: 4
+  },
+  {
+    id: 260812,
+    business_name: 'Rhubarb Cafe',
+    address: '168 Cassiobury DriveWatford',
+    postcode: 'WD17 3AJ',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260920,
+    business_name: 'The Daily Grind',
+    address: '64B Queens RoadWatford',
+    postcode: 'WD17 2LA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260914,
+    business_name: 'The Cafe In The Park',
+    address: '3 Cassiobury ParkWatford',
+    postcode: 'WD18 7HY',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260991,
+    business_name: 'Villiers Coffee House',
+    address: '30A Villiers RoadWatford',
+    postcode: 'WD19 4AH',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260709,
+    business_name: 'Mithunn Convenience Store',
+    address: '121 St Albans RoadWatford',
+    postcode: 'WD17 1RD',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260408,
+    business_name: 'Cafe Rosa',
+    address: '82 Queens RoadWatford',
+    postcode: 'WD17 2LA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260338,
+    business_name: 'Asah Restaurant',
+    address: '92 Queens RoadWatford',
+    postcode: 'WD17 2LA',
+    rating_value_str: '5',
+    rating_value_num: 5
+  },
+  {
+    id: 260796,
+    business_name: 'Protein Club',
+    address: 'NRG GymWatford House Lane',
+    postcode: 'WD17 1LQ',
+    rating_value_str: '4',
+    rating_value_num: 4
+  }
+]
