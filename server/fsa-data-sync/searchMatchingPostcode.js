@@ -37,7 +37,9 @@ const searchMatchingPostcode = async (places) => {
         fsa.establishments.id,
         fsa.establishments.business_name,
         fsa.establishments.address,
-        fsa.postcodes.postcode
+        fsa.postcodes.postcode,
+        fsa.establishments.rating_value_str,
+        fsa.establishments.rating_value_num
     FROM fsa.postcodes
     JOIN fsa.establishments
     ON fsa.postcodes.postcode_id = fsa.establishments.postcode_id
