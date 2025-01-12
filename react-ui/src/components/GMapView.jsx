@@ -108,7 +108,7 @@ const GMapView = ({ searchResults }) => {
                                     <div>
                                         <h3>${marker.getTitle()}</h3>
                                         <p>${place.formatted_address}</p>
-                                        <p><strong>Hygiene Rating:</strong> ${(hygieneScore !== 'N/A') ? `${hygieneScore}/5` : 'N/A'}</p>
+                                        <p><strong>Hygiene Rating:</strong> ${(typeof hygieneScore === 'number') ? `${hygieneScore}/5` : `${hygieneScore}`}</p>
                                     </div>
                                 `);
                             } else {

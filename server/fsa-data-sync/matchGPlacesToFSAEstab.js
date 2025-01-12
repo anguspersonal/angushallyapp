@@ -36,7 +36,7 @@ const matchGPlacesToFSAEstab = async (places) => {
     // THRESHOLDS: Define the threshold levels to use for the search
     const selectedFuseThresholdLevel = {
         postcodeThreshold: thresholds[3], // High strictness
-        nameAndAddressThreshold: thresholds[8] // Very lenient
+        nameAndAddressThreshold: thresholds[9] // Very lenient
     };
 
     // For each place, search for a matching address
