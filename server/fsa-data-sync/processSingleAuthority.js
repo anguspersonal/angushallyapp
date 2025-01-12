@@ -1,3 +1,4 @@
+const path = require('path');
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') }); // Load environment variables
 const axios = require('axios');
 const { XMLParser } = require('fast-xml-parser'); // Library for parsing XML
@@ -21,7 +22,7 @@ const processSingleAuthority = async (props) => {
         return { success: false, message: `No data returned for ${localAuthorityID}, ${laName}` };
     }
     console.log(`Successfully fetched data for local authority id ${localAuthorityID}, ${laName}`);
-    
+
     // 2 Parse the XML data to JSON
     const parser = new XMLParser();
     const parsedData = parser.parse(xmldata);
@@ -33,7 +34,7 @@ const processSingleAuthority = async (props) => {
 
     // 3 Extract establishments from the parsed data
     const establishments = parsedData.FHRSEstablishment.EstablishmentCollection.EstablishmentDetail || [];
-    
+
     // Log random establishments for debugging
     const randomIndex = Math.floor(Math.random() * establishments.length) + 1;
     console.log(establishments[randomIndex]);
@@ -46,7 +47,7 @@ const processSingleAuthority = async (props) => {
     let errorCount = 0;
     console.log(`Processing ${establishments.length} establishments for local authority id ${localAuthorityID}, ${laName}...`);
     //check database connection
-    testDatabaseConnection();  
+    testDatabaseConnection();
 
     try {
         // Process each establishment in parallel using Promise.all (Global ES6 feature)
@@ -56,11 +57,11 @@ const processSingleAuthority = async (props) => {
         const insertPromises = establishments.map(async (establishment) => {
             // Validate critical fields
             // Skip establishment if critical fields are missing
-            if (!establishment?.BusinessName || !establishment?.PostCode || !establishment?.RatingValue || !establishment?.FHRSID) {
+            if (!establishment?.BusinessName || !establishment?.FHRSID) {
                 skippedCount++;
-                // console.warn(
-                //     `Skipping establishment due to missing fields. FHRSID: ${establishment?.FHRSID || "<Missing>"}, File: ${localAuthorityID}, ${laName}. Skipped count: ${skippedCount}`
-                // );
+                console.warn(
+                    `Skipping establishment due to missing fields. FHRSID: ${establishment?.FHRSID || "<Missing>"}, Name:${establishment?.BusinessName || "<Missing>"} Postcode:${establishment?.PostCode || "<Missing>"} File: ${localAuthorityID}, ${laName}. Skipped count: ${skippedCount}`
+                );
                 return;
             }
 
@@ -94,11 +95,17 @@ const processSingleAuthority = async (props) => {
             // Process RatingValue
             const { rating_value_str = null, rating_value_num = null, rating_status_id = null } = processRatingValue(RatingValue);
 
+            // Ensure BusinessName is a string
+            const businessNameStr = BusinessName ? BusinessName.toString() : null;
+
+            // Creat composite string of address
+            const addressStr = [AddressLine1, AddressLine2, AddressLine4, PostCode].filter(Boolean).join(", ");
+
 
             const values = [
                 FHRSID, //$1
                 LocalAuthorityBusinessID || null, //$2
-                BusinessName || null, //$3
+                businessNameStr, //$3
                 BusinessType || null, //$4
                 BusinessTypeID || null, //$5
                 AddressLine1 || null, //$6
@@ -121,6 +128,7 @@ const processSingleAuthority = async (props) => {
                 NewRatingPending || null, //$23
                 Geocode.Longitude || null, //$24
                 Geocode.Latitude || null, //$25
+                addressStr, //$26
             ];
 
             // 5 Save the data to the database

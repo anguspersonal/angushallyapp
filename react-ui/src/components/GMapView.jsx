@@ -82,7 +82,7 @@ const GMapView = ({ searchResults }) => {
                         }
                         // console.log("Hygiene Scores Response:", hygieneScoresResponse.data);
                         const hygieneScoresMap = hygieneScoresResponse.data; // Map of { postcode: hygieneScore }
-                        console.log("Hygiene Scores Map:", hygieneScoresMap); 
+                        // console.log("Hygiene Scores Map:", hygieneScoresMap); 
                         console.log(`${placesPlusPostcodes.length} places found`);
 
                         // Step 3: Update markers with hygiene scores
@@ -94,8 +94,14 @@ const GMapView = ({ searchResults }) => {
                             }
                             // console log the place id you are looking for and the array of scores place ids to see if they match
                             // console.log("Place ID:", place.place_id, "Scores:", hygieneScoresMap.map(score => score.place_id));
-                            const hygieneScore = hygieneScoresMap.find(score => score.place_id === place.place_id)?.rating_value_num || 'N/A';
-                            console.log("Hygiene Score:", hygieneScore);
+                            const hygieneScorePlace = hygieneScoresMap.find(score => score.place_id === place.place_id) || 'N/A';
+                            console.log("Hygiene Score:", hygieneScorePlace);
+
+                            // if there is a rating value number, set the hygiene score to the rating value number, else, set it to rating value string, if no string, set to N/A
+                            const hygieneScore = hygieneScorePlace.rating_value_num ? hygieneScorePlace.rating_value_num : hygieneScorePlace.rating_value_str ? hygieneScorePlace.rating_value_str : 'N/A';
+
+
+                            // console.log("Hygiene Score:", hygieneScore);
                             if (marker && infoWindow) {
                                 // Update InfoWindow content with hygiene score
                                 infoWindow.setContent(`
