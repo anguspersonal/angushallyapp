@@ -24,9 +24,10 @@ INSERT INTO fsa.establishments (
                 scheme_type,
                 new_rating_pending, 
                 longitude, 
-                latitude
+                latitude,
+                address
             ) VALUES (
-                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26
             )
             ON CONFLICT (fhrs_id) DO UPDATE SET
                 local_authority_business_id = EXCLUDED.local_authority_business_id,
@@ -51,5 +52,6 @@ INSERT INTO fsa.establishments (
                 confidence_in_management = EXCLUDED.confidence_in_management,
                 scheme_type = EXCLUDED.scheme_type,
                 new_rating_pending = EXCLUDED.new_rating_pending,
-                longitude = EXCLUDED.latitude,
-                latitude = EXCLUDED.longitude;
+                longitude = EXCLUDED.longitude,
+                latitude = EXCLUDED.latitude,
+                address = EXCLUDED.address;

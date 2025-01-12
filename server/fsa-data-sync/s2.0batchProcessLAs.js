@@ -44,7 +44,7 @@ const fetchPendingLocalAuthorities = async () => {
             SELECT local_authority_id, name, url
             FROM fsa.local_authorities
             WHERE processing_status = 'Pending'
-            LIMIT 80;
+            LIMIT 45;
         `;
         localAuthorities = await db.query(query);
         // console.log('Query result:', localAuthorities); // Debugging log
