@@ -1,7 +1,9 @@
 import React,  { useState }from 'react';
-import '../../index.css';
-import SearchBar from "../../components/GMapsSearchBar";
-import MapView from "../../components/GMapView";
+import '../../../index.css'; // Import the CSS file from
+import SearchBar from "./GMapsSearchBar";
+import MapView from "./GMapView";
+import Header from '../../../components/Header';
+import Footer from '../../../components/Footer';
 
 
 function EatSafeUK() {
@@ -10,8 +12,10 @@ function EatSafeUK() {
 
     return (
         <div className='Page'>
+            <Header />
             <SearchBar onSearchResults={setSearchResults} />
             <MapView searchResults={searchResults} />
+            <Footer />
         </div>
     );
 }

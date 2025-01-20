@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Avenir&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Helvetica&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arial&display=swap');
+
+.dvg {
+    --e-global-color-primary: #FFFFFF;
+    --e-global-color-secondary: #000000;
+    --e-global-color-text: #EBEBEB;
+    --e-global-color-accent: #1D2530;
+    --e-global-color-24622ed: #242424;
+    --e-global-color-ceadcb9: #BD1972;
+    --e-global-color-fc53926: #D7347F;
+    --e-global-color-551fe9e: #E7519C;
+    --e-global-color-8fc5124: #8028C2;
+    --e-global-color-cf6a9cb: #9D4BDA;
+    --e-global-color-94182d8: #BA70E7;
+    --e-global-color-815c770: #233E91;
+    --e-global-color-afbc983: #2B5AB7;
+    --e-global-color-a5f3c28: #528AF8;
+    --e-global-color-background1: #FAFAFF; 
+    --e-global-color-c09952e: #E0006D;
+    --e-global-color-3e147b0: #E74B94;
+    --e-global-color-54484f5: #9F0A5D;
+    --e-global-color-0a996ac: #081A36;
+    --e-global-color-65f8ea7: #223F91;
+    --e-global-color-1d3426e: #548DFB;
+    --e-global-color-384471c: #CC0063;
+    --e-global-color-grey: #f4e7ff21;
+    --e-global-color-lightgrey: #FAFAFF00;
+    --e-global-typography-primary-font-family: "Georgia";
+    --e-global-typography-primary-font-weight: 600;
+    --e-global-typography-secondary-font-family: "Georgia";
+    --e-global-typography-secondary-font-weight: 400;
+    --e-global-typography-text-font-family: "Trebuchet MS";
+    --e-global-typography-text-font-weight: 400;
+    --e-global-typography-accent-font-family: "Trebuchet MS";
+    --e-global-typography-accent-font-weight: 500;
+    line-height: 1.5;
+    font-weight: 400;
+    background-color: var(--e-global-color-0a996ac);
+    color: var(--e-global-color-text);
+    --header-height: 15px; 
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+    padding: 1em;
+    text-align: center;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center;
+    place-items: center;
+}
+
+.dvg a {
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
+}
+
+.dvg a:hover {
+    color: #535bf2;
+}
+
+.dvg h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #EBEBEB;
+}
+
+.dvg button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    color: #EBEBEB;
+    background-color: #8028C2;
+    max-width: 30em;
+}
+
+.dvg button:hover {
+    border-color: #646cff;
+}
+
+.dvg button:focus,
+.dvg button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+}
+
+.dvg p {
+    font-size: 1em;
+    line-height: 1;
+}
+
+.dvg #planet {
+    position: absolute;
+    top: 0px;  /* Adjust this to control how far from the top the image appears */
+    left: 100%;
+    transform: translateX(-50%); /* Center the image horizontally */
+    width: 250px; /* Adjust the width as needed */
+    height: auto; /* Maintains aspect ratio */
+    z-index: 1; 
+    border-radius: 100%;
+}
+
+.dvg .welcome {
+    font-style: bold; /* Italicize the text */
+    font-weight: bold; /* Bold the text */
+    font-size: 1.2em; /* Adjust the font size as needed */
+    line-height: normal;
+    align-content: center;
+    margin-top: 20px; /* Add margin for better spacing */
+}
+
+.dvg .instructions {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    text-align: left;
+    font-size: 1em; /* Adjust the font size as needed */
+    line-height: 1.5; /* Adjust the line height as needed */
+    margin-top: 20px; /* Add margin for better spacing */
+}
+
+/* When screen is less than 575px wide, make element with id planet invisible. */
+@media screen and (max-width: 575px) {
+    .dvg #planet {
+        display: none;
+    }
+}
+
+.dvg #loseScreenTitle {
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--e-global-color-c09952e);
+    margin-top: 20px;
+}
+
+.dvg #winScreenTitle {
+    font-size: 2em;
+    font-weight: bold;
+    color: green;
+    margin-top: 20px;
+}

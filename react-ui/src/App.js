@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 // import logo from './logo.svg';
-import './App.css';
 import './index.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
@@ -10,7 +9,8 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Blog from './pages/Blog';
 import Projects from './pages/Projects';
-import EatSafeUK from './pages/projectPages/EatSafeUK';
+import EatSafeUK from './pages/projectPages/EatSafeUK/EatSafeUK';
+import DataValueGame from './pages/projectPages/DataValueGame/DataValueGame';
 
 function App() {
   //Set Use States  
@@ -46,7 +46,6 @@ function App() {
   return (
       <Router>
         <div className="App">
-          <Header />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
@@ -54,8 +53,8 @@ function App() {
               <Route path="/projects" element={<Projects />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/projects/EatSafeUK" element={<EatSafeUK />} />
+              <Route path="/projects/DataValueGame" element={<DataValueGame />} />
             </Routes>
-      <Footer />
     </div>
     </Router>
   );

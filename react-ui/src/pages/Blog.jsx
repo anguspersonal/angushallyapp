@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../index.css';
 import BlogSnippet from '../components/BlogSnippet';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 function Blog(props) {
   const [message, setMessage] = useState(props.message);
@@ -18,6 +20,7 @@ function Blog(props) {
 
   return (
     <div className='Page'>
+      <Header />
       <h1>Blog</h1>
       <div class="grid-container">
         {posts.map((post, index) => (
@@ -25,6 +28,7 @@ function Blog(props) {
         ))}
       
       </div>
+      <Footer />
     </div>
   );
 }
