@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-import '../index.css'; // Import the CSS file
 
 // Create a single instance of Loader
 const loader = new Loader({

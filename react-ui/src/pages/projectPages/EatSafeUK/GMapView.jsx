@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { Loader } from "@googlemaps/js-api-loader";
-import '../index.css'; // Import the CSS file
 import axios from 'axios';
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -94,13 +93,7 @@ const GMapView = ({ searchResults }) => {
                             }
                             // console log the place id you are looking for and the array of scores place ids to see if they match
                             // console.log("Place ID:", place.place_id, "Scores:", hygieneScoresMap.map(score => score.place_id));
-                            const hygieneScorePlace = hygieneScoresMap.find(score => score.place_id === place.place_id) || 'N/A';
-                            console.log("Hygiene Score:", hygieneScorePlace);
-
-                            // if there is a rating value number, set the hygiene score to the rating value number, else, set it to rating value string, if no string, set to N/A
-                            const hygieneScore = hygieneScorePlace.rating_value_num ? hygieneScorePlace.rating_value_num : hygieneScorePlace.rating_value_str ? hygieneScorePlace.rating_value_str : 'N/A';
-
-
+                            const hygieneScore = hygieneScoresMap.find(score => score.place_id === place.place_id)?.rating_value_num || 'N/A';
                             // console.log("Hygiene Score:", hygieneScore);
                             if (marker && infoWindow) {
                                 // Update InfoWindow content with hygiene score
@@ -108,7 +101,7 @@ const GMapView = ({ searchResults }) => {
                                     <div>
                                         <h3>${marker.getTitle()}</h3>
                                         <p>${place.formatted_address}</p>
-                                        <p><strong>Hygiene Rating:</strong> ${(typeof hygieneScore === 'number') ? `${hygieneScore}/5` : `${hygieneScore}`}</p>
+                                        <p><strong>Hygiene Rating:</strong> ${(hygieneScore !== 'N/A') ? `${hygieneScore}/5` : 'N/A'}</p>
                                     </div>
                                 `);
                             } else {
