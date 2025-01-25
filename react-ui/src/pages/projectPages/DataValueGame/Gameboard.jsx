@@ -132,7 +132,6 @@ const GameBoard = (props) => {
     setGuess(null); // Reset guess
     setPreviousIndustry(selectedIndustry); // Set selected industry as previous industry
     setSelectedCard(null); // Reset selected card
-
     setRoundCounter(prevRoundCounter => prevRoundCounter + 1); // Increment round counter correctly
   };
 
