@@ -1,29 +1,42 @@
-import { useState, useEffect } from "react";
-import { Loader } from "@googlemaps/js-api-loader";
+import { useState } from "react";
+import { enrichPlaceResults } from "./enrichPlaceResults";
+import { performNearbySearch } from "./nearbySearch";
 
-// Create a single instance of Loader
-const loader = new Loader({
-    apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
-});
-
-const GMapsSearchBar = ({ onSearchResults }) => {
+const GMapsSearchBar = ({ onSearchResults, google, userLocation }) => {
     const [query, setQuery] = useState("");
 
     const handleSearch = async () => {
         try {
-            const google = await loader.load();
+            if (!google) {
+                console.warn("Google API not loaded");
+                return;
+            }
+
             const service = new google.maps.places.PlacesService(document.createElement("div"));
 
-            service.textSearch({ query }, (results, status) => {
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                    onSearchResults(results); // Pass results to the parent component
-                } else {
-                    console.error("PlacesService failed with status:", status);
-                }
-            });
+            // Clear current search results
+            onSearchResults([]);
+
+            if (query) {
+                // Perform query-based search
+                console.log("Performing text search for query:", query);;
+                service.textSearch({ query }, async (results, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        const enrichedResults = await enrichPlaceResults(results, service, google);
+                        onSearchResults(enrichedResults);
+                    } else {
+                        console.error("Text search failed with status:", status);
+                    }
+                });
+            } else if (userLocation) {
+                // Perform location-based search using utility
+                console.log("Performing location-based search near:", userLocation);
+                await performNearbySearch(google, userLocation, onSearchResults);
+            } else {
+                console.warn("No query or user location provided");
+            }
         } catch (error) {
-            console.error("Error loading Google Maps API:", error);
+            console.error("Error performing search:", error);
         }
     };
 
@@ -31,9 +44,9 @@ const GMapsSearchBar = ({ onSearchResults }) => {
         <div className="search-bar">
             <input
                 type="text"
-                placeholder="Search restaurants..."
+                placeholder="Search restaurants or locations..."
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => setQuery(e.target.value)} // Correctly formatted onChange handler
                 className="search-input"
             />
             <button onClick={handleSearch} className="search-button">
