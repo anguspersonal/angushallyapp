@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
+    "@react-google-maps/api": "^2.20.5",
     "@vis.gl/react-google-maps": "^1.4.2",
     "and": "^0.0.3",
     "axios": "^1.7.9",

@@ -53,7 +53,7 @@ Styles set on :root apply globally to the entire document. */
 }
 
 /* Dark theme ----------------------------------------------------- */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #384C37;
     --secondary-color: #88A5BC;
@@ -64,7 +64,7 @@ Styles set on :root apply globally to the entire document. */
     --button-text-color: #F4F0EB;
     --button-border-color: #384C37;
   }
-}
+} */
 
 
 

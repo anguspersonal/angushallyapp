@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post('/api/hygieneScoreRoute', async (req, res) => {
     const places = req.body.places; // Directly access the array
-    // console.log('Received places:', places);
+    console.log('Received places:', places);
 
     if (!Array.isArray(places)) {
         return res.status(400).json({ error: 'Invalid input: places should be an array' });

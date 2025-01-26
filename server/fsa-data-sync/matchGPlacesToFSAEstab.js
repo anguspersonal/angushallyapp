@@ -42,7 +42,7 @@ const matchGPlacesToFSAEstab = async (places) => {
     // For each place, search for a matching address
     const keys = ['business_name','address']; // Define the keys to use for the fuzzy search
     const results = await performFuzzySearch(keys, places, estsMatchingPostcode, selectedFuseThresholdLevel);
-    console.log(`Results: ${JSON.stringify(results, null, 2)}`);
+    // console.log(`Results: ${JSON.stringify(results, null, 2)}`);
 
     // Get the result of establishments from address search, then for each place, search for a matching name
     return results;
@@ -75,14 +75,14 @@ const performFuzzySearch = async (keys, places, establishments, selectedFuseThre
     for (const place of places) {
         const result = searchNameAndAddress.search({
             business_name: place.name,
-            address: place.formatted_address
+            address: place.address
         });
         // console.log(`Search result for place ${place.name}, ${place.formatted_address}:`, result);
         if (result && result.length > 0) {
             const bestMatch = result[0].item;
             const returnPlace = { ...place, ...bestMatch };
             results.push(returnPlace);
-            console.log(`Matched: ${place.name} with ${bestMatch.business_name} Rating: ${bestMatch.rating_value_str}`);
+            // console.log(`Matched: ${place.name} with ${bestMatch.business_name} Rating: ${bestMatch.rating_value_str}`);
         }
     }
 
