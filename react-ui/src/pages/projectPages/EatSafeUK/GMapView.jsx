@@ -8,6 +8,7 @@ const defaultZoom = 15;
 const GMapView = ({ searchResults, userLocation, google }) => {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
+    const markersRef = useRef([]); // Store references to markers
 
     // Initialize the map once when the component mounts
     useEffect(() => {
@@ -31,8 +32,12 @@ const GMapView = ({ searchResults, userLocation, google }) => {
         const mapInstance = mapInstanceRef.current;
         const bounds = new google.maps.LatLngBounds();
     
+        // Clear existing markers
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
+
         // Call the refactored function with the required arguments
-        updateMarkersWithHygieneScores(searchResults, mapInstance, bounds, google);
+        updateMarkersWithHygieneScores(searchResults, mapInstance, bounds, google, markersRef);
     }, [searchResults]);
 
 
@@ -42,7 +47,7 @@ const GMapView = ({ searchResults, userLocation, google }) => {
 export default GMapView;
 
 
-const updateMarkersWithHygieneScores = async (searchResults, mapInstance, bounds, google) => {
+const updateMarkersWithHygieneScores = async (searchResults, mapInstance, bounds, google, markersRef) => {
     try {
         const markerMap = {}; // To store marker and info window references
         let currentInfoWindow = null; // Track the currently open InfoWindow
@@ -54,6 +59,8 @@ const updateMarkersWithHygieneScores = async (searchResults, mapInstance, bounds
                 map: mapInstance,
                 title: place.name,
             });
+
+            markersRef.current.push(marker); // Store marker reference
 
             const infoWindow = new google.maps.InfoWindow({
                 content: `
