@@ -296,6 +296,41 @@ h3 {
   /* Adjust the space between the emoji and text */
 }
 
+/* Contact Form*/
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  width: 100%;
+  max-width: 25em;
+  margin: 0 auto;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.form-group label {
+  flex: 0 0 auto; /* Prevent label from shrinking */
+  min-width: 5em; /* Minimum width for labels */
+  margin-right: 1em; /* Space between label and input/textarea */
+}
+
+.form-group input,
+.form-group textarea {
+  flex: 1 1 auto; /* Allow input/textarea to take up remaining space */
+  width: 100%; /* Ensure width is controlled by flex */
+  max-width: 100%; /* Prevent input/textarea from exceeding form-group width */
+  box-sizing: border-box; /* Include padding and border in element's total width */
+  padding: 0.5em; /* Add padding for better appearance */
+  font-size: 1em; /* Ensure consistent font size */
+  border: 1px solid #ccc; /* Add border for better appearance */
+  border-radius: 4px; /* Add border radius for better appearance */
+  resize: vertical; /* Allow vertical resizing for textarea */
+}
 
 /* Grid Styles ----------------------------------------------------------*/
 .grid-container {

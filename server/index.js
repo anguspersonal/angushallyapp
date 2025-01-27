@@ -66,13 +66,18 @@ if (!isDev && cluster.isMaster) {
 
   */
 
-  // Import and use the Google Places proxy route
+  // Import and use the Google Places proxy route for EatSafeUK app
   const googlePlacesProxyRoute = require('./routes/googlePlacesProxy');
   app.use(googlePlacesProxyRoute);
 
-  // Import and use the fuzzy search route
+  // Import and use the fuzzy search route for EatSafeUK app
   const fuzzySearchRoute = require('./routes/hygieneScoreRoute');
   app.use(fuzzySearchRoute);
+
+  // Import and use the contact route
+const contactRoute = require('./routes/contact');
+app.use(contactRoute);
+
 
   // Answer API requests.
   app.get('/api', function (req, res) {
