@@ -48,12 +48,13 @@
     min-width: 100vw;
     min-height: 100vh;
     margin: 0;
-    padding: 1em;
+    padding: 0.5em;
     text-align: center;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: center;
+    justify-content: space-around;
     place-items: center;
+    gap: 0.5em;
 }
 
 .dvg a {
