@@ -6,6 +6,7 @@ import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { performNearbySearch } from "./nearbySearch";
+import "./EatSafeUK.css";
 
 // Default libraries to load with the Google Maps API
 const libraries = ["places"];
@@ -43,6 +44,7 @@ function EatSafeUK() {
 
     return (
         <div className="Page">
+            <div className="eatsafeuk">
             <Header />
             <SearchBar
                 onSearchResults={setSearchResults}
@@ -55,6 +57,7 @@ function EatSafeUK() {
                 google={window.google} // Pass the Google API object
             />
             <Footer />
+            </div>
         </div>
     );
 }
