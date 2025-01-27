@@ -44,7 +44,7 @@ const GMapsSearchBar = ({ onSearchResults, google, userLocation }) => {
         <div className="search-bar">
             <input
                 type="text"
-                placeholder="Search restaurants or locations..."
+                placeholder="Search restaurants..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)} // Correctly formatted onChange handler
                 className="search-input"

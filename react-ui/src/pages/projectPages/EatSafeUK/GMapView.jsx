@@ -18,7 +18,19 @@ const GMapView = ({ searchResults, userLocation, google }) => {
             const mapInstance = new google.maps.Map(mapRef.current, {
                 center: userLocation || defaultCentre,
                 zoom: defaultZoom,
+                streetViewControl: false,
+                zoomControl: true,
             });
+
+// Set padding to ensure controls are visible
+mapInstance.setOptions({
+    padding: {
+      top: 10,
+      right: 40, // Adjust this if controls are off-screen
+      bottom: 40,
+      left: 10,
+    },
+  });
             mapInstanceRef.current = mapInstance;
         };
 
@@ -41,7 +53,7 @@ const GMapView = ({ searchResults, userLocation, google }) => {
     }, [searchResults]);
 
 
-    return <div ref={mapRef} style={{ height: "500px", width: "100%" }}></div>;
+    return <div ref={mapRef} className="map-container"></div>;
 };
 
 export default GMapView;

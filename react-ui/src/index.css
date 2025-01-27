@@ -49,6 +49,8 @@ Styles set on :root apply globally to the entire document. */
   /* Create global CSS variables */
   --header-height: 3.4em;
 
+  /* Deafult gap between elements */
+  --gap: 0.7em;
  
 }
 
