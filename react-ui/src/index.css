@@ -51,7 +51,7 @@ Styles set on :root apply globally to the entire document. */
 
   /* Deafult gap between elements */
   --gap: 0.7em;
- 
+
 }
 
 /* Dark theme ----------------------------------------------------- */
@@ -87,9 +87,9 @@ body {
   margin: 0;
   min-width: 100vw;
   min-height: 100vh;
-    /* Set the default color scheme */
-    color: var(--text-color);
-    background-color: var(--background-color);
+  /* Set the default color scheme */
+  color: var(--text-color);
+  background-color: var(--background-color);
 }
 
 div {
@@ -314,22 +314,34 @@ h3 {
 }
 
 .form-group label {
-  flex: 0 0 auto; /* Prevent label from shrinking */
-  min-width: 5em; /* Minimum width for labels */
-  margin-right: 1em; /* Space between label and input/textarea */
+  flex: 0 0 auto;
+  /* Prevent label from shrinking */
+  min-width: 5em;
+  /* Minimum width for labels */
+  margin-right: 1em;
+  /* Space between label and input/textarea */
 }
 
 .form-group input,
 .form-group textarea {
-  flex: 1 1 auto; /* Allow input/textarea to take up remaining space */
-  width: 100%; /* Ensure width is controlled by flex */
-  max-width: 100%; /* Prevent input/textarea from exceeding form-group width */
-  box-sizing: border-box; /* Include padding and border in element's total width */
-  padding: 0.5em; /* Add padding for better appearance */
-  font-size: 1em; /* Ensure consistent font size */
-  border: 1px solid #ccc; /* Add border for better appearance */
-  border-radius: 4px; /* Add border radius for better appearance */
-  resize: vertical; /* Allow vertical resizing for textarea */
+  flex: 1 1 auto;
+  /* Allow input/textarea to take up remaining space */
+  width: 100%;
+  /* Ensure width is controlled by flex */
+  max-width: 100%;
+  /* Prevent input/textarea from exceeding form-group width */
+  box-sizing: border-box;
+  /* Include padding and border in element's total width */
+  padding: 0.5em;
+  /* Add padding for better appearance */
+  font-size: 1em;
+  /* Ensure consistent font size */
+  border: 1px solid #ccc;
+  /* Add border for better appearance */
+  border-radius: 4px;
+  /* Add border radius for better appearance */
+  resize: vertical;
+  /* Allow vertical resizing for textarea */
 }
 
 /* Grid Styles ----------------------------------------------------------*/

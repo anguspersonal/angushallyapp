@@ -14,7 +14,8 @@
   background-color: var(--e-global-color-0a996ac);
   display: flex;
   align-content: center;
-  justify-content: left
+  justify-content: left;
+  border-bottom: none;
 }
 
 .title {

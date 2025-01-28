@@ -22,15 +22,15 @@ const GMapView = ({ searchResults, userLocation, google }) => {
                 zoomControl: true,
             });
 
-// Set padding to ensure controls are visible
-mapInstance.setOptions({
-    padding: {
-      top: 10,
-      right: 40, // Adjust this if controls are off-screen
-      bottom: 40,
-      left: 10,
-    },
-  });
+            // Set padding to ensure controls are visible
+            mapInstance.setOptions({
+                padding: {
+                    top: 10,
+                    right: 40, // Adjust this if controls are off-screen
+                    bottom: 40,
+                    left: 10,
+                },
+            });
             mapInstanceRef.current = mapInstance;
         };
 
@@ -40,10 +40,10 @@ mapInstance.setOptions({
     // Dynamically update markers and fetch hygiene scores
     useEffect(() => {
         if (!mapInstanceRef.current || !searchResults.length) return;
-    
+
         const mapInstance = mapInstanceRef.current;
         const bounds = new google.maps.LatLngBounds();
-    
+
         // Clear existing markers
         markersRef.current.forEach(marker => marker.setMap(null));
         markersRef.current = [];
@@ -95,7 +95,7 @@ const updateMarkersWithHygieneScores = async (searchResults, mapInstance, bounds
                 infoWindow.open(mapInstance, marker);
                 currentInfoWindow = infoWindow;
             });
-                        bounds.extend(marker.getPosition());
+            bounds.extend(marker.getPosition());
             markerMap[place.place_id] = { marker, infoWindow };
         });
 
@@ -123,9 +123,8 @@ const updateMarkersWithHygieneScores = async (searchResults, mapInstance, bounds
                 <div>
                     <h3>${place.name}</h3>
                     <p>${place.formatted_address}</p>
-                    <p><strong>Hygiene Rating:</strong> ${
-                        hygieneScore !== "N/A" ? `${hygieneScore}/5` : "N/A"
-                    }</p>
+                    <p><strong>Hygiene Rating:</strong> ${hygieneScore !== "N/A" ? `${hygieneScore}/5` : "N/A"
+                }</p>
                 </div>
             `);
         });
