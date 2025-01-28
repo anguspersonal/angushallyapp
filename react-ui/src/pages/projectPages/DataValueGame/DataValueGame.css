@@ -18,7 +18,7 @@
     --e-global-color-815c770: #233E91;
     --e-global-color-afbc983: #2B5AB7;
     --e-global-color-a5f3c28: #528AF8;
-    --e-global-color-background1: #FAFAFF; 
+    --e-global-color-background1: #FAFAFF;
     --e-global-color-c09952e: #E0006D;
     --e-global-color-3e147b0: #E74B94;
     --e-global-color-54484f5: #9F0A5D;
@@ -40,7 +40,7 @@
     font-weight: 400;
     background-color: var(--e-global-color-0a996ac);
     color: var(--e-global-color-text);
-    --header-height: 15px; 
+    --header-height: 15px;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -101,22 +101,30 @@
 
 .dvg #planet {
     position: absolute;
-    top: 0px;  /* Adjust this to control how far from the top the image appears */
+    top: 0px;
+    /* Adjust this to control how far from the top the image appears */
     left: 100%;
-    transform: translateX(-50%); /* Center the image horizontally */
-    width: 250px; /* Adjust the width as needed */
-    height: auto; /* Maintains aspect ratio */
-    z-index: 1; 
+    transform: translateX(-50%);
+    /* Center the image horizontally */
+    width: 250px;
+    /* Adjust the width as needed */
+    height: auto;
+    /* Maintains aspect ratio */
+    z-index: 1;
     border-radius: 100%;
 }
 
 .dvg .welcome {
-    font-style: bold; /* Italicize the text */
-    font-weight: bold; /* Bold the text */
-    font-size: 1.2em; /* Adjust the font size as needed */
+    font-style: bold;
+    /* Italicize the text */
+    font-weight: bold;
+    /* Bold the text */
+    font-size: 1.2em;
+    /* Adjust the font size as needed */
     line-height: normal;
     align-content: center;
-    margin-top: 20px; /* Add margin for better spacing */
+    margin-top: 20px;
+    /* Add margin for better spacing */
 }
 
 .dvg .instructions {
@@ -124,9 +132,12 @@
     flex-direction: column;
     justify-content: left;
     text-align: left;
-    font-size: 1em; /* Adjust the font size as needed */
-    line-height: 1.5; /* Adjust the line height as needed */
-    margin-top: 20px; /* Add margin for better spacing */
+    font-size: 1em;
+    /* Adjust the font size as needed */
+    line-height: 1.5;
+    /* Adjust the line height as needed */
+    margin-top: 20px;
+    /* Add margin for better spacing */
 }
 
 /* When screen is less than 575px wide, make element with id planet invisible. */
