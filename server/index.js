@@ -8,6 +8,8 @@ const Fuse = require('fuse.js'); // Import Fuse.js for fuzzy search
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); // Load environment variables
 const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
+const contactRoute = require('./routes/contact');
+
 
 const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
@@ -43,7 +45,7 @@ const contactLimiter = rateLimit({
 });
 
 // Apply the stricter limit to the contact form
-const contactRoute = require('./routes/contact');
+console.log("Contact route registered at /api/contact");
 app.use('/api/contact', contactLimiter, contactRoute); // 👈 Applied only to contact route
 
 // ✅ Keep other API routes below the rate limiter
@@ -82,6 +84,18 @@ app.get('/api', function (req, res) {
 app.get('*', function (request, response) {
   response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
 });
+
+// Override addEventListener to enforce passive listeners
+(function() {
+  const originalAddEventListener = EventTarget.prototype.addEventListener;
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (type === "touchstart" || type === "wheel") {
+      options = options instanceof Object ? { ...options, passive: true } : { passive: true };
+    }
+    originalAddEventListener.call(this, type, listener, options);
+  };
+})();
+
 
 app.listen(PORT, function () {
   console.error(`Node ${isDev ? 'dev server' : 'cluster worker ' + process.pid}: listening on port ${PORT}`);
