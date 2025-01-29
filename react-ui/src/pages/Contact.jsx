@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../index.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Contact() {
     const [formData, setFormData] = useState({
@@ -9,7 +10,9 @@ function Contact() {
         email: "",
         subject: "",
         message: "",
+        captchaValue: null,
     });
+    const [captchaValue, setCaptchaValue] = useState(null); // Store CAPTCHA value
     const [status, setStatus] = useState("");
 
     const handleChange = (e) => {
@@ -19,17 +22,26 @@ function Contact() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
+        // Check if CAPTCHA is completed
+        if (!captchaValue) {
+            setStatus("Please complete the CAPTCHA");
+            return;
+        }
+    
         setStatus("Sending...");
         try {
             const response = await fetch("/api/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...formData, captcha: captchaValue }), // ✅ Include captcha
             });
+    
             const result = await response.json();
             if (response.ok) {
                 setStatus("Message sent successfully!");
-                setFormData({ name: "", email: "", subject: "", message: "" }); //Reset form
+                setFormData({ name: "", email: "", subject: "", message: "" }); // Reset form
+                setCaptchaValue(null); // Reset CAPTCHA
             } else {
                 setStatus(result.error || "Failed to send message.");
             }
@@ -37,6 +49,7 @@ function Contact() {
             setStatus("An error occurred. Please try again.");
         }
     };
+    
 
     return (
         <div className='Page'>
@@ -86,6 +99,13 @@ function Contact() {
                         required
                     />
                 </div>
+
+                {/* reCAPTCHA Component */}
+                <ReCAPTCHA
+                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                    onChange={(value) => setCaptchaValue(value)}
+                />
+
                 <button type="submit">Send Message</button>
                 <p>{status}</p>
             </form>
