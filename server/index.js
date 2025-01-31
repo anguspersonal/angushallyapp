@@ -48,31 +48,18 @@ const contactLimiter = rateLimit({
 console.log("Contact route registered at /api/contact");
 app.use('/api/contact', contactLimiter, contactRoute); // 👈 Applied only to contact route
 
-// ✅ Keep other API routes below the rate limiter
-app.get('/api/db/:table', async (req, res) => {
-  const table = req.params.table;
-  let queryText;
-  switch (table) {
-    case 'posts': queryText = 'SELECT * FROM public.posts ORDER BY id ASC';
-      break;
-    default: res.status(400).json({ error: 'Invalid table name' });
-      return;
-  }
-  try {
-    const result = await db.query(queryText);
-    res.json(result);
-  } catch (err) {
-    console.error('Database query error: ', err);
-    res.status(500).json({ error: 'Database query error', message: err.message });
-  }
-});
+// ✅ Single DB query route
+const dbRoute = require('./routes/dbRoute'); // Import the database route
+app.use('/api/db', dbRoute); // Mount the route
 
-// Import other routes
+
+// ✅ Google Places API proxy route
 const googlePlacesProxyRoute = require('./routes/googlePlacesProxy');
 app.use(googlePlacesProxyRoute);
 
-const fuzzySearchRoute = require('./routes/hygieneScoreRoute');
-app.use(fuzzySearchRoute);
+// ✅ Fuzzy search route
+const hygieneScoreRoute = require('./routes/hygieneScoreRoute');
+app.use(hygieneScoreRoute);
 
 // Answer API requests.
 app.get('/api', function (req, res) {

@@ -1,10 +1,13 @@
 const express = require('express');
 const axios = require('axios');
 const nodemailer = require('nodemailer');
+const db = require('../db');
+const createOrRetrieveCustomer = require('../utils/createCustomer'); // Import customer function
+const { sendInquiryToOwner, sendAcknowledgmentToUser } = require('../utils/sendEmail'); // Import email utils
 const router = express.Router();
 
 
-// POST /api/contact
+// POST /api/contact (Handles form submissions)
 // Note that /api/contact is already defined in index.js so the route here can be just '/'
 router.post('/', async (req, res) => {
   const { name, email, subject, message, captcha } = req.body;
@@ -29,35 +32,34 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'CAPTCHA verification failed.' });
     }
 
-    // Step 4: Set up Nodemailer (assuming email sending is already working)
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    // Step 4: Create or retrieve customer
+    let customerId;
+    try {
+      customerId = await createOrRetrieveCustomer(name, email);
+    } catch (error) {
+      console.error("❌ Error creating/retrieving customer:", error);
+      return res.status(500).json({ error: 'Failed to process customer information.' });
+    }
+    // Step 5: Save message to database
+    try {
+      await db.query(
+        'INSERT INTO inquiries (customer_id, subject, message, captcha_token) VALUES ($1, $2, $3, $4)',
+        [customerId, subject, message, captcha]
+      );
+      console.log('✅ Inquiry successfully stored in database');
+    } catch (error) {
+      console.error("❌ Error inserting inquiry into database:", error);
+      return res.status(500).json({ error: 'Failed to store inquiry.' });
+    }
 
-    // Send email to app owner
-    await transporter.sendMail({
-      from: `"${name}" <${email}>`,
-      to: process.env.RECIPIENT_EMAIL,
-      subject: `Contact Form: ${subject}`,
-      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-    });
-
-    // Send acknowledgment email to user
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: `We’ve received your message!`,
-      text: `Hi ${name},\n\nThank you for reaching out! We’ve received your message:\n\n"${message}"\n\nWe’ll get back to you shortly.\n\nBest regards,\nAngus`,
-    });
+    // Step 6: Send emails Asynchronously 
+    sendInquiryToOwner(name, email, subject, message);
+    sendAcknowledgmentToUser(name, email, message);
 
     res.status(200).json({ message: 'Message sent successfully!' });
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Failed to send message.' });
+    console.error('❌ Unexpected error in contact route:', error);
+    res.status(500).json({ error: 'Unexpected server error.' });
   }
 });
 
