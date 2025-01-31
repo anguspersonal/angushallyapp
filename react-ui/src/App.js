@@ -11,6 +11,7 @@ import Blog from './pages/Blog';
 import Projects from './pages/Projects';
 import EatSafeUK from './pages/projectPages/EatSafeUK/EatSafeUK';
 import DataValueGame from './pages/projectPages/DataValueGame/DataValueGame';
+import Blogpost from './pages/projectPages/Blog/BlogPost';
 
 function App() {
   //Set Use States  
@@ -49,7 +50,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
-              <Route path="/blog" element={<Blog message = {message}  isFetching={isFetching}/>} />
+              <Route path="/blog" element= {<Blog/>} />
+              <Route path='/blog/:slug' element={<Blogpost />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/projects/EatSafeUK" element={<EatSafeUK />} />

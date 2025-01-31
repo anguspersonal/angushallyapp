@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import '../index.css';
-import BlogSnippet from '../components/BlogSnippet';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { fetchBlogList } from "./projectPages/Blog/fetchBlogData";
+import "../index.css";
+import BlogSnippet from "./projectPages/Blog/BlogSnippet";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
-function Blog(props) {
-  const [message, setMessage] = useState(props.message);
-  const [isFetching, setIsFetching] = useState(props.isFetching);
+function Blog() {
   const [posts, setPosts] = useState([]);
 
-  console.log('Blog.js: message:', message);
-
   useEffect(() => {
-    fetch('/api/db/posts')
-      .then(response => response.json())
-      .then(data => setPosts(data))
-      .catch(error => console.error('Error fetching data:', error));
+    async function fetchData() {
+      const blogs = await fetchBlogList();
+      setPosts(blogs);
+    }
+    fetchData();
   }, []);
 
   return (
-    <div className='Page'>
+    <div className="Page">
       <Header />
       <h1>Blog</h1>
-      <div class="grid-container">
-        {posts.map((post, index) => (
-          <BlogSnippet key={index} post={post}/>
+      <div className="grid-container">
+        {posts.map((post) => (
+          <Link key={post.id} to={`/blog/${post.slug}`} className="blog-link">
+            <BlogSnippet post={post} />
+          </Link>
         ))}
-      
       </div>
       <Footer />
     </div>

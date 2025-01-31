@@ -3,8 +3,13 @@ import '../index.css';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import getProjectList from './projectPages/projectList';
+import ProjectSnippet from './projectPages/ProjectSnippet';
 
 function Projects() {
+  const projects = getProjectList();
+  console.log('Projects.js: projects:', projects);
+
   return (
     <div className='Page'>
       <Header />
@@ -12,8 +17,9 @@ function Projects() {
       <div className='centre_stage'>
         <h1>My Projects</h1>
         <div className="grid-container">
-          <ul><li><Link to="/projects/EatSafeUK">Eat Safe UK</Link></li></ul>
-          <ul><li><Link to="/projects/DataValueGame">Data Value Game</Link></li></ul>
+         {projects.map((project,index) => (
+            <ProjectSnippet key={index} project={project}/>
+          ))} 
         </div>
       </div>
     </div>
