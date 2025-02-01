@@ -43,9 +43,11 @@ function EatSafeUK() {
     }
 
     return (
-        <div className="Page">
+
             <div className="eatsafeuk">
             <Header />
+            <div className='full_stage'>
+                <div className="centre_stage">
             <SearchBar
                 onSearchResults={setSearchResults}
                 google={window.google} // Pass the Google API object
@@ -56,9 +58,11 @@ function EatSafeUK() {
                 userLocation={userLocation}
                 google={window.google} // Pass the Google API object
             />
+            </div>
+            </div>
             <Footer />
             </div>
-        </div>
+    
     );
 }
 
