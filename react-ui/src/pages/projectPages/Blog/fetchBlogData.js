@@ -13,7 +13,7 @@ export const fetchBlogList = async () => {
   
   export const fetchBlogPost = async (slug) => {
     try {
-      const response = await fetch(`/api/db/posts?columns=id,title,content,created_at&slug=${slug}`);
+      const response = await fetch(`/api/db/posts?columns=id,title,content_md,created_at&slug=${slug}`);
       if (!response.ok) throw new Error("Post not found");
   
       const data = await response.json();
