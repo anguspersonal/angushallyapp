@@ -7,7 +7,8 @@ function About() {
     return (
         <div className='Page'>
             <Header />
-            <div className='centre_stage'>
+            <div className='full_stage'>
+                <div className='centre_stage'>
             <h1>About me</h1>
             <div className='photoWrapper'><img src="../angusprofile.jpg" alt="Angus Hally" id='profilePhoto' /></div>
             <p>Hi, I'm Angus Hally. I'm a strategy manager and
@@ -18,6 +19,7 @@ function About() {
                 of projects, including a blog and a portfolio
                 of my work. I'm excited to share my thoughts and
                 work with you. Thanks for visiting my website!</p>
+                </div>
                 </div>
                 <Footer />
         </div>

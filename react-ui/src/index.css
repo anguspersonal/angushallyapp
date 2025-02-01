@@ -79,17 +79,23 @@ Styles set on :root apply globally to the entire document. */
 
 /* Global Styles  -----------------------------------------------------*/
 
-body {
-  background-color: var(--background-color);
-  display: flex;
-  flex-direction: column nowrap;
-  padding: 0;
+html,
+body,
+#root,
+.App {
+  height: 100vh;
+  width: 100vw;
   margin: 0;
-  min-width: 100vw;
-  min-height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  /* Prevents unwanted scrolling */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
   /* Set the default color scheme */
   color: var(--text-color);
   background-color: var(--background-color);
+
 }
 
 div {
@@ -101,14 +107,71 @@ code {
     monospace;
 }
 
-/* Main Page styling --------------------------------------------------------*/
-.Page {
-  margin: 0;
-  margin-top: var(--header-height);
-  padding: 0;
-  min-width: 100vw;
-  min-height: 100vh;
+/* Layout styling --------------------------------------------------------*/
+/* General Page Wrapper */
+.Page,
+.full_stage {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
+
+.Page {
+}
+
+.full_stage {
+}
+
+
+/*Content in the middle of page like about or blog post*/
+.centre_stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70%;
+  /* Constrained width for general pages */
+  height: auto;
+  justify-content: center;
+}
+
+/* Flexbox row layout */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 1.5em;
+  margin: 1em 0;
+}
+
+/* Column-based layout */
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5em;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Responsive Tweaks */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+  }
+
+  .full_stage {
+    padding: 1rem;
+  }
+}
+
 
 
 
@@ -244,34 +307,6 @@ h3 {
 }
 
 /* Classes  ----------------------------------------------------------*/
-.row {
-  margin: 1em;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 2em;
-}
-
-.column {
-  margin: 1em;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.centre_stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-
-  /* Ensure the container takes up the full height of the viewport */
-}
-
 
 .photoWrapper {
   width: 200px;
@@ -425,6 +460,126 @@ p.truncate {
   align-items: center;
   justify-content: space-between;
   z-index: 1000;
+}
+
+
+/* Markdown Content -----------------------------------------------*/
+
+/* Markdown Content Styling */
+.markdown-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  line-height: 1.8;
+  font-size: 1.1em;
+  color: var(--text-color);
+}
+
+/* Headings */
+.markdown-content h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.6em;
+}
+
+.markdown-content h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.6em;
+}
+
+.markdown-content h3 {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+/* Paragraphs */
+.markdown-content p {
+  font-size: 1.1rem;
+  margin-bottom: 1.2em;
+}
+
+/* Lists */
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+.markdown-content ul li {
+  list-style-type: disc;
+  margin-bottom: 0.5em;
+}
+
+.markdown-content ol li {
+  list-style-type: decimal;
+  margin-bottom: 0.5em;
+}
+
+/* Blockquotes */
+.markdown-content blockquote {
+  border-left: 4px solid var(--primary-color);
+  padding-left: 1em;
+  color: var(--secondary-color);
+  font-style: italic;
+  margin: 1em 0;
+}
+
+/* Code Blocks */
+.markdown-content pre {
+  background-color: #282c34;
+  color: #f8f8f2;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-family: "Courier New", monospace;
+}
+
+.markdown-content code {
+  background-color: rgba(27, 31, 35, 0.05);
+  padding: 2px 5px;
+  font-family: "Courier New", monospace;
+}
+
+/* Tables */
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid var(--text-color);
+  padding: 8px;
+  text-align: left;
+}
+
+.markdown-content th {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Horizontal Rule */
+.markdown-content hr {
+  border: 1px solid var(--secondary-color);
+  margin: 2em 0;
+}
+
+/* Task List */
+.markdown-content input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Links */
+.markdown-content a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.markdown-content a:hover {
+  color: var(--accent-color);
 }
 
 /* ID's  ----------------------------------------------------------*/

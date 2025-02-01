@@ -14,7 +14,7 @@ function Projects() {
     <div className='Page'>
       <Header />
     <div className="main-content">
-      <div className='centre_stage'>
+      <div className='full_stage'>
         <h1>My Projects</h1>
         <div className="grid-container">
          {projects.map((project,index) => (

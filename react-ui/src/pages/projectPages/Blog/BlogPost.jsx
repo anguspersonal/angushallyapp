@@ -28,7 +28,9 @@ function BlogPost() {
       <Header />
       <div className="blog-post">
         <h1>{post.title}</h1>
+        <div className="markdown-content">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content_md}</ReactMarkdown> {/* ✅ Markdown Rendering */}
+        </div>
         <p><strong>Published:</strong> {new Date(post.created_at).toLocaleDateString()}</p>
         <Link to="/blog" className="back-button">← Back to Blog</Link>
       </div>

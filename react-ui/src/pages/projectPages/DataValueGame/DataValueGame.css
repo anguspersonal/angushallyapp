@@ -55,6 +55,7 @@
     justify-content: space-around;
     place-items: center;
     gap: 0.5em;
+    overflow: auto;
 }
 
 .dvg a {
