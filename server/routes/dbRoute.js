@@ -5,7 +5,7 @@ const router = express.Router();
 
 // ✅ Define Allowed Tables & Their Columns (Prevents SQL Injection)
 const allowedTables = {
-  posts: ['id', 'title', 'content', 'created_at', 'slug', 'excerpt'],
+  posts: ['id', 'title', 'content', 'content_md', 'created_at', 'slug', 'excerpt'],
   customers: ['id', 'name', 'email', 'created_at'],
   inquiries: ['id', 'customer_id', 'subject', 'message', 'created_at', 'status']
 };
