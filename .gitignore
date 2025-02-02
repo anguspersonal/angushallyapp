@@ -26,3 +26,6 @@ dist-ssr
 # Environment
 .env.local
 .env
+react-ui/.env
+
+
