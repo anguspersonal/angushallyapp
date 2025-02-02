@@ -1,12 +1,8 @@
 /**
- * Enriches Places API search results by fetching additional details (e.g., postcodes and formatted_address).
- * @param {Array} results - Array of Places search results.
- * @param {Object} service - Google PlacesService instance.
- * @param {Object} google - Google API object.
- * @returns {Promise<Array>} - Enriched results including postcodes and formatted_address.
+ * Enriches Places API search results by fetching additional details.
+ * This version tracks `getDetails()` calls *without* optimization.
  */
 export const enrichPlaceResults = async (results, service, google) => {
-    // Validate that the Google API is loaded
     if (!google) {
         console.error("Google API not loaded. Returning original results.");
         return results.map((place) => ({
@@ -16,37 +12,55 @@ export const enrichPlaceResults = async (results, service, google) => {
         }));
     }
 
+    let getDetailsCallCount = 0; // Track total API calls
+    let observedFields = {}; // Track which fields are returned by default
+
+    console.log(`🔍 Processing ${results.length} places for enrichment...`);
+
     const enrichedResultsPromises = results.map((place) =>
         new Promise((resolve) => {
-            try {
-            service.getDetails({ placeId: place.place_id }, (details, status) => {
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                    const postalCodeComponent = details.address_components.find((component) =>
-                        component.types.includes("postal_code")
-                    );
-                    resolve({
-                        ...place,
-                        formatted_address: details.formatted_address,
-                        postcode: postalCodeComponent ? postalCodeComponent.long_name : "N/A",
-                    });
-                } else {
-                    console.warn(`Failed to fetch details for place ID ${place.place_id}`);
-                    resolve({
-                        ...place,
-                        formatted_address: place.vicinity || "N/A", // Fallback to vicinity
-                        postcode: "N/A",
-                    });
+            getDetailsCallCount++; // Increment API call count
+
+            console.log(`📡 Calling getDetails() for "${place.name}" (place_id: ${place.place_id})`);
+            console.log(`📝 Requested Fields: formatted_address, address_components`);
+
+            service.getDetails(
+                { placeId: place.place_id, fields: ["formatted_address", "address_components"] },
+                (details, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        // Log which fields were returned
+                        Object.keys(details).forEach((field) => {
+                            //log details for the place
+                            console.log(details);
+                            observedFields[field] = (observedFields[field] || 0) + 1;
+                        });
+
+                        const postalCodeComponent = details.address_components?.find((component) =>
+                            component.types.includes("postal_code")
+                        );
+
+                        resolve({
+                            ...place,
+                            formatted_address: details.formatted_address || place.vicinity || "N/A",
+                            postcode: postalCodeComponent ? postalCodeComponent.long_name : "N/A",
+                        });
+                    } else {
+                        console.warn(`⚠️ getDetails() failed for "${place.name}" (place_id: ${place.place_id})`);
+                        resolve({
+                            ...place,
+                            formatted_address: place.vicinity || "N/A",
+                            postcode: "N/A",
+                        });
+                    }
                 }
-            });
-        } catch (error) { console.error(`Unexpected error during getDetails for place ID ${place.place_id}:`, error);
-        resolve({
-            ...place,
-            formatted_address: place.vicinity || "N/A",
-            postcode: "N/A",
-        });
-    }
+            );
         })
     );
 
-    return Promise.all(enrichedResultsPromises); // Wait for all promises to resolve
+    const enrichedResults = await Promise.all(enrichedResultsPromises);
+
+    console.log(`📊 Total getDetails() calls made: ${getDetailsCallCount}/${results.length}`);
+    console.log(`📋 Fields Returned by getDetails():`, observedFields);
+
+    return enrichedResults;
 };
