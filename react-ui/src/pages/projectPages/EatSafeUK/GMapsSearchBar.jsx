@@ -1,67 +1,72 @@
 import { useState, useEffect, useCallback } from "react";
-import { enrichPlaceResults } from "./enrichPlaceResults";
-import { performNearbySearch } from "./nearbySearch";
 
-const GMapsSearchBar = ({ onSearchResults, google, userLocation }) => {
+const GMapsSearchBar = ({ onSearchResults }) => {
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
-    const [sessionToken, setSessionToken] = useState(null);
 
-    // Debounce search input to avoid excessive API calls
+    // Load environment variable for API key
+    const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedQuery(query);
-        }, 500); // Adjust debounce delay as needed (500ms)
+        }, 500);
 
         return () => clearTimeout(handler);
     }, [query]);
 
-    // Refresh session token every time a new search is initiated
-    useEffect(() => {
-        if (google) {
-            setSessionToken(new google.maps.places.AutocompleteSessionToken());
-        }
-    }, [google, debouncedQuery]);
-
     const handleSearch = useCallback(async () => {
-        if (!google) {
-            console.warn("Google API not loaded");
+        if (!debouncedQuery) {
+            console.warn("⚠️ No search query provided.");
             return;
         }
 
-        const service = new google.maps.places.PlacesService(document.createElement("div"));
-        onSearchResults([]); // Clear previous results
+        if (!GOOGLE_MAPS_API_KEY) {
+            console.error("❌ Google Maps API key is missing. Check your .env file.");
+            return;
+        }
 
         try {
-            if (userLocation) {
-                // **1. Prioritize nearby search to reduce API cost**
-                console.log("Performing location-based search near:", userLocation);
-                await performNearbySearch(google, userLocation, onSearchResults);
-            } else if (debouncedQuery) {
-                // **2. Only use text search as fallback**
-                console.log("Performing text search for query:", debouncedQuery);
-                service.textSearch(
-                    {
-                        query: debouncedQuery,
-                        sessionToken, // **3. Use session token to reduce billing**
-                        fields: ["name", "place_id" ], // **4. Fetch only essential data**
-                    },
-                    async (results, status) => {
-                        if (status === google.maps.places.PlacesServiceStatus.OK) {
-                            const enrichedResults = await enrichPlaceResults(results, service, google);
-                            onSearchResults(enrichedResults);
-                        } else {
-                            console.error("Text search failed with status:", status);
-                        }
-                    }
-                );
+            const requestUrl = `https://places.googleapis.com/v1/places:searchText`;
+
+            const payload = {
+                textQuery: debouncedQuery // ✅ Ensure correct formatting
+            };
+
+            const headers = {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.addressComponents,places.location"
+            };
+
+            console.log("📡 Sending request to Google Places API:", payload);
+
+            const response = await fetch(requestUrl, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`❌ Google Places API Error: ${response.status} ${response.statusText}`);
+                console.error(`Response Body: ${errorText}`);
+                return;
+            }
+
+            const data = await response.json();
+            console.log("✅ API Response:", data[0]);
+
+            if (data.places) {
+                onSearchResults(data.places);
             } else {
-                console.warn("No query or user location provided");
+                console.warn("⚠️ No results found for text search.");
+                onSearchResults([]);
             }
         } catch (error) {
-            console.error("Error performing search:", error);
+            console.error("🚨 Error performing text search:", error);
         }
-    }, [google, debouncedQuery, userLocation, sessionToken, onSearchResults]);
+    }, [debouncedQuery, onSearchResults, GOOGLE_MAPS_API_KEY]);
 
     return (
         <div className="search-bar">
