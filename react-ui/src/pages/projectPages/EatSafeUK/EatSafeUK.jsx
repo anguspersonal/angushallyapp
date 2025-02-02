@@ -4,65 +4,44 @@ import SearchBar from "./GMapsSearchBar";
 import MapView from "./GMapView";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
-import { useJsApiLoader } from "@react-google-maps/api";
 import { performNearbySearch } from "./nearbySearch";
 import "./EatSafeUK.css";
-
-// Default libraries to load with the Google Maps API
-const libraries = ["places"];
 
 function EatSafeUK() {
     const [searchResults, setSearchResults] = useState([]);
     const [userLocation, setUserLocation] = useState(null);
-
-    // Use the useJsApiLoader hook to load the Google Maps API
-    const { isLoaded, loadError } = useJsApiLoader({
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-        version: "3.58", // Specify the desired API version
-        libraries, // Load the Places library
-    });
+    const [userSearched, setUserSearched] = useState(false); // NEW: Track if user performed a search
 
     // Ask for user location on page load
     useEffect(() => {
         askForLocationPermission(setUserLocation);
     }, []);
 
-    // Automatically fetch nearby restaurants once location and API are available
+    // Automatically fetch nearby restaurants only if user has not searched
     useEffect(() => {
-        if (userLocation && isLoaded) {
-            performNearbySearch(window.google, userLocation, setSearchResults);
+        if (userLocation && !userSearched) {
+            console.log("🔍 Fetching nearby places...");
+            performNearbySearch(userLocation, setSearchResults, 2000 );
         }
-    }, [userLocation, isLoaded]);
-
-    if (loadError) {
-        return <div>Error loading Google Maps API: {loadError.message}</div>;
-    }
-
-    if (!isLoaded) {
-        return <div>Loading Google Maps...</div>;
-    }
+    }, [userLocation, userSearched]);
 
     return (
-
-            <div className="eatsafeuk">
+        <div className="eatsafeuk">
             <Header />
-            <div className='full_stage'>
+            <div className="full_stage">
                 <div className="centre_stage">
-            <SearchBar
-                onSearchResults={setSearchResults}
-                google={window.google} // Pass the Google API object
-                userLocation={userLocation}
-            />
-            <MapView
-                searchResults={searchResults}
-                userLocation={userLocation}
-                google={window.google} // Pass the Google API object
-            />
-            </div>
+                    <SearchBar 
+                        onSearchResults={(results) => {
+                            setSearchResults(results);
+                            setUserSearched(true); // NEW: Mark that user has searched
+                        }}
+                        userLocation={userLocation} 
+                    />
+                    <MapView searchResults={searchResults} userLocation={userLocation} />
+                </div>
             </div>
             <Footer />
-            </div>
-    
+        </div>
     );
 }
 

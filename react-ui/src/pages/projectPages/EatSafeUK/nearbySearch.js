@@ -1,41 +1,61 @@
 /**
  * Performs a nearby search using the Google Places API.
- * @param {Object} google - The Google API object.
- * @param {Object} location - The location object with `lat` and `lng` properties.
+ * @param {Object} userLocation - The location object with `lat` and `lng` properties.
  * @param {Function} setSearchResults - Callback to set search results.
- * @param {Number} radius - The search radius in meters.
+ * @param {Number} radius - (Optional) The search radius in meters. Defaults to 1500m.
  */
-
-import { enrichPlaceResults } from "./enrichPlaceResults";
-
-export const performNearbySearch = async (google, userLocation, setSearchResults) => {
-    if (!google || !userLocation) {
-        console.warn("Google API or user location not available");
+export const performNearbySearch = async (userLocation, setSearchResults, radius = 1500) => {
+    if (!userLocation) {
+        console.warn("User location not available");
         return;
     }
 
     try {
-        const service = new google.maps.places.PlacesService(document.createElement("div"));
-        const request = {
-            location: new google.maps.LatLng(userLocation.lat, userLocation.lng),
-            radius: 1500,
-            type: ["restaurant"],
+        const requestUrl = `https://places.googleapis.com/v1/places:searchNearby`;
+
+        const payload = {
+            includedTypes: ["restaurant"],
+            locationRestriction: {
+                circle: {
+                    center: {
+                        latitude: userLocation.lat,
+                        longitude: userLocation.lng
+                    },
+                    radius: radius
+                }
+            }
         };
 
-        service.nearbySearch(request, async (results, status) => {
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                try {
-                    const enrichedResults = await enrichPlaceResults(results, service, google);
-                    setSearchResults(enrichedResults); // Set enriched results
-                } catch (error) {
-                    console.error("Error enriching place results:", error);
-                    setSearchResults(results); // Fallback to original results if enrichment fails
-                }
-            } else {
-                console.error(`Nearby search failed with status: ${status}`);
-            }
+        const response = await fetch(requestUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.addressComponents,places.location"
+            },
+            body: JSON.stringify(payload)
         });
+
+        // Log API response status for debugging
+        console.log(`📡 Nearby Search API Response: ${response.status} ${response.statusText}`);
+
+        // Handle rate limits or API errors
+        if (!response.ok) {
+            console.error(`❌ Nearby Search API Error: ${response.status} ${response.statusText}`);
+            setSearchResults([]);
+            return;
+        }
+
+        const data = await response.json();
+        if (data.places && Array.isArray(data.places)) {
+            console.log(`✅ Found ${data.places.length} nearby restaurants`);
+            setSearchResults(data.places);
+        } else {
+            console.warn("⚠️ No places found in API response");
+            setSearchResults([]);
+        }
     } catch (error) {
-        console.error("Error performing nearby search:", error);
+        console.error("🚨 Error performing nearby search:", error);
+        setSearchResults([]);
     }
 };
