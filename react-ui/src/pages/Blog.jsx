@@ -21,6 +21,7 @@ function Blog() {
     <div className="Page">
       <Header />
       <h1>Blog</h1>
+      <h2>Work in Progress, Current blogs are dummy posts</h2>
       <div className="grid-container">
         {posts.map((post) => (
           <Link key={post.id} to={`/blog/${post.slug}`} className="blog-link">
