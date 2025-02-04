@@ -87,15 +87,16 @@ body,
   width: 100vw;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  /* Prevents unwanted scrolling */
+}
+
+.App {
+  overflow: auto;
   display: flex;
   flex-direction: column;
   background-color: var(--background-color);
   /* Set the default color scheme */
   color: var(--text-color);
   background-color: var(--background-color);
-
 }
 
 div {
