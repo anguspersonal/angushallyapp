@@ -1,6 +1,5 @@
 import React from 'react';
 import '../index.css';
-import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import getProjectList from './projectPages/projectList';
@@ -19,7 +18,7 @@ function Projects() {
         <div className="grid-container">
          {projects.map((project,index) => (
             <ProjectSnippet key={index} project={project}/>
-          ))} 
+          ))}
         </div>
       </div>
     </div>

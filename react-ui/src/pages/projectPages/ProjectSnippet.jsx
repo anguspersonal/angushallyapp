@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import '../../index.css';
 
-function ProjectSnippet(props) {
+function ProjectSnippet({ project }) {
+    const { name, desc, route } = project;
     return (
-        <Link to={props.project.pRoute}>
+        <Link to={route}>
         <div className='grid-item'>
-            <h3 className="truncate-two-lines" >{props.project.pName}</h3>
-            <p className="truncate-two-lines" >{props.project.pDesc}</p>
+            <h3 className="truncate-two-lines" >{name}</h3>
+            <p className="truncate-two-lines" >{desc}</p>
         </div>
         </Link>
     )};

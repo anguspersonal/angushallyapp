@@ -1,26 +1,26 @@
-export default function getProjectList(){
+export default function getProjectList() {
     const projectList = [
         {
-            "pid": 0,
-            "pName": "Date Value Game",
-            "pDesc": "A game where you guess the value of data in different industries. Created for and utilising research form Anmut Consulting",
-            "pRoute": "/projects/DataValueGame"
+            "id": 0,
+            "name": "Date Value Game",
+            "desc": "A game where you guess the value of data in different industries. Created for and utilising research from Anmut Consulting.",
+            "route": "/projects/DataValueGame",
+            "created_at": "2024-10-01"
         },
         {
-            "pid": 1,
-            "pName": "Eat Safe UK",
-            "pDesc": "View UK retaurants by Health Rating. Search in map view and see hygiene ratings straight from the Food Standards Agency",
-            "pRoute": "/projects/EatSafeUK"
+            "id": 1,
+            "name": "Eat Safe UK",
+            "desc": "View UK restaurants by Health Rating. Search in map view and see hygiene ratings straight from the Food Standards Agency.",
+            "route": "/projects/EatSafeUK",
+            "created_at": "2025-01-03"
         },
-
         {
-            "pid": 2,
-            "pName": "Blog",
-            "pDesc": "A place where I write about things I find interesting or useful",
-            "pRoute": "/Blog"
+            "id": 2,
+            "name": "Blog",
+            "desc": "A place where I write about things I find interesting or useful.",
+            "route": "/Blog",
+            "created_at": "2025-01-01"
         }
-        
     ];
     return projectList;
-
-};
+}
