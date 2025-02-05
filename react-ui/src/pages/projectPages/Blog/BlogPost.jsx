@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm"; // ✅ Enables better Markdown parsing
 import { fetchBlogPost } from "../../projectPages/Blog/fetchBlogData";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
+import "./blog.css";
 
 function BlogPost() {
   const { slug } = useParams();
