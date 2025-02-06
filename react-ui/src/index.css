@@ -71,9 +71,13 @@ Styles set on :root apply globally to the entire document. */
 
 
 /* Responsive Screen width ----------------------------------------*/
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .nav-link {
     visibility: hidden;
+  }
+
+  .centre_stage{
+    width: 90vw !important; /* Width for phones */ 
   }
 }
 
@@ -140,13 +144,14 @@ code {
 /* Flexbox row layout */
 .row {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: left;
   align-items: center;
   width: 100%;
   gap: 1.5em;
   margin: 1em 0;
 }
+
 
 /* Column-based layout */
 .column {
@@ -157,6 +162,13 @@ code {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
+}
+
+/* Invisible Wrapper */
+.invisible_wrapper {
+  display: contents;
+  width: 100%;
+  height: 100%;
 }
 
 /* Responsive Tweaks */

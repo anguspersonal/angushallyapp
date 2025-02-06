@@ -4,7 +4,7 @@
  * @param {Function} setSearchResults - Callback to set search results.
  * @param {Number} radius - (Optional) The search radius in meters. Defaults to 1500m.
  */
-export const performNearbySearch = async (userLocation, setSearchResults, radius = 1500) => {
+export const performNearbySearch = async (userLocation, setSearchResults, radius = 500, maxResultCount = 5) => {
     if (!userLocation) {
         console.warn("User location not available");
         return;
@@ -15,6 +15,7 @@ export const performNearbySearch = async (userLocation, setSearchResults, radius
 
         const payload = {
             includedTypes: ["restaurant"],
+            maxResultCount: maxResultCount,
             locationRestriction: {
                 circle: {
                     center: {
@@ -48,7 +49,7 @@ export const performNearbySearch = async (userLocation, setSearchResults, radius
 
         const data = await response.json();
         if (data.places && Array.isArray(data.places)) {
-            console.log(`✅ Found ${data.places.length} nearby restaurants`);
+            console.log(`✅ Found ${data.places.length} nearby restaurants`,data.places);
             setSearchResults(data.places);
         } else {
             console.warn("⚠️ No places found in API response");
