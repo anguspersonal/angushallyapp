@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { fetchHygieneScores } from "./fetchHygieneScores";
+import { fetchHygieneScores } from "./utils/fetchHygieneScores";
 
 /**
  * Component responsible for adding markers to a Google Map instance.

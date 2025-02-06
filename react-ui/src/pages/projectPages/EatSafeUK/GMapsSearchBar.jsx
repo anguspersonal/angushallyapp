@@ -1,21 +1,35 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { askForLocationPermission } from "./utils/askUserLocation";
+import { getDynamicPlaceholder } from "./utils/getDynamicPlaceholder";
 
-const GMapsSearchBar = ({ onSearchResults }) => {
+
+const GMapsSearchBar = ({setSearchResults, setUserSearched}) => {
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
+    const [placeholder, setPlaceholder] = useState("Search restaurants...");
+    const inputRef = useRef(null);
 
     // Load environment variable for API key
     const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
+
+    //Set Debounce on search Query
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedQuery(query);
-        }, 500);
-
+        }, 1000);
         return () => clearTimeout(handler);
     }, [query]);
 
+
+    // Handle Text Search
     const handleSearch = useCallback(async () => {
+
+        if (!GOOGLE_MAPS_API_KEY) {
+            console.error("❌ Google Maps API key is missing. Check your .env file.");
+            return;
+        }
+
         if (!debouncedQuery) {
             console.warn("⚠️ No search query provided.");
             return;
@@ -55,24 +69,46 @@ const GMapsSearchBar = ({ onSearchResults }) => {
             }
 
             const data = await response.json();
-            console.log("✅ API Response:", data[0]);
+            console.log("✅ API Response:", data);
 
             if (data.places) {
-                onSearchResults(data.places);
+                setSearchResults(data.places);
+                setUserSearched(true);
             } else {
                 console.warn("⚠️ No results found for text search.");
-                onSearchResults([]);
+                setSearchResults([]);
+                setUserSearched(true);
             }
         } catch (error) {
             console.error("🚨 Error performing text search:", error);
         }
-    }, [debouncedQuery, onSearchResults, GOOGLE_MAPS_API_KEY]);
+    }, [debouncedQuery, setSearchResults]);
+
+
+    //Dynamically update placeholder
+    useEffect(() => {
+        const updatePlaceholder = () => {
+            if (inputRef.current) {
+                const inputWidth = inputRef.current.clientWidth;
+                setPlaceholder(getDynamicPlaceholder(inputWidth)); // Use the utility function
+            }
+        };
+
+        // Run on mount and when the window resizes
+        updatePlaceholder();
+        window.addEventListener("resize", updatePlaceholder);
+
+        return () => {
+            window.removeEventListener("resize", updatePlaceholder);
+        };
+    }, []);
 
     return (
         <div className="search-bar">
             <input
                 type="text"
-                placeholder="Search restaurants..."
+                ref={inputRef}
+                placeholder={placeholder}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="search-input"
