@@ -105,7 +105,7 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched}) => {
     }, []);
 
     return (
-        <div className="search-bar">
+        <div className="text-search-bar">
             <input
                 type="text"
                 ref={inputRef}

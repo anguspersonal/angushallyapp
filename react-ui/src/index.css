@@ -52,6 +52,9 @@ Styles set on :root apply globally to the entire document. */
   /* Deafult gap between elements */
   --gap: 0.7em;
 
+  /* Global min button size (width & height 44px = 2.75 em) */
+  --button-min :2.75em;
+
 }
 
 /* Dark theme ----------------------------------------------------- */
@@ -279,9 +282,9 @@ button {
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-  border-radius: 8px;
+  border-radius: 0.5em;
   font-weight: 500;
-  min-width: 75px;
+  min-width: 2.75em;
   font-family: inherit;
   text-align: center;
   text-decoration: none;

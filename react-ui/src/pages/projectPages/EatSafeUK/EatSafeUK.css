@@ -8,29 +8,35 @@
   justify-content: center;
 }
 
-.eatsafeuk .search-bar {
-  width: 100%;
+.eatsafeuk .search-bar,
+.eatsafeuk .text-search-bar {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: left;
+  flex-flow: row wrap;
+  flex-grow: 1;
   gap: var(--gap);
   padding: 0.1em;
-  gap: 1em;
+}
+
+.eatsafeuk .search-bar {
+  width: 100%;
+}
+
+.eatsafeuk .text-search-bar {
+  padding: 0;
+  margin: 0;
 }
 
 .eatsafeuk .search-bar input {
   flex-grow: 1;
   /* Allow input to grow and fill available space */
-  min-width: 3.5em;
-  /* Ensure a minimum width */
   padding: 0.5em;
-}
+  border-radius: 0.5em;}
 
-.eatsafeuk .search-bar button {
-  flex-shrink: 1;
-  /* Allow button to shrink if necessary */
+.eatsafeuk .search-bar button
+ {
   padding: 0.5em 1em;
+  min-width: var(--button-min);
+  min-height: var(--button-min);
 }
 
 .eatsafeuk .map-container {
@@ -118,30 +124,30 @@
 }
 
 .info-window-content {
-  max-width: 220px;       /* Limit how wide text can go */
+  max-width: 13.75em;       /* Limit how wide text can go */
   white-space: normal;    /* Let text wrap onto multiple lines */
   word-wrap: break-word;  /* Break long words if needed */
   color: #444;            /* A dark grey text colour */
-  padding: 10px;          /* Give space around content */
+  padding: 0.625em;          /* Give space around content */
   font-family: Arial, sans-serif;
 }
 
 
 .info-window-content h3 {
-  margin: 0 0 6px 0;   /* reduce spacing around heading */
-  font-size: 1.1rem;   /* slightly larger text */
+  margin: 0 0 0.375em 0;   /* reduce spacing around heading */
+  font-size: 1.1em;   /* slightly larger text */
   line-height: 1.2; 
 }
 
 .info-window-content p {
-  margin: 4px 0;
-  font-size: 0.9rem;
+  margin: 0.25em 0;
+  font-size: 0.9em;
 }
 
 
 /* Overriding Google's internal classes can be finicky, but try: */
 .gm-style-iw button.gm-ui-hover-effect {
-  top: 8px !important;
-  right: 8px !important;
+  top: 0.5em !important;
+  right: 0.5em !important;
   border: none;
 }
