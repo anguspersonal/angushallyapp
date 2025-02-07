@@ -51,6 +51,15 @@
   box-sizing: border-box;
 }
 
+.gm-style-mtc-bbw .gm-style-mtc>button {
+  border-radius: 0.5em !important;
+  /* Force rounded corners */
+  margin-right: 0.3em !important;
+  /* Add space between buttons */
+  background-color: #ffffff !important;
+  /* Change background */
+}
+
 
 .eatsafeuk .google-map {
   width: 100%; /* Take up 100% of parent's width */
@@ -63,3 +72,76 @@
 
 
 
+
+.gmnoprint.gm-bundled-control.gm-bundled-control-on-bottom {
+  position: absolute !important;
+  /* Ensure absolute positioning relative to the map container */
+  bottom: 18em !important;
+  /* Adjust dynamically from the bottom */
+  right: 9em !important;
+  /* Adjust dynamically from the right */
+  display: flex !important;
+  /* Arrange buttons in a column */
+  flex-direction: column !important;
+  gap: 1em !important;
+  /* Maintain consistent spacing between buttons */
+  z-index: 1 !important;
+  /* Ensure buttons appear above other elements */
+}
+
+
+.gmnoprint.gm-bundled-control.gm-bundled-control-on-bottom button {
+  width: 2.5em !important;
+  /* Adjust size of the buttons */
+  height: 2.5em !important;
+  background-color: white !important;
+  /* Ensure visibility of buttons */
+  border-radius: 0.25em !important;
+  box-shadow: 0 0.08em 0.25em rgba(0, 0, 0, 0.3) !important;
+  /* Add subtle shadow */
+  border: none !important;
+  cursor: pointer !important;
+}
+
+.gmnoprint.gm-bundled-control.gm-bundled-control-on-bottom button:hover {
+  background-color: #f0f0f0 !important;
+  /* Add hover effect for better UX */
+}
+
+[title="Toggle fullscreen view"] {
+  position: absolute !important;
+  /* Ensure absolute positioning relative to the map container */
+  bottom: 30em !important;
+  /* Adjust dynamically from the bottom */
+  right: 0.7em !important;
+  /* Adjust dynamically from the right */
+}
+
+.info-window-content {
+  max-width: 220px;       /* Limit how wide text can go */
+  white-space: normal;    /* Let text wrap onto multiple lines */
+  word-wrap: break-word;  /* Break long words if needed */
+  color: #444;            /* A dark grey text colour */
+  padding: 10px;          /* Give space around content */
+  font-family: Arial, sans-serif;
+}
+
+
+.info-window-content h3 {
+  margin: 0 0 6px 0;   /* reduce spacing around heading */
+  font-size: 1.1rem;   /* slightly larger text */
+  line-height: 1.2; 
+}
+
+.info-window-content p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+
+/* Overriding Google's internal classes can be finicky, but try: */
+.gm-style-iw button.gm-ui-hover-effect {
+  top: 8px !important;
+  right: 8px !important;
+  border: none;
+}

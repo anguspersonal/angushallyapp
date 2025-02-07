@@ -44,13 +44,14 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched}) => {
             const requestUrl = `https://places.googleapis.com/v1/places:searchText`;
 
             const payload = {
-                textQuery: debouncedQuery // ✅ Ensure correct formatting
+                textQuery: debouncedQuery, // ✅ Ensure correct formatting,
+                pageSize: 2
             };
 
             const headers = {
                 "Content-Type": "application/json",
                 "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
-                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.addressComponents,places.location"
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.addressComponents,places.location",
             };
 
             console.log("📡 Sending request to Google Places API:", payload);
@@ -58,7 +59,7 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched}) => {
             const response = await fetch(requestUrl, {
                 method: "POST",
                 headers: headers,
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
