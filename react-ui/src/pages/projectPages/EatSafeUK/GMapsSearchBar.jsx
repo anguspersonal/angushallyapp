@@ -3,7 +3,7 @@ import { askForLocationPermission } from "./utils/askUserLocation";
 import { getDynamicPlaceholder } from "./utils/getDynamicPlaceholder";
 
 
-const GMapsSearchBar = ({setSearchResults, setUserSearched}) => {
+const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching}) => {
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
     const [placeholder, setPlaceholder] = useState("Search restaurants...");
@@ -11,7 +11,6 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched}) => {
 
     // Load environment variable for API key
     const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-
 
     //Set Debounce on search Query
     useEffect(() => {
@@ -114,9 +113,12 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched}) => {
                 onChange={(e) => setQuery(e.target.value)}
                 className="search-input"
             />
-            <button onClick={handleSearch} className="search-button">
-                Search
-            </button>
+            {isSearching ? (<div className="spinner"></div>) :
+             (<button onClick={handleSearch} className="search-button">
+             Search
+         </button>)}
+           
+            
         </div>
     );
 };

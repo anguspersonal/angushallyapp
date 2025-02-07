@@ -24,16 +24,19 @@
 .eatsafeuk .text-search-bar {
   padding: 0;
   margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 .eatsafeuk .search-bar input {
   flex-grow: 1;
   /* Allow input to grow and fill available space */
   padding: 0.5em;
-  border-radius: 0.5em;}
+  border-radius: 0.5em;
+  min-height: var(--button-min);
+}
 
-.eatsafeuk .search-bar button
- {
+.eatsafeuk .search-bar button {
   padding: 0.5em 1em;
   min-width: var(--button-min);
   min-height: var(--button-min);
@@ -41,7 +44,8 @@
 
 .eatsafeuk .map-container {
   width: 100%;
-  height: 80vh; /* Ensures the map takes up most of the height */
+  height: 80vh;
+  /* Ensures the map takes up most of the height */
   margin: auto;
   margin-top: var(--gap);
   border: 0.08em solid #ccc;
@@ -52,7 +56,8 @@
   /* Ensure content doesn't overflow */
   position: relative !important;
   /* Ensure child elements are positioned relative to this container */
-  padding: 0 !important; /*Make sure map fills the box*
+  padding: 0 !important;
+  /*Make sure map fills the box*
   /* Add padding to the map container */
   box-sizing: border-box;
 }
@@ -68,11 +73,16 @@
 
 
 .eatsafeuk .google-map {
-  width: 100%; /* Take up 100% of parent's width */
-  height: 100%; /* Take up 100% of parent's height */
-  padding: 0; /* Remove padding */
-  margin: 0; /* Remove margin */
-  box-sizing: border-box; /* Include padding and border in dimensions */
+  width: 100%;
+  /* Take up 100% of parent's width */
+  height: 100%;
+  /* Take up 100% of parent's height */
+  padding: 0;
+  /* Remove padding */
+  margin: 0;
+  /* Remove margin */
+  box-sizing: border-box;
+  /* Include padding and border in dimensions */
   border: 0.2em solid black;
 }
 
@@ -124,19 +134,26 @@
 }
 
 .info-window-content {
-  max-width: 13.75em;       /* Limit how wide text can go */
-  white-space: normal;    /* Let text wrap onto multiple lines */
-  word-wrap: break-word;  /* Break long words if needed */
-  color: #444;            /* A dark grey text colour */
-  padding: 0.625em;          /* Give space around content */
+  max-width: 13.75em;
+  /* Limit how wide text can go */
+  white-space: normal;
+  /* Let text wrap onto multiple lines */
+  word-wrap: break-word;
+  /* Break long words if needed */
+  color: #444;
+  /* A dark grey text colour */
+  padding: 0.625em;
+  /* Give space around content */
   font-family: Arial, sans-serif;
 }
 
 
 .info-window-content h3 {
-  margin: 0 0 0.375em 0;   /* reduce spacing around heading */
-  font-size: 1.1em;   /* slightly larger text */
-  line-height: 1.2; 
+  margin: 0 0 0.375em 0;
+  /* reduce spacing around heading */
+  font-size: 1.1em;
+  /* slightly larger text */
+  line-height: 1.2;
 }
 
 .info-window-content p {
@@ -150,4 +167,27 @@
   top: 0.5em !important;
   right: 0.5em !important;
   border: none;
+}
+
+.spinner {
+  width: 2em;
+  height: 2em;
+  border: 6px solid #ddd;
+  /* Light grey border */
+  border-top: 6px solid #3498db;
+  /* The “swirl” colour */
+  border-radius: 50%;
+  animation: spin 0.5s linear infinite;
+  align-items: center;
+ 
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

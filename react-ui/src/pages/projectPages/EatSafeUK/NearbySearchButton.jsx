@@ -1,7 +1,7 @@
 import { performNearbySearch} from "./utils/nearbySearch";
 import {askUserLocation} from "./utils/askUserLocation";
 
-export default function NearbySearchButton({ setSearchResults, setUserLocation, setUserLocationPermission, setUserSearched }) {
+export default function NearbySearchButton({ setSearchResults, setUserLocation, setUserLocationPermission, setUserSearched, isSearching }) {
     const handleNearbySearch = async () => {
         try {
             askUserLocation((location) => {
@@ -21,5 +21,13 @@ export default function NearbySearchButton({ setSearchResults, setUserLocation, 
         }
     };
 
-    return <button onClick={handleNearbySearch}>Find Nearby Places</button>;
-}
+    return (
+        <button
+          onClick={!isSearching ? handleNearbySearch : undefined}
+          disabled={isSearching}
+          className="search-button"
+        >
+          Find Nearby Places
+        </button>
+      );
+      }

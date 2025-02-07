@@ -6,7 +6,7 @@ import Markers from "./Markers"; // ✅ Import modular Markers component
 import { fetchHygieneScores } from "./utils/fetchHygieneScores";
 // import { testPlaces } from "./utils/markerTestPlaces"; // if needed
 
-const GMapView = ({ searchResults, userLocation }) => {
+const GMapView = ({ searchResults, userLocation, setIsSearching }) => {
   const mapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
   const mapsID = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID;
 
@@ -23,6 +23,7 @@ const GMapView = ({ searchResults, userLocation }) => {
     }
 
     (async () => {
+      setIsSearching(true);
       const transformed = searchResults.map((place) => ({
         id: place.id,
         key: place.id, // consistent unique key
@@ -53,6 +54,7 @@ const GMapView = ({ searchResults, userLocation }) => {
         // fallback - show base markers even if scores fail
         setMarkers(transformed);
       }
+      setIsSearching(false);
     })();
   }, [searchResults]);
 
