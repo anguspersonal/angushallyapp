@@ -1,5 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import { useMap, AdvancedMarker, Pin, InfoWindow } from "@vis.gl/react-google-maps";
+import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import { Marker } from '@googlemaps/markerclusterer';
 
 const Markers = ({
   places,

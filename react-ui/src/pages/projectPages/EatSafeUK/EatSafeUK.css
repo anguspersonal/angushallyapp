@@ -69,6 +69,7 @@
   /* Add space between buttons */
   background-color: #ffffff !important;
   /* Change background */
+  display: none !important;
 }
 
 
@@ -94,7 +95,7 @@
   /* Ensure absolute positioning relative to the map container */
   bottom: 18em !important;
   /* Adjust dynamically from the bottom */
-  right: 9em !important;
+  right: 4em !important;
   /* Adjust dynamically from the right */
   display: flex !important;
   /* Arrange buttons in a column */
@@ -103,6 +104,8 @@
   /* Maintain consistent spacing between buttons */
   z-index: 1 !important;
   /* Ensure buttons appear above other elements */
+  display: none !important;
+
 }
 
 
@@ -129,7 +132,7 @@
   /* Ensure absolute positioning relative to the map container */
   bottom: 30em !important;
   /* Adjust dynamically from the bottom */
-  right: 0.7em !important;
+  right: 0 !important;
   /* Adjust dynamically from the right */
 }
 
