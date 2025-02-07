@@ -6,14 +6,13 @@ import Markers from "./Markers"; // ✅ Import modular Markers component
 import { fetchHygieneScores } from "./utils/fetchHygieneScores";
 // import { testPlaces } from "./utils/markerTestPlaces"; // if needed
 
-const GMapView = ({ searchResults, userLocation, setIsSearching }) => {
+const GMapView = ({ searchResults, userLocation, selectedMarker, setSelectedMarker, isSearching, setIsSearching }) => {
   const mapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
   const mapsID = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID;
 
   // State for markers (array of places)
   const [markers, setMarkers] = useState([]);
-  // InfoWindow selection (if used in the child, can pass setSelectedMarker down)
-  const [selectedMarker, setSelectedMarker] = useState(null);
+
 
   // 1) Transform searchResults and fetch hygiene scores
   useEffect(() => {
@@ -23,7 +22,6 @@ const GMapView = ({ searchResults, userLocation, setIsSearching }) => {
     }
 
     (async () => {
-      setIsSearching(true);
       const transformed = searchResults.map((place) => ({
         id: place.id,
         key: place.id, // consistent unique key
@@ -54,6 +52,7 @@ const GMapView = ({ searchResults, userLocation, setIsSearching }) => {
         // fallback - show base markers even if scores fail
         setMarkers(transformed);
       }
+      // Once search is done, set isSearching to false
       setIsSearching(false);
     })();
   }, [searchResults]);
@@ -97,7 +96,10 @@ const GMapView = ({ searchResults, userLocation, setIsSearching }) => {
           {/* Pass 'markers' array to child, so it can render them */}
           <Markers
             places={markers}
+            selectedMarker={selectedMarker}
             setSelectedMarker={setSelectedMarker}
+            isSearching={isSearching}
+            setIsSearching={setIsSearching}
           />
         </Map>
       </APIProvider>
