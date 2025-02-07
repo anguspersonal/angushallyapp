@@ -22,14 +22,14 @@
 .eatsafeuk .search-bar input {
   flex-grow: 1;
   /* Allow input to grow and fill available space */
-  min-width: 12.5em;
+  min-width: 3.5em;
   /* Ensure a minimum width */
   padding: 0.5em;
 }
 
 .eatsafeuk .search-bar button {
-  flex-shrink: 0;
-  /* Prevent button from shrinking */
+  flex-shrink: 1;
+  /* Allow button to shrink if necessary */
   padding: 0.5em 1em;
 }
 
