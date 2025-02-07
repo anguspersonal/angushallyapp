@@ -31,7 +31,7 @@ function EatSafeUK() {
                             isSearching={isSearching}
                             setIsSearching={setIsSearching}
                             selectedMarker={selectedMarker}
-                            setSelectedMarker={selectedMarker}
+                            setSelectedMarker={setSelectedMarker}
                         />
                         <p>or</p>
                         <SearchBar
@@ -40,7 +40,7 @@ function EatSafeUK() {
                             isSearching={isSearching}
                             setIsSearching={setIsSearching}
                             selectedMarker={selectedMarker}
-                            setSelectedMarker={selectedMarker}
+                            setSelectedMarker={setSelectedMarker}
                         />
                     </div>
                     <MapView
