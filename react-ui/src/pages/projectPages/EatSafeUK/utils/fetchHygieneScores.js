@@ -16,10 +16,11 @@ export const fetchHygieneScores = async (places) => {
             );
             return {
                 place_id: place.id,
-                name: place.displayName?.text || "Unknown",
+                name: place.name || "Unknown",
                 address: place.formattedAddress || "No Address Available",
                 postcode: postcodeComponent ? postcodeComponent.shortText : "N/A",
-                location: place.location
+                location: place.location,
+                position: place.position
             };
         });
 
