@@ -45,7 +45,7 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched}) => {
 
             const payload = {
                 textQuery: debouncedQuery, // ✅ Ensure correct formatting,
-                pageSize: 2
+                pageSize: 10
             };
 
             const headers = {
