@@ -15,7 +15,7 @@ import { Marker } from "@googlemaps/markerclusterer";
  *     ...any other fields...
  *   }
  */
-const Markers = ({ places }) => {
+const Markers = ({ places, selectedMarker, setSelectedMarker, isSearching, setIsSearching }) => {
   // 1) Acquire the map instance from context
   const map = useMap();
 
@@ -26,7 +26,7 @@ const Markers = ({ places }) => {
   const clustererRef = useRef(null);
 
   // 4) Track the currently selected marker for InfoWindow
-  const [selectedMarker, setSelectedMarker] = useState(null);
+  // ///moved to grandparent
 
   // 5) Initialise the clusterer once (if map is ready)
   useEffect(() => {

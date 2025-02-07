@@ -3,7 +3,7 @@ import { askForLocationPermission } from "./utils/askUserLocation";
 import { getDynamicPlaceholder } from "./utils/getDynamicPlaceholder";
 
 
-const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching}) => {
+const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSearching}) => {
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
     const [placeholder, setPlaceholder] = useState("Search restaurants...");
@@ -24,6 +24,8 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching}) => {
     // Handle Text Search
     const handleSearch = useCallback(async () => {
 
+        setIsSearching(true);
+        
         if (!GOOGLE_MAPS_API_KEY) {
             console.error("❌ Google Maps API key is missing. Check your .env file.");
             return;

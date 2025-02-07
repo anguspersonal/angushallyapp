@@ -12,7 +12,8 @@ function EatSafeUK() {
     const [userSearched, setUserSearched] = useState(false); // Track if user performed a search
     const [userLocation, setUserLocation] = useState(null);
     const [userLocationPermission, setUserLocationPermission] = useState(false);
-    const [isSearching, setIsSearching ] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
+    const [selectedMarker, setSelectedMarker] = useState(null); //Set selected markers on map.
 
 
     return (
@@ -28,11 +29,28 @@ function EatSafeUK() {
                             setUserLocationPermission={setUserLocationPermission}
                             setUserSearched={setUserSearched}
                             isSearching={isSearching}
+                            setIsSearching={setIsSearching}
+                            selectedMarker={selectedMarker}
+                            setSelectedMarker={selectedMarker}
                         />
                         <p>or</p>
-                        <SearchBar setSearchResults={setSearchResults} setUserSearched={setUserSearched} isSearching={isSearching}/>
+                        <SearchBar
+                            setSearchResults={setSearchResults}
+                            setUserSearched={setUserSearched}
+                            isSearching={isSearching}
+                            setIsSearching={setIsSearching}
+                            selectedMarker={selectedMarker}
+                            setSelectedMarker={selectedMarker}
+                        />
                     </div>
-                    <MapView searchResults={searchResults} userLocation={userLocation} setIsSearching={setIsSearching}/>
+                    <MapView
+                        searchResults={searchResults}
+                        userLocation={userLocation}
+                        isSearching={isSearching}
+                        setIsSearching={setIsSearching}
+                        selectedMarker={selectedMarker}
+                        setSelectedMarker={setSelectedMarker}
+                    />
                 </div>
             </div>
             <Footer />
