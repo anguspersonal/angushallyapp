@@ -12,6 +12,7 @@ function EatSafeUK() {
     const [userSearched, setUserSearched] = useState(false); // Track if user performed a search
     const [userLocation, setUserLocation] = useState(null);
     const [userLocationPermission, setUserLocationPermission] = useState(false);
+    const [isSearching, setIsSearching ] = useState(false);
 
 
     return (
@@ -26,11 +27,12 @@ function EatSafeUK() {
                             setUserLocation={setUserLocation}
                             setUserLocationPermission={setUserLocationPermission}
                             setUserSearched={setUserSearched}
+                            isSearching={isSearching}
                         />
                         <p>or</p>
-                        <SearchBar setSearchResults={setSearchResults} setUserSearched={setUserSearched} />
+                        <SearchBar setSearchResults={setSearchResults} setUserSearched={setUserSearched} isSearching={isSearching}/>
                     </div>
-                    <MapView searchResults={searchResults} userLocation={userLocation} />
+                    <MapView searchResults={searchResults} userLocation={userLocation} setIsSearching={setIsSearching}/>
                 </div>
             </div>
             <Footer />
