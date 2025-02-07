@@ -3,7 +3,7 @@ import { askForLocationPermission } from "./utils/askUserLocation";
 import { getDynamicPlaceholder } from "./utils/getDynamicPlaceholder";
 
 
-const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSearching}) => {
+const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSearching, selectedMarker, setSelectedMarker}) => {
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
     const [placeholder, setPlaceholder] = useState("Search restaurants...");
@@ -16,7 +16,7 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSe
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedQuery(query);
-        }, 1000);
+        }, 100);
         return () => clearTimeout(handler);
     }, [query]);
 
@@ -25,7 +25,8 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSe
     const handleSearch = useCallback(async () => {
 
         setIsSearching(true);
-        
+        setSelectedMarker(null);
+
         if (!GOOGLE_MAPS_API_KEY) {
             console.error("❌ Google Maps API key is missing. Check your .env file.");
             return;
@@ -113,6 +114,12 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSe
                 placeholder={placeholder}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault(); // Prevent form submissions or other default behaviour
+                      handleSearch();
+                    }
+                  }}
                 className="search-input"
             />
             {isSearching ? (<div className="spinner"></div>) :
