@@ -3,7 +3,6 @@ import "../../../index.css";
 import SearchBar from "./GMapsSearchBar";
 import MapView from "./GMapView";
 import Header from "../../../components/Header";
-import Footer from "../../../components/Footer";
 import "./EatSafeUK.css";
 import NearbySearchButton from "./NearbySearchButton";
 
@@ -63,7 +62,6 @@ function EatSafeUK() {
                     />
                 </div>
             </div>
-            <Footer />
         </div>
     );
 }
