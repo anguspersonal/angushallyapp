@@ -98,12 +98,14 @@ body,
 
 .App {
   overflow: auto;
-  display: flex;
+  display: flex !important;
   flex-direction: column;
+  flex-grow: 1; /*Ensures app fill entire screen*/
   background-color: var(--background-color);
   /* Set the default color scheme */
   color: var(--text-color);
   background-color: var(--background-color);
+  justify-content: space-between;
 }
 
 div {

@@ -57,6 +57,7 @@ function App() {
               <Route path="/projects/EatSafeUK" element={<EatSafeUK />} />
               <Route path="/projects/DataValueGame" element={<DataValueGame />} />
             </Routes>
+            <Footer />
     </div>
     </Router>
   );

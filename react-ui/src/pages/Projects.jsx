@@ -1,7 +1,6 @@
 import React from 'react';
 import '../index.css';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import getProjectList from './projectPages/projectList';
 import ProjectSnippet from './projectPages/ProjectSnippet';
 
@@ -22,7 +21,6 @@ function Projects() {
         </div>
       </div>
     </div>
-    <Footer />
     </div>
       );
 }

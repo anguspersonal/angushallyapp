@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import '../index.css';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import ReCAPTCHA from "react-google-recaptcha";
 
 function Contact() {
@@ -109,7 +108,6 @@ function Contact() {
                 <button type="submit">Send Message</button>
                 <p>{status}</p>
             </form>
-            <Footer />
         </div>
     );
 }

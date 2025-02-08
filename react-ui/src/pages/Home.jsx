@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import '../index.css';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import Snippet from '../components/Snippet';
 import { fetchLatestBlog } from '../pages/projectPages/Blog/fetchBlogData';
 import getProjectList from '../pages/projectPages/projectList';
 import ProjectSnippet from '../pages/projectPages/ProjectSnippet';
+import { Link } from 'react-router-dom';
 
 
 function Home() {
@@ -57,7 +57,7 @@ function Home() {
           <h1>Welcome to My Website</h1>
           <p>
             A collection of my coding projects, blog posts, and whatever else catches my interest.
-            Take a look around—you never know what you’ll find.
+            Take a look around— and feel free to drop feedback via the<Link to="/contact"> Contact me</Link> page!
           </p>
           <div className="grid-container">
             {latestBlog && <Snippet {...latestBlog} />}
@@ -65,7 +65,6 @@ function Home() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
