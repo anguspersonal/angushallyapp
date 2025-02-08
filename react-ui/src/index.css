@@ -101,8 +101,7 @@ body,
   display: flex !important;
   flex-direction: column;
   flex-grow: 1; /*Ensures app fill entire screen*/
-  background-color: var(--background-color);
-  /* Set the default color scheme */
+  background-color: var(--background-color); /* Set the default color scheme */
   color: var(--text-color);
   background-color: var(--background-color);
   justify-content: space-between;
@@ -316,6 +315,25 @@ button:disabled {
   background-color: #5C5F57;
 }
 
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-links a {
+  font-size: 24px;
+  color: var(--primary-color); /* Use your theme color */
+  transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--accent-color); /* Change color on hover */
+}
+
+
+/* Headings ------------------------------------------------------------*/
 h1 {
   font-size: 3.4em;
   line-height: 1.3;
