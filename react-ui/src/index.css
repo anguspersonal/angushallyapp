@@ -284,7 +284,8 @@ button {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
   border-radius: 0.5em;
   font-weight: 500;
-  min-width: 2.75em;
+  min-width: var(--button-min);
+  min-height: var(--button-min);
   font-family: inherit;
   text-align: center;
   text-decoration: none;
@@ -303,6 +304,14 @@ button:focus-visible {
   background-color: var(--button-border-color);
   color: var(--accent-color);
   outline: 4px auto var(--primary-color);
+}
+
+p a {
+  color: #88A5BC;
+}
+
+button:disabled {
+  background-color: #5C5F57;
 }
 
 h1 {

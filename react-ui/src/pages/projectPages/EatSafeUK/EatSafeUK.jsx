@@ -21,7 +21,17 @@ function EatSafeUK() {
             <Header />
             <div className="full_stage">
                 <div className="centre_stage">
-                    <p>Hello! This is my "EatSafeUK" project. Apologies, it's currently limited to England. You can use it to serach the hygiene score of restaurants, cafes, or establishment of any kind. It uses Google Maps API to locate places, and then matches them with estblishments on the Food Standard Agency Database.</p>
+                    <p>
+                        Hello! Welcome to EatSafeUK.
+                        This app helps you check the hygiene scores
+                        of restaurants, cafés, hospitals, schools,
+                        and other establishments. It currently covers
+                        England and works by using the Google Maps API
+                        to locate places, then matches them with
+                        establishments in the  
+                        <a href="https://www.food.gov.uk/" target="_blank" rel="noopener noreferrer"> Food Standards Agency</a> database.
+                    </p>
+
                     <div className="search-bar">
                         <NearbySearchButton
                             setSearchResults={setSearchResults}
