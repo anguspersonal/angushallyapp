@@ -21,7 +21,6 @@ function About() {
                 work with you. Thanks for visiting my website!</p>
                 </div>
                 </div>
-                <Footer />
         </div>
     );
 }

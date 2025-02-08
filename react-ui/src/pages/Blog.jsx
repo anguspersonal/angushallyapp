@@ -4,7 +4,6 @@ import { fetchBlogList } from "./projectPages/Blog/fetchBlogData";
 import "../index.css";
 import BlogSnippet from "./projectPages/Blog/BlogSnippet";
 import Header from "../components/Header";
-import Footer from "../components/Footer";
 
 function Blog() {
   const [posts, setPosts] = useState([]);
@@ -29,7 +28,6 @@ function Blog() {
           </Link>
         ))}
       </div>
-      <Footer />
     </div>
   );
 }
