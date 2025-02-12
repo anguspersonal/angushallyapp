@@ -1,3 +1,17 @@
+/* db.js - Database Connection and Query Module
+
+This module establishes a PostgreSQL connection pool using the 'pg' package and provides functions for executing SQL queries safely.
+
+Key Functions: - query(text, params, retries): Executes parameterised SQL queries with error handling and retry logic, returning only the result rows. - select(table, allowedTables, filters, columns): Constructs a dynamic, safe SELECT query. It validates the table and column names against an allowed list to prevent SQL injection, applies filters and ordering, and executes the query via the query() function.
+
+Environment Variables: - DATABASE_URL: Specifies the connection string for PostgreSQL. - SSL is configured with 'rejectUnauthorized' set to false.
+
+Usage Example: const { query, select } = require('./db');
+
+References: - PostgreSQL Node.js client documentation: https://node-postgres.com/
+
+Author: <Your Name> Date: <Date> */
+
 const { Pool } = require('pg');
 
 // Initialize PostgreSQL connection pool

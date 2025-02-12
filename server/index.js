@@ -10,7 +10,6 @@ const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
 const contactRoute = require('./routes/contact');
 
-
 const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
 // console.log(process.env.NODE_ENV,process.env.PORT);
