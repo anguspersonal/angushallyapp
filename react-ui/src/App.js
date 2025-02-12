@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom"; // ✅ Remove BrowserRouter here
 import "./index.css";
-import Home from "./pages/Home";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Blog from "./pages/Blog";
-import Projects from "./pages/Projects";
-import EatSafeUK from "./pages/projectPages/EatSafeUK/EatSafeUK";
-import DataValueGame from "./pages/projectPages/DataValueGame/DataValueGame";
-import Blogpost from "./pages/projectPages/Blog/BlogPost";
+import Home from "./pages/Home.jsx";
+import Footer from "./components/Footer.jsx";
+import Header from "./components/Header.jsx";
+import About from "./pages/About.jsx";
+import Contact from "./pages/Contact.jsx";
+import Blog from "./pages/Blog.jsx";
+import Projects from "./pages/Projects.jsx";
+import EatSafeUK from "./pages/projectPages/EatSafeUK/EatSafeUK.jsx";
+import DataValueGame from "./pages/projectPages/DataValueGame/DataValueGame.jsx";
+import Blogpost from "./pages/projectPages/Blog/BlogPost.jsx";
+import Strava from "./pages/projectPages/Strava/Strava.jsx";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/projects/EatSafeUK" element={<EatSafeUK />} />
         <Route path="/projects/DataValueGame" element={<DataValueGame />} />
+        <Route path="/projects/Strava" element={<Strava />} />
       </Routes>
       {/* Conditionally render the footer only if the current route is NOT in hideFooterRoutes */}
       {!hideFooterRoutes.includes(location.pathname) && <Footer />}

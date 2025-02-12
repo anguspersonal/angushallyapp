@@ -26,3 +26,7 @@ yarn-error.log*
 # Ignore both backend and frontend environment files
 .env
 react-ui/.env
+
+
+# Ignore Supporting readmes
+Readme-Strava.md

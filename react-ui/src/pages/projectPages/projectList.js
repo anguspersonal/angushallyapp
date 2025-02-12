@@ -20,6 +20,13 @@ export default function getProjectList() {
             "desc": "A place where I write about things I find interesting or useful.",
             "route": "/Blog",
             "created_at": "2025-01-01"
+        },
+        {
+            "id": 3,
+            "name": "Strava",
+            "desc": "Displaying my Strava Activity.",
+            "route": "/projects/Strava",
+            "created_at": "2025-02-09"
         }
     ];
     return projectList;

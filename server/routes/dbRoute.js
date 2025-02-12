@@ -1,3 +1,26 @@
+/* dbRoute.js - Express Router for Database Query Endpoints
+
+This module defines an Express router that provides an HTTP GET 
+endpoint to fetch data from specified 
+database tables using the functions provided in db.js.
+
+Key Features: 
+- Specifies a set of allowed tables and their permitted columns to ensure security against SQL injection. 
+- Extracts the table name from the URL and query parameters for filters and column selection. It validates these parameters against the allowed list. 
+- Invokes the select() function from db.js to perform safe, dynamic SELECT queries. 
+- Handles errors by returning appropriate HTTP status codes and error messages.
+
+Route: 
+- GET /:table: Fetches data from the designated table with optional filters and column selections specified via query parameters.
+
+Usage: 
+- Mount this router in your main server file (e.g., index.js) under an API path such as /api/db.
+
+References: - Express documentation: https://expressjs.com/
+
+Author: Angus Hally Date: 11/02/2025 */
+
+
 const express = require('express');
 const db = require('../db'); // Import database functions
 
