@@ -156,6 +156,17 @@ code {
   margin: 1em 0;
 }
 
+.row-centred {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 1.5em;
+  margin: 1em 0;
+}
+
+
 
 /* Column-based layout */
 .column {
