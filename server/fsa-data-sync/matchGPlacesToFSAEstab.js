@@ -7,7 +7,7 @@ const searchMatchingPostcode = require('./searchMatchingPostcode');
 const fuseThresholdLevels = require('./fuseThresholdLevels');
 
 // Check database connection
-testDatabaseConnection();
+// testDatabaseConnection();
 
 /**
  * Function to take an array of Google places with id, name, address, postcode

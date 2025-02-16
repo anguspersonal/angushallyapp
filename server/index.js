@@ -8,7 +8,6 @@ const Fuse = require('fuse.js'); // Import Fuse.js for fuzzy search
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); // Load environment variables
 const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
-const contactRoute = require('./routes/contact');
 
 const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
@@ -47,6 +46,7 @@ const contactLimiter = rateLimit({
 });
 
 // Apply the stricter limit to the contact form
+const contactRoute = require('./routes/contact');
 console.log("Contact route registered at /api/contact");
 app.use('/api/contact', contactLimiter, contactRoute); // 👈 Applied only to contact route
 
@@ -54,14 +54,17 @@ app.use('/api/contact', contactLimiter, contactRoute); // 👈 Applied only to c
 const dbRoute = require('./routes/dbRoute'); // Import the database route
 app.use('/api/db', dbRoute); // Mount the route
 
-
 // ✅ Google Places API proxy route
 const googlePlacesProxyRoute = require('./routes/googlePlacesProxy');
 app.use(googlePlacesProxyRoute);
 
-// ✅ Fuzzy search route
+// ✅ Hygiene score route
 const hygieneScoreRoute = require('./routes/hygieneScoreRoute');
 app.use(hygieneScoreRoute);
+
+// ✅ Strava API routes
+const stravaRoute = require('./routes/stravaRoute');
+app.use(stravaRoute);
 
 // Answer API requests.
 app.get('/api', function (req, res) {
