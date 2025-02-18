@@ -2,7 +2,7 @@ export default function getProjectList() {
     const projectList = [
         {
             "id": 0,
-            "name": "Date Value Game",
+            "name": "Data Value Game",
             "desc": "A game where you guess the value of data in different industries. Created for and utilising research from Anmut Consulting.",
             "route": "/projects/DataValueGame",
             "created_at": "2024-10-01"
