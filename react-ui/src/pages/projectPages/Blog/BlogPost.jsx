@@ -4,7 +4,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm"; // ✅ Enables better Markdown parsing
 import { fetchBlogPost } from "../../projectPages/Blog/fetchBlogData";
 import Header from "../../../components/Header";
-import Footer from "../../../components/Footer";
 import "./blog.css";
 
 function BlogPost() {
@@ -35,7 +34,6 @@ function BlogPost() {
         <p><strong>Published:</strong> {new Date(post.created_at).toLocaleDateString()}</p>
         <Link to="/blog" className="back-button">← Back to Blog</Link>
       </div>
-      <Footer />
     </div>
   );
 }
