@@ -1,6 +1,6 @@
 const dotenv = require('dotenv');
 const path = require('path');
-const testDatabaseConnection = require('../testDatabaseConnection.js');
+const {testDatabaseConnection} = require('../testDatabaseConnection.js');
 const processSingleAuthority = require('./processSingleAuthority.js');
 
 // Load environment variables before importing the database module

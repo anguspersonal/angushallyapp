@@ -1,8 +1,13 @@
 const axios = require("axios");
 const dotenv = require("dotenv");
-const db = require("../db");
 
 dotenv.config();
+
+//DOTENV MUST BE BEFORE DB
+const db = require("../db.js");
+const { testDatabaseConnection } = require("../testDatabaseConnection.js");
+
+
 
 const STRAVA_CLIENT_ID = process.env.STRAVA_CLIENT_ID;
 const STRAVA_CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET;
@@ -12,6 +17,13 @@ const STRAVA_CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET;
  * ✅ Always retrieves the most recent access & refresh token.
  */
 const getStoredTokens = async () => {
+  console.log("🔍 checkig for tokens stored in DB");
+  console.log('Calling testDatabaseConnection...');
+  const success = await testDatabaseConnection();
+  console.log('testDatabaseConnection returned:', success);
+
+
+  console.log("🔍 Retrieving tokens from DB...");
   try {
     const result = await db.query(
       `SELECT * FROM habit.strava_tokens ORDER BY expires_at DESC LIMIT 1`
@@ -100,9 +112,9 @@ const refreshAccessToken = async (storedTokens = null) => {
       grant_type: "refresh_token",
       refresh_token: storedTokens.refresh_token, // ✅ Use passed refresh token
     });
-    
+
     const { access_token, refresh_token, expires_at } = response.data;
-   
+
     await saveTokens(access_token, refresh_token, expires_at); // ✅ Store the new refresh token
     console.log(`✅ Tokens updated: Access token expires at ${new Date(expires_at * 1000).toISOString()}`);
     return access_token;
@@ -125,6 +137,7 @@ const refreshAccessToken = async (storedTokens = null) => {
  * ❌ If refresh fails, user must manually reauthorize.
  */
 const getValidAccessToken = async () => {
+  console.log("🔍 Checking for valid access token...");
   const storedTokens = await getStoredTokens();
 
   if (storedTokens && storedTokens.expires_at > Math.floor(Date.now() / 1000)) {

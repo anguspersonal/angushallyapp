@@ -1,4 +1,6 @@
 const { getNewActivities } = require('./stravaService');
+const dotenv = require('dotenv');
+const db = require('../db');
 
 const runGetNewActivities = async () => {
     try {

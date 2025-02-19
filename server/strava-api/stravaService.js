@@ -91,6 +91,9 @@ const getNewActivities = async () => {
             "INSERT INTO habit.strava_sync_log (last_updated) VALUES (now())"
         );
 
+        // ✅ Store in the database
+        await saveStravaActivities(response.data);
+
         return response.data;
     } catch (error) {
         console.error("❌ Error fetching new activities:", error.response?.data || error.message);

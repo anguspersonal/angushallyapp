@@ -12,12 +12,19 @@ References: - PostgreSQL Node.js client documentation: https://node-postgres.com
 
 Author: <Your Name> Date: <Date> */
 
+const dotenv = require("dotenv");
+
+dotenv.config();
+
 const { Pool } = require('pg');
 
 // Initialize PostgreSQL connection pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  ssl: {
+    require: true,
+    rejectUnauthorized: false
+  },
 });
 
 // ✅ Generic query function (handles ALL SQL queries)
