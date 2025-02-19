@@ -26,4 +26,4 @@ const testDatabaseConnection = async () => {
 module.exports = { testDatabaseConnection };
 
 // Test the database connection
-testDatabaseConnection();
+// testDatabaseConnection();
