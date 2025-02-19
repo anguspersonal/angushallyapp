@@ -6,7 +6,7 @@ const db = require('../db'); // Database connection module
 const fs = require('fs');
 const query = fs.readFileSync(path.join(__dirname, 'updateEstablishment.sql'), 'utf-8');
 const processRatingValue = require('./processRatingValue');
-const testDatabaseConnection = require('../testDatabaseConnection');
+const {testDatabaseConnection} = require('../testDatabaseConnection');
 
 
 const processSingleAuthority = async (props) => {

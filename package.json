@@ -32,6 +32,11 @@
     "react-markdown": "^9.0.3",
     "remark-gfm": "^4.0.0"
   },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "@babel/plugin-proposal-private-property-in-object": "^7.17.0"
+
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mars/heroku-cra-node.git"

@@ -1,4 +1,5 @@
 // Description: Get all activities from the database
+const dotenv = require('dotenv');
 const db = require('../db'); // Database connection module
 const checkValueType = require('../utils/checkValueType');
 
@@ -22,3 +23,6 @@ const getStravaActivitiesFromDB = async () => {
 };
 
 module.exports = getStravaActivitiesFromDB;
+
+// ✅ Test the function
+getStravaActivitiesFromDB();
