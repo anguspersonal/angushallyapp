@@ -14,14 +14,14 @@ const processSingleAuthority = async (props) => {
     const { localAuthorityID, laName, url } = props;
 
     // 1 Get the XML data from the FSA API for the given url
-    console.log(`Processing: ${laName}, ID:${localAuthorityID}, fetching data from: ${url}`);
+    // console.log(`Processing: ${laName}, ID:${localAuthorityID}, fetching data from: ${url}`);
     const response = await axios.get(url, { responseType: 'text' });
     const xmldata = response.data;
     if (!xmldata) {
-        console.log(`No data returned for local authority id ${localAuthorityID}, ${laName}`);
+        // console.log(`No data returned for local authority id ${localAuthorityID}, ${laName}`);
         return { success: false, message: `No data returned for ${localAuthorityID}, ${laName}` };
     }
-    console.log(`Successfully fetched data for local authority id ${localAuthorityID}, ${laName}`);
+    // console.log(`Successfully fetched data for local authority id ${localAuthorityID}, ${laName}`);
 
     // 2 Parse the XML data to JSON
     const parser = new XMLParser();
@@ -30,14 +30,14 @@ const processSingleAuthority = async (props) => {
         console.log(`Failed to parse data for local authority id ${localAuthorityID}, ${laName}`);
         return { success: false, message: `Failed to parse data for local authority id ${localAuthorityID}, ${laName}` };
     }
-    console.log(`Successfully parsed data for ${localAuthorityID}, ${laName}`);
+    // console.log(`Successfully parsed data for ${localAuthorityID}, ${laName}`);
 
     // 3 Extract establishments from the parsed data
     const establishments = parsedData.FHRSEstablishment.EstablishmentCollection.EstablishmentDetail || [];
 
     // Log random establishments for debugging
     const randomIndex = Math.floor(Math.random() * establishments.length) + 1;
-    console.log(establishments[randomIndex]);
+    // console.log(establishments[randomIndex]);
 
     // 4 Deconstruct, Validate, Process and Insert the data for each establishment into database
 

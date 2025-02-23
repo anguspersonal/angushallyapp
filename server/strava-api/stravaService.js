@@ -13,7 +13,7 @@ const getAllActivities = async () => {
             throw new Error("❌ No valid access token available.");
         }
 
-        console.log("🔍 Fetching all historical activities...");
+        // console.log("🔍 Fetching all historical activities...");
 
         let allActivities = [];
         let hasMoreData = true;
@@ -38,7 +38,7 @@ const getAllActivities = async () => {
             }
         }
 
-        console.log(`✅ Retrieved ${allActivities.length} historical activities.`);
+        // console.log(`✅ Retrieved ${allActivities.length} historical activities.`);
 
         // ✅ Store in the database
         await saveStravaActivities(allActivities);
@@ -68,7 +68,7 @@ const getNewActivities = async () => {
             ? Math.floor(new Date(lastUpdatedResult[0].last_updated).getTime() / 1000)
             : Math.floor(new Date("2000-01-01").getTime() / 1000); // Default if first run
 
-        console.log(`🔍 Fetching new activities after: ${new Date(lastUpdated * 1000).toISOString()}`);
+        // console.log(`🔍 Fetching new activities after: ${new Date(lastUpdated * 1000).toISOString()}`);
 
         const response = await axios.get("https://www.strava.com/api/v3/athlete/activities", {
             headers: { Authorization: `Bearer ${accessToken}` },
@@ -80,11 +80,11 @@ const getNewActivities = async () => {
         });
 
         if (response.data.length === 0) {
-            console.log("✅ No new activities found.");
+            // console.log("✅ No new activities found.");
             return [];
         }
 
-        console.log(`✅ Fetched ${response.data.length} new activities from Strava.`);
+        // console.log(`✅ Fetched ${response.data.length} new activities from Strava.`);
 
         // ✅ Update `last_updated` timestamp in DB
         await db.query(
@@ -213,7 +213,7 @@ const saveStravaActivities = async (activities) => {
                 ]
             );
         }
-        console.log(`✅ Stored or updated ${activities.length} activities in the database.`);
+        // console.log(`✅ Stored or updated ${activities.length} activities in the database.`);
     } catch (err) {
         console.error("❌ Database query error:", err);
     }
@@ -222,18 +222,18 @@ const saveStravaActivities = async (activities) => {
 
 if (process.argv[2] === "test-all") {
     (async () => {
-        console.log("🔍 Testing Full Historical Activities Fetch...");
+        // console.log("🔍 Testing Full Historical Activities Fetch...");
         const activities = await getAllActivities();
-        console.log(activities ? `✅ Retrieved ${activities.length} activities.` : "❌ Failed to fetch.");
+        // console.log(activities ? `✅ Retrieved ${activities.length} activities.` : "❌ Failed to fetch.");
         process.exit();
     })();
 }
 
 if (process.argv[2] === "test-new") {
     (async () => {
-        console.log("🔍 Testing Incremental Activities Fetch...");
+        // console.log("🔍 Testing Incremental Activities Fetch...");
         const activities = await getNewActivities();
-        console.log(activities ? `✅ Retrieved ${activities.length} new activities.` : "❌ No new activities found.");
+        // console.log(activities ? `✅ Retrieved ${activities.length} new activities.` : "❌ No new activities found.");
         process.exit();
     })();
 }

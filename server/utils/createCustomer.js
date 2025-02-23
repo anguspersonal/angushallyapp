@@ -14,10 +14,10 @@ async function createOrRetrieveCustomer(name, email) {
             [email]
         );
 
-        console.log('🔍 Query Result for Existing Customer:', existingCustomer); // Debugging
+        // console.log('🔍 Query Result for Existing Customer:', existingCustomer); // Debugging
 
         if (existingCustomer.length > 0) { // ✅ Fix: Check length directly
-            console.log(`✅ Customer exists: ID ${existingCustomer[0].id}`);
+            // console.log(`✅ Customer exists: ID ${existingCustomer[0].id}`);
             return existingCustomer[0].id;
         }
 
@@ -28,11 +28,11 @@ async function createOrRetrieveCustomer(name, email) {
         );
 
         if (!newCustomer || newCustomer.length === 0) {
-            console.log('🔍 Query Result for New Customer:', JSON.stringify(newCustomer, null, 2));
+            // console.log('🔍 Query Result for New Customer:', JSON.stringify(newCustomer, null, 2));
             throw new Error('Failed to create customer: No data returned from INSERT query.');
         }
 
-        console.log(`✅ New customer created: ID ${newCustomer[0].id}`);
+        // console.log(`✅ New customer created: ID ${newCustomer[0].id}`);
         return newCustomer[0].id;
     } catch (error) {
         console.error('❌ Error in createOrRetrieveCustomer:', error);

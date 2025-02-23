@@ -15,7 +15,7 @@ const testDatabaseConnection = async () => {
         console.log('Running test query...');
         // console.log("DEBUG: DATABASE_URL is", process.env.DATABASE_URL);
         await db.query('SELECT 1;');
-        console.log('Database connection is working');
+        console.log('Database connection is working, test result:');
         return true; // Return true for success
     } catch (error) {
         console.error('Database connection error:', error);

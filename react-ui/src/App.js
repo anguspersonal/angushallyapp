@@ -13,6 +13,7 @@ import DataValueGame from "./pages/projectPages/DataValueGame/DataValueGame.jsx"
 import Blogpost from "./pages/projectPages/Blog/BlogPost.jsx";
 import Strava from "./pages/projectPages/Strava/Strava.jsx";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import Habit from "./pages/projectPages/Habit/Habit.jsx";
 
 function App() {
   // Set Use States
@@ -62,6 +63,7 @@ function App() {
         <Route path="/projects/EatSafeUK" element={<EatSafeUK />} />
         <Route path="/projects/DataValueGame" element={<DataValueGame />} />
         <Route path="/projects/Strava" element={<Strava />} />
+        <Route path="/projects/Habit" element={<Habit />} />
       </Routes>
       {/* Conditionally render the footer only if the current route is NOT in hideFooterRoutes */}
       {!hideFooterRoutes.includes(location.pathname) && <Footer />}

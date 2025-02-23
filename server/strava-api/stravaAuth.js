@@ -17,13 +17,13 @@ const STRAVA_CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET;
  * ✅ Always retrieves the most recent access & refresh token.
  */
 const getStoredTokens = async () => {
-  console.log("🔍 checkig for tokens stored in DB");
-  console.log('Calling testDatabaseConnection...');
+  // console.log("🔍 checkig for tokens stored in DB");
+  // console.log('Calling testDatabaseConnection...');
   const success = await testDatabaseConnection();
-  console.log('testDatabaseConnection returned:', success);
+  // console.log('testDatabaseConnection returned:', success);
 
 
-  console.log("🔍 Retrieving tokens from DB...");
+  // console.log("🔍 Retrieving tokens from DB...");
   try {
     const result = await db.query(
       `SELECT * FROM habit.strava_tokens ORDER BY expires_at DESC LIMIT 1`
@@ -58,7 +58,7 @@ const saveTokens = async (accessToken, refreshToken, expiresAt) => {
         [accessToken, refreshToken, expiresAt]
       );
     }
-    console.log("✅ Tokens stored/updated in database.");
+    // console.log("✅ Tokens stored/updated in database.");
   } catch (err) {
     console.error("❌ Error saving tokens to DB:", err);
   }
@@ -81,7 +81,7 @@ const getAccessToken = async (authCode) => {
 
     const { access_token, refresh_token, expires_at } = response.data;
     await saveTokens(access_token, refresh_token, expires_at);
-    console.log("✅ New access & refresh tokens stored.");
+    // console.log("✅ New access & refresh tokens stored.");
     return response.data;
   } catch (error) {
     console.error("❌ Error exchanging auth code:", error.response?.data || error.message);
@@ -96,7 +96,7 @@ const getAccessToken = async (authCode) => {
  */
 const refreshAccessToken = async (storedTokens = null) => {
   if (!storedTokens) {
-    console.log("🔍 No storedTokens passed, retrieving from DB...");
+    // console.log("🔍 No storedTokens passed, retrieving from DB...");
     storedTokens = await getStoredTokens();
   }
 
@@ -116,7 +116,7 @@ const refreshAccessToken = async (storedTokens = null) => {
     const { access_token, refresh_token, expires_at } = response.data;
 
     await saveTokens(access_token, refresh_token, expires_at); // ✅ Store the new refresh token
-    console.log(`✅ Tokens updated: Access token expires at ${new Date(expires_at * 1000).toISOString()}`);
+    // console.log(`✅ Tokens updated: Access token expires at ${new Date(expires_at * 1000).toISOString()}`);
     return access_token;
   } catch (error) {
     console.error("❌ Error refreshing access token:", error.response?.data || error.message);
@@ -137,19 +137,19 @@ const refreshAccessToken = async (storedTokens = null) => {
  * ❌ If refresh fails, user must manually reauthorize.
  */
 const getValidAccessToken = async () => {
-  console.log("🔍 Checking for valid access token...");
+  // console.log("🔍 Checking for valid access token...");
   const storedTokens = await getStoredTokens();
 
   if (storedTokens && storedTokens.expires_at > Math.floor(Date.now() / 1000)) {
-    console.log("✅ Using stored access token.");
+    // console.log("✅ Using stored access token.");
     return storedTokens.access_token;
   }
 
-  console.log("🔄 Access token expired, attempting refresh...");
+  // console.log("🔄 Access token expired, attempting refresh...");
   const refreshedToken = await refreshAccessToken(storedTokens); // ✅ Pass storedTokens here
 
   if (!refreshedToken) {
-    console.log("❌ Unable to refresh token. Manual reauthorization required.");
+    // console.log("❌ Unable to refresh token. Manual reauthorization required.");
     return null;
   }
 
@@ -161,9 +161,9 @@ const getValidAccessToken = async () => {
  */
 if (process.argv[2] === "test") {
   (async () => {
-    console.log("🔍 Testing Strava Auth...");
+    // console.log("🔍 Testing Strava Auth...");
     const token = await getValidAccessToken();
-    console.log(token ? `✅ Token Retrieved: ${token}` : "❌ No valid token available.");
+    // console.log(token ? `✅ Token Retrieved: ${token}` : "❌ No valid token available.");
     // process.exit(); // Uncomment to exit after testing
   })();
 }

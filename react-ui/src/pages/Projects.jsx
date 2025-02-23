@@ -6,7 +6,7 @@ import ProjectSnippet from './projectPages/ProjectSnippet';
 
 function Projects() {
   const projects = getProjectList();
-  console.log('Projects.js: projects:', projects);
+  // console.log('Projects.js: projects:', projects);
 
   return (
     <div className='Page'>

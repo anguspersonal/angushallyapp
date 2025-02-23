@@ -8,7 +8,7 @@ function Header() {
                 <img src="/AH-logo-no-background.ico" id="headerlogo" alt='AH Logo'></img>
             </Link>
 
-            <nav>
+            <nav className='row row-right'>
                 <Link to="/about">About</Link>
                 <Link to="/blog">Blog</Link>
                 <Link to="/contact">Contact</Link>

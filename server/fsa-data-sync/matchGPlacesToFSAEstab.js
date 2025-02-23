@@ -2,12 +2,11 @@ const path = require('path'); // Import the path module
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const Fuse = require('fuse.js');
 
-const {testDatabaseConnection} = require('../testDatabaseConnection');
+const { testDatabaseConnection } = require('../testDatabaseConnection');
 const searchMatchingPostcode = require('./searchMatchingPostcode');
 const fuseThresholdLevels = require('./fuseThresholdLevels');
 
-// Check database connection
-// testDatabaseConnection();
+
 
 /**
  * Function to take an array of Google places with id, name, address, postcode
@@ -23,6 +22,10 @@ const fuseThresholdLevels = require('./fuseThresholdLevels');
  */
 
 const matchGPlacesToFSAEstab = async (places) => {
+
+    // Check database connection
+    testDatabaseConnection();
+
     // Match places with establishments based on postcodes efficiently by batching.
     const estsMatchingPostcode = await searchMatchingPostcode(places);
 
@@ -40,7 +43,7 @@ const matchGPlacesToFSAEstab = async (places) => {
     };
 
     // For each place, search for a matching address
-    const keys = ['business_name','address']; // Define the keys to use for the fuzzy search
+    const keys = ['business_name', 'address']; // Define the keys to use for the fuzzy search
     const results = await performFuzzySearch(keys, places, estsMatchingPostcode, selectedFuseThresholdLevel);
     // console.log(`Results: ${JSON.stringify(results, null, 2)}`);
 
@@ -55,16 +58,16 @@ module.exports = matchGPlacesToFSAEstab;
 // FUZZY SEARCH: The `performFuzzySearch` function performs a fuzzy search on a list of places using the establishments list
 const performFuzzySearch = async (keys, places, establishments, selectedFuseThresholdLevel) => {
     const results = [];
-    console.log(`looking up places: ${JSON.stringify(places[0], null, 2)}`);
-        // Validate and log establishments
-        establishments.forEach(establishment => {
-            if (!establishment.address) {
-                console.error('Invalid establishment address:', establishment);
-            }
-        });
+    // console.log(`looking up places: ${JSON.stringify(places[0], null, 2)}`);
+    // Validate and log establishments
+    establishments.forEach(establishment => {
+        if (!establishment.address) {
+            console.error('Invalid establishment address:', establishment);
+        }
+    });
 
-        const validEstablishments = establishments.filter(establishment => establishment.address);
-        // console.log(`Valid establishments: `,validEstablishments);
+    const validEstablishments = establishments.filter(establishment => establishment.address);
+    // console.log(`Valid establishments: `,validEstablishments);
 
     const searchNameAndAddress = new Fuse(validEstablishments,
         {

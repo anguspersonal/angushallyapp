@@ -1,21 +1,23 @@
 const axios = require('axios');
 const dotenv = require('dotenv');
 const path = require('path');
-const {testDatabaseConnection} = require('../testDatabaseConnection.js');
+const { testDatabaseConnection } = require('../testDatabaseConnection.js');
 
 // Load environment variables before importing the database module
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const db = require('../db.js'); // Database connection module
 
-//Test the database connection
-testDatabaseConnection();
+
 
 /**
  * Fetches the URLs for Open Data files from the Food Hygiene Rating Scheme (FHRS) API
  * and inserts or updates local authority data in the PostgreSQL database.
  */
 async function getLocalAuthorities() {
+
+    //Test the database connection
+    testDatabaseConnection();
     try {
         console.log('Fetching local authorities data from FHRS API...');
 

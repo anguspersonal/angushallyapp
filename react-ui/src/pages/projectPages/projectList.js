@@ -27,6 +27,13 @@ export default function getProjectList() {
             "desc": "Displaying my Strava Activity.",
             "route": "/projects/Strava",
             "created_at": "2025-02-09"
+        },
+        {
+            "id": 4,
+            "name": "Habit",
+            "desc": "Habit Tracker.",
+            "route": "/projects/Habit",
+            "created_at": "2025-02-23"
         }
     ];
     return projectList;

@@ -7,9 +7,9 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env'
 
 router.get('/api/strava', async (req, res) => {
     try {
-        console.log("Starting to fetch new Strava activities...");
+        // console.log("Starting to fetch new Strava activities...");
         const activities = await getStravaActivitiesFromDB();
-        console.log(`Fetched ${activities.length} activities from Strava and saved to database`);
+        // console.log(`Fetched ${activities.length} activities from Strava and saved to database`);
         res.status(200).json(activities);
     } catch (error) {
         console.error("Error in fetching route for Strava data:", error.response?.data || error.message);

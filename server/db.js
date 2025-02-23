@@ -18,6 +18,7 @@ dotenv.config();
 
 const { Pool } = require('pg');
 
+// console.log("Attempting to connect to", process.env.DATABASE_URL);
 // Initialize PostgreSQL connection pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -25,11 +26,13 @@ const pool = new Pool({
     require: true,
     rejectUnauthorized: false
   },
+  connectionTimeoutMillis: 5000, // 5 seconds
 });
 
 // ✅ Generic query function (handles ALL SQL queries)
 const query = async (text, params = [], retries = 3) => {
   const client = await pool.connect();
+  console.log('DB Executing query:', text, params);
   try {
     const res = await client.query(text, params);
     return res.rows;  // ✅ Only returning rows, NOT an object with { rows: [...] }
