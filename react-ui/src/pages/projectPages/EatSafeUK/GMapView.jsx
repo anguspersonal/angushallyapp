@@ -37,7 +37,7 @@ const GMapView = ({ searchResults, userLocation, selectedMarker, setSelectedMark
 
       try {
         const scores = await fetchHygieneScores(transformed);
-        console.log("scores:", scores);
+        // console.log("scores:", scores);
 
         // Merge new rating info
         const merged = scores.map((item) => ({
@@ -45,7 +45,7 @@ const GMapView = ({ searchResults, userLocation, selectedMarker, setSelectedMark
           rating: item ? item.rating_value_str : null
         }));
 
-        console.log("merged:", merged);
+        // console.log("merged:", merged);
         setMarkers(merged);
       } catch (error) {
         console.error("Error fetching hygiene scores:", error);

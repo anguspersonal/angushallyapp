@@ -4,9 +4,9 @@ const db = require('../db');
 
 const runGetNewActivities = async () => {
     try {
-        console.log("Starting to fetch new Strava activities...");
+        // console.log("Starting to fetch new Strava activities...");
         const activities = await getNewActivities();
-        console.log(`Fetched ${activities.length} activities from Strava and saved to database`);
+        // console.log(`Fetched ${activities.length} activities from Strava and saved to database`);
     } catch (error) {
         // More specific error handling
         if (error.response?.status === 429) {

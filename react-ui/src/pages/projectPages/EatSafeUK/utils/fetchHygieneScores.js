@@ -29,7 +29,7 @@ export const fetchHygieneScores = async (places) => {
         // Make API request
         const response = await axios.post("/api/hygieneScoreRoute", { places: payload });
 
-        console.log("✅ Received hygiene scores:", response.data);
+        // console.log("✅ Received hygiene scores:", response.data);
         return response.data;
     } catch (error) {
         console.error("🚨 Error fetching hygiene scores:", error);

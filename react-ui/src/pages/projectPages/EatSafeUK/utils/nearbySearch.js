@@ -38,7 +38,7 @@ export const performNearbySearch = async (userLocation, setSearchResults, radius
         });
 
         // Log API response status for debugging
-        console.log(`📡 Nearby Search API Response: ${response.status} ${response.statusText}`);
+        // console.log(`📡 Nearby Search API Response: ${response.status} ${response.statusText}`);
 
         // Handle rate limits or API errors
         if (!response.ok) {
@@ -49,7 +49,7 @@ export const performNearbySearch = async (userLocation, setSearchResults, radius
 
         const data = await response.json();
         if (data.places && Array.isArray(data.places)) {
-            console.log(`✅ Found ${data.places.length} nearby restaurants`,data.places);
+            // console.log(`✅ Found ${data.places.length} nearby restaurants`,data.places);
             setSearchResults(data.places);
         } else {
             console.warn("⚠️ No places found in API response");

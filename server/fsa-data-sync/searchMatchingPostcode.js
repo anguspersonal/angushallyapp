@@ -3,8 +3,7 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env'
 const db = require('../db'); // Database connection module
 const { testDatabaseConnection } = require('../testDatabaseConnection');
 
-// Check database connection
-testDatabaseConnection();
+
 
 /**
  * Match places with establishments based on postcodes efficiently by batching.
@@ -12,6 +11,10 @@ testDatabaseConnection();
  * @returns {Object.<string, Array>} Dictionary of place names to matching establishments
  */
 const searchMatchingPostcode = async (places) => {
+    // Check database connection
+    testDatabaseConnection();
+
+
     // Log the places array to debug
     // console.log('Received places:', places);
 

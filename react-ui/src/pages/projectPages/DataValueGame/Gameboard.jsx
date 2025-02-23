@@ -22,15 +22,15 @@ const shuffleDeck = () => {
   }));
 
   // Log length of deck
-  console.log('Deck Length:', shuffledDeck.length);
+  // console.log('Deck Length:', shuffledDeck.length);
 
   // Select the initial industry card and remove it from the deck
   const startingIndustry = shuffledDeck[Math.floor(Math.random() * shuffledDeck.length)];
   const filteredDeck = shuffledDeck.filter(industry => industry.id !== startingIndustry.id);
 
   // Log starting industry and deck
-  console.log('Starting Industry:', startingIndustry);
-  console.log('Filtered Deck Length:', filteredDeck.length);
+  // console.log('Starting Industry:', startingIndustry);
+  // console.log('Filtered Deck Length:', filteredDeck.length);
 
   return {
     deck: filteredDeck,
@@ -63,7 +63,7 @@ const GameBoard = (props) => {
     setCards(deck);
     setSelectedCard(null);
     setRoundCounter(0);
-    console.log('Game restarted');
+    // console.log('Game restarted');
   };
 
   // UseEffect hook to restart the game when the component mounts
@@ -115,7 +115,7 @@ const GameBoard = (props) => {
 
     if (isCorrect) {
       setScore(prevScore => prevScore + 1); // Increment score correctly using functional update
-      console.log('Correct Guess! New Previous Industry:', selectedIndustry); // Add console log
+      // console.log('Correct Guess! New Previous Industry:', selectedIndustry); // Add console log
     } else {
       setLives(prevLives => {
         const newLives = prevLives - 1;
@@ -140,7 +140,7 @@ const GameBoard = (props) => {
     if (roundCounter >= 9) {
       setTimeout(() => {
         setGameStatus('won');
-        console.log('Congratulations! You have won the game!');
+        // console.log('Congratulations! You have won the game!');
       }, 2000); // 3-second delay before winning
     }
   }, [roundCounter]); // Add dependency array to run effect only when roundCounter changes

@@ -56,7 +56,7 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSe
                 "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.addressComponents,places.location",
             };
 
-            console.log("📡 Sending request to Google Places API:", payload);
+            // console.log("📡 Sending request to Google Places API:", payload);
 
             const response = await fetch(requestUrl, {
                 method: "POST",
@@ -72,7 +72,7 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSe
             }
 
             const data = await response.json();
-            console.log("✅ API Response:", data);
+            // console.log("✅ API Response:", data);
 
             if (data.places) {
                 setSearchResults(data.places);

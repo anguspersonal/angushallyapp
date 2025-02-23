@@ -146,26 +146,27 @@ code {
 }
 
 /* Flexbox row layout */
+/* Flexbox row layout */
 .row {
   display: flex;
   flex-direction: row;
-  justify-content: left;
   align-items: center;
   width: 100%;
-  gap: 1.5em;
   margin: 1em 0;
+  gap: var(--gap);
+}
+
+.row-left {
+  justify-content: left;
 }
 
 .row-centred {
-  display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: 1.5em;
-  margin: 1em 0;
 }
 
+.row-right {
+  justify-content: flex-end;
+}
 
 
 /* Column-based layout */
@@ -191,7 +192,7 @@ code {
   .row {
     flex-direction: column;
     align-items: center;
-    gap: 1em;
+    gap: calc(0.5*var(--gap));
   }
 
   .full_stage {
@@ -521,6 +522,14 @@ p.truncate {
   align-items: center;
   justify-content: space-between;
   z-index: 1000;
+}
+
+.Header .row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: right;
+  width: 100%;
 }
 
 .Footer {

@@ -13,7 +13,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
 // console.log(process.env.NODE_ENV,process.env.PORT);
 
-console.log('TEST_VAR:', process.env.TEST_VAR);
+// console.log('TEST_VAR:', process.env.TEST_VAR);
 
 const app = express();
 // Use body-parsing middleware
@@ -47,7 +47,7 @@ const contactLimiter = rateLimit({
 
 // Apply the stricter limit to the contact form
 const contactRoute = require('./routes/contact');
-console.log("Contact route registered at /api/contact");
+// console.log("Contact route registered at /api/contact");
 app.use('/api/contact', contactLimiter, contactRoute); // 👈 Applied only to contact route
 
 // ✅ Single DB query route
@@ -66,7 +66,11 @@ app.use(hygieneScoreRoute);
 const stravaRoute = require('./routes/stravaRoute');
 app.use(stravaRoute);
 
-// Answer API requests.
+// ✅ Habit API routes
+const habitRoute = require('./routes/habitRoute');
+app.use(habitRoute);
+
+// Answer all other API requests.
 app.get('/api', function (req, res) {
   res.set('Content-Type', 'application/json');
   res.send('{"message":"Hello from the custom server!"}');
