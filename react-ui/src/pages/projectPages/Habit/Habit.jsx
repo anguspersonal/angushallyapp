@@ -19,7 +19,7 @@ function Habit() {
       const fetchedData = await getHabitLogs();
       setData(fetchedData);
       // checkValueType(fetchedData);
-      console.log('Habit data:', fetchedData);
+      // console.log('Habit data:', fetchedData);
     } catch (error) {
       console.error('Error loading Habit data:', error);
     }
