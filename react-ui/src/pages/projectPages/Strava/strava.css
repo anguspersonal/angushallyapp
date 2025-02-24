@@ -2,22 +2,14 @@
 
 /* Scoped custom properties for the Strava dashboard */
 .strava-dashboard {
-    --primary-color: #fc4c02;
-    /* Strava’s signature orange */
-    --secondary-color: #212121;
-    /* Dark text for headings */
-    --accent-color: #00bcd4;
-    /* Accent color for interactive elements */
-    --background-color: #f5f5f5;
-    /* Light background for the dashboard */
-    --text-color: #333333;
-    /* Main text color */
-    --card-background: #ffffff;
-    /* Card background color */
-    --border-radius: 8px;
-    /* Rounded corners for cards and buttons */
-    --transition-speed: 0.3s;
-    /* Smooth transitions for hover effects */
+    --primary-color: #fc4c02; /* Strava’s signature orange */
+    --secondary-color: #212121; /* Dark text for headings */
+    --accent-color: #00bcd4; /* Accent color for interactive elements */
+    --background-color: #f5f5f5; /* Light background for the dashboard */
+    --text-color: #333333; /* Main text color */
+    --card-background: #ffffff; /* Card background color */
+    --border-radius: 8px; /* Rounded corners for cards and buttons */
+    --transition-speed: 0.3s; /* Smooth transitions for hover effects */
 }
 
 /* Dashboard layout container */
@@ -83,8 +75,7 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: box-shadow var(--transition-speed);
     max-height: 18.75em;
-    overflow: hidden;
-    /* hide overflow from the section */
+    overflow: hidden; /* hide overflow from the section */
 }
 
 .strava-dashboard .card:hover {
@@ -108,7 +99,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-color: #20129e #f1f1f1; /* thumb and track colors for Firefox */
-  }
+}
 
 .strava-dashboard .scrollable-table {
     width: 100%;
@@ -117,17 +108,16 @@
     max-height: 30em;
     overflow-y: auto;
     overflow-x: hidden;
-    scrollbar-color: --text-color #f1f1f1; /* thumb and track colors for Firefox */
-  }
+    scrollbar-color: var(--text-color) #f1f1f1; /* thumb and track colors for Firefox */
+}
 
-  /* Assuming the table is within a container like .scrollable-table */
+/* Assuming the table is within a container like .scrollable-table */
 .scrollable-table thead {
     position: sticky;
     top: 0;
     background-color: var(--card-background, #ffffff); /* Ensure a solid background */
     z-index: 1; /* Keeps the header above other content */
-  }
-  
+}
 
 /* Footer styling */
 .strava-dashboard .dashboard-footer {
