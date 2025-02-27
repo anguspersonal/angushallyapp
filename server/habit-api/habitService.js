@@ -1,5 +1,10 @@
 // Habit Api
 
+
+/**
+ * Logs a habit entry into `habit_log` before specific service processing.
+ */
+
 const dotenv = require('dotenv');
 // Load environment variables before importing the database module
 dotenv.config({ path: require('path').resolve(__dirname, '../../.env') });
@@ -9,7 +14,8 @@ const { testDatabaseConnection } = require('../testDatabaseConnection');
 // Check the value type of the input.
 const checkValueType = require('../utils/checkValueType');
 
-const addHabitToDB = async (habitLog) => {
+
+const logHabitLog = async (habitLog) => {
     // test the database connection
     await testDatabaseConnection();
 
@@ -55,12 +61,12 @@ const getHabitLogsFromDB = async () => {
 
 // Export multiple modules using named exports
 module.exports = {
-    addHabitToDB,
+    logHabitLog,
     getHabitLogsFromDB
 };
 
 // test module by calling it
-// addHabitToDB('{"type":"running","duration":30,"distance":5,"date":"2021-09-01"}');
+// logHabitLog('{"type":"running","duration":30,"distance":5,"date":"2021-09-01"}');
 // getHabitLogsFromDB();
 
 if (process.argv[2] === "test-habit") {

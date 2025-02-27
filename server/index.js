@@ -70,6 +70,11 @@ app.use(stravaRoute);
 const habitRoute = require('./routes/habitRoute');
 app.use(habitRoute);
 
+// ✅ Alcohol API routes
+const alcoholRoute = require("./routes/alcohol");
+app.use("/api/alcohol", alcoholRoute);
+
+
 // Answer all other API requests.
 app.get('/api', function (req, res) {
   res.set('Content-Type', 'application/json');
