@@ -46,14 +46,18 @@ function Habit() {
   return (
     <div className="Page">
       <Header />
-      <h1>Habit Tracker</h1>
-      <div className="habit">
-        <button onClick={handleClick} disabled={loading}>
-          {loading ? 'Adding...' : 'Add'}
-        </button>
+      <h1 className="dashboard-header">Habit Tracker</h1>
+      <div className="dashboard-content">
+        <div className="habit">
+          <button onClick={handleClick} disabled={loading}>
+            {loading ? 'Adding...' : 'Add'}
+          </button>
+        </div>
+        <br />
+        <section style={{ width: '40em' }}>
+          <HabitTable habitLogs={data} />
+        </section>
       </div>
-      <br />
-      <HabitTable habitLogs={data} />
     </div>
   );
 }
@@ -77,12 +81,10 @@ function HabitTable({ habitLogs }) {
             <Table.Tr key={log.id}>
               <Table.Td>{log.id}</Table.Td>
               <Table.Td>{log.created_at}</Table.Td>
-
             </Table.Tr>
           ))}
         </Table.Tbody>
       </Table>
     </section>
   )
-  
 }
