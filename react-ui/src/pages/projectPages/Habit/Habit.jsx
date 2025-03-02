@@ -12,7 +12,7 @@ import "../Strava/strava.css";
 
 function Habit() {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   const loadData = async () => {
     try {
@@ -27,7 +27,7 @@ function Habit() {
 
   useEffect(() => {
     loadData();
-  }, []); 
+  }, []);
 
   const testHabitData = {
     type: 'walking',
@@ -52,7 +52,7 @@ function Habit() {
           {loading ? 'Adding...' : 'Add'}
         </button>
       </div>
-<br />
+      <br />
       <HabitTable habitLogs={data} />
     </div>
   );
@@ -63,25 +63,26 @@ export default Habit;
 
 // Create Habit Table
 function HabitTable({ habitLogs }) {
-  return ( 
-     <section className="scrollable-table">
-                <Table>
-                    <Table.Thead>
-                        <Table.Tr>
-                            <Table.Th>Habit</Table.Th>
-                            <Table.Th>Value</Table.Th>
-                        </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                        {habitLogs.map(log => (
-                            <Table.Tr key={log.id}>
-                                <Table.Td>{log.id }</Table.Td>
-                                <Table.Td>{log.created_at }</Table.Td>
+  return (
+    <section className="scrollable-table">
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Habit</Table.Th>
+            <Table.Th>Value</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {habitLogs.map(log => (
+            <Table.Tr key={log.id}>
+              <Table.Td>{log.id}</Table.Td>
+              <Table.Td>{log.created_at}</Table.Td>
 
-                            </Table.Tr>
-                        ))}
-                    </Table.Tbody>
-                </Table>
-            </section>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </section>
   )
+  
 }
