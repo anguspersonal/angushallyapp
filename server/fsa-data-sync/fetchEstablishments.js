@@ -3,7 +3,7 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env'
 const fs = require('fs');
 const db = require('../db'); // Database connection module
 const queryPath = path.join(__dirname, 'getEstablishments.sql');
-const { testDatabaseConnection } = require('../testDatabaseConnection');
+const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
 
 
 

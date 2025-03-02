@@ -5,7 +5,7 @@ const processSingleAuthority = require('./processSingleAuthority.js');
 const localAuthorityID = 1;
 const name = "cambridge-city";
 const url = "https://ratings.food.gov.uk/OpenDataFiles/FHRS027en-GB.xml";
-// // Call the processSingleAuthority function with the test input 
+// Call the processSingleAuthority function with the test input 
 (async () => {
     try {
         const result = await processSingleAuthority({localAuthorityID, name, url});

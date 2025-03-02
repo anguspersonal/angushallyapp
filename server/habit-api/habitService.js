@@ -9,36 +9,30 @@ const dotenv = require('dotenv');
 // Load environment variables before importing the database module
 dotenv.config({ path: require('path').resolve(__dirname, '../../.env') });
 const db = require('../db.js'); // Database connection module
-const { testDatabaseConnection } = require('../testDatabaseConnection');
+const { testDatabaseConnection } = require('../tests/testDatabaseConnection.js');
 
 // Check the value type of the input.
 const checkValueType = require('../utils/checkValueType');
 
 
-const logHabitLog = async (habitLog) => {
-    // test the database connection
-    await testDatabaseConnection();
+const logHabitLog = async (user_id, habit_type, value = null, metric = null, extra_data = {}) => {
+    await testDatabaseConnection(); // Ensure DB connection works
 
-    // If Value is an object, convert it to a json string
-    const type = checkValueType(habitLog);
-    if (type === 'object') {
-        habitLog = JSON.stringify(habitLog);
-    }
-
-    const query = `INSERT INTO habit.habit_log (habit_log) VALUES ($1::jsonb) RETURNING *;`;
-    const values = [habitLog];
-    console.log(`Executing query: ${query} with values: ${values}`);
+    const query = `
+        INSERT INTO habit.habit_log (user_id, habit_type, value, metric, extra_data, created_at)
+        VALUES ($1, $2, $3, $4, $5::jsonb, NOW()) RETURNING id;
+    `;
+    const values = [user_id, habit_type, value, metric, JSON.stringify(extra_data)];
+    
     try {
         const response = await db.query(query, values);
-        //console.log('Response:', response);
-        const valueType = checkValueType(response);
-        //console.log(`Value type of rows: ${valueType}`);
-        return response;
+        return response[0].id;
     } catch (error) {
-        console.error("Error in fetching activities from database:", error);
-        return [];
+        console.error("Error logging habit:", error);
+        throw error;
     }
-}
+};
+
 
 const getHabitLogsFromDB = async () => {
     // test the database connection
@@ -66,7 +60,19 @@ module.exports = {
 };
 
 // test module by calling it
-// logHabitLog('{"type":"running","duration":30,"distance":5,"date":"2021-09-01"}');
+// (async () => {
+//     try {
+//         const result = await logHabitLog(1, "alcohol", 1, "ml", {
+//             drink_id: 3,
+//             volume_ml: 500,
+//             abv_percent: 5.1
+//         });
+//         console.log("✅ Habit log created:", result);
+//     } catch (error) {
+//         console.error("❌ Error:", error);
+//     }
+// })();
+
 // getHabitLogsFromDB();
 
 if (process.argv[2] === "test-habit") {

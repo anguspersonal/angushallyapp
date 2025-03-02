@@ -2,7 +2,7 @@ const express = require('express');
 const { matchGPlacesToFSAEstab } = require('../fsa-data-sync/matchGPlacesToFSAEstab');
 const router = express.Router();
 
-router.post('/api/hygieneScoreRoute', async (req, res) => {
+router.post('/', async (req, res) => {
     const places = req.body.places; // Directly access the array
     console.log('Received places:', places);
 
