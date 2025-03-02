@@ -10,6 +10,7 @@
     --card-background: #ffffff; /* Card background color */
     --border-radius: 8px; /* Rounded corners for cards and buttons */
     --transition-speed: 0.3s; /* Smooth transitions for hover effects */
+    text-align: center !important;
 }
 
 /* Dashboard layout container */
