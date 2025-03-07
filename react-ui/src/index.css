@@ -39,6 +39,8 @@ Styles set on :root apply globally to the entire document. */
   /* Button text color */
   --button-border-color: #F4F0EB;
   /* Button border color */
+  --success-color: #6B9F70;
+  /* Success Color */
 
   /* Set the default font styles */
   font-synthesis: none;
@@ -140,10 +142,28 @@ text-align: center !important;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 70%;
+  width: 80%;
   /* Constrained width for general pages */
   height: auto;
   justify-content: center;
+}
+
+@media (min-width: 1200px) {
+  .centre_stage {
+    width: 70% !important; /* Width for large screens */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .centre_stage {
+    width: 80% !important; /* Width for normal screens */
+  }
+}
+
+@media (max-width: 767px) {
+  .centre_stage {
+    width: 90% !important; /* Width for narrow screens */
+  }
 }
 
 /* Flexbox row layout */
@@ -468,6 +488,13 @@ h3 {
 
 .grid-item p {
   color: #777;
+}
+
+.grid-item.expanded {
+  grid-column: 2 / 5 !important;
+  grid-row: span 3 !important;
+  background-color: white !important;
+  color: black !important;
 }
 
 .truncate {
