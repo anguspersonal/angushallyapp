@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../index.css';
+import "../general.css";
 import Header from '../components/Header';
 import ReCAPTCHA from "react-google-recaptcha";
 

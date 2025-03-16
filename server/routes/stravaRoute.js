@@ -5,7 +5,7 @@ const router = express.Router();
 
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') }); // Load environment variables
 
-router.get('/api/strava', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         // console.log("Starting to fetch new Strava activities...");
         const activities = await getStravaActivitiesFromDB();

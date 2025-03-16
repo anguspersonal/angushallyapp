@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../index.css';
+import "../general.css";
 import Header from '../components/Header';
 import Snippet from '../components/Snippet';
 import { fetchLatestBlog } from '../pages/projectPages/Blog/fetchBlogData';

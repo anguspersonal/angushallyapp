@@ -1,6 +1,6 @@
 // Description: Check the value type of the input.
 
-export const checkValueType = (value) => {
+export default function checkValueType(value){
     let valueType ="";
     
         // 1. Check if it's undefined
@@ -31,3 +31,5 @@ export const checkValueType = (value) => {
       return valueType;
     
     };
+
+  

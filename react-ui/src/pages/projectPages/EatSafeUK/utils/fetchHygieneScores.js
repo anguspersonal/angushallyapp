@@ -24,7 +24,7 @@ export const fetchHygieneScores = async (places) => {
             };
         });
 
-        // console.log("📦 Payload sent to backend:", payload);
+        console.log("📦 Payload sent to backend:", payload);
 
         // Make API request
         const response = await axios.post("/api/hygieneScoreRoute", { places: payload });

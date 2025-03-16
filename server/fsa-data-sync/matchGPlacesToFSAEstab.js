@@ -2,7 +2,7 @@ const path = require('path'); // Import the path module
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const Fuse = require('fuse.js');
 
-const { testDatabaseConnection } = require('../testDatabaseConnection');
+const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
 const searchMatchingPostcode = require('./searchMatchingPostcode');
 const fuseThresholdLevels = require('./fuseThresholdLevels');
 

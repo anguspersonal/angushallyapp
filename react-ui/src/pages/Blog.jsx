@@ -4,6 +4,7 @@ import { fetchBlogList } from "./projectPages/Blog/fetchBlogData";
 import "../index.css";
 import BlogSnippet from "./projectPages/Blog/BlogSnippet";
 import Header from "../components/Header";
+import "../general.css";
 
 function Blog() {
   const [posts, setPosts] = useState([]);
