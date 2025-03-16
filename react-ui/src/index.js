@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom"; // ✅ Enables routing in the app
 import "./index.css";
+import "./general.css";
 import App from "./App.js";
 
 // ✅ Import Mantine for UI styling & theming

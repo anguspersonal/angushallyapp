@@ -1,4 +1,5 @@
 const db = require("../db");
+require("../routes/habitRoute");
 
 /**
  * Logs a workout session after it has been recorded in `habit_log`.
@@ -37,4 +38,29 @@ async function logExercise(log_id, exerciseData) {
     }
 }
 
-module.exports = { logExercise };
+async function getExerciseLogs(requestType) {
+    try {
+        let response;
+        switch (requestType) {
+            case "thisWeek":
+                // ✅ Fetch exercise logs for this week
+                response = await db.query(`SELECT * FROM habit.exercises WHERE date >= date_trunc('week', current_date)`);
+                break;
+            case "today":
+                // ✅ Fetch exercise logs for today
+                response = await db.query(`SELECT * FROM habit.exercises WHERE date = current_date`);
+                break;
+            default:
+                // ✅ Fetch all exercise logs
+                response = await db.query(`SELECT * FROM habit.exercises`);
+                break;
+        }
+        console.log("Response from getExerciseLogs:", response);
+        return response;
+    } catch (error) {
+        console.error("❌ Error in getExerciseLogs:", error);
+        throw error;
+    }
+}
+
+module.exports = { logExercise, getExerciseLogs };

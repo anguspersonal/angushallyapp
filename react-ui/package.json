@@ -65,8 +65,11 @@
   "proxy": "http://localhost:5000",
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.17.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
     "postcss": "^8.5.2",
     "postcss-preset-mantine": "^1.17.0",
-    "postcss-simple-vars": "^7.0.1"
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "^5.8.2"
   }
 }

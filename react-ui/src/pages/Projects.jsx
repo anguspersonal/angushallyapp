@@ -1,5 +1,6 @@
 import React from 'react';
 import '../index.css';
+import "../general.css";
 import Header from '../components/Header';
 import getProjectList from './projectPages/projectList';
 import ProjectSnippet from './projectPages/ProjectSnippet';

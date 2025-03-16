@@ -1,100 +1,138 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Button } from "@mantine/core";
 import Header from "../../../components/Header";
 import HabitHeader from "./HabitHeader";
 import HabitTile from "./HabitTile";
 import HabitDrawer from "./HabitDrawer";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, SimpleGrid } from "@mantine/core"; // ✅ Use SimpleGrid for responsiveness
-import "@mantine/core/styles.css";
-import { addHabitLog, getHabitLogs } from "./habit";
+import { getHabitLogs, getLogsByHabit } from "./habit";
 import "../../../index.css";
 
 function Habit() {
-  const [loading, setLoading] = useState(false);
-  const [habitLogs, setHabitLogs] = useState({}); // ✅ Initialize as an object, not an array
+  const [habitLogs, setHabitLogs] = useState([]);
   const [selectedHabit, setSelectedHabit] = useState(null);
+  const [selectedLogs, setSelectedLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [opened, handlers] = useDisclosure(false);
-  const [selectedLogs, setSelectedLogs] = useState({});
+  const isInitialMount = useRef(true);
 
-  // Load habit logs
+  // Load all habit logs once on mount
   useEffect(() => {
     const loadHabitLogs = async () => {
       try {
         const fetchedData = await getHabitLogs();
-        setHabitLogs(fetchedData);
+        if (Array.isArray(fetchedData)) {
+          setHabitLogs(fetchedData);
+        } else {
+          console.error("Fetched data is not an array:", fetchedData);
+        }
       } catch (error) {
         console.error("Error loading Habit data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    loadHabitLogs();
+    if (isInitialMount.current) {
+      loadHabitLogs();
+      isInitialMount.current = false;
+    }
   }, []);
 
   // Define habits for tiles
   const habits = [
-    { id: 1, name: "Alcohol", icon: "🍷", progress: 60 },
-    { id: 2, name: "Exercise", icon: "🏋️", progress: 80 },
-    { id: 3, name: "Coding", icon: "💻", progress: 90 },
+    { id: 1, name: "alcohol", displayName: "Alcohol", icon: "🍷", progress: 60 },
+    { id: 2, name: "exercise", displayName: "Exercise", icon: "🏋️", progress: 80 },
+    { id: 3, name: "coding", displayName: "Coding", icon: "💻", progress: 90 },
   ];
 
-  // ✅ Handle habit selection & open modal
-  const handleOpenHabit = (habit) => {
-    console.log(`Habit Opened: ${habit.name}`);
+  // 🔹 Ensure selectedLogs updates properly when selectedHabit changes
+  useEffect(() => {
+    if (selectedHabit && selectedLogs.length === 0) {
+      console.log(`Filtering logs for habit: ${selectedHabit.name}`);
+      setSelectedLogs(habitLogs.filter(log => log.habit_type === selectedHabit.name));
+    }
+  }, [selectedHabit, habitLogs]);
+  
+
+
+  // ✅ Function to open a habit and filter its logs
+  const handleOpenHabit = async (habit) => {
+    console.log(`Opening Habit: ${habit.displayName}`);
+  
+    // ✅ Fetch specific logs for the selected habit
+    try {
+      const fetchedLogs = await getLogsByHabit(habit.name);
+      if (Array.isArray(fetchedLogs)) {
+        setSelectedLogs(fetchedLogs); // ✅ Ensure logs are fresh before opening drawer
+      } else {
+        console.error("Fetched data is not an array:", fetchedLogs);
+      }
+    } catch (error) {
+      console.error(`Error fetching logs for ${habit.name}:`, error);
+    }
+  
     setSelectedHabit(habit);
-    setSelectedLogs(habitLogs[habit.id] || []);
-    handlers.open(); // ✅ Ensures modal opens when clicking a habit tile
+    handlers.open();
+  };
+  
+
+  const handleCloseDrawer = () => {
+    handlers.close();
+    setSelectedHabit(null); // ✅ Ensure habit resets on close
   };
 
-  // ✅ Handles logging a habit
-  const onLog = (habit) => {
-    console.log(`Habit Logged: ${habit.name}`);
 
-    // Simulate a loading state
-    setLoading(true);
+  // ✅ Function to refresh logs after submission
+  const refreshHabitLogs = async () => {
+    try {
+      const fetchedData = selectedHabit
+        ? await getLogsByHabit(selectedHabit.name) // ✅ Fetch only selected habit logs
+        : await getHabitLogs(); // ✅ Fetch all logs if no habit is selected
 
-    // Simulate API call / update logs
-    setTimeout(() => {
-      setLoading(false);
-
-      // ✅ Update logs correctly
-      // setHabitLogs((prevLogs) => ({
-      //   ...prevLogs,
-      //   [habit.id]: [...(prevLogs[habit.id] || []), { id: Date.now(), date: new Date().toISOString() }]
-      // }));
-
-    }, 500);
+      if (Array.isArray(fetchedData)) {
+        setHabitLogs(fetchedData);
+        setSelectedLogs(fetchedData.filter(log => log.habit_type === selectedHabit?.name));
+      } else {
+        console.error("Fetched data is not an array:", fetchedData);
+      }
+    } catch (error) {
+      console.error("Error fetching logs from DB:", error);
+    }
   };
+
+
+  // ✅ Modify updateLogsCallback to trigger database refresh instead of appending
+  const updateLogsCallback = async () => {
+    console.log("Refreshing logs after new habit entry...");
+    await new Promise(resolve => setTimeout(resolve, 500)); // ✅ Small delay before fetching logs
+    await refreshHabitLogs(); // ✅ Fetch fresh logs from DB
+};
+
+
 
   return (
     <div className="Page">
       <Header />
       <HabitHeader />
+      <h1 className="dashboard-header">Habit Tracker</h1>
 
-      <div className="centre_stage">
-        <h1 className="dashboard-header">Habit Tracker</h1>
+      {loading ? <p>Loading habits...</p> : null}
 
-        {/* ✅ Fix: Function reference instead of function call */}
-        <Button variant="default" onClick={() => handlers.open()}>
-          Open modal
-        </Button>
-
-        {/* ✅ Fix: Use SimpleGrid instead of regular div */}
-        <div className="grid-container">
-          {habits.map((habit) => (
-            <HabitTile
-              key={habit.id}
-              habit={habit}
-              onClick={() => handleOpenHabit(habit)}
-              onLog={() => onLog(habit)}
-            />
-          ))}
-        </div>
+      <div className="grid-container">
+        {habits.map((habit) => (
+          <HabitTile key={habit.id} habit={habit} onClick={() => handleOpenHabit(habit)} />
+        ))}
       </div>
 
-      {/* ✅ Ensure modal opens only when a habit is selected */}
       {selectedHabit && (
-        <HabitDrawer habit={selectedHabit} logs={selectedLogs} opened={opened} onClose={handlers.close} />
+        <HabitDrawer
+          habit={selectedHabit}
+          selectedLogs={selectedLogs}
+          opened={opened}
+          onClose={handleCloseDrawer}
+          updateLogsCallback={updateLogsCallback}
+        />
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../../index.css';
+import "../../general.css";
 
 function ProjectSnippet({ project }) {
     const { name, desc, route } = project;

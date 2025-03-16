@@ -24,7 +24,7 @@ function HabitTile({ habit, onClick, onLog }) { // ✅ Accept `onLog` as a prop
       <IconCircleDashedCheck 
         onClick={(event) => {
           event.stopPropagation(); // ✅ Prevents modal from opening
-          onLog(habit); // ✅ Calls `onLog` from `Habit.jsx`
+          // onLog(habit); // ✅ Calls `onLog` from `Habit.jsx`
         }}
         size={24} stroke={2} 
         color={"var(--success-color)"} 
