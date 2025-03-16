@@ -7,10 +7,10 @@
  *
  * Endpoints:
  * - GET  /api/habit          → Fetch all habit logs from the database.
- * - POST /api/habit/:habit_type → Log a habit entry based on habit type.
+ * - POST /api/habit/:habitType → Log a habit entry based on habit type.
  *
  * How It Works:
- * 1. The frontend sends a request to `/api/habit/:habit_type` with habit data.
+ * 1. The frontend sends a request to `/api/habit/:habitType` with habit data.
  * 2. The router logs the habit entry in `habit_log`.
  * 3. The correct habit service (`logAlcohol`, `logExercise`, etc.) is called
  *    to handle additional habit-specific logic.
@@ -27,12 +27,11 @@
 
 const express = require("express");
 const { getHabitLogsFromDB, logHabitLog } = require("../habit-api/habitService");
-const { logAlcohol } = require("../habit-api/alcoholService");
-const { logExercise } = require("../habit-api/exerciseService");
+const { logAlcohol, getAlcoholLogs } = require("../habit-api/alcoholService");
+const { logExercise, getExerciseLogs  } = require("../habit-api/exerciseService");
 const router = express.Router();
 
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') }); // Load environment variables
-
 
 // ✅ Get habit logs from database
 router.get('/', async (req, res) => {
@@ -48,37 +47,37 @@ router.get('/', async (req, res) => {
 });
 
 // ✅ Add Habit Log
-router.post('/:habit_type', async (req, res) => {
-    console.log("Habit route POST hit to log habit!")
+router.post('/:habitType', async (req, res) => {
+    console.log("Habit route POST hit to log habit!");
     console.log("Request body:", req.body);
+    const { userId, value, metric, extraData } = req.body;
+    console.log("Request body split:", userId, value, metric, extraData, "Request params", req.params);
+    const { habitType } = req.params;
+    console.log("Habit type", habitType);
     try {
-        const { habit_type } = req.params;
-        const { user_id, value, metric, extra_data } = req.body;
-
-
-        if (!user_id) {
-            return res.status(400).json({ error: "user_id is required" });
+        if (!userId) {
+            return res.status(400).json({ error: "userId is required" });
         }
 
         // ✅ Log the habit in `habit_log`
-        const log_id = await logHabitLog(user_id, habit_type, value, metric, extra_data);
-        console.log(`✅ Habit log created for user ${user_id} with ID: ${log_id}`);
+        const logId = await logHabitLog(userId, habitType, value, metric, extraData);
+        console.log(`✅ Habit log created for user ${userId} with ID: ${logId}`);
 
         let result;
 
         // ✅ Call the correct habit service based on habit type
-        switch (habit_type) {
+        switch (habitType) {
             case "alcohol":
-                result = await logAlcohol(log_id, extra_data);
+                result = await logAlcohol(logId, extraData);
                 break;
             case "exercise":
-                result = await logExercise(log_id, extra_data);
+                result = await logExercise(logId, extraData);
                 break;
             default:
                 return res.status(400).json({ error: "Invalid habit type" });
         }
 
-        res.json({ message: "Habit logged successfully", log_id, ...result });
+        res.json({ message: "Habit logged successfully", logId, ...result });
 
     } catch (error) {
         console.error("❌ Error logging habit:", error);
@@ -86,4 +85,45 @@ router.post('/:habit_type', async (req, res) => {
     }
 });
 
+// Habit-specific get routes
+router.get('/:habitType/:requestType', async (req, res) => {
+    const { habitType, requestType } = req.params;
+    console.log(`GET /api/habit/${habitType}/${requestType} endpoint hit.`);
+
+    try {
+        let response;
+        switch (habitType) {
+            case "alcohol":
+                response = await getAlcoholLogs(requestType);
+                break;
+            case "exercise":
+                response = await getExerciseLogs(requestType);
+                break;
+            default:
+                return res.status(400).json({ error: "Invalid habit type" });
+        }
+        console.log(`Fetched logs for ${habitType}:`, response);
+        res.json(response);
+
+    } catch (error) {
+        console.error("Error fetching habit logs:", error);
+        res.status(500).json({ error: "Failed to fetch habit logs" });
+    }
+});
+
+
 module.exports = router;
+
+
+/*
+Request Params { habitType: 'alcohol' } Request Body {
+    user_id: 1,
+    habitType: 'Alcohol',
+    value: 170,
+    metric: 'units',
+    extra_data: { drink_id: 2, volume_ml: 34, abv: 5 }
+  }
+
+drink id: 2 drinkName: undefined volumeML: undefined abvPerc: undefined
+
+*/

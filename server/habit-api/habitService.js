@@ -15,14 +15,14 @@ const { testDatabaseConnection } = require('../tests/testDatabaseConnection.js')
 const checkValueType = require('../utils/checkValueType');
 
 
-const logHabitLog = async (user_id, habit_type, value = null, metric = null, extra_data = {}) => {
+const logHabitLog = async (userId, habitType, value = null, metric = null, extraData = {}) => {
     await testDatabaseConnection(); // Ensure DB connection works
 
     const query = `
         INSERT INTO habit.habit_log (user_id, habit_type, value, metric, extra_data, created_at)
         VALUES ($1, $2, $3, $4, $5::jsonb, NOW()) RETURNING id;
     `;
-    const values = [user_id, habit_type, value, metric, JSON.stringify(extra_data)];
+    const values = [userId, habitType, value, metric, JSON.stringify(extraData)];
     
     try {
         const response = await db.query(query, values);
@@ -44,8 +44,8 @@ const getHabitLogsFromDB = async () => {
     // console.log(`Executing query: ${query}`);
     try {
         const response = await db.query(query);
-        // checkValueType(response);
-        // console.log('Response Length:', response.length);
+        checkValueType(response);
+        console.log('Response Length:', response.length);
         return response;
     } catch (error) {
         console.error("Error in fetching habit logs from database:", error);

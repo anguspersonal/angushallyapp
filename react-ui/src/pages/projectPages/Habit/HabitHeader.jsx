@@ -4,6 +4,12 @@ import { IconPlus, IconSettings, IconHome } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
 function HabitHeader({ onButtonClick }) {
+
+
+  function onButtonClick(x) {
+    console.log(x);
+  }
+
   return (
     <Group position="apart" px="md" py="sm" style={{ borderBottom: "1px solid #ddd" }}>
       {/* Home Button (Logo) */}

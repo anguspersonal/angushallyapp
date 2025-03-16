@@ -1,5 +1,6 @@
 import React from 'react';
 import '../index.css';
+import "../general.css";
 import { Link } from 'react-router-dom';
 
 function Snippet(props) {
