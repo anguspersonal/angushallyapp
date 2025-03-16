@@ -72,7 +72,7 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSe
             }
 
             const data = await response.json();
-            // console.log("✅ API Response:", data);
+            console.log("✅ API Response:", data);
 
             if (data.places) {
                 setSearchResults(data.places);

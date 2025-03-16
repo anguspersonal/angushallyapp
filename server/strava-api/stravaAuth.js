@@ -5,7 +5,7 @@ dotenv.config();
 
 //DOTENV MUST BE BEFORE DB
 const db = require("../db.js");
-const { testDatabaseConnection } = require("../testDatabaseConnection.js");
+const { testDatabaseConnection } = require("../tests/testDatabaseConnection.js");
 
 
 

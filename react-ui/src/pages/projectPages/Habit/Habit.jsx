@@ -1,87 +1,141 @@
-import { addHabitLog, getHabitLogs } from "./habit";
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import "../../../index.css";
+import React, { useState, useEffect, useRef } from "react";
+import { Button } from "@mantine/core";
 import Header from "../../../components/Header";
-import '@mantine/charts/styles.css';
-import { Table, table } from '@mantine/core';
-import { LineChart } from '@mantine/charts';
-import { useMantineTheme } from '@mantine/core';
-import { checkValueType } from "../../../utils/checkValueType";
-import "../Strava/strava.css";
+import HabitHeader from "./HabitHeader";
+import HabitTile from "./HabitTile";
+import HabitDrawer from "./HabitDrawer";
+import { useDisclosure } from "@mantine/hooks";
+import { getHabitLogs, getLogsByHabit } from "./habit";
+import "../../../index.css";
 
 function Habit() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false); 
+  const [habitLogs, setHabitLogs] = useState([]);
+  const [selectedHabit, setSelectedHabit] = useState(null);
+  const [selectedLogs, setSelectedLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [opened, handlers] = useDisclosure(false);
+  const isInitialMount = useRef(true);
 
-  const loadData = async () => {
+  // Load all habit logs once on mount
+  useEffect(() => {
+    const loadHabitLogs = async () => {
+      try {
+        const fetchedData = await getHabitLogs();
+        if (Array.isArray(fetchedData)) {
+          setHabitLogs(fetchedData);
+        } else {
+          console.error("Fetched data is not an array:", fetchedData);
+        }
+      } catch (error) {
+        console.error("Error loading Habit data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isInitialMount.current) {
+      loadHabitLogs();
+      isInitialMount.current = false;
+    }
+  }, []);
+
+  // Define habits for tiles
+  const habits = [
+    { id: 1, name: "alcohol", displayName: "Alcohol", icon: "🍷", progress: 60 },
+    { id: 2, name: "exercise", displayName: "Exercise", icon: "🏋️", progress: 80 },
+    { id: 3, name: "coding", displayName: "Coding", icon: "💻", progress: 90 },
+  ];
+
+  // 🔹 Ensure selectedLogs updates properly when selectedHabit changes
+  useEffect(() => {
+    if (selectedHabit && selectedLogs.length === 0) {
+      console.log(`Filtering logs for habit: ${selectedHabit.name}`);
+      setSelectedLogs(habitLogs.filter(log => log.habit_type === selectedHabit.name));
+    }
+  }, [selectedHabit, habitLogs]);
+  
+
+
+  // ✅ Function to open a habit and filter its logs
+  const handleOpenHabit = async (habit) => {
+    console.log(`Opening Habit: ${habit.displayName}`);
+  
+    // ✅ Fetch specific logs for the selected habit
     try {
-      const fetchedData = await getHabitLogs();
-      setData(fetchedData);
-      // checkValueType(fetchedData);
-      // console.log('Habit data:', fetchedData);
+      const fetchedLogs = await getLogsByHabit(habit.name);
+      if (Array.isArray(fetchedLogs)) {
+        setSelectedLogs(fetchedLogs); // ✅ Ensure logs are fresh before opening drawer
+      } else {
+        console.error("Fetched data is not an array:", fetchedLogs);
+      }
     } catch (error) {
-      console.error('Error loading Habit data:', error);
+      console.error(`Error fetching logs for ${habit.name}:`, error);
+    }
+  
+    setSelectedHabit(habit);
+    handlers.open();
+  };
+  
+
+  const handleCloseDrawer = () => {
+    handlers.close();
+    setSelectedHabit(null); // ✅ Ensure habit resets on close
+  };
+
+
+  // ✅ Function to refresh logs after submission
+  const refreshHabitLogs = async () => {
+    try {
+      const fetchedData = selectedHabit
+        ? await getLogsByHabit(selectedHabit.name) // ✅ Fetch only selected habit logs
+        : await getHabitLogs(); // ✅ Fetch all logs if no habit is selected
+
+      if (Array.isArray(fetchedData)) {
+        setHabitLogs(fetchedData);
+        setSelectedLogs(fetchedData.filter(log => log.habit_type === selectedHabit?.name));
+      } else {
+        console.error("Fetched data is not an array:", fetchedData);
+      }
+    } catch (error) {
+      console.error("Error fetching logs from DB:", error);
     }
   };
 
-  useEffect(() => {
-    loadData();
-  }, []); 
 
-  const testHabitData = {
-    type: 'walking',
-    duration: 30,
-    distance: 5,
-    date: '2021-09-01',
-  }
+  // ✅ Modify updateLogsCallback to trigger database refresh instead of appending
+  const updateLogsCallback = async () => {
+    console.log("Refreshing logs after new habit entry...");
+    await new Promise(resolve => setTimeout(resolve, 500)); // ✅ Small delay before fetching logs
+    await refreshHabitLogs(); // ✅ Fetch fresh logs from DB
+};
 
-  const handleClick = async () => {
-    setLoading(true); // Set loading state to true
-    await addHabitLog(testHabitData);
-    setLoading(false); // Set loading state to false once the response is obtained
-    loadData(); // Reload data after adding a new habit log
-  }
+
 
   return (
     <div className="Page">
       <Header />
-      <h1>Habit Tracker</h1>
-      <div className="habit">
-        <button onClick={handleClick} disabled={loading}>
-          {loading ? 'Adding...' : 'Add'}
-        </button>
+      <HabitHeader />
+      <h1 className="dashboard-header">Habit Tracker</h1>
+
+      {loading ? <p>Loading habits...</p> : null}
+
+      <div className="grid-container">
+        {habits.map((habit) => (
+          <HabitTile key={habit.id} habit={habit} onClick={() => handleOpenHabit(habit)} />
+        ))}
       </div>
-<br />
-      <HabitTable habitLogs={data} />
+
+      {selectedHabit && (
+        <HabitDrawer
+          habit={selectedHabit}
+          selectedLogs={selectedLogs}
+          opened={opened}
+          onClose={handleCloseDrawer}
+          updateLogsCallback={updateLogsCallback}
+        />
+      )}
     </div>
   );
 }
 
 export default Habit;
-
-
-// Create Habit Table
-function HabitTable({ habitLogs }) {
-  return ( 
-     <section className="scrollable-table">
-                <Table>
-                    <Table.Thead>
-                        <Table.Tr>
-                            <Table.Th>Habit</Table.Th>
-                            <Table.Th>Value</Table.Th>
-                        </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                        {habitLogs.map(log => (
-                            <Table.Tr key={log.id}>
-                                <Table.Td>{log.id }</Table.Td>
-                                <Table.Td>{log.created_at }</Table.Td>
-
-                            </Table.Tr>
-                        ))}
-                    </Table.Tbody>
-                </Table>
-            </section>
-  )
-}

@@ -6,7 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // console.log("DEBUG: DATABASE_URL is", process.env.DATABASE_URL);
 
-const db = require('./db.js'); // Database connection module
+const db = require('../db.js'); // Database connection module
 
 // Function to test database connection
 const testDatabaseConnection = async () => {

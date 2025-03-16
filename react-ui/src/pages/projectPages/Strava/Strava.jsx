@@ -64,8 +64,9 @@ export default function Strava() {
                         yAxisLabel="Distance (m)"
                     />
                 </section>
-            </div>
         </div>
+        </div>
+
     );
 }
 

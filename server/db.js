@@ -10,7 +10,7 @@ Usage Example: const { query, select } = require('./db');
 
 References: - PostgreSQL Node.js client documentation: https://node-postgres.com/
 
-Author: <Your Name> Date: <Date> */
+Author: Angus Hally Date: 2025-02-28 */
 
 const dotenv = require("dotenv");
 
@@ -35,19 +35,25 @@ const query = async (text, params = [], retries = 3) => {
   console.log('DB Executing query:', text, params);
   try {
     const res = await client.query(text, params);
-    return res.rows;  // ✅ Only returning rows, NOT an object with { rows: [...] }
+    return res.rows;  // ✅ Return just the rows
   } catch (error) {
     console.error('Database query error:', error);
     if (retries > 0) {
       console.log(`Retrying query (${retries} retries left)...`);
       return query(text, params, retries - 1);
-    } else {
-      throw error;
     }
+    throw error;
   } finally {
     client.release();
   }
 };
+
+// ✅ Utility function to end the pool
+const end = () => {
+  console.log('Closing PostgreSQL pool...');
+  return pool.end();
+};
+
 
 // ✅ High-level function for selecting records (uses `query()`)
 const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
@@ -81,4 +87,4 @@ const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
   return await query(queryText, queryParams);
 };
 
-module.exports = { query, select };
+module.exports = { query, end, select };

@@ -54,26 +54,17 @@ app.use('/api/contact', contactLimiter, contactRoute); // 👈 Applied only to c
 const dbRoute = require('./routes/dbRoute'); // Import the database route
 app.use('/api/db', dbRoute); // Mount the route
 
-// ✅ Google Places API proxy route
-const googlePlacesProxyRoute = require('./routes/googlePlacesProxy');
-app.use(googlePlacesProxyRoute);
-
 // ✅ Hygiene score route
 const hygieneScoreRoute = require('./routes/hygieneScoreRoute');
-app.use(hygieneScoreRoute);
+app.use('/api/hygieneScoreRoute',hygieneScoreRoute);
 
 // ✅ Strava API routes
 const stravaRoute = require('./routes/stravaRoute');
-app.use(stravaRoute);
+app.use('/api/strava',stravaRoute);
 
 // ✅ Habit API routes
 const habitRoute = require('./routes/habitRoute');
-app.use(habitRoute);
-
-// ✅ Alcohol API routes
-const alcoholRoute = require("./routes/alcohol");
-app.use("/api/alcohol", alcoholRoute);
-
+app.use('/api/habit', habitRoute);
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {
