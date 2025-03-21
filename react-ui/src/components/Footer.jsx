@@ -14,7 +14,7 @@ function Footer() {
               This is the local enviroment, Edit <code>src/App.js</code> and save to reload.
             </p>
         }
-          <p>© {currentYear} Angus Hally. All rights reserved. (...not sure what this means, but sounds legit)</p>
+          <p>© {currentYear} Angus Hally. All rights reserved.</p>
         </div>
     );
 }

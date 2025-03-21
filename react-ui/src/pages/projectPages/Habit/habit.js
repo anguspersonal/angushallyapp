@@ -29,7 +29,7 @@ export const getHabitLogs = async () => {
     }
 };
 
-// ✅ Get Logs for a Specific Habit (NEW FUNCTION)
+// ✅ Get Logs for a Specific Habit
 export const getLogsByHabit = async (habitType) => {
     console.log(`Fetching logs for habit: ${habitType}`);
     try {
