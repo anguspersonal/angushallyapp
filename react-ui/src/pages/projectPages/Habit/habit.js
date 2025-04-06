@@ -8,7 +8,7 @@ export const addHabitLog = async (habitLog, habitType) => {
         
         // ✅ Append the habit type to response data so that we can use it in the frontend
         response.data.habit_type = habitType;
-        console.log('Respons:', response.data);
+        console.log('Response:', response.data);
 
         return response.data;
     } catch (error) {
@@ -68,6 +68,18 @@ export const getDrinkCatalog = async () => {
         return response.data;
     } catch (error) {
         console.error('Error fetching drink catalog:', error);
+        throw error;
+    }
+};
+
+export const getAggregateStats = async (habitType, period = 'week', metrics = ['sum', 'avg', 'min', 'max', 'stddev']) => {
+    try {
+        const response = await axios.get(`/api/habit/aggregate/${habitType}`, {
+            params: { period, metrics }
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching aggregate stats for ${habitType}:`, error);
         throw error;
     }
 };

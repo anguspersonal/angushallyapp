@@ -53,10 +53,61 @@ const getHabitLogsFromDB = async () => {
     }
 };
 
+async function getHabitAggregates(period, metrics) {
+    const periodCondition = getPeriodCondition(period);
+    
+    const query = `
+        SELECT 
+            ${buildMetricSelect(metrics)}
+        FROM habit.habit_log
+        WHERE ${periodCondition}
+    `;
+
+    const result = await db.query(query);
+    return formatAggregateResult(result[0], metrics);
+}
+
+function getPeriodCondition(period) {
+    switch (period) {
+        case 'day':
+            return "created_at >= CURRENT_DATE";
+        case 'week':
+            return "created_at >= DATE_TRUNC('week', CURRENT_DATE)";
+        case 'month':
+            return "created_at >= DATE_TRUNC('month', CURRENT_DATE)";
+        case 'year':
+            return "created_at >= DATE_TRUNC('year', CURRENT_DATE)";
+        case 'all':
+            return "1=1";
+        default:
+            throw new Error(`Invalid period: ${period}`);
+    }
+}
+
+function buildMetricSelect(metrics) {
+    const metricFunctions = {
+        sum: 'SUM(value)',
+        avg: 'AVG(value)',
+        min: 'MIN(value)',
+        max: 'MAX(value)',
+        stddev: 'STDDEV(value)'
+    };
+
+    return metrics.map(metric => `${metricFunctions[metric]} as ${metric}`).join(', ');
+}
+
+function formatAggregateResult(result, metrics) {
+    return metrics.reduce((acc, metric) => {
+        acc[metric] = parseFloat(result[metric]) || 0;
+        return acc;
+    }, {});
+}
+
 // Export multiple modules using named exports
 module.exports = {
     logHabitLog,
-    getHabitLogsFromDB
+    getHabitLogsFromDB,
+    getHabitAggregates
 };
 
 // test module by calling it
