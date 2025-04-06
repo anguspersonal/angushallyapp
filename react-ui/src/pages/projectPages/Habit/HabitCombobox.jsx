@@ -1,77 +1,99 @@
 import React, { useState, useEffect } from "react";
-import { Combobox, InputBase, useCombobox } from "@mantine/core";
+import {
+  Combobox,
+  InputBase,
+  useCombobox,
+  Group,
+  Text,
+  Badge
+} from "@mantine/core";
 
-function HabitCombobox({ options, value, onChange, placeholder = "Pick an option", resetCombobox }) {
+function HabitCombobox({ options = [], value = [], onChange, placeholder = "Pick drinks", resetCombobox }) {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
   const [search, setSearch] = useState("");
+  const [selectedDrinks, setSelectedDrinks] = useState(value);
 
-  // ✅ Filter & sort items before grouping
-  const filteredOptions = options
-    .filter((option) => !option.archived && option.catalog_type === "generic") // ✅ Exclude archived & only keep "generic"
-    .sort((a, b) => b.count - a.count); // ✅ Sort by count (highest first)
+  // ✅ Ensure options is always an array
+  const filteredOptions = Array.isArray(options)
+    ? options.filter((option) => !option.archived && option.catalog_type === "generic")
+    : [];
 
-  // ✅ Group options by `drink_type`
+  // ✅ Group by drink_type
   const groupedOptions = filteredOptions.reduce((acc, option) => {
-    const drinkType = option.drink_type || "Other"; // ✅ Ensure drink_type is always a string
-    if (!acc[drinkType]) {
-      acc[drinkType] = [];
-    }
-    acc[drinkType].push(option);
+    const group = option.drink_type || "Other";
+    if (!acc[group]) acc[group] = [];
+    acc[group].push(option);
     return acc;
   }, {});
 
-  // ✅ Filter options based on search input
-  const filteredGroups = Object.keys(groupedOptions).map((group) => {
-    const groupOptions = groupedOptions[group].filter((option) =>
-      option.name.toLowerCase().includes(search.toLowerCase().trim())
-    );
+  // ✅ Apply search filter to each group
+  const filteredGroups = Object.entries(groupedOptions).map(([group, opts]) => ({
+    label: group,
+    options: opts.filter((opt) =>
+      opt.name.toLowerCase().includes(search.toLowerCase().trim())
+    ),
+  }));
 
-    return { label: String(group), options: groupOptions }; // ✅ Convert to string to prevent React error
-  });
+  const totalOptions = filteredGroups.reduce((sum, g) => sum + g.options.length, 0);
 
-  // ✅ Count total options to check if "Nothing found" should be displayed
-  const totalOptions = filteredGroups.reduce((acc, group) => acc + group.options.length, 0);
-
-  // ✅ Generate grouped dropdown options
-  const groups = filteredGroups.map((group) => {
-    const optionsList = group.options.map((option) => (
-      <Combobox.Option value={option.id.toString()} key={option.id}>
-        {option.icon} {option.name} {/* ✅ Display icon + name */}
-      </Combobox.Option>
-    ));
-
-    return (
-      <Combobox.Group label={String(group.label)} key={group.label}> {/* ✅ Convert to string */}
-        {optionsList}
-      </Combobox.Group>
-    );
-  });
-
-  // ✅ Reset the combobox state
-  const handleReset = () => {
-    console.log("Resetting combobox");
-    setSearch("");
-    combobox.resetSelectedOption();
+  // ✅ Add a new drink to selected list
+  const addDrink = (option) => {
+    if (!selectedDrinks.some((d) => d.id === option.id)) {
+      const newDrink = {
+        id: option.id,
+        name: option.name,
+        icon: option.icon,
+        group: option.drink_type || "Other",
+        volumeML: option.default_volume_ml || 250,
+        abvPerc: option.default_abv || 12,
+      };
+      const updated = [...selectedDrinks, newDrink];
+      setSelectedDrinks(updated);
+      onChange(updated); // send full array to parent
+    }
   };
 
-  // Call the reset function when the component mounts
+  // ✅ Handle Creatable Drink
+  const handleCreate = (query) => {
+    const id = `custom-${Date.now()}`;
+    const newDrink = {
+      id,
+      name: query,
+      icon: "🍹",
+      group: "Custom",
+      volumeML: 250,
+      abvPerc: 12,
+    };
+    const updated = [...selectedDrinks, newDrink];
+    setSelectedDrinks(updated);
+    onChange(updated);
+    setSearch("");
+    combobox.closeDropdown();
+  };
+
+  // ✅ Reset support
   useEffect(() => {
     if (resetCombobox) {
-      resetCombobox(handleReset);
+      resetCombobox(() => {
+        setSelectedDrinks([]);
+        setSearch("");
+        combobox.resetSelectedOption();
+      });
     }
   }, [resetCombobox]);
 
   return (
     <Combobox
       store={combobox}
-      withinPortal={false}
       onOptionSubmit={(val) => {
         const selectedOption = filteredOptions.find((option) => option.id.toString() === val);
-        onChange(selectedOption);
-        setSearch(selectedOption ? selectedOption.name : "");
+        if (selectedOption) {
+          onChange(selectedOption);
+        }
+        setSearch(""); // Reset search
         combobox.closeDropdown();
       }}
     >
@@ -84,13 +106,31 @@ function HabitCombobox({ options, value, onChange, placeholder = "Pick an option
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}
         >
-          {value ? `${value.icon} ${value.name}` : placeholder}
+          {placeholder}
         </InputBase>
+
       </Combobox.Target>
 
       <Combobox.Dropdown>
+        <Combobox.Search value={search} onChange={(e) => setSearch(e.currentTarget.value)} placeholder="Search or create…" />
         <Combobox.Options>
-          {totalOptions > 0 ? groups : <Combobox.Empty>Nothing found</Combobox.Empty>}
+          {filteredGroups.map((group) => (
+            <Combobox.Group label={group.label} key={group.label}>
+              {group.options.map((option) => (
+                <Combobox.Option key={option.id} value={option.id.toString()}>
+                  {option.icon} {option.name}
+                </Combobox.Option>
+              ))}
+            </Combobox.Group>
+          ))}
+
+          {search.trim() && !filteredOptions.some((o) =>
+            o.name.toLowerCase() === search.trim().toLowerCase()
+          ) && (
+              <Combobox.Option value="__create">+ Create “{search.trim()}”</Combobox.Option>
+            )}
+
+          {totalOptions === 0 && <Combobox.Empty>Nothing found</Combobox.Empty>}
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>

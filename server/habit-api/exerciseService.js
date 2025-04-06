@@ -63,4 +63,55 @@ async function getExerciseLogs(requestType) {
     }
 }
 
-module.exports = { logExercise, getExerciseLogs };
+async function getExerciseAggregates(period, metrics) {
+    const periodCondition = getPeriodCondition(period);
+    
+    const query = `
+        SELECT 
+            ${buildMetricSelect(metrics)}
+        FROM habit.exercises e
+        JOIN habit.habit_log hl ON e.log_id = hl.id
+        WHERE ${periodCondition}
+    `;
+
+    const result = await db.query(query);
+    return formatAggregateResult(result[0], metrics);
+}
+
+function getPeriodCondition(period) {
+    switch (period) {
+        case 'day':
+            return "hl.created_at >= CURRENT_DATE";
+        case 'week':
+            return "hl.created_at >= DATE_TRUNC('week', CURRENT_DATE)";
+        case 'month':
+            return "hl.created_at >= DATE_TRUNC('month', CURRENT_DATE)";
+        case 'year':
+            return "hl.created_at >= DATE_TRUNC('year', CURRENT_DATE)";
+        case 'all':
+            return "1=1";
+        default:
+            throw new Error(`Invalid period: ${period}`);
+    }
+}
+
+function buildMetricSelect(metrics) {
+    const metricFunctions = {
+        sum: 'SUM(e.distance_km)',
+        avg: 'AVG(e.distance_km)',
+        min: 'MIN(e.distance_km)',
+        max: 'MAX(e.distance_km)',
+        stddev: 'STDDEV(e.distance_km)'
+    };
+
+    return metrics.map(metric => `${metricFunctions[metric]} as ${metric}`).join(', ');
+}
+
+function formatAggregateResult(result, metrics) {
+    return metrics.reduce((acc, metric) => {
+        acc[metric] = parseFloat(result[metric]) || 0;
+        return acc;
+    }, {});
+}
+
+module.exports = { logExercise, getExerciseLogs, getExerciseAggregates };

@@ -135,3 +135,29 @@ The backend synchronizes data from the Food Hygiene Rating Scheme (FHRS) API and
 - Simplified instructions for deploying and running the app locally.
 
 This updated README ensures the documentation reflects your project's current state and provides clear instructions for contributors.
+
+
+
+--- 
+
+### Database Query Behavior
+
+#### Important Note on db.query
+The db.query function in this application is implemented in db.js using the PostgreSQL pg library.
+The db.query function has been customized to return only the rows property of the query result.
+
+### Example Usage
+
+// Correct Usage
+const response = await db.query("SELECT * FROM habit.drink_catalog;");
+console.log(response); // Logs the array of rows directly
+
+// Incorrect Usage
+const response = await db.query("SELECT * FROM habit.drink_catalog;");
+console.log(response.rows); // ❌ This will cause an error because `.rows` is not available
+
+Why This Matters:
+This approach simplifies the application code by eliminating the need to access the `.rows` property explicitly, reducing boilerplate code. 
+It also ensures consistency across all database queries, making the codebase easier to maintain and less prone to errors caused by incorrect property access.
+This simplifies the application code and ensures consistency across all database queries.
+You can directly use the response from db.query as an array of rows.
