@@ -27,8 +27,8 @@
 
 const express = require("express");
 const { getHabitLogsFromDB, logHabitLog } = require("../habit-api/habitService");
-const { logAlcohol, getAlcoholLogs } = require("../habit-api/alcoholService");
-const { logExercise, getExerciseLogs  } = require("../habit-api/exerciseService");
+const { logAlcohol, getAlcoholLogs, getDrinkCatalog, getAlcoholAggregates } = require("../habit-api/alcoholService");
+const { logExercise, getExerciseLogs } = require("../habit-api/exerciseService");
 const { getAggregateStats } = require("../habit-api/aggregateService");
 const router = express.Router();
 
@@ -86,6 +86,64 @@ router.post('/:habitType', async (req, res) => {
     }
 });
 
+// Add aggregate stats route
+router.get('/aggregate/:habitType', async (req, res) => {
+    try {
+        const { habitType } = req.params;
+        const { period, metrics = 'sum,avg,min,max,stddev' } = req.query;
+        const metricsArray = metrics.split(',');
+
+        console.log('Aggregate request received:', {
+            habitType,
+            period,
+            metrics: metricsArray,
+            headers: req.headers,
+            url: req.url
+        });
+
+        // Validate inputs
+        if (!habitType || !period) {
+            console.error('Missing required parameters:', { habitType, period });
+            return res.status(400).json({ error: 'Missing required parameters' });
+        }
+
+        const validPeriods = ['day', 'week', 'month', 'year', 'all'];
+        if (!validPeriods.includes(period)) {
+            console.error('Invalid period:', period);
+            return res.status(400).json({ error: 'Invalid period' });
+        }
+
+        // Get the appropriate service based on habit type
+        let aggregateFunction;
+        switch (habitType.toLowerCase()) {  // Convert to lowercase for case-insensitive comparison
+            case 'alcohol':
+                console.log('Using alcohol service for aggregation');
+                aggregateFunction = getAlcoholAggregates;
+                break;
+            case 'exercise':
+                console.log('Using exercise service for aggregation');
+                aggregateFunction = getExerciseAggregates;
+                break;
+            default:
+                console.log('Using default habit service for aggregation');
+                aggregateFunction = getHabitAggregates;
+        }
+
+        console.log('Calling aggregate function with:', { period, metrics: metricsArray });
+        const stats = await aggregateFunction(period, metricsArray);
+        console.log('Aggregate function returned:', stats);
+
+        res.json(stats);
+    } catch (error) {
+        console.error('Error in aggregate route:', error);
+        res.status(500).json({ 
+            error: 'Failed to get aggregate stats',
+            details: error.message,
+            stack: error.stack
+        });
+    }
+});
+
 // Habit-specific get routes
 router.get('/:habitType/:requestType', async (req, res) => {
     const { habitType, requestType } = req.params;
@@ -95,7 +153,15 @@ router.get('/:habitType/:requestType', async (req, res) => {
         let response;
         switch (habitType) {
             case "alcohol":
-                response = await getAlcoholLogs(requestType);
+                if (requestType === "drinkCatalog") {
+                    response = await getDrinkCatalog();
+                } else if (requestType === "aggregates") {
+                    response = await getAlcoholAggregates(req.query.period, req.query.metrics);
+                } else {
+                    // Handle log-related requests with period parameter
+                    const period = requestType === 'logs' ? 'all' : requestType;
+                    response = await getAlcoholLogs(period);
+                }
                 break;
             case "exercise":
                 response = await getExerciseLogs(requestType);
@@ -103,68 +169,10 @@ router.get('/:habitType/:requestType', async (req, res) => {
             default:
                 return res.status(400).json({ error: "Invalid habit type" });
         }
-        //console.log(`Fetched logs for ${habitType}:`, response);
         res.json(response);
-
     } catch (error) {
-        console.error("Error fetching habit logs:", error);
-        res.status(500).json({ error: "Failed to fetch habit logs" });
-    }
-});
-
-// New route in habitRoute.js
-router.get('/aggregate/:habitType', async (req, res) => {
-    try {
-        const { habitType } = req.params;
-        const { period, metrics } = req.query;
-        
-        const stats = await getAggregateStats(habitType, period, metrics);
-        res.json(stats);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Add aggregate stats route
-router.get('/aggregate', async (req, res) => {
-    try {
-        const { habitType, period, metrics = 'sum,avg,min,max,stddev' } = req.query;
-        const metricsArray = metrics.split(',');
-
-        console.log('Aggregate request:', { habitType, period, metrics: metricsArray });
-
-        // Validate inputs
-        if (!habitType || !period) {
-            return res.status(400).json({ error: 'Missing required parameters' });
-        }
-
-        const validPeriods = ['day', 'week', 'month', 'year', 'all'];
-        if (!validPeriods.includes(period)) {
-            return res.status(400).json({ error: 'Invalid period' });
-        }
-
-        // Get the appropriate service based on habit type
-        let aggregateFunction;
-        switch (habitType) {
-            case 'alcohol':
-                console.log('Using alcohol service');
-                aggregateFunction = alcoholService.getAlcoholAggregates;
-                break;
-            case 'exercise':
-                console.log('Using exercise service');
-                aggregateFunction = exerciseService.getExerciseAggregates;
-                break;
-            default:
-                console.log('Using default habit service');
-                aggregateFunction = habitService.getHabitAggregates;
-        }
-
-        const stats = await aggregateFunction(period, metricsArray);
-        console.log('Stats result:', stats);
-        res.json(stats);
-    } catch (error) {
-        console.error('Error getting aggregate stats:', error);
-        res.status(500).json({ error: 'Failed to get aggregate stats' });
+        console.error("Error fetching habit data:", error);
+        res.status(500).json({ error: "Failed to fetch habit data" });
     }
 });
 

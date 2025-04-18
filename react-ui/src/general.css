@@ -125,28 +125,58 @@ nav a:hover {
 
 /* ✅ Header */
 .Header {
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin-bottom: 1em;
-    width: 100%;
-    z-index: 1000;
-    padding: 0.1em 1em;
-    color: white;
-    height: var(--header-height);
-    background-color: var(--secondary-color);
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    padding: 1em;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
 }
 
-.Header .row {
+.Header nav {
     display: flex;
-    align-items: center;
-    justify-content: right;
+    gap: 2em;
+    margin-left: auto;
+}
+
+.Header nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.Header nav a:hover {
+    color: var(--primary-color);
+}
+
+.Header nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.Header nav a:hover::after {
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    .Header {
+        padding: 0.5em;
+    }
+    
+    .Header nav {
+        display: none;
+    }
 }
 
 /* ✅ Footer */

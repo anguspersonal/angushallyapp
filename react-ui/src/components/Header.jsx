@@ -1,15 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Menu } from '@mantine/core';
+import { Menu, Box } from '@mantine/core';
 import {
   IconUser,
   IconArticle,
   IconMail,
   IconRocket,
   IconMenu2,
+  IconFolder,
+  IconTestPipe
 } from '@tabler/icons-react';
 import { useMediaQuery, useMounted } from '@mantine/hooks';
-import '../index.css';
 import '../general.css';
 
 function Header() {
@@ -17,10 +18,43 @@ function Header() {
   const mounted = useMounted();
 
   return (
-    <div className="Header">
-      <Link to="/">
-        <img src="/AH-logo-no-background.ico" id="headerlogo" alt="AH Logo" />
-      </Link>
+    <Box
+      className="Header"
+      sx={(theme) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '1em',
+        minHeight: '80px',
+        position: 'relative',
+        width: '100%',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        [`@media (max-width: ${theme.breakpoints.sm})`]: {
+          padding: '0.5em',
+          minHeight: '60px'
+        }
+      })}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Link to="/">
+          <img 
+            src="/AH-logo-no-background.ico" 
+            alt="AH Logo" 
+            style={{
+              height: 'clamp(40px, 5vw, 60px)',
+              width: 'auto',
+              transition: 'height 0.3s ease'
+            }}
+          />
+        </Link>
+      </Box>
 
       {!mounted ? null : isPhoneSize ? (
         <Menu
@@ -31,7 +65,7 @@ function Header() {
           transition="pop"
           withinPortal
           trigger="click"
-          style={{ marginRight: '2em' }}
+          style={{ marginLeft: 'auto' }}
         >
           <Menu.Target>
             <div style={{ cursor: 'pointer' }}>
@@ -41,7 +75,7 @@ function Header() {
 
           <Menu.Dropdown tabIndex={0}>
             <Menu.Item
-              leftSection={<IconRocket size={18} />}
+              leftSection={<IconFolder size={18} />}
               component={Link}
               to="/projects"
             >
@@ -65,25 +99,32 @@ function Header() {
             </Menu.Item>
 
             <Menu.Item
-              leftSection={<IconMail size={18} />}
+              leftSection={<IconRocket size={18} />}
               component={Link}
-              to="/contact"
+              to="/collab"
             >
-              Contact
+              Collab
             </Menu.Item>
 
+            <Menu.Item
+              leftSection={<IconTestPipe size={18} />}
+              component={Link}
+              to="/test"
+            >
+              Test Page
+            </Menu.Item>
           </Menu.Dropdown>
         </Menu>
       ) : (
-        <nav>
+        <nav style={{ marginLeft: 'auto' }}>
           <Link to="/projects">Projects</Link>
           <Link to="/blog">Blog</Link>
           <Link to="/about">About</Link>
-          <Link to="/contact">Contact</Link>
-
+          <Link to="/collab">Collab</Link>
+          <Link to="/test">Test</Link>
         </nav>
       )}
-    </div>
+    </Box>
   );
 }
 

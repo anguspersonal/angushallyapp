@@ -103,78 +103,81 @@ async function logAlcohol(logId, extraData) {
 }
 
 /**
- * Fetches alcohol logs based on the request type.
+ * Fetches alcohol logs for a given time period.
+ * Default period is 'week' if not specified.
  *
- * @param {string} requestType - The type of logs to fetch (e.g., "thisWeek", "today", "drinkCatalog", "logs").
- * @returns {Array} - Array of alcohol logs or drink catalog entries.
+ * @param {string} [period='week'] - The time period to fetch logs for:
+ *   - "day": Today's logs
+ *   - "week": This week's logs
+ *   - "month": This month's logs
+ *   - "year": This year's logs
+ *   - "all": All logs
+ * @returns {Array} - Array of alcohol log entries
  */
-async function getAlcoholLogs(requestType) {
+async function getAlcoholLogs(period = 'week') {
     try {
-        // ✅ Test the database connection before proceeding
         await testDatabaseConnection();
 
-        let response;
+        const periodCondition = getPeriodCondition(period);
+        
+        const query = `
+            SELECT 
+                id,
+                drink_name,
+                volume_ml,
+                abv_percent,
+                count,
+                units,
+                created_at
+            FROM habit.alcohol
+            WHERE ${periodCondition}
+            ORDER BY created_at DESC;
+        `;
 
-        switch (requestType) {
-            case "thisWeek":
-                // console.log("Fetching alcohol logs for this week...");
-                // ✅ Fetch alcohol logs for this week
-                response = await db.query(`
-                    SELECT a.*, hl.user_id, hl.habit_type 
-                    FROM habit.alcohol a
-                    JOIN habit.habit_log hl ON a.log_id = hl.id
-                    WHERE a.created_at >= DATE_TRUNC('week', CURRENT_DATE)
-                    ORDER BY a.created_at DESC; -- ✅ Ensure latest logs appear first
-                `);
-                break;
-
-            case "today":
-                // console.log("Fetching alcohol logs for today...");
-                // ✅ Fetch alcohol logs for today
-                response = await db.query(`
-                    SELECT a.*, hl.user_id, hl.habit_type 
-                    FROM habit.alcohol a
-                    JOIN habit.habit_log hl ON a.log_id = hl.id
-                    WHERE a.created_at >= CURRENT_DATE
-                    ORDER BY a.created_at DESC;
-                `);
-                break;
-
-            case "drinkCatalog":
-                // console.log("Fetching drink catalog...");
-                response = await db.query(`
-                    SELECT * FROM habit.drink_catalog ORDER BY count DESC;
-                `);
-                // console.log("Drink catalog response:", response);
-                break;
-
-            case "logs":
-                // console.log("Fetching all alcohol logs...");
-                // ✅ Fetch all alcohol logs
-                response = await db.query(`
-                    SELECT a.*, hl.user_id, hl.habit_type 
-                    FROM habit.alcohol a
-                    JOIN habit.habit_log hl ON a.log_id = hl.id
-                    ORDER BY a.created_at DESC; -- ✅ Ensure latest logs appear first
-                `);
-                break;
-
-            default:
-                // ❌ Handle invalid requestType explicitly
-                throw new Error(`Invalid requestType: ${requestType}`);
-        }
-
-        // ✅ Log the response for debugging
-        // if (response) {
-        //     console.log(`Fetched ${response.length} rows for requestType: ${requestType}`);
-        // } else {
-        //     console.log(`No rows found for requestType: ${requestType}`);
-        // }
-
-        return response || []; // ✅ Return rows or an empty array if no rows are found
-
+        const response = await db.query(query);
+        return response || [];
     } catch (error) {
         console.error("❌ Error in getAlcoholLogs:", error);
+        throw error;
+    }
+}
+
+/**
+ * Fetches the drink catalog with available drinks.
+ *
+ * @returns {Array} - Array of drink catalog entries with all required fields for the combobox
+ */
+async function getDrinkCatalog() {
+    try {
+        console.log('Starting getDrinkCatalog...');
+        await testDatabaseConnection();
+        
+        const query = `
+            SELECT 
+                id,
+                name,
+                default_volume_ml as default_volume_ml,
+                default_abv_percent as default_abv,
+                COALESCE(icon, '🍺') as icon,
+                COALESCE(drink_type, 'Other') as drink_type,
+                COALESCE(catalog_type, 'generic') as catalog_type,
+                COALESCE(archived, false) as archived
+            FROM habit.drink_catalog
+            ORDER BY name
+        `;
+        
+        console.log('Executing query:', query);
+        const response = await db.query(query);
+        console.log('Query response:', response);
+        
+        return response || [];
+    } catch (error) {
+        console.error("❌ Error in getDrinkCatalog:", error);
+        console.error("Error details:", {
+            message: error.message,
+            stack: error.stack,
+            query: error.query
+        });
         throw error;
     }
 }
@@ -233,5 +236,6 @@ function formatAggregateResult(result, metrics) {
 module.exports = { 
     logAlcohol, 
     getAlcoholLogs,
-    getAlcoholAggregates 
+    getDrinkCatalog,
+    getAlcoholAggregates
 };

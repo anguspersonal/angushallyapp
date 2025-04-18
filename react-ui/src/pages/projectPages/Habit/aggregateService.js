@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
-
 /**
  * Fetches aggregate statistics for a specific habit type and period
  * @param {string} habitType - The type of habit (e.g., 'alcohol', 'exercise')
@@ -10,21 +8,40 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
  * @returns {Promise<Object>} - The aggregate statistics
  */
 export async function getAggregateStats(habitType, period, metrics = ['sum', 'avg', 'min', 'max', 'stddev']) {
-    console.log('Fetching stats:', { habitType, period, metrics });
+    console.log('getAggregateStats called with:', {
+        habitType,
+        period,
+        metrics
+    });
+
     try {
-        const url = `${API_BASE_URL}/api/habits/aggregate`;
-        const params = {
-            habitType,
-            period,
-            metrics: metrics.join(',')
-        };
-        console.log('Making request to:', url, 'with params:', params);
+        const response = await axios.get(`/api/habit/aggregate/${habitType}`, {
+            params: { period, metrics: metrics.join(',') }
+        });
         
-        const response = await axios.get(url, { params });
-        console.log('Response data:', response.data);
+        console.log('API response received:', {
+            status: response.status,
+            statusText: response.statusText,
+            data: response.data
+        });
+
+        if (!response.data) {
+            console.warn('Empty response data received');
+            return metrics.reduce((acc, metric) => {
+                acc[metric] = 0;
+                return acc;
+            }, {});
+        }
+
         return response.data;
     } catch (error) {
-        console.error(`Error fetching ${period} stats for ${habitType}:`, error);
+        console.error('Error in getAggregateStats:', {
+            error: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            config: error.config
+        });
+        
         // Return default values in case of error
         return metrics.reduce((acc, metric) => {
             acc[metric] = 0;
