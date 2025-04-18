@@ -4,10 +4,13 @@ import { BrowserRouter } from "react-router-dom"; // ✅ Enables routing in the 
 import "./index.css";
 import "./general.css";
 import App from "./App.js";
+// Remove theme import if not needed here
+// import { theme } from "./theme.js";
 
 // ✅ Import Mantine for UI styling & theming
 import "@mantine/core/styles.css";
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+// Remove MantineProvider import
+// import { MantineProvider } from "@mantine/core";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -26,10 +29,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter> {/* ✅ Ensures proper routing in the app */}
-      <MantineProvider withGlobalStyles withNormalizeCSS> {/* ✅ Ensures Mantine UI styles apply */}
-        <ColorSchemeScript /> {/* ✅ Handles dark/light mode switching */}
-        <App /> {/* ✅ Main application component */}
-      </MantineProvider>
+      <App /> {/* ✅ Main application component */}
     </BrowserRouter>
   </React.StrictMode>
 );

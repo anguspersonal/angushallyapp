@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom"; // ✅ Remove BrowserRouter here
 import "./index.css";
+import "./general.css"; // Ensure general.css is imported
 import Home from "./pages/Home.jsx";
 import Footer from "./components/Footer.jsx";
 import Header from "./components/Header.jsx";
@@ -12,62 +13,41 @@ import EatSafeUK from "./pages/projectPages/EatSafeUK/EatSafeUK.jsx";
 import DataValueGame from "./pages/projectPages/DataValueGame/DataValueGame.jsx";
 import Blogpost from "./pages/projectPages/Blog/BlogPost.jsx";
 import Strava from "./pages/projectPages/Strava/Strava.jsx";
+import TestPage from "./pages/TestPage.jsx";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Habit from "./pages/projectPages/Habit/Habit.jsx";
+import Collab from "./pages/Collab.jsx";
+import { MantineProvider } from '@mantine/core'; // Import MantineProvider
+import { theme } from './theme.js'; // Import your theme
 
 function App() {
-  // Set Use States
-  const [message, setMessage] = useState(null);
-  const [isFetching, setIsFetching] = useState(false);
-  const [url, setUrl] = useState("/api");
   const location = useLocation(); // ✅ Now this works properly
 
   // Define routes where the footer should be hidden
   const hideFooterRoutes = ["/projects/DataValueGame"];
 
-  // Set initial App data
-  const fetchData = useCallback(() => {
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((json) => {
-        setMessage(json.message);
-        setIsFetching(false);
-      })
-      .catch((e) => {
-        setMessage(`API call failed: ${e}`);
-        setIsFetching(false);
-      });
-  }, [url]);
-
-  // Use Effect to fetch data
-  useEffect(() => {
-    setIsFetching(true);
-    fetchData();
-  }, [fetchData]);
-
   // Return the App UI
   return (
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:slug" element={<Blogpost />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/projects/EatSafeUK" element={<EatSafeUK />} />
-        <Route path="/projects/DataValueGame" element={<DataValueGame />} />
-        <Route path="/projects/Strava" element={<Strava />} />
-        <Route path="/projects/Habit" element={<Habit />} />
-      </Routes>
-      {/* Conditionally render the footer only if the current route is NOT in hideFooterRoutes */}
-      {!hideFooterRoutes.includes(location.pathname) && <Footer />}
-    </div>
+    <MantineProvider theme={theme}> {/* Wrap everything in MantineProvider */}
+      <div className="App"> {/* Keep your main App div if needed for structure */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<Blogpost />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/collab" element={<Collab />} />
+          <Route path="/projects/EatSafeUK" element={<EatSafeUK />} />
+          <Route path="/projects/DataValueGame" element={<DataValueGame />} />
+          <Route path="/projects/Strava" element={<Strava />} />
+          <Route path="/projects/Habit" element={<Habit />} />
+          <Route path="/test" element={<TestPage />} />
+        </Routes>
+        {/* Conditionally render the footer only if the current route is NOT in hideFooterRoutes */}
+        {!hideFooterRoutes.includes(location.pathname) && <Footer />}
+      </div>
+    </MantineProvider>
   );
 }
 

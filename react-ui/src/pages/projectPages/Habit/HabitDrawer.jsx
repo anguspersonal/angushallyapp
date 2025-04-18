@@ -205,23 +205,40 @@ function HabitDrawer({ habit, selectedLogs, opened, onClose, updateLogsCallback 
         <Text>Target units: {TARGET_UNITS} units</Text>
         <Text>Average units: {stats.week.avg.toFixed(1)} units</Text>
         <Text>Min/Max: {stats.week.min.toFixed(1)}/{stats.week.max.toFixed(1)} units</Text>
-        <LogsTable logs={logs} />
+        <LogsTable logs={logs} habitType={habit?.name.toLowerCase() === 'alcohol' ? 'alcohol' : 'other'} />
       </Stack>
     </Drawer>
   );
 }
 
 // Logs Table Component
-function LogsTable({ logs }) {
+function LogsTable({ logs, habitType }) {
   if (!Array.isArray(logs)) {
     console.warn("No logs available.");
     return <p>No logs found for this habit.</p>;
   }
 
-  const deconstructedLogs = logs.map((log) => ({
-    ...log,
-    extraData: log.extraData || log.extra_data || { optionName: "N/A", volumeML: 0, abvPerc: 0 }, // Ensure extraData always exists
-  }));
+  // Handle different log structures based on habit type
+  const processedLogs = logs.map((log) => {
+    if (habitType === 'alcohol') {
+      // For alcohol logs, we already have the structure we need
+      return {
+        id: log.id,
+        name: log.drink_name,
+        units: log.units,
+        date: log.created_at,
+        volume: log.volume_ml,
+        abv: log.abv_percent,
+        count: log.count
+      };
+    } else {
+      // For other habits, use the existing structure
+      return {
+        ...log,
+        extraData: log.extraData || log.extra_data || { optionName: "N/A", volumeML: 0, abvPerc: 0 }
+      };
+    }
+  });
 
   return (
     <section className="scrollable-table">
@@ -229,16 +246,22 @@ function LogsTable({ logs }) {
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Name</Table.Th>
-            <Table.Th>Unit</Table.Th>
+            {habitType === 'alcohol' && <Table.Th>Count</Table.Th>}
+            <Table.Th>Units</Table.Th>
+            {habitType === 'alcohol' && <Table.Th>Volume (ml)</Table.Th>}
+            {habitType === 'alcohol' && <Table.Th>ABV (%)</Table.Th>}
             <Table.Th>Date</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {deconstructedLogs.map((log) => (
+          {processedLogs.map((log) => (
             <Table.Tr key={log.id}>
-              <Table.Td>{log.drink_name || "N/A"}</Table.Td>
+              <Table.Td>{log.name || "N/A"}</Table.Td>
+              {habitType === 'alcohol' && <Table.Td>{log.count}</Table.Td>}
               <Table.Td>{log.units}</Table.Td>
-              <Table.Td>{new Date(log.created_at).toLocaleDateString()}</Table.Td>
+              {habitType === 'alcohol' && <Table.Td>{log.volume}</Table.Td>}
+              {habitType === 'alcohol' && <Table.Td>{log.abv}</Table.Td>}
+              <Table.Td>{new Date(log.date).toLocaleDateString()}</Table.Td>
             </Table.Tr>
           ))}
         </Table.Tbody>

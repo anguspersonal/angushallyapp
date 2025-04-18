@@ -102,12 +102,31 @@ function Habit() {
   };
 
 
-  // ✅ Modify updateLogsCallback to trigger database refresh instead of appending
+  // ✅ Modify updateLogsCallback to handle alcohol-specific logs
   const updateLogsCallback = async () => {
     console.log("Refreshing logs after new habit entry...");
     await new Promise(resolve => setTimeout(resolve, 500)); // ✅ Small delay before fetching logs
-    await refreshHabitLogs(); // ✅ Fetch fresh logs from DB
-};
+    
+    try {
+      // Fetch fresh logs based on habit type
+      const fetchedData = await getLogsByHabit(selectedHabit.name);
+      
+      if (Array.isArray(fetchedData)) {
+        // Update both habitLogs and selectedLogs
+        setHabitLogs(prevLogs => {
+          // Remove old logs for this habit type
+          const filteredLogs = prevLogs.filter(log => log.habit_type !== selectedHabit.name);
+          // Add new logs
+          return [...filteredLogs, ...fetchedData];
+        });
+        setSelectedLogs(fetchedData);
+      } else {
+        console.error("Fetched data is not an array:", fetchedData);
+      }
+    } catch (error) {
+      console.error("Error refreshing logs:", error);
+    }
+  };
 
 
 
