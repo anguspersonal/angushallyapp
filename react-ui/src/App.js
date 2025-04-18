@@ -13,7 +13,6 @@ import EatSafeUK from "./pages/projectPages/EatSafeUK/EatSafeUK.jsx";
 import DataValueGame from "./pages/projectPages/DataValueGame/DataValueGame.jsx";
 import Blogpost from "./pages/projectPages/Blog/BlogPost.jsx";
 import Strava from "./pages/projectPages/Strava/Strava.jsx";
-import TestPage from "./pages/TestPage.jsx";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Habit from "./pages/projectPages/Habit/Habit.jsx";
 import Collab from "./pages/Collab.jsx";
@@ -42,7 +41,6 @@ function App() {
           <Route path="/projects/DataValueGame" element={<DataValueGame />} />
           <Route path="/projects/Strava" element={<Strava />} />
           <Route path="/projects/Habit" element={<Habit />} />
-          <Route path="/test" element={<TestPage />} />
         </Routes>
         {/* Conditionally render the footer only if the current route is NOT in hideFooterRoutes */}
         {!hideFooterRoutes.includes(location.pathname) && <Footer />}
