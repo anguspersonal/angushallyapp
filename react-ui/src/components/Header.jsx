@@ -106,13 +106,6 @@ function Header() {
               Collab
             </Menu.Item>
 
-            <Menu.Item
-              leftSection={<IconTestPipe size={18} />}
-              component={Link}
-              to="/test"
-            >
-              Test Page
-            </Menu.Item>
           </Menu.Dropdown>
         </Menu>
       ) : (
@@ -121,7 +114,6 @@ function Header() {
           <Link to="/blog">Blog</Link>
           <Link to="/about">About</Link>
           <Link to="/collab">Collab</Link>
-          <Link to="/test">Test</Link>
         </nav>
       )}
     </Box>

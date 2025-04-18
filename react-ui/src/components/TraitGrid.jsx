@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Center, Text, Image, HoverCard, useMantineTheme } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { motion, LazyMotion, domAnimation } from 'framer-motion';
+import { motionTransitions } from '../theme'; // Import theme transitions
 
 const traits = [
   // Order determines placement in grid cells (top-left to bottom-right, skipping center)
@@ -111,7 +112,7 @@ function TraitGrid() {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={motionTransitions.viewportRepeat}
         >
           <Box
             style={{
@@ -156,7 +157,7 @@ function TraitGrid() {
                     variants={itemVariants}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true, amount: 0.3 }}
+                    viewport={motionTransitions.viewportRepeat}
                     style={{
                       gridArea: gridAreas[index], 
                       display: 'flex',
