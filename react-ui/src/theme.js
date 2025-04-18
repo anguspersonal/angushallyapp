@@ -1,5 +1,39 @@
 import { createTheme } from '@mantine/core';
 
+export const motionTransitions = {
+  // Standard spring animation
+  spring: {
+    type: "spring",
+    stiffness: 100,
+    damping: 20,
+    duration: 0.8
+  },
+  // Faster spring for quick animations
+  springFast: {
+    type: "spring",
+    stiffness: 120,
+    damping: 25,
+    duration: 0.6
+  },
+  // Slower spring for more dramatic animations
+  springSlow: {
+    type: "spring",
+    stiffness: 80,
+    damping: 15,
+    duration: 1
+  },
+  // Viewport that triggers animation each time
+  viewportRepeat: {
+    // once defaults to false
+    amount: 0.3
+  },
+  // Viewport that triggers animation only once
+  viewportOnce: {
+    once: true,
+    amount: 0.2 // Keeping the earlier trigger amount
+  }
+};
+
 export const theme = createTheme({
   // Define standard breakpoints for clarity and customization
   breakpoints: {

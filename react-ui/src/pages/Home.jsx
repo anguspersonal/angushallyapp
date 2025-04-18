@@ -57,12 +57,12 @@ function Home() {
           <div className='photoWrapper'><img src="../angusprofile.jpg" alt="Angus Hally" id='profilePhoto' /></div>
           <h1>Welcome to My Website</h1>
           <p>
-            👋 Hi, I’m Angus. I'm a strategy consultant, amateur developer, and constant learner.
-            This site is a mix of personal proejct, career experiments and things
+            👋 Hi, I'm Angus. I'm a strategy consultant, amateur developer, and constant learner.
+            This site is a mix of personal projects, career experiments and things
             I've learned by building, shipping, and sometimes failing.
             <br></br>
             <br></br>
-            I’m also open to collaborating with early-stage founders; helping take raw ideas toward traction, funding, and real-world impact.
+            I'm also open to collaborating with early-stage founders; helping take raw ideas toward traction, funding, and real-world impact.
             <br></br>
             <br></br>
             Feel free to explore, poke around, and say hello via the<Link to="/contact"> contact me</Link> page!
