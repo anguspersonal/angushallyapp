@@ -1,74 +1,126 @@
 import React from 'react';
-import '../index.css';
-import "../general.css";
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import { Box, Container, Title, Text, Image, Anchor, Group, ActionIcon, useMantineTheme } from '@mantine/core';
+import { IconBrandLinkedin, IconBrandGithub, IconBrandX, IconBrandInstagram } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import Header from '../components/Header';
+import "../general.css";
+import { assets, motionTransitions } from '../theme';
+
+const contentVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+        opacity: 1,
+        y: 0,
+        transition: {
+            delay: i * 0.1,
+            duration: 0.5,
+            ease: "easeOut"
+        }
+    })
+};
 
 function About() {
+    const theme = useMantineTheme();
+
     return (
-        <div className='Page'>
+        <Box>
             <Header />
-            <div className='full_stage'>
-                <div className='centre_stage'>
-                    <h2>Hi, I'm Angus</h2>
-                    <div className='photoWrapper'><img src="../angusprofile.jpg" alt="Angus Hally" id='profilePhoto' /></div>
-                    <p>I'm a strategy consultant and amateur developer with a passion for the intersection of
-                        <strong> business strategy,</strong> software, and data.
-                    </p>
+            <Container size="sm" py="xl">
+                <motion.div 
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <motion.div custom={0} variants={contentVariants}>
+                        <Title order={2} mb="lg">Hi, I'm Angus</Title>
+                    </motion.div>
 
-                    <p>I started my career at
-                        <a href="https://www.accenture.com/gb-en" target="_blank" rel="noopener noreferrer"> Accenture</a>,
-                        cutting my teeth as an analyst in digital transformation projects across the
-                        <a href="https://www.royalnavy.mod.uk/" target="_blank" rel="noopener noreferrer"> Royal Navy</a>,
-                        <a href="https://www.sussex-pcc.gov.uk/pcc-priorities/partnership-working/video-enabled-justice-vej/" target="_blank" rel="noopener noreferrer"> Police</a>, and
-                        <a href="https://www.judiciary.uk/" target="_blank" rel="noopener noreferrer"> Courts and Tribunals Judiciary (CTJ)</a>.
-                        Later, I moved into Accenture’s <strong>strategy division</strong>, working on
-                        <strong> pricing, GDPR, and data-driven insights</strong> in large telecom and insurance companies.
-                    </p>
+                    <motion.div custom={1} variants={contentVariants} mb="lg" style={{ maxWidth: 250, margin: '0 auto' }}>
+                        <Image
+                            src="/20230208_AH_Profile_Poser.jpg"
+                            alt="Angus Hally"
+                            fallbackSrc={assets.placeholderImage.square}
+                            radius="xl"
+                            style={{ display: 'block', width: '100%', height: 'auto' }}
+                        />
+                    </motion.div>
+                    <br />
 
-                    <p>Before all that, I was a <strong>mathematics teacher</strong> through the
-                        <a href="https://www.teachfirst.org.uk/" target="_blank" rel="noopener noreferrer"> TeachFirst program</a>—to this day, the hardest thing I've done.
-                    </p>
+                    <motion.div custom={2} variants={contentVariants}>
+                        <Text mb="md">
+                            I'm a strategy consultant and amateur developer with a passion for the intersection of
+                            <Text span fw={700}> business strategy,</Text> software, and data.
+                        </Text>
+                    </motion.div>
 
-                    <p>Currently, I work as a <strong>Data Strategy Manager at
-                        <a href="https://www.anmut.co.uk/" target="_blank" rel="noopener noreferrer"> Anmut</a></strong>,
-                        a data management consultancy shaking up the industry with its
-                        <a href="https://www.anmut.co.uk/solutions/data-valuation/" target="_blank" rel="noopener noreferrer"> data valuation service</a> and
-                        cutting-edge data maturity tools, like <a href="https://www.anmut.co.uk/solutions/data-maturity/" target="_blank" rel="noopener noreferrer">Grace</a>.
-                    </p>
+                    <motion.div custom={3} variants={contentVariants}>
+                        <Text mb="md">
+                            I started my career at
+                            <Anchor href="https://www.accenture.com/gb-en" target="_blank" rel="noopener noreferrer"> Accenture</Anchor>,
+                            cutting my teeth as an analyst in digital transformation projects across the
+                            <Anchor href="https://www.royalnavy.mod.uk/" target="_blank" rel="noopener noreferrer"> Royal Navy</Anchor>,
+                            <Anchor href="https://www.sussex-pcc.gov.uk/pcc-priorities/partnership-working/video-enabled-justice-vej/" target="_blank" rel="noopener noreferrer"> Police</Anchor>, and
+                            <Anchor href="https://www.judiciary.uk/" target="_blank" rel="noopener noreferrer"> Courts and Tribunals Judiciary (CTJ)</Anchor>.
+                            Later, I moved into Accenture's <Text span fw={700}>strategy division</Text>, working on
+                            <Text span fw={700}> pricing, GDPR, and data-driven insights</Text> in large telecom and insurance companies.
+                        </Text>
+                    </motion.div>
 
-                    <p>This website is my<strong> sandbox</strong>—a space to explore <strong> personal software projects</strong> and challenge myself to put what I learn and my thoughts out into the world.
-                        Honestly, I find that terrifying. But growth comes from pushing past discomfort, and I believe the best way to develop is to
-                        <strong> create, share, and learn from others</strong>.
-                    </p>
+                    <motion.div custom={4} variants={contentVariants}>
+                        <Text mb="md">
+                            Before all that, I was a <Text span fw={700}>mathematics teacher</Text> through the
+                            <Anchor href="https://www.teachfirst.org.uk/" target="_blank" rel="noopener noreferrer"> TeachFirst program</Anchor>—to this day, the hardest thing I've done.
+                        </Text>
+                    </motion.div>
 
-                    <p>If you have any thoughts, feedback, or just want to chat, feel free to reach out via the
-                        <Link to="/contact"> Contact Me</Link> page.
-                    </p>
+                    <motion.div custom={5} variants={contentVariants}>
+                        <Text mb="md">
+                            Currently, I work as a <Text span fw={700}>Data Strategy Manager at
+                            <Anchor href="https://www.anmut.co.uk/" target="_blank" rel="noopener noreferrer"> Anmut</Anchor></Text>,
+                            a data management consultancy shaking up the industry with its
+                            <Anchor href="https://www.anmut.co.uk/solutions/data-valuation/" target="_blank" rel="noopener noreferrer"> data valuation service</Anchor> and
+                            cutting-edge data maturity tools, like <Anchor href="https://www.anmut.co.uk/solutions/data-maturity/" target="_blank" rel="noopener noreferrer">Grace</Anchor>.
+                        </Text>
+                    </motion.div>
 
-                    <p><strong>Thanks for stopping by—I appreciate it!</strong></p>
+                    <motion.div custom={6} variants={contentVariants}>
+                        <Text mb="md">
+                            This website is my<Text span fw={700}> sandbox</Text>—a space to explore <Text span fw={700}> personal software projects</Text> and challenge myself to put what I learn and my thoughts out into the world.
+                            Honestly, I find that terrifying. But growth comes from pushing past discomfort, and I believe the best way to develop is to
+                            <Text span fw={700}> create, share, and learn from others</Text>.
+                        </Text>
+                    </motion.div>
 
-                    {/*<!-- Social Links -->*/}
-                    <div class="social-links">
-                        <a href="https://www.linkedin.com/in/angus-hally-9ab66a87" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://github.com/anguspersonal" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="https://x.com/HallyAngus" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="https://www.instagram.com/hallyangus/" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
+                    <motion.div custom={7} variants={contentVariants}>
+                        <Text mb="md">
+                            If you have any thoughts, feedback, or just want to chat, feel free to reach out via the
+                            <Anchor component={Link} to="/contact"> Contact Me</Anchor> page.
+                        </Text>
+                    </motion.div>
 
+                    <motion.div custom={8} variants={contentVariants}>
+                        <Text fw={700} mb="lg">Thanks for stopping by—I appreciate it!</Text>
+                    </motion.div>
 
-                </div>
-            </div>
-        </div>
+                    <motion.div custom={9} variants={contentVariants}>
+                        <Group justify="center" gap="lg">
+                            <ActionIcon component="a" href="https://www.linkedin.com/in/angus-hally-9ab66a87" target="_blank" rel="noopener noreferrer" variant="subtle" size="lg">
+                                <IconBrandLinkedin size={24} />
+                            </ActionIcon>
+                            <ActionIcon component="a" href="https://github.com/anguspersonal" target="_blank" rel="noopener noreferrer" variant="subtle" size="lg">
+                                <IconBrandGithub size={24} />
+                            </ActionIcon>
+                            <ActionIcon component="a" href="https://x.com/HallyAngus" target="_blank" rel="noopener noreferrer" variant="subtle" size="lg">
+                                <IconBrandX size={24} />
+                            </ActionIcon>
+                            <ActionIcon component="a" href="https://www.instagram.com/hallyangus/" target="_blank" rel="noopener noreferrer" variant="subtle" size="lg">
+                                <IconBrandInstagram size={24} />
+                            </ActionIcon>
+                        </Group>
+                    </motion.div>
+                </motion.div>
+            </Container>
+        </Box>
     );
 }
 

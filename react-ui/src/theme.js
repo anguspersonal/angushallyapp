@@ -34,6 +34,15 @@ export const motionTransitions = {
   }
 };
 
+// Global assets
+export const assets = {
+  placeholderImage: {
+    landscape: '/20250418_3BY2_Default_Image_Placeholder.png',  // 3:2 ratio
+    square: '/20250419_1BY1_Default_Image_Placeholder.png',     // 1:1 ratio
+    portrait: '/20250419_2BY3_Default_Image_Placeholder.png',   // 2:3 ratio
+  }
+};
+
 export const theme = createTheme({
   // Define standard breakpoints for clarity and customization
   breakpoints: {

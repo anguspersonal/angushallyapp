@@ -7,6 +7,7 @@
  * 
  * 2. Site Credentialing:
  *    - Add testimonials section (possibly between Case Studies and Founder Journey)
+ *    - Update the "Where I add the most value" section to include the links to new case studies
  *    - Create supporting blog posts that demonstrate expertise in each case study area
  *    - Consider adding logos of companies worked with (if permitted)
  *    - Add downloadable resources or white papers to showcase depth of knowledge
@@ -14,59 +15,85 @@
 
 import { Carousel } from '@mantine/carousel';
 import { Card, Text, Title, Box, Flex, Image, useMantineTheme } from '@mantine/core';
-import { IconCheck, IconHammer, IconRocket, IconChartBar, IconBulb, IconUsers } from '@tabler/icons-react';
+import { IconCheck, IconHammer, IconRocket, IconChartBar, IconBulb, IconUsers, IconShieldLock, } from '@tabler/icons-react';
 import '@mantine/carousel/styles.css';
 import { useMediaQuery } from '@mantine/hooks';
+import { assets } from '../theme';
 
 const caseStudies = [
   {
-    image: "/case-studies/project-turnaround.jpg",
-    icon: <IconHammer size={24} />,
-    title: 'Project Turnaround (Anmut)',
-    challenge: 'Project floundering from unclear scope and misaligned stakeholders.',
-    solution: 'Aligned team, clarified scope, rebuilt delivery rhythm.',
-    outcome: 'Delivered on time, regained client trust, and rebuilt momentum.'
-  },
-  {
-    image: "/case-studies/covid-rollout.jpg",
-    icon: <IconRocket size={24} />,
-    title: 'COVID Rollout Acceleration (Accenture)',
-    challenge: 'Urgent remote onboarding process was too slow.',
-    solution: 'Redesigned onboarding workflow, scaled up delivery.',
-    outcome: 'Scaled onboarding from 2 → 30 users/day within one week.'
-  },
-  {
-    image: "/case-studies/product-foundations.jpg",
+    image: "/20250419_Analog_to_Digital_Transition_Teamvine.png",
+    fallbackImage: "/20250418_Grey_Background_Placeholder.png",
     icon: <IconBulb size={24} />,
-    title: 'Product Foundations (Teamvine)',
-    challenge: 'No internal delivery systems or product roadmap.',
-    solution: 'Took ownership of product and ops — roadmap, content, compliance.',
-    outcome: 'Built solid product foundation, enabling future scale.'
+    title: "Future Factory Pivot to Teamvine",
+    tags: ["startup", "grant funding", "product strategy"],
+    challenge:
+      "Pivoting from physical team-building kits to an online platform with no technical founder or external funding.",
+    solution:
+      "Secured a £100k Innovate UK grant, built the MVP with part-time developers, and launched the first digital product.",
+    outcome:
+      "Established Teamvine as a digital-first company and validated the new business model through early traction.",
   },
   {
-    image: "/case-studies/revenue-insight.jpg",
+    image: "/20250419_Digital_Courtroom_Scene.png",
+    icon: <IconRocket size={24} />,
+    title: "COVID Rollout – Remote Justice Enablement",
+    tags: ["public sector", "covid response", "delivery leadership"],
+    challenge:
+      "Hundreds of legal staff needed access to remote court systems during lockdown, but onboarding was slow and unscalable.",
+    solution:
+      "Redesigned the onboarding process, managed a team of analysts, and scaled onboarding from 2 to 30 users/day.",
+    outcome:
+      "Enabled 500+ legal professionals across 5 agencies to access court remotely, keeping justice moving during lockdown.",
+  },
+  {
+    image: "/20250419_Strategic_Corporate_Insights.png",
     icon: <IconChartBar size={24} />,
-    title: 'Revenue Insight (Telecom Client)',
-    challenge: 'Low conversion across digital channels.',
-    solution: 'Built four customer data models to uncover cross-sell opportunities.',
-    outcome: 'Unlocked £4M in incremental revenue through smarter targeting.'
+    title: "£4M Commercial Insight (Telecoms)",
+    tags: ["data analysis", "customer segmentation", "enterprise"],
+    challenge:
+      "Client lacked a behaviour-based view of customers, limiting upsell opportunities across thousands of tariffs.",
+    solution:
+      "Developed four models using product usage data and cluster analysis to identify micro-segments.",
+    outcome:
+      "Identified £12.3M in opportunity; £4M uplift realised through revised sales targeting within a year.",
   },
   {
-    image: "/case-studies/value-prop.jpg",
+    image: "/20250419_Telecom_Store_Observation.png",
     icon: <IconUsers size={24} />,
-    title: 'Value Proposition Reset (Startup Founder)',
-    challenge: 'Founder struggling to articulate what the product really did.',
-    solution: 'Facilitated discovery sessions, rewrote the core proposition, and rebuilt pitch deck.',
-    outcome: 'Clearer messaging, stronger pitch, and early investor interest.'
+    title: "Retail Journey Uplift – Secret Shopper Insight",
+    tags: ["cx design", "conversion", "retail"],
+    challenge:
+      "Retail stores failed to capture consent from walkouts, limiting follow-up and conversion.",
+    solution:
+      "Performed secret shopper visits, identified the gap, and led a redesign of the customer journey.",
+    outcome:
+      "Proposed changes projected to increase revenue by £1.1M–£3.5M annually through re-engagement.",
   },
   {
-    image: "/case-studies/team-alignment.jpg",
-    icon: <IconCheck size={24} />,
-    title: 'Team Alignment Under Pressure (Multi-Stakeholder Public Project)',
-    challenge: 'Conflicting priorities across multiple departments derailing delivery.',
-    solution: 'Ran alignment workshops, reset goals, clarified roles.',
-    outcome: 'Project realigned, delivered on time, and stakeholders reengaged.'
-  }
+    image: "/20250419_Data_Operations_Room.png",
+    icon: <IconShieldLock size={24} />,
+    title: "DVSA Data Valuation & Strategy",
+    tags: ["data strategy", "public sector", "valuation"],
+    challenge:
+      "DVSA held extensive datasets but lacked a strategy to prioritise data investment.",
+    solution:
+      "Led a valuation project to assess financial and strategic impact of data assets.",
+    outcome:
+      "Delivered a framework used to guide strategic data funding and investment prioritisation.",
+  },
+  {
+    image: "/20250419_Unified_Data_Illumination.png",
+    icon: <IconHammer size={24} />,
+    title: "Marketing Consent & Data Strategy (Telecom)",
+    tags: ["gdpr", "data governance", "revenue modelling"],
+    challenge:
+      "Conflicting customer preferences across systems made many contacts unmarketable, limiting revenue.",
+    solution:
+      "Modelled uplift from unifying identity and consent data; built a £2.7M–£4.5M p.a. business case for centralisation.",
+    outcome:
+      "Influenced data roadmap; became a go-to for privacy strategy among MDs and data leads.",
+  },
 ];
 
 function CaseStudies() {
@@ -78,18 +105,18 @@ function CaseStudies() {
   const slidesPerView = isSmallScreen ? 1 : isMediumScreen ? 2 : 3;
 
   return (
-    <Box my="xl">
-      <Title order={2} mb="md">Real Impact</Title>
-      <Text size="sm" color="dimmed" mb="lg">
+<Box my="xl">
+  <Title order={2} mb="md">Real Impact</Title>
+  <Text size="sm" color="dimmed" mb="lg">
         A few snapshots of where I've helped unlock clarity, traction, or delivery when it mattered.
-      </Text>
+  </Text>
 
-      <Carousel
-        withIndicators
+  <Carousel
+    withIndicators
         slideSize={`${100 / slidesPerView}%`}
-        slideGap="md"
-        loop
-        align="start"
+    slideGap="md"
+    loop
+    align="start"
         slidesToScroll={1}
         styles={{
           indicators: {
@@ -106,14 +133,15 @@ function CaseStudies() {
             },
           },
         }}
-      >
-        {caseStudies.map((item, index) => (
-          <Carousel.Slide key={index}>
-            <Card shadow="md" padding={0} radius="md" withBorder style={{ height: '25em' }}>
+  >
+    {caseStudies.map((item, index) => (
+      <Carousel.Slide key={index}>
+            <Card shadow="md" padding={0} radius="md" withBorder style={{ height: '30em' }}>
               <Card.Section>
                 <Box style={{ position: 'relative' }}>
                   <Image
                     src={item.image}
+                    fallbackSrc={assets.placeholderImage.landscape}
                     height={160}
                     alt={item.title}
                     loading={index < slidesPerView ? "eager" : "lazy"}
@@ -146,11 +174,11 @@ function CaseStudies() {
                 <Text size="xs" color="dimmed" mb="xs" align="center"><strong>What I did:</strong> {item.solution}</Text>
                 <Text size="xs" c="teal.6" align="center"><strong>Outcome:</strong> {item.outcome}</Text>
               </Flex>
-            </Card>
-          </Carousel.Slide>
-        ))}
-      </Carousel>
-    </Box>
+        </Card>
+      </Carousel.Slide>
+    ))}
+  </Carousel>
+</Box>
   );
 }
 

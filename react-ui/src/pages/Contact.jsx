@@ -1,115 +1,184 @@
 import React, { useState } from 'react';
-import '../index.css';
-import "../general.css";
-import Header from '../components/Header';
+import {
+    Box,
+    Container,
+    Title,
+    TextInput,
+    Textarea,
+    Button,
+    Text,
+    Group,
+    useMantineTheme,
+    Stack
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
 import ReCAPTCHA from "react-google-recaptcha";
+import { motion } from 'framer-motion';
+import Header from '../components/Header';
+import "../general.css";
+import { motionTransitions } from '../theme';
+
+// Animation variants for staggered fade-in
+const formElementVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+        opacity: 1,
+        y: 0,
+        transition: {
+            delay: i * 0.1, // Stagger delay
+            duration: 0.5,
+            ease: "easeOut"
+        }
+    })
+};
 
 function Contact() {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-        captchaValue: null,
-    });
-    const [captchaValue, setCaptchaValue] = useState(null); // Store CAPTCHA value
+    const theme = useMantineTheme();
+    const [captchaValue, setCaptchaValue] = useState(null);
     const [status, setStatus] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state for button
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+    const form = useForm({
+        initialValues: {
+            name: "",
+            email: "",
+            subject: "",
+            message: "",
+        },
+        // Optional: Add validation
+        validate: {
+            name: (value) => (value.trim().length < 2 ? 'Name must have at least 2 letters' : null),
+            email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+            subject: (value) => (value.trim().length === 0 ? 'Subject cannot be empty' : null),
+            message: (value) => (value.trim().length < 10 ? 'Message must be at least 10 characters long' : null),
+        },
+    });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-    
-        // Check if CAPTCHA is completed
+    const handleSubmit = async (values) => {
         if (!captchaValue) {
-            setStatus("Please complete the CAPTCHA");
+            setStatus("Please complete the CAPTCHA.");
+            form.setFieldError('captcha', 'Please complete the CAPTCHA.'); // Optional: set form error
             return;
         }
-    
+
         setStatus("Sending...");
+        setIsSubmitting(true);
         try {
             const response = await fetch("/api/contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...formData, captcha: captchaValue }), // ✅ Include captcha
+                body: JSON.stringify({ ...values, captcha: captchaValue }),
             });
-    
+
             const result = await response.json();
             if (response.ok) {
-                setStatus("Message sent successfully!");
-                setFormData({ name: "", email: "", subject: "", message: "" }); // Reset form
-                setCaptchaValue(null); // Reset CAPTCHA
+                setStatus("Message sent successfully! Thanks for reaching out.");
+                form.reset();
+                setCaptchaValue(null);
+                // Consider resetting the ReCAPTCHA component visually if possible/needed
             } else {
-                setStatus(result.error || "Failed to send message.");
+                setStatus(result.error || "Failed to send message. Please try again.");
             }
         } catch (error) {
-            setStatus("An error occurred. Please try again.");
+            console.error("Contact form error:", error); // Log error for debugging
+            setStatus("An error occurred. Please check your connection and try again.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
-    
 
     return (
-        <div className='Page'>
+        <Box>
             <Header />
-            <h1>Contact</h1>
-            <form onSubmit={handleSubmit} className="contact-form">
-                <div className="form-group">
-                    <label htmlFor="name">Name:</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="email">Email:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="subject">Subject:</label>
-                    <input
-                        type="text"
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="message">Message:</label>
-                    <textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+            <Container size="sm" py="xl">
+                <motion.div initial="hidden" animate="visible"> {/* Parent for stagger */}
+                    <motion.div custom={0} variants={formElementVariants}>
+                        <Title order={2} mb="xl" ta="center">Get In Touch</Title>
+                    </motion.div>
 
-                {/* reCAPTCHA Component */}
-                <ReCAPTCHA
-                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                    onChange={(value) => setCaptchaValue(value)}
-                />
+                    <Box component="form" onSubmit={form.onSubmit(handleSubmit)} align="left">
+                        <Stack gap="md">
+                            <motion.div custom={1} variants={formElementVariants}>
+                                <TextInput
+                                    required
+                                    label="Name"
+                                    placeholder="Your name"
+                                    {...form.getInputProps('name')}
+                                    styles={{ label: { textAlign: 'left' } }}
+                                />
+                            </motion.div>
 
-                <button type="submit">Send Message</button>
-                <p>{status}</p>
-            </form>
-        </div>
+                            <motion.div custom={2} variants={formElementVariants}>
+                                <TextInput
+                                    required
+                                    label="Email"
+                                    placeholder="your@email.com"
+                                    {...form.getInputProps('email')}
+                                    styles={{ label: { textAlign: 'left' } }}
+                                />
+                            </motion.div>
+
+                            <motion.div custom={3} variants={formElementVariants}>
+                                <TextInput
+                                    required
+                                    label="Subject"
+                                    placeholder="What's this about?"
+                                    {...form.getInputProps('subject')}
+                                    styles={{ label: { textAlign: 'left' } }}
+                                />
+                            </motion.div>
+
+                            <motion.div custom={4} variants={formElementVariants}>
+                                <Textarea
+                                    required
+                                    label="Message"
+                                    placeholder="Your message..."
+                                    minRows={4}
+                                    {...form.getInputProps('message')}
+                                    styles={{ label: { textAlign: 'left' } }}
+                                />
+                            </motion.div>
+
+                            <motion.div custom={5} variants={formElementVariants}>
+                                <Group justify="center" mt="md">
+                                    <ReCAPTCHA
+                                        sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY || "YOUR_RECAPTCHA_SITE_KEY_HERE"} // Add fallback for safety
+                                        onChange={(value) => setCaptchaValue(value)}
+                                        // Add theme='dark' prop if needed based on your theme
+                                    />
+                                </Group>
+                                {/* Display CAPTCHA error if any */}
+                                {form.errors.captcha && (
+                                    <Text c="red" size="sm" ta="center" mt="xs">{form.errors.captcha}</Text>
+                                )}
+                            </motion.div>
+
+                            <motion.div custom={6} variants={formElementVariants}>
+                                <Group justify="center" mt="xl">
+                                    <Button
+                                        type="submit"
+                                        variant="gradient"
+                                        gradient={{ from: 'teal', to: 'blue' }}
+                                        size="md"
+                                        loading={isSubmitting} // Show loading state
+                                    >
+                                        Send Message
+                                    </Button>
+                                </Group>
+                            </motion.div>
+
+                            {status && (
+                                <motion.div custom={7} variants={formElementVariants}>
+                                    <Text ta="center" mt="md" c={status.includes("successfully") ? 'green' : status.includes("Failed") || status.includes("error") || status.includes("Please complete") ? 'red' : 'dimmed'}>
+                                        {status}
+                                    </Text>
+                                </motion.div>
+                            )}
+                        </Stack>
+                    </Box>
+                </motion.div>
+            </Container>
+        </Box>
     );
 }
 

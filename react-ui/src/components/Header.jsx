@@ -4,11 +4,9 @@ import { Menu, Box } from '@mantine/core';
 import {
   IconUser,
   IconArticle,
-  IconMail,
   IconRocket,
   IconMenu2,
   IconFolder,
-  IconTestPipe
 } from '@tabler/icons-react';
 import { useMediaQuery, useMounted } from '@mantine/hooks';
 import '../general.css';
