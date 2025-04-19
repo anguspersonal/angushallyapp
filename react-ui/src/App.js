@@ -9,12 +9,12 @@ import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import Blog from "./pages/Blog.jsx";
 import Projects from "./pages/Projects.jsx";
-import EatSafeUK from "./pages/projectPages/EatSafeUK/EatSafeUK.jsx";
-import DataValueGame from "./pages/projectPages/DataValueGame/DataValueGame.jsx";
-import Blogpost from "./pages/projectPages/Blog/BlogPost.jsx";
-import Strava from "./pages/projectPages/Strava/Strava.jsx";
+import EatSafeUK from "./pages/projects/eat-safe-uk/EatSafeUK.jsx";
+import DataValueGame from "./pages/projects/data-value-game/DataValueGame.jsx";
+import Blogpost from "./pages/projects/blog/BlogPost.jsx";
+import Strava from "./pages/projects/strava/Strava.jsx";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import Habit from "./pages/projectPages/Habit/Habit.jsx";
+import Habit from "./pages/projects/habit/Habit.jsx";
 import Collab from "./pages/Collab.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
 import { theme } from './theme.js'; // Import your theme
@@ -23,7 +23,7 @@ function App() {
   const location = useLocation(); // ✅ Now this works properly
 
   // Define routes where the footer should be hidden
-  const hideFooterRoutes = ["/projects/DataValueGame"];
+  const hideFooterRoutes = ["/projects/data-value-game"];
 
   // Return the App UI
   return (
@@ -37,10 +37,10 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/collab" element={<Collab />} />
-          <Route path="/projects/EatSafeUK" element={<EatSafeUK />} />
-          <Route path="/projects/DataValueGame" element={<DataValueGame />} />
-          <Route path="/projects/Strava" element={<Strava />} />
-          <Route path="/projects/Habit" element={<Habit />} />
+          <Route path="/projects/eat-safe-uk" element={<EatSafeUK />} />
+          <Route path="/projects/data-value-game" element={<DataValueGame />} />
+          <Route path="/projects/strava" element={<Strava />} />
+          <Route path="/projects/habit" element={<Habit />} />
         </Routes>
         {/* Conditionally render the footer only if the current route is NOT in hideFooterRoutes */}
         {!hideFooterRoutes.includes(location.pathname) && <Footer />}
