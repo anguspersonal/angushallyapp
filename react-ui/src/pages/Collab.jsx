@@ -4,9 +4,10 @@ import { Container, Title, Text, Anchor, Group, Button, Stack, Box, Image, Flex,
 import { motion } from 'framer-motion';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconSettings, IconTargetArrow, IconTrendingUp, IconMicrophone, IconCoin, IconChartBar } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import TraitGrid from './collab/components/TraitGrid';
-import CaseStudies from '../components/CaseStudies';
+import CaseStudies from './collab/components/CaseStudies';
 import FounderJourney from './collab/components/FounderJourney';
 import { motionTransitions, assets } from '../theme';
 import '../general.css';
@@ -196,7 +197,7 @@ function Collab() {
                     <li>Build lightweight systems and rituals for execution</li>
                     <li>Get your early team aligned and moving fast</li>
                   </ul>
-                  I’ve turned around floundering public sector projects <strong>(see: VEJ rollout)</strong>, scaled startup operations from scratch <strong>(see: Teamvine)</strong>, and led agile teams through high-pressure, time-sensitive delivery.
+                  I've turned around floundering public sector projects <Anchor component={Link} to="/blog/vej-pandemic-rollout"><strong>(see: VEJ rollout)</strong></Anchor>, scaled startup operations from scratch <Anchor component={Link} to="/blog/future-factory-digital-pivot"><strong>(see: Teamvine)</strong></Anchor>, and led agile teams through high-pressure, time-sensitive delivery.
                 </Accordion.Panel>
 
               </Accordion.Item>
@@ -206,7 +207,7 @@ function Collab() {
                   Proposition Shaping
                 </Accordion.Control>
                 <Accordion.Panel>
-                  Whether you’ve got a half-formed idea or a product with traction, I help you sharpen what you’re really offering — and why it matters.
+                  Whether you've got a half-formed idea or a product with traction, I help you sharpen what you're really offering — and why it matters.
                   <br /><br />
                   I can help you:
                   <ul>
@@ -214,7 +215,7 @@ function Collab() {
                     <li>Craft a crisp, compelling value proposition</li>
                     <li>Test and refine your messaging with early users and investors</li>
                   </ul>
-                  I’ve done this with early-stage founders <strong>(see: Proposition Reset case)</strong> and in pitching for grant funding <strong>(see: Future Factory / Teamvine)</strong>. I translate complexity into narrative clarity — fast.
+                  I've done this with early-stage founders <Anchor component={Link} to="/blog/retail-journey-insight"><strong>(see: Proposition Reset case)</strong></Anchor> and in pitching for grant funding <Anchor component={Link} to="/blog/future-factory-digital-pivot"><strong>(see: Future Factory / Teamvine)</strong></Anchor>. I translate complexity into narrative clarity — fast.
                 </Accordion.Panel>
 
               </Accordion.Item>
@@ -224,7 +225,7 @@ function Collab() {
                   Early Go-To-Market
                 </Accordion.Control>
                 <Accordion.Panel>
-                  I help you move from “we’re building” to “people are using this” — by finding the fastest path to real traction.
+                  I help you move from "we're building" to "people are using this" — by finding the fastest path to real traction.
                   <br /><br />
                   I support you to:
                   <ul>
@@ -232,7 +233,7 @@ function Collab() {
                     <li>Set up landing pages, feedback loops, and conversion paths</li>
                     <li>Collect signal to guide product and commercial focus</li>
                   </ul>
-                  I’ve helped teams get to market while still building <strong>(see: Teamvine launch)</strong> and helped large-scale clients unlock sales from dormant segments <strong>(see: Telecom Insight)</strong>.
+                  I've helped teams get to market while still building <Anchor component={Link} to="/blog/future-factory-digital-pivot"><strong>(see: Teamvine launch)</strong></Anchor> and helped large-scale clients unlock sales from dormant segments <Anchor component={Link} to="/blog/commercial-usage-insight"><strong>(see: Telecom Insight)</strong></Anchor>.
                 </Accordion.Panel>
 
               </Accordion.Item>
@@ -250,7 +251,7 @@ function Collab() {
                     <li>Represent your startup at events and on stage</li>
                     <li>Coach you to pitch with clarity, confidence, and presence</li>
                   </ul>
-                  I’ve presented to C-suites <strong>(Telecom £4M insight)</strong>, secured grant funding <strong>(Teamvine)</strong>, and often serve as a founder’s external amplifier and co-strategist in the room.
+                  I've presented to C-suites <Anchor component={Link} to="/blog/commercial-usage-insight"><strong>(Telecom £4M insight)</strong></Anchor>, secured grant funding <Anchor component={Link} to="/blog/future-factory-digital-pivot"><strong>(Teamvine)</strong></Anchor>, and often serve as a founder's external amplifier and co-strategist in the room.
                 </Accordion.Panel>
 
               </Accordion.Item>
@@ -260,7 +261,7 @@ function Collab() {
                   Fundraising Support
                 </Accordion.Control>
                 <Accordion.Panel>
-                  Fundraising’s not just about the pitch — it’s about story, structure, and confidence.
+                  Fundraising's not just about the pitch — it's about story, structure, and confidence.
                   <br /><br />
                   I help with:
                   <ul>
@@ -268,7 +269,7 @@ function Collab() {
                     <li>Structuring your ask, milestones, and equity logic</li>
                     <li>Warm intros, pitch prep, and investor Q&A</li>
                   </ul>
-                  I’ve helped secure public funding <strong>(Innovate UK grant – Teamvine)</strong> and regularly coach founders through positioning for pre-seed and seed. I bring strategic thinking plus delivery support so your raise gets you real momentum.
+                  I've helped secure public funding <Anchor component={Link} to="/blog/future-factory-digital-pivot"><strong>(Innovate UK grant – Teamvine)</strong></Anchor> and regularly coach founders through positioning for pre-seed and seed. I bring strategic thinking plus delivery support so your raise gets you real momentum.
                 </Accordion.Panel>
 
               </Accordion.Item>
@@ -278,7 +279,7 @@ function Collab() {
                   Data & Measurement Strategy
                 </Accordion.Control>
                 <Accordion.Panel>
-                  Data isn’t just dashboards — it’s about knowing what matters and making better decisions faster.
+                  Data isn't just dashboards — it's about knowing what matters and making better decisions faster.
                   <br /><br />
                   I help you:
                   <ul>
@@ -286,7 +287,7 @@ function Collab() {
                     <li>Set up lightweight, scalable tracking systems</li>
                     <li>Link data insights to product, marketing, or funding priorities</li>
                   </ul>
-                  I’ve built data valuation frameworks for national agencies <strong>(DVSA)</strong>, commercial models unlocking millions <strong>(Telecoms)</strong>, and internal systems to track performance in startups <strong>(Teamvine)</strong>.
+                  I've built data valuation frameworks for national agencies <Anchor component={Link} to="/blog/dvsa-data-valuation"><strong>(DVSA)</strong></Anchor>, commercial models unlocking millions <Anchor component={Link} to="/blog/commercial-usage-insight"><strong>(Telecoms)</strong></Anchor>, and internal systems to track performance in startups <Anchor component={Link} to="/blog/future-factory-digital-pivot"><strong>(Teamvine)</strong></Anchor>.
                 </Accordion.Panel>
 
               </Accordion.Item>
@@ -297,15 +298,8 @@ function Collab() {
 
       {/* Case Studies Section (4) - Colored */}
       <Box style={sectionStyles.colored}>
-        <Container size="lg" p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg}>
+        <Container p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg}>
           <CaseStudies />
-        </Container>
-      </Box>
-
-      {/* Founder Journey Section (5) - No background */}
-      <Box style={sectionStyles.transparent}>
-        <Container size="lg" p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg}>
-          <FounderJourney />
         </Container>
       </Box>
 
