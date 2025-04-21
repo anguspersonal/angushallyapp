@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Box, Container, Title, SimpleGrid, Anchor, useMantineTheme } from '@mantine/core';
 import { motion } from 'framer-motion';
-import { fetchBlogList } from "./projects/blog/fetchBlogData";
+import { fetchBlogList } from "./blog/fetchBlogData";
 import "../index.css";
-import BlogSnippet from "./projects/blog/BlogSnippet";
+import BlogSnippet from "./blog/components/BlogSnippet";
 import Header from "../components/Header";
 import "../general.css";
-import './projects/blog/blog.css';
+import './blog/blog.css';
 
 // Animation variants (can reuse from Projects)
 const containerVariants = {

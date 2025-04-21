@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Snippet from '../components/Snippet';
 import ProjectSnippet from '../components/ProjectSnippet';
-import { fetchLatestBlog } from '../pages/projects/blog/fetchBlogData';
+import { fetchLatestBlog } from '../pages/blog/fetchBlogData';
 import getProjectList from '../data/projectList';
 import { assets, motionTransitions } from '../theme';
 import "../general.css";

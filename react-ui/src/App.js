@@ -11,7 +11,7 @@ import Blog from "./pages/Blog.jsx";
 import Projects from "./pages/Projects.jsx";
 import EatSafeUK from "./pages/projects/eat-safe-uk/EatSafeUK.jsx";
 import DataValueGame from "./pages/projects/data-value-game/DataValueGame.jsx";
-import Blogpost from "./pages/projects/blog/BlogPost.jsx";
+import Blogpost from "./pages/blog/BlogPost.jsx";
 import Strava from "./pages/projects/strava/Strava.jsx";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Habit from "./pages/projects/habit/Habit.jsx";

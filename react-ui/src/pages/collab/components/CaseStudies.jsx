@@ -14,16 +14,16 @@
  */
 
 import { Carousel } from '@mantine/carousel';
-import { Card, Text, Title, Box, Flex, Image, useMantineTheme } from '@mantine/core';
+import { Card, Text, Title, Box, Flex, Image, useMantineTheme, Button } from '@mantine/core';
 import { IconCheck, IconHammer, IconRocket, IconChartBar, IconBulb, IconUsers, IconShieldLock, } from '@tabler/icons-react';
+import { Link } from 'react-router-dom';
 import '@mantine/carousel/styles.css';
-import { useMediaQuery } from '@mantine/hooks';
-import { assets } from '../theme';
+import { assets } from '../../../theme';
 
 const caseStudies = [
   {
+    id: 0,
     image: "/20250419_Analog_to_Digital_Transition_Teamvine.png",
-    fallbackImage: "/20250418_Grey_Background_Placeholder.png",
     icon: <IconBulb size={24} />,
     title: "Future Factory Pivot to Teamvine",
     tags: ["startup", "grant funding", "product strategy"],
@@ -33,8 +33,10 @@ const caseStudies = [
       "Secured a £100k Innovate UK grant, built the MVP with part-time developers, and launched the first digital product.",
     outcome:
       "Established Teamvine as a digital-first company and validated the new business model through early traction.",
+    blogPostSlug: "/blog/future-factory-digital-pivot"
   },
   {
+    id: 1,
     image: "/20250419_Digital_Courtroom_Scene.png",
     icon: <IconRocket size={24} />,
     title: "COVID Rollout – Remote Justice Enablement",
@@ -45,8 +47,10 @@ const caseStudies = [
       "Redesigned the onboarding process, managed a team of analysts, and scaled onboarding from 2 to 30 users/day.",
     outcome:
       "Enabled 500+ legal professionals across 5 agencies to access court remotely, keeping justice moving during lockdown.",
+    blogPostSlug: "/blog/vej-pandemic-rollout"
   },
   {
+    id: 2,
     image: "/20250419_Strategic_Corporate_Insights.png",
     icon: <IconChartBar size={24} />,
     title: "£4M Commercial Insight (Telecoms)",
@@ -57,8 +61,10 @@ const caseStudies = [
       "Developed four models using product usage data and cluster analysis to identify micro-segments.",
     outcome:
       "Identified £12.3M in opportunity; £4M uplift realised through revised sales targeting within a year.",
+    blogPostSlug: "/blog/commercial-usage-insight"
   },
   {
+    id: 3,
     image: "/20250419_Telecom_Store_Observation.png",
     icon: <IconUsers size={24} />,
     title: "Retail Journey Uplift – Secret Shopper Insight",
@@ -69,8 +75,10 @@ const caseStudies = [
       "Performed secret shopper visits, identified the gap, and led a redesign of the customer journey.",
     outcome:
       "Proposed changes projected to increase revenue by £1.1M–£3.5M annually through re-engagement.",
+    blogPostSlug: "/blog/retail-journey-insight"
   },
   {
+    id: 4,
     image: "/20250419_Data_Operations_Room.png",
     icon: <IconShieldLock size={24} />,
     title: "DVSA Data Valuation & Strategy",
@@ -81,8 +89,10 @@ const caseStudies = [
       "Led a valuation project to assess financial and strategic impact of data assets.",
     outcome:
       "Delivered a framework used to guide strategic data funding and investment prioritisation.",
+    blogPostSlug: "/blog/dvsa-data-valuation"
   },
   {
+    id: 5,
     image: "/20250419_Unified_Data_Illumination.png",
     icon: <IconHammer size={24} />,
     title: "Marketing Consent & Data Strategy (Telecom)",
@@ -93,16 +103,12 @@ const caseStudies = [
       "Modelled uplift from unifying identity and consent data; built a £2.7M–£4.5M p.a. business case for centralisation.",
     outcome:
       "Influenced data roadmap; became a go-to for privacy strategy among MDs and data leads.",
+    blogPostSlug: "/blog/telecom-gdpr-marketing-strategy"
   },
 ];
 
 function CaseStudies() {
   const theme = useMantineTheme();
-  const isSmallScreen = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const isMediumScreen = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-
-  // Determine slides per view based on screen size
-  const slidesPerView = isSmallScreen ? 1 : isMediumScreen ? 2 : 3;
 
   return (
 <Box my="xl">
@@ -113,30 +119,30 @@ function CaseStudies() {
 
   <Carousel
     withIndicators
-        slideSize={`${100 / slidesPerView}%`}
-    slideGap="md"
+    slideSize={{ base: '100%', sm: '50%', md: '33.3333%' }}
+    slideGap={{ base: 0, sm: 'md' }}
     loop
     align="start"
-        slidesToScroll={1}
-        styles={{
-          indicators: {
-            bottom: -20,
+    slidesToScroll={1}
+    styles={{
+        indicators: {
+          bottom: -20,
+        },
+        indicator: {
+          width: 12,
+          height: 4,
+          transition: 'width 250ms ease',
+          backgroundColor: theme.colors.secondary[6],
+          '&[data-active]': {
+            width: 40,
+            backgroundColor: theme.colors.secondary[8],
           },
-          indicator: {
-            width: 12,
-            height: 4,
-            transition: 'width 250ms ease',
-            backgroundColor: theme.colors.secondary[6],
-            '&[data-active]': {
-              width: 40,
-              backgroundColor: theme.colors.secondary[8],
-            },
-          },
-        }}
+        },
+      }}
   >
     {caseStudies.map((item, index) => (
-      <Carousel.Slide key={index}>
-            <Card shadow="md" padding={0} radius="md" withBorder style={{ height: '30em' }}>
+      <Carousel.Slide key={item.id}>
+            <Card shadow="md" padding={0} radius="md" withBorder style={{ height: '33em' }}>
               <Card.Section>
                 <Box style={{ position: 'relative' }}>
                   <Image
@@ -144,7 +150,7 @@ function CaseStudies() {
                     fallbackSrc={assets.placeholderImage.landscape}
                     height={160}
                     alt={item.title}
-                    loading={index < slidesPerView ? "eager" : "lazy"}
+                    loading={index < 3 ? "eager" : "lazy"}
                     style={{ objectFit: 'cover' }}
                   />
                   <Box
@@ -165,14 +171,29 @@ function CaseStudies() {
               <Flex
                 direction="column"
                 align="center"
-                justify="center"
+                justify="space-between"
                 p="md"
-                gap="sm"
+                gap="xs"
+                style={{ height: 'calc(100% - 160px)' }}
               >
-                <Title order={4} mb="xs" align="center">{item.title}</Title>
-                <Text size="xs" color="dimmed" mb="xs" align="center"><strong>Challenge:</strong> {item.challenge}</Text>
-                <Text size="xs" color="dimmed" mb="xs" align="center"><strong>What I did:</strong> {item.solution}</Text>
-                <Text size="xs" c="teal.6" align="center"><strong>Outcome:</strong> {item.outcome}</Text>
+                <Box>
+                    <Title order={4} mb="xs" align="center">{item.title}</Title>
+                    <Text size="xs" color="dimmed" mb="xs" align="center"><strong>Challenge:</strong> {item.challenge}</Text>
+                    <Text size="xs" color="dimmed" mb="xs" align="center"><strong>What I did:</strong> {item.solution}</Text>
+                    <Text size="xs" c="teal.6" align="center"><strong>Outcome:</strong> {item.outcome}</Text>
+                </Box>
+
+                {item.blogPostSlug && (
+                  <Button
+                    component={Link}
+                    to={item.blogPostSlug}
+                    variant="light"
+                    size="xs" 
+                    mt="md"
+                  >
+                    Read Related Post
+                  </Button>
+                )}
               </Flex>
         </Card>
       </Carousel.Slide>

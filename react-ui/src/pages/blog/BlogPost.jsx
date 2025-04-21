@@ -3,9 +3,19 @@ import { useParams, Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm"; // ✅ Enables better Markdown parsing
 import { fetchBlogPost } from "./fetchBlogData";
-import Header from "../../../components/Header";
+import Header from "../../components/Header";
 import "./blog.css";
 
+/**
+ * BlogPost Component
+ * 
+ * Renders the full content of a single blog post based on the URL slug.
+ * This component acts as a "Page Component" directly mapped to the '/blog/:slug' route in App.js.
+ * Therefore, it resides directly within the 'pages/blog/' directory.
+ * 
+ * Child components specific to the blog feature (e.g., BlogSnippet) are placed
+ * in the 'pages/blog/components/' subfolder for better organization.
+ */
 function BlogPost() {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
