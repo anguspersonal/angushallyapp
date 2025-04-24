@@ -7,8 +7,10 @@ import { IconSettings, IconTargetArrow, IconTrendingUp, IconMicrophone, IconCoin
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import TraitGrid from './collab/components/TraitGrid';
-import CaseStudies from './collab/components/CaseStudies';
+import CustomCarousel from './collab/components/Carousel';
 import FounderJourney from './collab/components/FounderJourney';
+import { testimonials } from './collab/data/testimonials';
+import { caseStudies } from './collab/data/caseStudies';
 import { motionTransitions, assets } from '../theme';
 import '../general.css';
 
@@ -296,15 +298,27 @@ function Collab() {
         </Container>
       </Box>
 
-      {/* Case Studies Section (4) - Colored */}
+      {/* Impact Section (4) - Colored */}
       <Box style={sectionStyles.colored}>
-        <Container p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg}>
-          <CaseStudies />
+        <Container size="lg" p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg}>
+          <CustomCarousel
+            title="Impact & Testimonials"
+            description="Real results and feedback from clients and partners"
+            slides={[...testimonials, ...caseStudies].sort(() => Math.random() - 0.5)}
+            type="mixed"
+          />
         </Container>
       </Box>
 
-      {/* Let's Talk Section (6) - Colored */}
-      <Box style={sectionStyles.colored} ref={letsTalkRef}>
+      {/* Founder Journey Section (5) - No background */}
+      <Box style={sectionStyles.transparent}>
+        <Container size="lg" p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg}>
+          <FounderJourney />
+        </Container>
+      </Box>
+
+      {/* Let's Talk Section (7) - No background */}
+      <Box style={sectionStyles.transparent} ref={letsTalkRef}>
         <Container size="sm" p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg}>
           <Title order={2} align="left" color="accent.8">Let's Talk</Title>
           <Text align="left" size="lg" mt="md" mb="xl">
