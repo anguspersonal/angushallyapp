@@ -31,6 +31,7 @@
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
+    "embla-carousel-autoplay": "^7.1.0",
     "embla-carousel-react": "^7.1.0",
     "framer-motion": "^12.7.4",
     "fuse.js": "^7.0.0",
