@@ -13,7 +13,7 @@
  *    - Add downloadable resources or white papers to showcase depth of knowledge
  */
 
-import { Card, Text, Group, Image, Badge, ActionIcon, Box, Button } from '@mantine/core';
+import { Card, Text, Group, Image, Badge, ActionIcon, Box, Button, Anchor } from '@mantine/core';
 import { IconX, IconArrowRight } from '@tabler/icons-react';
 
 function CaseStudySlide({ data, isExpanded, onExpand, onClose }) {
@@ -56,13 +56,41 @@ function CaseStudySlide({ data, isExpanded, onExpand, onClose }) {
                 </ActionIcon>
             )}
 
-            <Card.Section style={{ flex: '0 0 auto' }}>
+            <Card.Section style={{ flex: '0 0 auto', position: 'relative' }}>
                 <Image
-                    src={data.image}
+                    src={data.image.src}
                     height={160}
-                    alt={data.title}
+                    alt={data.image.alt}
                     fit="cover"
                 />
+                {isExpanded && data.image.attribution && (
+                    <Text 
+                        size="xs" 
+                        c="dimmed" 
+                        style={{ 
+                            position: 'absolute', 
+                            bottom: 4, 
+                            right: 8,
+                            fontSize: '8px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            padding: '2px 6px',
+                            borderRadius: 4
+                        }}
+                    >
+                        {data.image.attributionLink ? (
+                            <Anchor 
+                                href={data.image.attributionLink} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                style={{ color: 'inherit' }}
+                            >
+                                {data.image.attribution}
+                            </Anchor>
+                        ) : (
+                            data.image.attribution
+                        )}
+                    </Text>
+                )}
             </Card.Section>
 
             <Box 
@@ -74,12 +102,12 @@ function CaseStudySlide({ data, isExpanded, onExpand, onClose }) {
                     overflow: isExpanded ? 'visible' : 'hidden'
                 }}
             >
-                <Group position="apart" mb="xs">
-                    <Text weight={500}>{data.title}</Text>
+                <Box mb="xs" style={{ textAlign: 'center' }}>
+                    <Text weight={500} mb="xs">{data.title}</Text>
                     <Badge color="blue" variant="light">
                         {data.tags[0]}
                     </Badge>
-                </Group>
+                </Box>
 
                 <Box style={!isExpanded ? {
                     display: '-webkit-box',

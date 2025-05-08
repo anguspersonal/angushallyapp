@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm"; // ✅ Enables better Markdown parsing
 import { fetchBlogPost } from "./fetchBlogData";
 import Header from "../../components/Header";
+import { Image, Text, Box, Anchor } from '@mantine/core';
 import "./blog.css";
 
 /**
@@ -38,8 +39,29 @@ function BlogPost() {
       <Header />
       <div className="blog-post">
         <h1>{post.title}</h1>
+        {post.cover_image && (
+          <Box mb="xl">
+            <Image
+              src={post.cover_image}
+              alt={post.alt_text || `Cover image for ${post.title}`}
+              fit="cover"
+              style={{ maxHeight: '400px', width: '100%', objectFit: 'cover' }}
+            />
+            {post.attribution && (
+              <Text size="sm" c="dimmed" ta="right" mt="xs">
+                {post.attribution_link ? (
+                  <Anchor href={post.attribution_link} target="_blank" rel="noopener noreferrer" c="dimmed">
+                    {post.attribution}
+                  </Anchor>
+                ) : (
+                  post.attribution
+                )}
+              </Text>
+            )}
+          </Box>
+        )}
         <div className="markdown-content">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content_md}</ReactMarkdown> {/* ✅ Markdown Rendering */}
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content_md}</ReactMarkdown>
         </div>
         <p><strong>Published:</strong> {new Date(post.created_at).toLocaleDateString()}</p>
         <Link to="/blog" className="back-button">← Back to Blog</Link>

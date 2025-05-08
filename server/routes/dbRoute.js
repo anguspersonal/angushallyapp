@@ -28,7 +28,7 @@ const router = express.Router();
 
 // ✅ Define Allowed Tables & Their Columns (Prevents SQL Injection)
 const allowedTables = {
-  posts: ['id', 'title', 'content', 'content_md', 'created_at', 'slug', 'excerpt'],
+  posts: ['id', 'title', 'content', 'content_md', 'created_at', 'slug', 'excerpt', 'cover_image', 'attribution', 'attribution_link', 'alt_text'],
   customers: ['id', 'name', 'email', 'created_at'],
   inquiries: ['id', 'customer_id', 'subject', 'message', 'created_at', 'status']
 };
@@ -37,8 +37,9 @@ const allowedTables = {
 router.get('/:table', async (req, res) => {
   const table = req.params.table;
   const filters = req.query;
-  let columns = filters.columns ? filters.columns.split(',') : ['*']; // Ensure columns is an array
-  delete filters.columns; // Remove columns from filters
+  
+  let columns = filters.columns ? filters.columns.split(',') : ['*'];
+  delete filters.columns;
 
   // ✅ Validate Table Name
   if (!allowedTables[table]) {
@@ -50,7 +51,6 @@ router.get('/:table', async (req, res) => {
   const filteredColumns = columns.filter(col => allowedColumns.includes(col));
 
   if (filteredColumns.length === 0) {
-    // Default to all allowed columns if invalid columns were requested
     columns = allowedColumns;
   } else {
     columns = filteredColumns;
@@ -60,7 +60,7 @@ router.get('/:table', async (req, res) => {
     const result = await db.select(table, allowedTables, filters, columns);
     res.json(result);
   } catch (err) {
-    console.error('❌ Database query error:', err);
+    console.error('Database query error:', err);
     res.status(500).json({ error: 'Database query error', message: err.message });
   }
 });
