@@ -4,7 +4,12 @@ export const caseStudies = [
     {
       id: 0,
       type: 'caseStudy',
-      image: "/20250419_Analog_to_Digital_Transition_Teamvine.png",
+      image: {
+        src: "/josh-calabrese-Ev1XqeVL2wI-unsplash.jpg",
+        alt: "Rowers on a river, ariel view, working together in a team",
+        attribution: "Photo by Josh Calabrese",
+        attributionLink: "https://unsplash.com/@joshcala?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+      },
       icon: <IconBulb size={24} />,
       title: "Future Factory Pivot to Teamvine",
       tags: ["startup", "grant funding", "product strategy"],
@@ -19,7 +24,12 @@ export const caseStudies = [
     {
       id: 1,
       type: 'caseStudy',
-      image: "/20250419_Digital_Courtroom_Scene.png",
+      image: {
+        src: "/george-ciobra-2sT4RAAzOj4-unsplash.jpg",
+        alt: "The Royal Courts of Justice, London",
+        attribution: "Photo by George Ciobra",
+        attributionLink: "https://unsplash.com/@george_ciobra?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+      },
       icon: <IconRocket size={24} />,
       title: "COVID Rollout – Remote Justice Enablement",
       tags: ["public sector", "covid response", "delivery leadership"],
@@ -34,7 +44,12 @@ export const caseStudies = [
     {
       id: 2,
       type: 'caseStudy',
-      image: "/20250419_Strategic_Corporate_Insights.png",
+      image: {
+        src: "/jorge-salvador-c6hEUfgiwnw-unsplash.jpg",
+        alt: "Tasajera, Aragua, Venezuela, April 23, 2020, aerial antenna in mountains",
+        attribution: "Photo by Jorge Salvador",
+        attributionLink: "https://unsplash.com/@jsshotz?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+      },
       icon: <IconChartBar size={24} />,
       title: "£4M Commercial Insight (Telecoms)",
       tags: ["data analysis", "customer segmentation", "enterprise"],
@@ -49,7 +64,12 @@ export const caseStudies = [
     {
       id: 3,
       type: 'caseStudy',
-      image: "/20250419_Telecom_Store_Observation.png",
+      image: {
+        src: "/ani-adigyozalyan-ILw49SKUe8M-unsplash.jpg",
+        alt: "Cat cunningly hiding in a brown paper bag, the expert secret shopper",
+        attribution: "Photo by Ani Adigyozalyan",
+        attributionLink: "https://unsplash.com/@aniadigyozalyan?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+      },
       icon: <IconUsers size={24} />,
       title: "Retail Journey Uplift – Secret Shopper Insight",
       tags: ["cx design", "conversion", "retail"],
@@ -64,7 +84,12 @@ export const caseStudies = [
     {
       id: 4,
       type: 'caseStudy',
-      image: "/20250419_Data_Operations_Room.png",
+      image: {
+        src: "/rick-oldland-BVaGEkvF2LU-unsplash.jpg",
+        alt: "POV view of motorcylist rather to drive down a winding road through a beautiful valley. Lake District National Park, Ambleside, United Kingdom, Published on November 14, 2020. Apple, iPhone X",
+        attribution: "Photo by Rick Oldland",
+        attributionLink: "https://unsplash.com/@myhopelives?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+      },
       icon: <IconShieldLock size={24} />,
       title: "DVSA Data Valuation & Strategy",
       tags: ["data strategy", "public sector", "valuation"],
@@ -79,7 +104,12 @@ export const caseStudies = [
     {
       id: 5,
       type: 'caseStudy',
-      image: "/20250419_Unified_Data_Illumination.png",
+      image: {
+        src: "/conny-schneider-xuTJZ7uD7PI-unsplash.jpg",
+        alt: "A blue backgournd with lines and circles representing data points. Hamburg, Deutschland. Published on February 5, 2022",
+        attribution: "Photo by Conny Schneider",
+        attributionLink: "https://unsplash.com/@choys_?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+      },
       icon: <IconHammer size={24} />,
       title: "Marketing Consent & Data Strategy (Telecom)",
       tags: ["gdpr", "data governance", "revenue modelling"],

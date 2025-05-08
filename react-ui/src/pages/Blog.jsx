@@ -59,7 +59,6 @@ function Blog() {
                     >
                         {posts.map((post) => (
                             <motion.div key={post.id} variants={itemVariants}>
-                                {/* Wrap snippet in Anchor for consistent link styling */}
                                 <Anchor 
                                     component={Link} 
                                     to={`/blog/${post.slug}`} 

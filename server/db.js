@@ -13,12 +13,9 @@ References: - PostgreSQL Node.js client documentation: https://node-postgres.com
 Author: Angus Hally Date: 2025-02-28 */
 
 const dotenv = require("dotenv");
-
 dotenv.config();
-
 const { Pool } = require('pg');
 
-// console.log("Attempting to connect to", process.env.DATABASE_URL);
 // Initialize PostgreSQL connection pool
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -32,14 +29,12 @@ const pool = new Pool({
 // ✅ Generic query function (handles ALL SQL queries)
 const query = async (text, params = [], retries = 3) => {
   const client = await pool.connect();
-  console.log('DB Executing query:', text, params);
   try {
     const res = await client.query(text, params);
     return res.rows;  // ✅ Return just the rows
   } catch (error) {
     console.error('Database query error:', error);
     if (retries > 0) {
-      console.log(`Retrying query (${retries} retries left)...`);
       return query(text, params, retries - 1);
     }
     throw error;
@@ -50,10 +45,8 @@ const query = async (text, params = [], retries = 3) => {
 
 // ✅ Utility function to end the pool
 const end = () => {
-  console.log('Closing PostgreSQL pool...');
   return pool.end();
 };
-
 
 // ✅ High-level function for selecting records (uses `query()`)
 const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
@@ -81,7 +74,12 @@ const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
     queryText += ` WHERE ${conditions.join(' AND ')}`;
   }
 
-  queryText += ` ORDER BY id ASC`;
+  // Add order by created_at if it exists in the columns
+  if (allowedColumns.includes('created_at')) {
+    queryText += ` ORDER BY created_at DESC`;
+  } else {
+    queryText += ` ORDER BY id ASC`;
+  }
 
   // ✅ Use `query()` internally
   return await query(queryText, queryParams);
