@@ -4,6 +4,9 @@
 exports.up = async function(knex) {
     await knex.raw('CREATE SCHEMA IF NOT EXISTS habit'); // Ensure habit schema exists
 
+    // Drop the unique email constraint temporarily
+    await knex.raw('ALTER TABLE identity.users DROP CONSTRAINT IF EXISTS users_email_key');
+
     // Insert specific primary user required for Strava data linkage
     await knex.raw(`
       INSERT INTO identity.users
