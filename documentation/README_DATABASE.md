@@ -11,7 +11,36 @@ Key schemas include:
 - **habit**: User-specific habit tracking data, including Strava integration.
 - **crm**: Customer relationship management, primarily inquiries.
 - **fsa**: Data synchronized from the Food Standards Agency.
-- **public_data**: Publicly accessible content like blog posts and author information.
+- **content**: Blog posts, authors, and public content (moved from public schema).
+
+## Environment-Specific Configuration
+
+The application uses environment-specific database configurations:
+
+### Development
+- Uses local PostgreSQL instance
+- Configuration via environment variables:
+  - `DEV_DB_HOST`
+  - `DEV_DB_PORT`
+  - `DEV_DB_NAME`
+  - `DEV_DB_USER`
+  - `DEV_DB_PASSWORD`
+- Configured in local `.env` file
+
+### Production
+- Uses Heroku PostgreSQL
+- Configuration via `DATABASE_URL`
+- Enhanced connection pool settings:
+  - Connection timeout: 10 seconds
+  - Idle timeout: 30 seconds
+  - Pool size: 2-10 connections
+- SSL enabled with rejectUnauthorized: false
+
+### Search Paths
+Both environments use the following search path:
+```sql
+['public', 'identity', 'habit', 'crm', 'fsa', 'content']
+```
 
 ## Schema Definitions & Diagrams
 
@@ -34,9 +63,26 @@ The database schema is managed using Knex.js migrations.
 *   **Knex Migrations Documentation:** [View Migrations README](../server/migrations/README.md)
     *   This file explains how to run migrations, create new ones, and outlines the existing migration history and specific schema versions.
 
+## Backup Management
+
+Database backups should never be committed to version control. Instead:
+- Use Heroku's backup commands for production:
+  ```bash
+  heroku pg:backups:capture
+  heroku pg:backups:download
+  ```
+- Store backups in a dedicated `db_backups/` directory (gitignored)
+- Use `.gitignore` patterns to prevent accidental commits:
+  ```
+  *.dump
+  *.sql
+  db_backups/
+  ```
+
 ## Key Considerations
 
 *   **Unified Identity:** The `identity.users` table is the central record for all users across different application features.
 *   **Foreign Keys:** Domain-specific tables (e.g., `habit.habit_log`, `crm.inquiries`) should have foreign keys pointing to `identity.users.id`.
 *   **Data Integrity:** Constraints and relationships are defined to ensure data consistency.
-*   **Search Path:** The default database connection `searchPath` is configured in `server/knexfile.js` to include `public, identity, habit, crm, fsa`. 
+*   **Schema Organization:** Each domain has its own schema for clear separation of concerns.
+*   **Connection Management:** Environment-specific connection pools with optimized settings. 
