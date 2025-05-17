@@ -82,6 +82,25 @@ This file tracks development progress, current status, and next steps for the pr
     - Updated all documentation
     - Documented outstanding technical improvements
 
+14. **Phase 1 Schema Migration Fixes & Deployment (Date: 17/05/2025)**
+    - Fixed deployment issues with Heroku slug size
+      - Removed database dumps from version control
+      - Updated .gitignore to prevent future commits of dumps
+    - Fixed content schema migration issues
+      - Rewritten migration to explicitly handle table creation and data copying
+      - Successfully moved blog data from public to content schema
+      - Verified schema integrity across all domains
+    - Current Schema Status:
+      - `public`: Contains only Knex migration tables
+      - `content`: Successfully holds authors and posts tables
+      - `habit`: Retains all habit tracking tables
+      - `identity`: Contains user authentication tables
+      - `crm`: Contains inquiry management tables
+    - Deployment Status:
+      - All migrations successfully applied
+      - Application running on Heroku
+      - Database schemas verified in production
+
 ## Current Focus (as of 17/05/2025)
 
 **Phase 2: Auth Integration Planning**
@@ -356,40 +375,3 @@ Heroku has a mechanism for running migrations, often as part of its release phas
     *   Ensure your application code (e.g., `server/routes/contentRoute.js`, `server/routes/dbRoute.js`, `server/index.js` with mounted route, frontend changes in `fetchBlogData.js`) is committed.
     *   `git add .`
     *   `git commit -m "Implementing content schema, refactoring posts/authors, updating APIs"`
-    *   `git push heroku main`
-
-4.  **Monitor Heroku Build and Release Phase:**
-    *   `heroku logs --tail --app YOUR_HEROKU_APP_NAME`
-    *   Watch the logs closely. You'll see the build process, then the `release` command (your migrations) running.
-    *   **If migrations fail:**
-        *   The release will fail, and Heroku will not switch to your new code. Your application will continue running the old version.
-        *   Examine the logs to understand the error.
-        *   You'll need to:
-            *   Fix the migration script locally.
-            *   Potentially run `heroku pg:reset DATABASE_URL --app YOUR_HEROKU_APP_NAME` (if the database is severely messed up and you're okay with data loss for this dev/early stage app, **BE VERY CAREFUL WITH THIS COMMAND ON A REAL PROD DB**). More likely, you'd try to connect to the DB and manually revert or fix, or restore from your backup if it's a true production scenario.
-            *   If you fix a migration, commit, and push again, the release phase will re-run.
-            *   For a production database, if a migration fails mid-way, you'd typically restore from the backup taken in Step 1, fix the migration, and try the deployment process again.
-
-5.  **If Migrations Succeed:**
-    *   Heroku will proceed to deploy your new application code.
-
-**Phase 3: Post-Deployment (Heroku)**
-
-1.  **Disable Heroku Maintenance Mode (If Enabled):**
-    *   `heroku maintenance:off --app YOUR_HEROKU_APP_NAME`
-
-2.  **Thorough Testing in Production:**
-    *   Test all affected parts of your application as outlined before.
-    *   Check Heroku logs (`heroku logs --tail`) for any runtime errors.
-
-3.  **Monitor Closely.**
-
-**Key Considerations for Heroku:**
-
-*   **`Procfile` `release` phase is critical.** This is how Heroku automates running migrations.
-*   **Test `down` migrations locally:** While the release phase only runs `up` (`migrate:latest`), if you ever need to manually roll back on Heroku (e.g., using `heroku run bash` and then running knex commands), your `down` migrations need to be reliable.
-*   **Database Connection Pooling:** Heroku dynos have limited resources. Ensure your `pg` pool settings in `server/config/dbConfig.js` (or `knexfile.js` if Knex manages the pool directly for runtime) are sensible for Heroku's environment (e.g., not too many connections per dyno). Heroku's smaller plans often have connection limits on the database itself.
-
-This Heroku-specific workflow automates the migration execution. The most important parts are still the **backup**, **thorough local/staging testing of migrations against production-like data**, and having a **correctly configured `Procfile`**.
-
-Are you comfortable setting up or verifying the `release` phase in your `Procfile`? And have you configured the production settings in your `knexfile.js` for Heroku's `DATABASE_URL`?
