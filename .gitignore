@@ -30,7 +30,11 @@ react-ui/.env
 
 # Database dumps and backups
 *.dump
+*.dump.*
 *.sql
+*.backup
 db_backups/
+pg_dump/
+database_backups/
 
 

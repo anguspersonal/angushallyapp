@@ -44,13 +44,16 @@ router.get('/posts', async (req, res) => {
           END
         ) as author_name
       FROM content.posts p
-      JOIN identity.users u ON p.author_id = u.id
+      LEFT JOIN identity.users u ON p.author_id = u.id
       ORDER BY p."${sortBy}" ${order}
       LIMIT $1
       OFFSET $2;
     `;
     
+    console.log('Executing query:', postsQuery); // Add logging
     const posts = await db.query(postsQuery, [limit, offset]);
+    console.log('Query results:', posts); // Add logging
+    
     const totalPostsResult = await db.query('SELECT COUNT(*) AS total FROM content.posts;');
     const total = totalPostsResult[0] ? parseInt(totalPostsResult[0].total, 10) : 0;
 
