@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
 dist
 dist-ssr
@@ -23,10 +24,24 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment
-.env.local
+# Environment files
+# Root environment files
 .env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+
+# React environment files (auto-generated)
 react-ui/.env
+react-ui/.env.local
+react-ui/.env.development
+react-ui/.env.production
+react-ui/.env.staging
+
+# But keep the example file
+!config/env.example
 
 # Database dumps and backups
 *.dump
@@ -36,5 +51,9 @@ react-ui/.env
 db_backups/
 pg_dump/
 database_backups/
+
+# Build outputs
+build/
+dist/
 
 
