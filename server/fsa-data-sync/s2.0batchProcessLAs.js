@@ -1,14 +1,10 @@
-const dotenv = require('dotenv');
+const config = require('../../config/env');
 const path = require('path');
 const {testDatabaseConnection} = require('../tests/testDatabaseConnection');
 const processSingleAuthority = require('./processSingleAuthority.js');
 
-// Load environment variables before importing the database module
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-
 // Don't import the database module until the environment variables are loaded
 const db = require('../db.js');
-
 
 /**
  * Batch process local authorities.
@@ -17,7 +13,6 @@ const db = require('../db.js');
  * processes each local authority by downloading and parsing XML data, and updates the processing status
  * in the database accordingly.
  */
-
 
 const updateQuery = `
     UPDATE fsa.local_authorities
@@ -30,7 +25,6 @@ const updateQuery = `
         processing_status = 'Completed'
     WHERE local_authority_id = $1;
 `;
-
 
 /**
  * Fetches the first 10 pending local authorities from the database.
@@ -72,7 +66,6 @@ const fetchPendingLocalAuthorities = async () => {
 /**
  * Main function to batch process local authorities.
  */
-
 
 const batchProcessLAs = async () => {
 

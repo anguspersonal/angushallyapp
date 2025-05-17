@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db'); // Uses the exported query function
+const config = require('../../config/env');
 
 const router = express.Router();
 
@@ -97,7 +98,7 @@ router.get('/posts', async (req, res) => {
     res.status(500).json({ 
       error: 'Failed to fetch posts', 
       message: error.message,
-      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      details: config.nodeEnv === 'development' ? error.stack : undefined
     });
   }
 });

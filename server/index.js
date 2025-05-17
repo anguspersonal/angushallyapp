@@ -5,12 +5,12 @@ const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 const axios = require('axios'); // Add axios for API calls
 const Fuse = require('fuse.js'); // Import Fuse.js for fuzzy search
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); // Load environment variables
+const config = require('../config/env');
 const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
 
-const isDev = process.env.NODE_ENV !== 'production';
-const PORT = process.env.PORT || 5000;
+const isDev = config.nodeEnv !== 'production';
+const PORT = config.port;
 // console.log(process.env.NODE_ENV,process.env.PORT);
 
 // console.log('TEST_VAR:', process.env.TEST_VAR);
@@ -69,6 +69,10 @@ app.use('/api/strava',stravaRoute);
 // ✅ Habit API routes
 const habitRoute = require('./routes/habitRoute');
 app.use('/api/habit', habitRoute);
+
+// ✅ Auth API routes
+const authRoute = require('./routes/authRoute');
+app.use('/api/auth', authRoute);
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {

@@ -1,3 +1,4 @@
+const config = require('../../config/env');
 /**
  * testHygieneScoreRoute.test.js
  *
@@ -16,9 +17,7 @@
  * 2. In another: `npm test -- testHygieneScoreRoute.test.js`
  */
 
-const dotenv = require('dotenv');
 const path = require('path');
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const axios = require('axios');
 const db = require('../db'); // if you want to close the pool

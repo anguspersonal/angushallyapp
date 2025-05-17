@@ -1,3 +1,4 @@
+const config = require('../../config/env');
 /**
  * testHabitAPI.test.js
  *
@@ -16,11 +17,7 @@
  *    (The `--testNamePattern` flag is a Jest feature that filters tests by name.)
  */
 
-const dotenv = require('dotenv');
 const path = require('path');
-
-// Load environment variables before importing the database module
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const axios = require("axios");
 const db = require("../db");

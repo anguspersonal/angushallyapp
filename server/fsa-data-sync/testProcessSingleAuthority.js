@@ -1,5 +1,5 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') }); // Load environment variables
-const processSingleAuthority = require('./processSingleAuthority.js');
+const config = require('../../config/env');
+ const processSingleAuthority = require('./processSingleAuthority.js');
 
 // Define the test input 
 const localAuthorityID = 1;

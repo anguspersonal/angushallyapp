@@ -1,8 +1,5 @@
-const dotenv = require('dotenv');
+const config = require('../../config/env');
 const path = require('path');
-
-// Load environment variables before importing the database module
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // console.log("DEBUG: DATABASE_URL is", process.env.DATABASE_URL);
 

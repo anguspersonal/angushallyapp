@@ -1,12 +1,10 @@
+const config = require('../../config/env');
 const path = require('path'); // Import the path module
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 const Fuse = require('fuse.js');
 
 const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
 const searchMatchingPostcode = require('./searchMatchingPostcode');
 const fuseThresholdLevels = require('./fuseThresholdLevels');
-
-
 
 /**
  * Function to take an array of Google places with id, name, address, postcode
@@ -54,7 +52,6 @@ const matchGPlacesToFSAEstab = async (places) => {
 
 module.exports = matchGPlacesToFSAEstab;
 
-
 // FUZZY SEARCH: The `performFuzzySearch` function performs a fuzzy search on a list of places using the establishments list
 const performFuzzySearch = async (keys, places, establishments, selectedFuseThresholdLevel) => {
     const results = [];
@@ -88,7 +85,6 @@ const performFuzzySearch = async (keys, places, establishments, selectedFuseThre
             // console.log(`Matched: ${place.name} with ${bestMatch.business_name} Rating: ${bestMatch.rating_value_str}`);
         }
     }
-
 
     // Calculate the number of matches
     if (results.length > 0) {

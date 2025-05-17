@@ -1,5 +1,4 @@
-// Load environment variables before importing the database module
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
+const config = require('../../config/env');
 const db = require('../db'); // Database connection module
 const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
 

@@ -1,5 +1,5 @@
 // Description: Get all activities from the database
-const dotenv = require('dotenv');
+const config = require('../../config/env');
 const db = require('../db'); // Database connection module
 const checkValueType = require('../utils/checkValueType');
 

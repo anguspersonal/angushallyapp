@@ -1,13 +1,12 @@
+const config = require('../../config/env');
 const path = require('path');
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') }); // Load environment variables
-const axios = require('axios');
+ const axios = require('axios');
 const { XMLParser } = require('fast-xml-parser'); // Library for parsing XML
 const db = require('../db'); // Database connection module
 const fs = require('fs');
 const query = fs.readFileSync(path.join(__dirname, 'updateEstablishment.sql'), 'utf-8');
 const processRatingValue = require('./processRatingValue');
 const {testDatabaseConnection} = require('../tests/testDatabaseConnection');
-
 
 const processSingleAuthority = async (props) => {
     const startTime = Date.now(); // Start time for performance measurement
@@ -101,7 +100,6 @@ const processSingleAuthority = async (props) => {
             // Creat composite string of address
             const addressStr = [AddressLine1, AddressLine2, AddressLine4, PostCode].filter(Boolean).join(", ");
 
-
             const values = [
                 FHRSID, //$1
                 LocalAuthorityBusinessID || null, //$2
@@ -164,8 +162,6 @@ const processSingleAuthority = async (props) => {
         );
     }
 };
-
-
 
 // Export the function
 module.exports = processSingleAuthority;

@@ -1,3 +1,4 @@
+const config = require('../../config/env');
 /**
  * testStravaActivitiesRoute.test.js
  *
@@ -11,9 +12,7 @@
  *    (or just `npm test` if you want to run all tests).
  */
 
-const dotenv = require('dotenv');
 const path = require('path');
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const axios = require('axios');
 const db = require('../db');

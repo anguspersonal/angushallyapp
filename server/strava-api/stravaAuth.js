@@ -1,16 +1,11 @@
 const axios = require("axios");
-const dotenv = require("dotenv");
+const config = require('../../config/env');
 
-dotenv.config();
-
-//DOTENV MUST BE BEFORE DB
 const db = require("../db.js");
 const { testDatabaseConnection } = require("../tests/testDatabaseConnection.js");
 
-
-
-const STRAVA_CLIENT_ID = process.env.STRAVA_CLIENT_ID;
-const STRAVA_CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET;
+const STRAVA_CLIENT_ID = config.strava.clientId;
+const STRAVA_CLIENT_SECRET = config.strava.clientSecret;
 
 /**
  * Fetch the latest valid Strava token from the database.
@@ -21,7 +16,6 @@ const getStoredTokens = async () => {
   // console.log('Calling testDatabaseConnection...');
   const success = await testDatabaseConnection();
   // console.log('testDatabaseConnection returned:', success);
-
 
   // console.log("🔍 Retrieving tokens from DB...");
   try {

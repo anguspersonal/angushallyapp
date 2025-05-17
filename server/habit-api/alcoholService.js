@@ -1,6 +1,4 @@
-const dotenv = require('dotenv');
-// Load environment variables before importing the database module
-dotenv.config({ path: require('path').resolve(__dirname, '../../.env') });
+const config = require('../../config/env');
 const db = require('../db.js'); // Database connection module
 const { testDatabaseConnection } = require('../tests/testDatabaseConnection.js');
 const { calculateUnits } = require('../utils/calculateUnits'); // Utility function to calculate units

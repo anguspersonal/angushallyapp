@@ -1,19 +1,16 @@
 // Habit Api
 
+const config = require('../../config/env');
 
 /**
  * Logs a habit entry into `habit_log` before specific service processing.
  */
 
-const dotenv = require('dotenv');
-// Load environment variables before importing the database module
-dotenv.config({ path: require('path').resolve(__dirname, '../../.env') });
 const db = require('../db.js'); // Database connection module
 const { testDatabaseConnection } = require('../tests/testDatabaseConnection.js');
 
 // Check the value type of the input.
 const { checkValueType } = require('../utils/checkValueType');
-
 
 const logHabitLog = async (googleUserId, habitType, value = null, metric = null, extraData = {}) => {
     await testDatabaseConnection(); // Ensure DB connection works
@@ -32,7 +29,6 @@ const logHabitLog = async (googleUserId, habitType, value = null, metric = null,
         throw error;
     }
 };
-
 
 const getHabitLogsFromDB = async (googleUserId) => {
     // test the database connection

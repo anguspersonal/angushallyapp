@@ -1,10 +1,7 @@
 const axios = require('axios');
-const dotenv = require('dotenv');
 const path = require('path');
 const { testDatabaseConnection } = require('../tests/testDatabaseConnection.js');
-
-// Load environment variables before importing the database module
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+const config = require('../../config/env');
 
 const db = require('../db.js'); // Database connection module
 

@@ -1,5 +1,4 @@
-const dotenv = require("dotenv");
-dotenv.config({ path: require('path').resolve(__dirname, '../.env') }); // Ensure .env from server/ is loaded
+const config = require('../../config/env');
 
 /**
  * @fileoverview Database configuration module.
@@ -7,47 +6,52 @@ dotenv.config({ path: require('path').resolve(__dirname, '../.env') }); // Ensur
  * based on the NODE_ENV environment variable.
  */
 
-let poolConfig;
+function getDatabaseConfig() {
+  if (config.nodeEnv === 'production') {
+    // Prefer DATABASE_URL if available (Heroku standard)
+    if (config.database.url) {
+      return {
+        connectionString: config.database.url,
+        ssl: {
+          rejectUnauthorized: false
+        }
+      };
+    }
 
-if (process.env.NODE_ENV === 'production') {
-  console.log('DB Config: Using PRODUCTION settings (DATABASE_URL)');
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL environment variable is not set for production.');
+    // Fall back to detailed production config if DATABASE_URL is not available
+    const prodConfig = config.database.production;
+    if (!prodConfig.host || !prodConfig.name || !prodConfig.user || !prodConfig.password) {
+      throw new Error('Missing required production database configuration');
+    }
+
+    return {
+      host: prodConfig.host,
+      port: prodConfig.port,
+      database: prodConfig.name,
+      user: prodConfig.user,
+      password: prodConfig.password,
+      ssl: {
+        rejectUnauthorized: false
+      },
+      searchPath: prodConfig.searchPath
+    };
   }
-  poolConfig = {
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      require: true,
-      rejectUnauthorized: false // Common for Heroku, but review for your specific prod SSL needs
-    },
-    connectionTimeoutMillis: 10000, // 10 seconds
-    idleTimeoutMillis: 30000, // 30 seconds
-    max: 10, // Maximum number of clients in the pool
-    min: 2,  // Minimum number of clients in the pool
-    acquireTimeoutMillis: 8000, // 8 seconds
-    // Consider adding searchPath for production if needed, matching knexfile.js
-    searchPath: ['public', 'identity', 'habit', 'crm', 'fsa', 'content']
-  };
-} else {
-  // Development or other environments (e.g., test)
-  console.log('DB Config: Using DEVELOPMENT settings (DEV_DB_HOST, etc.)');
-  if (!process.env.DEV_DB_HOST || !process.env.DEV_DB_NAME || !process.env.DEV_DB_USER) {
-    throw new Error('Missing one or more DEV_DB_ environment variables for development (DEV_DB_HOST, DEV_DB_NAME, DEV_DB_USER).');
+
+  // Development configuration
+  const devConfig = config.database.development;
+  if (!devConfig.host || !devConfig.name || !devConfig.user) {
+    throw new Error('Missing required development database configuration');
   }
-  poolConfig = {
-    host: process.env.DEV_DB_HOST,
-    port: process.env.DEV_DB_PORT || 5432,
-    database: process.env.DEV_DB_NAME,
-    user: process.env.DEV_DB_USER,
-    password: process.env.DEV_DB_PASSWORD, // Can be null if that's how your local PG is set up
-    connectionTimeoutMillis: 5000,
-    idleTimeoutMillis: 30000,
-    max: 10,
-    min: 2,
-    // SSL typically not needed for local dev against WSL PG, unless you've configured it
-    // Add searchPath for development, matching knexfile.js
-    searchPath: process.env.DEV_DB_SEARCH_PATH ? process.env.DEV_DB_SEARCH_PATH.split(',') : ['public', 'identity', 'habit', 'crm', 'fsa', 'content']
+
+  return {
+    host: devConfig.host,
+    port: devConfig.port,
+    database: devConfig.name,
+    user: devConfig.user,
+    password: devConfig.password,
+    ssl: false,
+    searchPath: devConfig.searchPath
   };
 }
 
-module.exports = poolConfig; 
+module.exports = getDatabaseConfig(); 

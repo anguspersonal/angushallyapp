@@ -2,8 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const getStravaActivitiesFromDB = require('../strava-api/getActivitesFromDB');
 const router = express.Router();
-
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') }); // Load environment variables
+const config = require('../../config/env');
 
 router.get('/', async (req, res) => {
     try {

@@ -32,8 +32,8 @@ const { logExercise, getExerciseLogs } = require("../habit-api/exerciseService")
 const { getAggregateStats } = require("../habit-api/aggregateService");
 const { authMiddleware } = require("../middleware/auth");
 const router = express.Router();
+const config = require('../../config/env');
 
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') }); // Load environment variables
 
 // Apply authentication middleware to all routes
 router.use(authMiddleware());

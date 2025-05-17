@@ -1,17 +1,16 @@
-require('dotenv').config();
+const config = require('../config/env');
 
 // --- Optional: More robust debug connection --- 
-// This debug connection will now more reliably use your .env variables.
-// It's still good practice to move this to a separate script for non-debug runs.
+// This debug connection will now more reliably use the centralized config.
 let directPgClient;
-if (process.env.NODE_ENV === 'development' || process.env.KNEX_DEBUG_CONNECT === 'true') {
+if (config.nodeEnv === 'development' || process.env.KNEX_DEBUG_CONNECT === 'true') {
   const pg = require('pg');
   directPgClient = new pg.Client({
-    host: process.env.DEV_DB_HOST,     // Directly from .env
-    port: process.env.DEV_DB_PORT,
-    database: process.env.DEV_DB_NAME,
-    user: process.env.DEV_DB_USER,       // Directly from .env
-    password: process.env.DEV_DB_PASSWORD // Directly from .env
+    host: config.database.development.host,
+    port: config.database.development.port,
+    database: config.database.development.name,
+    user: config.database.development.user,
+    password: config.database.development.password
   });
 
   directPgClient.connect()
@@ -32,12 +31,12 @@ module.exports = {
   development: {
     client: 'postgresql',
     connection: {
-      host     : process.env.DEV_DB_HOST,
-      port     : process.env.DEV_DB_PORT,
-      database : process.env.DEV_DB_NAME,
-      user     : process.env.DEV_DB_USER,
-      password : process.env.DEV_DB_PASSWORD,
-      searchPath: ['public', 'identity', 'habit', 'crm', 'fsa'] // 'public' first for knex tables
+      host: config.database.development.host,
+      port: config.database.development.port,
+      database: config.database.development.name,
+      user: config.database.development.user,
+      password: config.database.development.password,
+      searchPath: config.database.development.searchPath
     },    
     pool: {
       min: 2,
@@ -45,7 +44,7 @@ module.exports = {
     },
     migrations: {
       directory: './migrations',
-      tableName: 'knex_migrations', // Corrected: Just the table name
+      tableName: 'knex_migrations',
       loadExtensions: ['.js']
     },
     seeds: {
@@ -62,12 +61,22 @@ module.exports = {
 
   production: {
     client: 'postgresql',
-    connection: {
-      connectionString: process.env.DATABASE_URL,
+    connection: config.database.url ? {
+      connectionString: config.database.url,
       ssl: {
         rejectUnauthorized: false
       },
-      searchPath: ['public', 'identity', 'habit', 'crm', 'fsa'] // Corrected to camelCase and public first
+      searchPath: config.database.production.searchPath
+    } : {
+      host: config.database.production.host,
+      port: config.database.production.port,
+      database: config.database.production.name,
+      user: config.database.production.user,
+      password: config.database.production.password,
+      ssl: {
+        rejectUnauthorized: false
+      },
+      searchPath: config.database.production.searchPath
     },
     pool: {
       min: 2,
@@ -75,7 +84,7 @@ module.exports = {
     },
     migrations: {
       directory: './migrations',
-      tableName: 'knex_migrations', // Corrected: Just the table name
+      tableName: 'knex_migrations',
       loadExtensions: ['.js']
     },
     seeds: {
