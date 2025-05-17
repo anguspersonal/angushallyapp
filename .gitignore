@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-# dist // Remove this line
+dist
 dist-ssr
 *.local
 
@@ -27,5 +27,10 @@ dist-ssr
 .env.local
 .env
 react-ui/.env
+
+# Database dumps and backups
+*.dump
+*.sql
+db_backups/
 
 
