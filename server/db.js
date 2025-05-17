@@ -30,7 +30,12 @@ const poolConfig = require('./config/dbConfig'); // Import the configuration
 const pool = new Pool(poolConfig);
 
 pool.on('connect', () => {
-  console.log('DB Pool: Connected to PostgreSQL using config:', poolConfig.host || poolConfig.connectionString);
+  console.log('DB Pool: Connected to PostgreSQL using config:', 
+    poolConfig.connectionString ? 
+    'DATABASE_URL (production)' : 
+    `${poolConfig.host}:${poolConfig.port}/${poolConfig.database}`
+  );
+  console.log('Search path:', poolConfig.searchPath);
 });
 
 pool.on('error', (err) => {
@@ -63,19 +68,30 @@ const quoteIdent = (identifier) => {
  * @throws {Error} If the query fails after all retries.
  */
 const query = async (text, params = [], retries = 3) => {
+  console.log('Executing query:', { text, params });
   const client = await pool.connect();
   try {
+    console.log('Got client from pool, executing query...');
     const res = await client.query(text, params);
+    console.log('Query completed successfully, row count:', res.rowCount);
     return res.rows;
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error('Database query error:', {
+      error: error.message,
+      stack: error.stack,
+      query: text,
+      params,
+      retries_left: retries
+    });
+    
     if (retries > 0) {
-      console.log(`Retrying query, ${retries -1} retries left...`);
+      console.log(`Retrying query, ${retries - 1} retries left...`);
       await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
       return query(text, params, retries - 1);
     }
     throw error;
   } finally {
+    console.log('Releasing client back to pool');
     client.release();
   }
 };

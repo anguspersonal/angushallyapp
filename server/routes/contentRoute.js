@@ -5,6 +5,8 @@ const router = express.Router();
 
 // GET /api/content/posts - Fetch multiple posts with author names
 router.get('/posts', async (req, res) => {
+  console.log('Received request for /api/content/posts with query:', req.query);
+  
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = parseInt(req.query.offset, 10) || 0;
   const sortBy = req.query.sort_by || 'created_at';
@@ -17,6 +19,23 @@ router.get('/posts', async (req, res) => {
   }
 
   try {
+    // First verify the schemas exist
+    const schemaCheck = await db.query(`
+      SELECT schema_name 
+      FROM information_schema.schemata 
+      WHERE schema_name IN ('content', 'identity');
+    `);
+    console.log('Available schemas:', schemaCheck);
+
+    // Then verify the tables exist
+    const tableCheck = await db.query(`
+      SELECT table_schema, table_name 
+      FROM information_schema.tables 
+      WHERE table_schema IN ('content', 'identity') 
+      AND table_name IN ('posts', 'users');
+    `);
+    console.log('Available tables:', tableCheck);
+
     const postsQuery = `
       SELECT 
         p.id,
@@ -50,12 +69,13 @@ router.get('/posts', async (req, res) => {
       OFFSET $2;
     `;
     
-    console.log('Executing query:', postsQuery); // Add logging
+    console.log('Executing posts query...');
     const posts = await db.query(postsQuery, [limit, offset]);
-    console.log('Query results:', posts); // Add logging
+    console.log(`Retrieved ${posts.length} posts`);
     
     const totalPostsResult = await db.query('SELECT COUNT(*) AS total FROM content.posts;');
     const total = totalPostsResult[0] ? parseInt(totalPostsResult[0].total, 10) : 0;
+    console.log('Total posts count:', total);
 
     res.json({
       data: posts,
@@ -69,8 +89,16 @@ router.get('/posts', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error in /api/content/posts:', error);
-    res.status(500).json({ error: 'Failed to fetch posts', message: error.message });
+    console.error('Error in /api/content/posts:', {
+      error: error.message,
+      stack: error.stack,
+      query: req.query
+    });
+    res.status(500).json({ 
+      error: 'Failed to fetch posts', 
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
