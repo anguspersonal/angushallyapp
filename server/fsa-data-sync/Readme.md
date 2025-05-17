@@ -77,45 +77,100 @@ This folder contains scripts and utilities for synchronizing data from the Food 
 
 ## **Database Schema Overview**
 
-### **`local_authorities` Table**
-Stores metadata about local authorities and their Open Data file URLs.
+### **`fsa.local_authorities` Table**
+Stores metadata about local authorities, their Open Data file URLs, and processing metrics for establishment data.
 ```sql
 CREATE TABLE fsa.local_authorities (
-    local_authority_id INTEGER PRIMARY KEY,   -- Unique ID for each local authority
-    name TEXT,                                -- Full authority name
-    friendly_name TEXT,                       -- Simplified name for filenames
-    url TEXT,                                 -- Open Data file URL
-    metadata JSONB,                           -- Full metadata from /Authorities endpoint
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    local_authority_id INTEGER PRIMARY KEY,
+    name TEXT NULLABLE,
+    friendly_name TEXT NULLABLE,
+    url TEXT NULLABLE,
+    metadata JSONB NULLABLE,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    estab_success_count INTEGER NULLABLE,
+    estab_skipped_count INTEGER NULLABLE,
+    estab_error_count INTEGER NULLABLE,
+    processing_duration DOUBLE PRECISION NULLABLE,
+    process_successful BOOLEAN NULLABLE,
+    processing_status TEXT NULLABLE DEFAULT 'Pending',
+    process_message TEXT NULLABLE
 );
 ```
 
-### **`establishments` Table**
+### **`fsa.establishments` Table**
 Stores parsed establishment data from the downloaded XML files.
 ```sql
 CREATE TABLE fsa.establishments (
-    fhrs_id INTEGER PRIMARY KEY,             -- Unique ID for each establishment
-    business_name TEXT,                      -- Name of the establishment
-    business_type TEXT,                      -- Type of business
-    address_line_1 TEXT,                     -- Address line 1
-    address_line_2 TEXT,                     -- Address line 2
-    address_line_4 TEXT,                     -- Address line 4
-    post_code TEXT,                          -- Postcode
-    rating_value TEXT,                       -- Hygiene rating value
-    rating_date DATE,                        -- Date of the rating
-    latitude FLOAT,                          -- Latitude coordinate
-    longitude FLOAT,                         -- Longitude coordinate
-    local_authority_id INTEGER REFERENCES fsa.local_authorities(local_authority_id),
-    metadata JSONB,                          -- Full metadata for flexibility
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id INTEGER PRIMARY KEY DEFAULT nextval('fsa.establishments_id_seq'::regclass),
+    fhrs_id INTEGER UNIQUE NULLABLE, -- FHRSID, often used as a primary business identifier from FSA
+    local_authority_business_id TEXT NULLABLE,
+    business_name TEXT NULLABLE,
+    business_type TEXT NULLABLE,
+    business_type_id INTEGER NULLABLE,
+    address_line_1 TEXT NULLABLE,
+    address_line_2 TEXT NULLABLE,
+    address_line_4 TEXT NULLABLE, -- Assuming address_line_3 might be missing or combined
+    post_code TEXT NULLABLE,
+    address TEXT NULLABLE, -- Combined address field
+    rating_value_str TEXT NULLABLE,    -- Text representation of rating (e.g., '5', 'AwaitingInspection')
+    rating_value_num INTEGER NULLABLE, -- Numerical representation of rating if applicable
+    rating_key TEXT NULLABLE,
+    rating_date DATE NULLABLE,
+    rating_status_id INTEGER NULLABLE REFERENCES fsa.ratings(id),
+    local_authority_code TEXT NULLABLE,
+    local_authority_name TEXT NULLABLE, -- Redundant if joining with local_authorities but often present in raw data
+    local_authority_website TEXT NULLABLE,
+    local_authority_email_address TEXT NULLABLE,
+    hygiene_score INTEGER NULLABLE,
+    structural_score INTEGER NULLABLE,
+    confidence_in_management INTEGER NULLABLE,
+    scheme_type TEXT NULLABLE,
+    new_rating_pending BOOLEAN NULLABLE,
+    longitude DOUBLE PRECISION NULLABLE,
+    latitude DOUBLE PRECISION NULLABLE,
+    postcode_id INTEGER NULLABLE REFERENCES fsa.postcodes(postcode_id),
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    -- metadata JSONB from original README was not in live schema, can be added if needed.
+);
+```
+
+### **`fsa.postcodes` Table**
+Lookup table for postcodes.
+```sql
+CREATE TABLE fsa.postcodes (
+    postcode_id INTEGER PRIMARY KEY DEFAULT nextval('fsa.postcodes_postcode_id_seq'::regclass),
+    postcode VARCHAR(10) NOT NULL UNIQUE
+);
+```
+
+### **`fsa.ratings` Table**
+Lookup table for rating values.
+```sql
+CREATE TABLE fsa.ratings (
+    id INTEGER PRIMARY KEY DEFAULT nextval('fsa.ratings_id_seq'::regclass),
+    rating_value_str TEXT UNIQUE NULLABLE
+);
+```
+
+### **`fsa.scheduled_jobs` Table**
+Tracks scheduled jobs for FSA data synchronization.
+```sql
+CREATE TABLE fsa.scheduled_jobs (
+    job_id INTEGER PRIMARY KEY DEFAULT nextval('fsa.scheduled_jobs_job_id_seq'::regclass),
+    job_name TEXT NOT NULL,
+    start_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITHOUT TIME ZONE NULLABLE,
+    status TEXT NOT NULL,
+    remarks TEXT NULLABLE,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
 ---
 
-## **Quick Check: What You’ve Achieved**
+## **Quick Check: What You've Achieved**
 - **Database Setup**:
   - Structured the `local_authorities` and `establishments` tables effectively.
   - Optimized relationships between tables using `local_authority_id`.

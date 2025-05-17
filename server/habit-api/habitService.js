@@ -12,17 +12,17 @@ const db = require('../db.js'); // Database connection module
 const { testDatabaseConnection } = require('../tests/testDatabaseConnection.js');
 
 // Check the value type of the input.
-const checkValueType = require('../utils/checkValueType');
+const { checkValueType } = require('../utils/checkValueType');
 
 
-const logHabitLog = async (userId, habitType, value = null, metric = null, extraData = {}) => {
+const logHabitLog = async (googleUserId, habitType, value = null, metric = null, extraData = {}) => {
     await testDatabaseConnection(); // Ensure DB connection works
 
     const query = `
-        INSERT INTO habit.habit_log (user_id, habit_type, value, metric, extra_data, created_at)
+        INSERT INTO habit.habit_log (google_user_id, habit_type, value, metric, extra_data, created_at)
         VALUES ($1, $2, $3, $4, $5::jsonb, NOW()) RETURNING id;
     `;
-    const values = [userId, habitType, value, metric, JSON.stringify(extraData)];
+    const values = [googleUserId, habitType, value, metric, JSON.stringify(extraData)];
     
     try {
         const response = await db.query(query, values);
@@ -34,16 +34,20 @@ const logHabitLog = async (userId, habitType, value = null, metric = null, extra
 };
 
 
-const getHabitLogsFromDB = async () => {
+const getHabitLogsFromDB = async (googleUserId) => {
     // test the database connection
     await testDatabaseConnection();
 
     console.log('Fetching habit logs from database...');
 
-    const query = `SELECT * FROM habit.habit_log ORDER BY created_at DESC;`;
+    const query = `
+        SELECT * FROM habit.habit_log 
+        WHERE google_user_id = $1 
+        ORDER BY created_at DESC;
+    `;
     // console.log(`Executing query: ${query}`);
     try {
-        const response = await db.query(query);
+        const response = await db.query(query, [googleUserId]);
         checkValueType(response);
         console.log('Response Length:', response.length);
         return response;
@@ -53,7 +57,7 @@ const getHabitLogsFromDB = async () => {
     }
 };
 
-async function getHabitAggregates(period, metrics) {
+async function getHabitAggregates(period, metrics, googleUserId) {
     const periodCondition = getPeriodCondition(period);
     
     const query = `
@@ -61,9 +65,10 @@ async function getHabitAggregates(period, metrics) {
             ${buildMetricSelect(metrics)}
         FROM habit.habit_log
         WHERE ${periodCondition}
+        AND google_user_id = $1
     `;
 
-    const result = await db.query(query);
+    const result = await db.query(query, [googleUserId]);
     return formatAggregateResult(result[0], metrics);
 }
 

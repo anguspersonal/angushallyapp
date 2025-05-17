@@ -1,12 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, Box } from '@mantine/core';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, Box, Button } from '@mantine/core';
 import {
   IconUser,
   IconArticle,
   IconRocket,
   IconMenu2,
   IconFolder,
+  IconLogout,
 } from '@tabler/icons-react';
 import { useMediaQuery, useMounted } from '@mantine/hooks';
 import '../general.css';
@@ -14,6 +15,63 @@ import '../general.css';
 function Header() {
   const isPhoneSize = useMediaQuery('(max-width: 768px)');
   const mounted = useMounted();
+  const navigate = useNavigate();
+  
+  const checkAuth = () => {
+    // Check localStorage first (for "Remember me")
+    const token = localStorage.getItem('googleToken');
+    const expiration = localStorage.getItem('tokenExpiration');
+    
+    if (token && expiration) {
+      // Check if token has expired
+      const expirationDate = new Date(expiration);
+      if (expirationDate > new Date()) {
+        return true;
+      }
+      // Clear expired token
+      localStorage.removeItem('googleToken');
+      localStorage.removeItem('tokenExpiration');
+    }
+    
+    // Check sessionStorage (for regular session)
+    const sessionToken = sessionStorage.getItem('googleToken');
+    return !!sessionToken;
+  };
+
+  const isAuthenticated = checkAuth();
+
+  const handleLogout = () => {
+    // Clear both storage types
+    localStorage.removeItem('googleToken');
+    localStorage.removeItem('tokenExpiration');
+    sessionStorage.removeItem('googleToken');
+    navigate('/login');
+  };
+
+  const renderAuthButton = () => {
+    if (isAuthenticated) {
+      return (
+        <Button
+          variant="subtle"
+          color="gray"
+          leftSection={<IconLogout size={18} />}
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+      );
+    }
+    return (
+      <Button
+        variant="subtle"
+        color="gray"
+        component={Link}
+        to="/login"
+      >
+        Login
+      </Button>
+    );
+  };
 
   return (
     <Box
@@ -104,14 +162,31 @@ function Header() {
               Collab
             </Menu.Item>
 
+            {isAuthenticated ? (
+              <Menu.Item
+                leftSection={<IconLogout size={18} />}
+                onClick={handleLogout}
+              >
+                Logout
+              </Menu.Item>
+            ) : (
+              <Menu.Item
+                leftSection={<IconUser size={18} />}
+                component={Link}
+                to="/login"
+              >
+                Login
+              </Menu.Item>
+            )}
           </Menu.Dropdown>
         </Menu>
       ) : (
-        <nav style={{ marginLeft: 'auto' }}>
+        <nav style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <Link to="/projects">Projects</Link>
           <Link to="/blog">Blog</Link>
           <Link to="/about">About</Link>
           <Link to="/collab">Collab</Link>
+          {renderAuthButton()}
         </nav>
       )}
     </Box>

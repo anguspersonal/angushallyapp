@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const nodemailer = require('nodemailer');
 const db = require('../db');
-const createOrRetrieveCustomer = require('../utils/createCustomer'); // Import customer function
+// const createOrRetrieveCustomer = require('../utils/createCustomer'); // Removed: No longer creating/retrieving customer for basic inquiry
 const { sendInquiryToOwner, sendAcknowledgmentToUser } = require('../utils/sendEmail'); // Import email utils
 const router = express.Router();
 
@@ -11,6 +11,7 @@ const router = express.Router();
 // Note that /api/contact is already defined in index.js so the route here can be just '/'
 router.post('/', async (req, res) => {
   const { name, email, subject, message, captcha } = req.body;
+  const submitterUserId = req.user?.id || null; // Will be null if route is not authenticated, or if req.user is not populated
 
   // Step 1: Check if all fields are present
   if (!name || !email || !subject || !message || !captcha) {
@@ -32,23 +33,19 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'CAPTCHA verification failed.' });
     }
 
-    // Step 4: Create or retrieve customer
-    let customerId;
+    // Step 5: Save message to crm.inquiries database
     try {
-      customerId = await createOrRetrieveCustomer(name, email);
-    } catch (error) {
-      console.error("❌ Error creating/retrieving customer:", error);
-      return res.status(500).json({ error: 'Failed to process customer information.' });
-    }
-    // Step 5: Save message to database
-    try {
+      // Note: submitter_user_id is null for public contact forms unless auth is added to this route
+      // status and assigned_to_user_id will use database defaults
       await db.query(
-        'INSERT INTO inquiries (customer_id, subject, message, captcha_token) VALUES ($1, $2, $3, $4)',
-        [customerId, subject, message, captcha]
+        `INSERT INTO crm.inquiries 
+        (name, email, subject, message, submitter_user_id, captcha_token, status) 
+        VALUES ($1, $2, $3, $4, $5, $6, 'new')`,
+        [name, email, subject, message, submitterUserId, captcha]
       );
-      console.log('✅ Inquiry successfully stored in database');
+      console.log('✅ Inquiry successfully stored in crm.inquiries');
     } catch (error) {
-      console.error("❌ Error inserting inquiry into database:", error);
+      console.error("❌ Error inserting inquiry into crm.inquiries:", error);
       return res.status(500).json({ error: 'Failed to store inquiry.' });
     }
 

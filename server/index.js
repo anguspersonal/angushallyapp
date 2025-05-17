@@ -54,6 +54,10 @@ app.use('/api/contact', contactLimiter, contactRoute); // 👈 Applied only to c
 const dbRoute = require('./routes/dbRoute'); // Import the database route
 app.use('/api/db', dbRoute); // Mount the route
 
+// ✅ Content API routes (new)
+const contentRoute = require('./routes/contentRoute');
+app.use('/api/content', contentRoute);
+
 // ✅ Hygiene score route
 const hygieneScoreRoute = require('./routes/hygieneScoreRoute');
 app.use('/api/hygieneScoreRoute',hygieneScoreRoute);

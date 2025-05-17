@@ -28,9 +28,43 @@ const router = express.Router();
 
 // ✅ Define Allowed Tables & Their Columns (Prevents SQL Injection)
 const allowedTables = {
-  posts: ['id', 'title', 'content', 'content_md', 'created_at', 'slug', 'excerpt', 'cover_image', 'attribution', 'attribution_link', 'alt_text'],
-  customers: ['id', 'name', 'email', 'created_at'],
-  inquiries: ['id', 'customer_id', 'subject', 'message', 'created_at', 'status']
+  'content.posts': [
+    'id', 
+    'title', 
+    'author_id', // Now UUID, links to identity.users
+    'content', 
+    'content_md', 
+    'excerpt', 
+    'slug', 
+    'tags',
+    'metadata',
+    'cover_image', 
+    'alt_text', 
+    'attribution', 
+    'attribution_link', 
+    'created_at', // Now TIMESTAMPTZ
+    'updated_at'  // Now TIMESTAMPTZ
+  ],
+  'content.authors': [
+    'id',       // UUID, PK, links to identity.users
+    'name', 
+    'created_at', // Now TIMESTAMPTZ
+    'updated_at'  // Now TIMESTAMPTZ
+  ],
+  'crm.inquiries': [
+    'id',
+    'submitter_user_id',
+    'name',
+    'email',
+    'subject',
+    'message',
+    'captcha_token',
+    'status',
+    'assigned_to_user_id',
+    'created_at',
+    'updated_at'
+  ]
+  // Add other tables here if they need to be exposed via this generic route
 };
 
 // ✅ GET API Route for Fetching Data from Any Allowed Table

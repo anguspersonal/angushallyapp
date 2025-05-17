@@ -1,40 +1,77 @@
-/* db.js - Database Connection and Query Module
+/**
+ * @module db
+ * @description Database Connection and Query Module for PostgreSQL.
+ *
+ * Establishes a PostgreSQL connection pool (via `pg` package) using configuration 
+ * from `./config/dbConfig.js`. Exports utility functions for executing SQL queries.
+ *
+ * Key Exports:
+ *   - `query(text: string, params?: any[], retries?: number): Promise<any[]>`
+ *   - `select(table: string, allowedTables: Record<string,string[]>, filters?: Record<string,any>, columns?: string[]): Promise<any[]>`
+ *   - `end(): Promise<void>`
+ *   - `pool: pg.Pool`
+ *
+ * @see {@link ./config/dbConfig.js|Database Configuration}
+ * @see {@link https://node-postgres.com/|node-postgres documentation}
+ * @author Angus Hally
+ * @version 1.2.0 
+ * @since 2025-02-28 
+ * @updated 2025-05-12 - Refactored to separate config logic; JSDoc updates.
+ */
 
-This module establishes a PostgreSQL connection pool using the 'pg' package and provides functions for executing SQL queries safely.
-
-Key Functions: - query(text, params, retries): Executes parameterised SQL queries with error handling and retry logic, returning only the result rows. - select(table, allowedTables, filters, columns): Constructs a dynamic, safe SELECT query. It validates the table and column names against an allowed list to prevent SQL injection, applies filters and ordering, and executes the query via the query() function.
-
-Environment Variables: - DATABASE_URL: Specifies the connection string for PostgreSQL. - SSL is configured with 'rejectUnauthorized' set to false.
-
-Usage Example: const { query, select } = require('./db');
-
-References: - PostgreSQL Node.js client documentation: https://node-postgres.com/
-
-Author: Angus Hally Date: 2025-02-28 */
-
-const dotenv = require("dotenv");
-dotenv.config();
+// Note: dotenv.config() is now called within dbConfig.js
 const { Pool } = require('pg');
+const poolConfig = require('./config/dbConfig'); // Import the configuration
 
-// Initialize PostgreSQL connection pool
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    require: true,
-    rejectUnauthorized: false
-  },
-  connectionTimeoutMillis: 5000, // 5 seconds
+/**
+ * The PostgreSQL connection pool instance.
+ * @type {import('pg').Pool}
+ */
+const pool = new Pool(poolConfig);
+
+pool.on('connect', () => {
+  console.log('DB Pool: Connected to PostgreSQL using config:', poolConfig.host || poolConfig.connectionString);
 });
 
-// ✅ Generic query function (handles ALL SQL queries)
+pool.on('error', (err) => {
+  console.error('DB Pool: Unexpected error on idle client', err);
+  process.exit(-1);
+});
+
+/**
+ * Helper function to safely quote PostgreSQL identifiers (table names, column names).
+ * Handles schema-qualified identifiers like "schema.table" by quoting each part.
+ * @param {string} identifier - The identifier to quote.
+ * @returns {string} The quoted identifier.
+ */
+const quoteIdent = (identifier) => {
+  return identifier
+    .split('.')
+    .map(part => `"${part.replace(/"/g, '""')}"`)
+    .join('.');
+};
+
+/**
+ * Executes a SQL query against the database with retry logic.
+ * Returns only the rows from the result.
+ * @async
+ * @function query
+ * @param {string} text - The SQL query string.
+ * @param {any[]} [params=[]] - An array of parameters for the SQL query.
+ * @param {number} [retries=3] - The number of times to retry the query on failure.
+ * @returns {Promise<any[]>} A promise that resolves to an array of result rows.
+ * @throws {Error} If the query fails after all retries.
+ */
 const query = async (text, params = [], retries = 3) => {
   const client = await pool.connect();
   try {
     const res = await client.query(text, params);
-    return res.rows;  // ✅ Return just the rows
+    return res.rows;
   } catch (error) {
     console.error('Database query error:', error);
     if (retries > 0) {
+      console.log(`Retrying query, ${retries -1} retries left...`);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
       return query(text, params, retries - 1);
     }
     throw error;
@@ -43,46 +80,69 @@ const query = async (text, params = [], retries = 3) => {
   }
 };
 
-// ✅ Utility function to end the pool
+/**
+ * Ends the connection pool.
+ * @function end
+ * @returns {Promise<void>} A promise that resolves when the pool has ended.
+ */
 const end = () => {
   return pool.end();
 };
 
-// ✅ High-level function for selecting records (uses `query()`)
+/**
+ * Constructs and executes a dynamic, safe SELECT query.
+ * Validates table and column names against an allowed list.
+ * @async
+ * @function select
+ * @param {string} table - The name of the table to select from. Can be schema-qualified (e.g., 'public.my_table').
+ * @param {Record<string, string[]>} allowedTables - An object where keys are table names (can be schema-qualified) and values are arrays of allowed column names for that table.
+ * @param {Record<string, any>} [filters={}] - An object representing WHERE clause filters (e.g., { column_name: value }).
+ * @param {string[]} [columns=['*']] - An array of column names to select. Defaults to all columns.
+ * @returns {Promise<any[]>} A promise that resolves to an array of result rows.
+ * @throws {Error} If the table name is invalid or if the query fails.
+ */
 const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
-  // Validate table name
-  if (!allowedTables[table]) {
-    throw new Error(`Invalid table name: ${table}`);
+  if (!allowedTables[table]) { 
+    throw new Error(`Invalid table name or table not in allowed list: ${table}`);
   }
 
-  // Validate requested columns
-  const allowedColumns = allowedTables[table];
-  const selectedColumns = columns.every(col => allowedColumns.includes(col))
-    ? columns.join(', ')
-    : allowedColumns.join(', ');
+  const allowedColumnsForTable = allowedTables[table];
+  let effectiveColumns = columns;
 
-  // Construct dynamic query with filters
-  let queryText = `SELECT ${selectedColumns} FROM public.${table}`;
+  if (columns.length === 1 && columns[0] === '*') {
+    effectiveColumns = allowedColumnsForTable;
+  } else {
+    effectiveColumns = columns.filter(col => allowedColumnsForTable.includes(col));
+    if (effectiveColumns.length === 0 && columns[0] !== '*') {
+      throw new Error(`No valid columns selected for table ${table}. Requested: ${columns.join(', ')}. Allowed: ${allowedColumnsForTable.join(', ')}`);
+    }
+  }
+
+  const selectedColumnsSQL = effectiveColumns.map(quoteIdent).join(', ');
+  const safeTableSQL = quoteIdent(table); // Now correctly handles schema.table
+
+  let queryText = `SELECT ${selectedColumnsSQL} FROM ${safeTableSQL}`;
   const queryParams = [];
-  const conditions = Object.keys(filters).map((key, index) => {
-    if (!allowedColumns.includes(key)) return null; // Prevent SQL Injection
-    queryParams.push(filters[key]);
-    return `${key} = $${index + 1}`;
-  }).filter(Boolean);
-
-  if (conditions.length > 0) {
+  
+  const filterKeys = Object.keys(filters);
+  if (filterKeys.length > 0) {
+    const conditions = filterKeys.map((key, index) => {
+      if (!allowedColumnsForTable.includes(key)) {
+        throw new Error(`Filter key "${key}" is not an allowed column for table "${table}".`);
+      }
+      queryParams.push(filters[key]);
+      return `${quoteIdent(key)} = $${index + 1}`;
+    });
     queryText += ` WHERE ${conditions.join(' AND ')}`;
   }
 
-  // Add order by created_at if it exists in the columns
-  if (allowedColumns.includes('created_at')) {
-    queryText += ` ORDER BY created_at DESC`;
-  } else {
-    queryText += ` ORDER BY id ASC`;
+  if (allowedColumnsForTable.includes('created_at')) {
+    queryText += ` ORDER BY ${quoteIdent('created_at')} DESC`;
+  } else if (allowedColumnsForTable.includes('id')) {
+    queryText += ` ORDER BY ${quoteIdent('id')} ASC`;
   }
 
-  // ✅ Use `query()` internally
   return await query(queryText, queryParams);
 };
 
-module.exports = { query, end, select };
+module.exports = { query, end, select, pool };

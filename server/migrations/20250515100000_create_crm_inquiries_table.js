@@ -5,6 +5,9 @@
 exports.up = async function(knex) {
   await knex.raw('CREATE SCHEMA IF NOT EXISTS crm');
 
+  // Drop the table first if it exists
+  await knex.schema.withSchema('crm').dropTableIfExists('inquiries');
+
   await knex.schema.withSchema('crm').createTable('inquiries', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     

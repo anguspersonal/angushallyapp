@@ -1,5 +1,7 @@
+// App.js
 import React, { useCallback, useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom"; // ✅ Remove BrowserRouter here
+import { Routes, Route, useLocation } from "react-router-dom";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import "./index.css";
 import "./general.css"; // Ensure general.css is imported
 import Home from "./pages/Home.jsx";
@@ -16,19 +18,20 @@ import Strava from "./pages/projects/strava/Strava.jsx";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Habit from "./pages/projects/habit/Habit.jsx";
 import Collab from "./pages/Collab.jsx";
+import Login from "./pages/Login.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
 import { theme } from './theme.js'; // Import your theme
 
-function App() {
-  const location = useLocation(); // ✅ Now this works properly
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
-  // Define routes where the footer should be hidden
+function App() {
+  const location = useLocation();
   const hideFooterRoutes = ["/projects/data-value-game"];
 
-  // Return the App UI
   return (
-    <MantineProvider theme={theme}> {/* Wrap everything in MantineProvider */}
-      <div className="App"> {/* Keep your main App div if needed for structure */}
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <MantineProvider theme={theme}>
+        <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -41,11 +44,12 @@ function App() {
           <Route path="/projects/data-value-game" element={<DataValueGame />} />
           <Route path="/projects/strava" element={<Strava />} />
           <Route path="/projects/habit" element={<Habit />} />
+            <Route path="/login" element={<Login />} />
         </Routes>
-        {/* Conditionally render the footer only if the current route is NOT in hideFooterRoutes */}
         {!hideFooterRoutes.includes(location.pathname) && <Footer />}
       </div>
     </MantineProvider>
+    </GoogleOAuthProvider>
   );
 }
 
