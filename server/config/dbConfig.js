@@ -20,9 +20,13 @@ if (process.env.NODE_ENV === 'production') {
       require: true,
       rejectUnauthorized: false // Common for Heroku, but review for your specific prod SSL needs
     },
-    connectionTimeoutMillis: 5000,
+    connectionTimeoutMillis: 10000, // 10 seconds
+    idleTimeoutMillis: 30000, // 30 seconds
+    max: 10, // Maximum number of clients in the pool
+    min: 2,  // Minimum number of clients in the pool
+    acquireTimeoutMillis: 8000, // 8 seconds
     // Consider adding searchPath for production if needed, matching knexfile.js
-    // searchPath: ['public', 'identity', 'habit', 'crm', 'fsa'] 
+    searchPath: ['public', 'identity', 'habit', 'crm', 'fsa', 'content']
   };
 } else {
   // Development or other environments (e.g., test)
@@ -37,9 +41,12 @@ if (process.env.NODE_ENV === 'production') {
     user: process.env.DEV_DB_USER,
     password: process.env.DEV_DB_PASSWORD, // Can be null if that's how your local PG is set up
     connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 30000,
+    max: 10,
+    min: 2,
     // SSL typically not needed for local dev against WSL PG, unless you've configured it
     // Add searchPath for development, matching knexfile.js
-    searchPath: process.env.DEV_DB_SEARCH_PATH ? process.env.DEV_DB_SEARCH_PATH.split(',') : ['public', 'identity', 'habit', 'crm', 'fsa']
+    searchPath: process.env.DEV_DB_SEARCH_PATH ? process.env.DEV_DB_SEARCH_PATH.split(',') : ['public', 'identity', 'habit', 'crm', 'fsa', 'content']
   };
 }
 
