@@ -8,10 +8,13 @@
   },
   "scripts": {
     "start": "node server",
-    "build": "cd react-ui/ && npm install && npm run build",
-    "dev": "cd react-ui/ && npm install && npm start",
+    "build": "npm run sync-env && cd react-ui/ && npm install && npm run build",
+    "dev": "npm run sync-env && cd react-ui/ && npm install && npm start",
     "test": "npx jest server/tests",
-    "test--verbose": "npx jest server/tests --verbose"
+    "test--verbose": "npx jest server/tests --verbose",
+    "sync-env": "node scripts/sync-env.js",
+    "prestart": "npm run sync-env",
+    "predevelop": "npm run sync-env"
   },
   "type": "commonjs",
   "cacheDirectories": [
@@ -40,7 +43,10 @@
     "react-google-recaptcha": "^3.1.0",
     "react-markdown": "^9.1.0",
     "remark-gfm": "^4.0.0",
-    "tree-kill": "^1.2.2"
+    "tree-kill": "^1.2.2",
+    "bcrypt": "^5.1.1",
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.17.0",
