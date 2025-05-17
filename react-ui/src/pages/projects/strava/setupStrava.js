@@ -8,7 +8,7 @@ const loadStravaApi = async () => {
     
     const defaultClient = StravaApiV3.ApiClient.instance;
     const strava_oauth = defaultClient.authentications['strava_oauth'];
-    strava_oauth.accessToken = process.env.STRAVA_ACCESS_TOKEN;
+    strava_oauth.accessToken = null; // Will be set after authentication
   
     const api = new StravaApiV3.ActivitiesApi();
     
