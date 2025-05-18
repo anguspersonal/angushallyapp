@@ -1,6 +1,7 @@
+console.log('Executing searchMatchingPostcode.js - V_LATEST_DEBUG_01');
 const config = require('../../config/env');
 const db = require('../db'); // Database connection module
-const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
+// const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
 
 
 
@@ -11,7 +12,7 @@ const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
  */
 const searchMatchingPostcode = async (places) => {
     // Check database connection
-    testDatabaseConnection();
+    // testDatabaseConnection();
 
 
     // Log the places array to debug

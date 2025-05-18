@@ -1,3 +1,4 @@
+console.log('Executing matchGPlacesToFSAEstab.js - V_LATEST_DEBUG_01');
 const config = require('../../config/env');
 const path = require('path'); // Import the path module
 const Fuse = require('fuse.js');
@@ -49,8 +50,6 @@ const matchGPlacesToFSAEstab = async (places) => {
     return results;
 
 };
-
-module.exports = matchGPlacesToFSAEstab;
 
 // FUZZY SEARCH: The `performFuzzySearch` function performs a fuzzy search on a list of places using the establishments list
 const performFuzzySearch = async (keys, places, establishments, selectedFuseThresholdLevel) => {
