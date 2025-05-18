@@ -1,6 +1,6 @@
+console.log('Executing alcoholService.js - V001 - Fixed testDatabaseConnection');
 const config = require('../../config/env');
 const db = require('../db.js'); // Database connection module
-const { testDatabaseConnection } = require('../tests/testDatabaseConnection.js');
 const { calculateUnits } = require('../utils/calculateUnits'); // Utility function to calculate units
 
 /**
@@ -23,8 +23,7 @@ async function logAlcohol(logId, extraData) {
     const loggedDrinks = [];
 
     try {
-        // ✅ Test the database connection before proceeding
-        await testDatabaseConnection();
+        // Database connection test removed
 
         for (const drink of extraData.drinks) {
             const { id: drinkId, name: drinkName, volumeML, abvPerc, count } = drink;
@@ -114,7 +113,7 @@ async function logAlcohol(logId, extraData) {
  */
 async function getAlcoholLogs(period = 'week') {
     try {
-        await testDatabaseConnection();
+        // Database connection test removed
 
         const periodCondition = getPeriodCondition(period);
         
@@ -148,7 +147,7 @@ async function getAlcoholLogs(period = 'week') {
 async function getDrinkCatalog() {
     try {
         console.log('Starting getDrinkCatalog...');
-        await testDatabaseConnection();
+        // Database connection test removed
         
         const query = `
             SELECT 
