@@ -21,7 +21,7 @@ exports.up = async function(knex) {
   // This assumes the old user_id (integer) still exists on habit_log for mapping.
   if (await knex.schema.withSchema('habit').hasColumn('habit_log', 'user_id') && await knex.schema.withSchema('habit').hasColumn('habit_log', 'identity_user_id_temp')) {
     const oldUserColInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'habit_log' AND column_name = 'user_id';");
-    const oldUserColInfo = oldUserColInfoResult.rows[0];
+    const oldUserColInfo = oldUserColInfoResult[0];
     if (oldUserColInfo && oldUserColInfo.data_type === 'integer') {
       await knex.raw(`
         UPDATE habit.habit_log hhl
@@ -38,7 +38,7 @@ exports.up = async function(knex) {
   if (await knex.schema.withSchema('habit').hasColumn('habit_log', 'user_id')) {
      // Check if user_id is integer type before trying to drop FK that expects integer column
     const userColInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'habit_log' AND column_name = 'user_id';");
-    const userColInfo = userColInfoResult.rows[0];
+    const userColInfo = userColInfoResult[0];
     if (userColInfo && userColInfo.data_type === 'integer') {
       await knex.raw('ALTER TABLE habit.habit_log DROP CONSTRAINT IF EXISTS habit_log_user_id_fkey;');
     }
@@ -47,7 +47,7 @@ exports.up = async function(knex) {
   // Step 6: Drop the old integer user_id column (if it exists and is integer)
   if (await knex.schema.withSchema('habit').hasColumn('habit_log', 'user_id')) {
     const userColInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'habit_log' AND column_name = 'user_id';");
-    const userColInfo = userColInfoResult.rows[0];
+    const userColInfo = userColInfoResult[0];
     if (userColInfo && userColInfo.data_type === 'integer') {
         await knex.schema.withSchema('habit').table('habit_log', t => t.dropColumn('user_id'));
     }
@@ -58,7 +58,7 @@ exports.up = async function(knex) {
     let renameTemp = true;
     if (await knex.schema.withSchema('habit').hasColumn('habit_log', 'user_id')) {
         const userColInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'habit_log' AND column_name = 'user_id';");
-        const userColInfo = userColInfoResult.rows[0];
+        const userColInfo = userColInfoResult[0];
         if (userColInfo && userColInfo.data_type === 'uuid') { 
             await knex.schema.withSchema('habit').table('habit_log', t => t.dropColumn('identity_user_id_temp'));
             renameTemp = false;
@@ -76,13 +76,13 @@ exports.up = async function(knex) {
   // Step 9: Add the new foreign key constraint (if user_id is now UUID and FK doesn't exist)
   if (await knex.schema.withSchema('habit').hasColumn('habit_log', 'user_id')) {
     const userColInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'habit_log' AND column_name = 'user_id';");
-    const userColInfo = userColInfoResult.rows[0];
+    const userColInfo = userColInfoResult[0];
     if (userColInfo && userColInfo.data_type === 'uuid') {
         const fkExistsResult = await knex.raw(
           `SELECT 1 FROM information_schema.table_constraints ` +
           `WHERE constraint_schema = 'habit' AND table_name = 'habit_log' AND constraint_name = 'fk_habit_log_identity_user' AND constraint_type = 'FOREIGN KEY';`
         );
-        const fkExists = fkExistsResult.rows.length > 0;
+        const fkExists = fkExistsResult.length > 0;
         if (!fkExists) {
             await knex.schema.withSchema('habit').table('habit_log', t => {
                 t.foreign('user_id', 'fk_habit_log_identity_user').references('id').inTable('identity.users').onDelete('CASCADE');
@@ -101,7 +101,7 @@ exports.up = async function(knex) {
   let alcoholHasUserId = await knex.schema.withSchema('habit').hasColumn('alcohol', 'user_id');
   if (alcoholHasUserId) {
     const colInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'alcohol' AND column_name = 'user_id';");
-    const colInfo = colInfoResult.rows[0];
+    const colInfo = colInfoResult[0];
     if (colInfo && colInfo.data_type !== 'uuid') {
       console.warn('habit.alcohol.user_id exists but is not UUID. Replacing it.');
       await knex.schema.withSchema('habit').table('alcohol', t => t.dropColumn('user_id'));
@@ -121,13 +121,13 @@ exports.up = async function(knex) {
 
   const finalAlcoholUserColCheckResult = await knex.schema.withSchema('habit').hasColumn('alcohol', 'user_id') ? 
                                 (await knex.raw('SELECT data_type FROM information_schema.columns WHERE table_schema = \'habit\' AND table_name = \'alcohol\' AND column_name = \'user_id\';')) : null;
-  const finalAlcoholUserColInfo = finalAlcoholUserColCheckResult ? finalAlcoholUserColCheckResult.rows[0] : null;                            
+  const finalAlcoholUserColInfo = finalAlcoholUserColCheckResult ? finalAlcoholUserColCheckResult[0] : null;                            
   if (finalAlcoholUserColInfo && finalAlcoholUserColInfo.data_type === 'uuid') {
     const fkExistsResult = await knex.raw(
         `SELECT 1 FROM information_schema.table_constraints 
          WHERE constraint_schema = 'habit' AND table_name = 'alcohol' AND constraint_name = 'fk_alcohol_identity_user' AND constraint_type = 'FOREIGN KEY';`
     );
-    const fkExists = fkExistsResult.rows.length > 0;
+    const fkExists = fkExistsResult.length > 0;
     if (!fkExists) {
         await knex.schema.withSchema('habit').table('alcohol', t => {
             t.foreign('user_id', 'fk_alcohol_identity_user').references('id').inTable('identity.users').onDelete('CASCADE');
@@ -147,7 +147,7 @@ exports.up = async function(knex) {
   let exerciseHasUserId = await knex.schema.withSchema('habit').hasColumn('exercise', 'user_id');
   if (exerciseHasUserId) {
     const colInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'exercise' AND column_name = 'user_id';");
-    const colInfo = colInfoResult.rows[0];
+    const colInfo = colInfoResult[0];
     if (colInfo && colInfo.data_type !== 'uuid') {
       console.warn('habit.exercise.user_id exists but is not UUID. Replacing it.');
       await knex.schema.withSchema('habit').table('exercise', t => t.dropColumn('user_id'));
@@ -167,13 +167,13 @@ exports.up = async function(knex) {
 
   const finalExerciseUserColCheckResult = await knex.schema.withSchema('habit').hasColumn('exercise', 'user_id') ? 
                                 (await knex.raw('SELECT data_type FROM information_schema.columns WHERE table_schema = \'habit\' AND table_name = \'exercise\' AND column_name = \'user_id\';')) : null;
-  const finalExerciseUserColInfo = finalExerciseUserColCheckResult ? finalExerciseUserColCheckResult.rows[0] : null;
+  const finalExerciseUserColInfo = finalExerciseUserColCheckResult ? finalExerciseUserColCheckResult[0] : null;
   if (finalExerciseUserColInfo && finalExerciseUserColInfo.data_type === 'uuid') {
     const fkExistsResult = await knex.raw(
         `SELECT 1 FROM information_schema.table_constraints 
          WHERE constraint_schema = 'habit' AND table_name = 'exercise' AND constraint_name = 'fk_exercise_identity_user' AND constraint_type = 'FOREIGN KEY';`
     );
-    const fkExists = fkExistsResult.rows.length > 0;
+    const fkExists = fkExistsResult.length > 0;
     if (!fkExists) {
         await knex.schema.withSchema('habit').table('exercise', t => {
             t.foreign('user_id', 'fk_exercise_identity_user').references('id').inTable('identity.users').onDelete('CASCADE');
@@ -189,7 +189,7 @@ exports.up = async function(knex) {
 
   if (drinkCatalogHasUserIdColumn) {
     const colInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'drink_catalog' AND column_name = 'user_id';");
-    const colInfo = colInfoResult.rows[0];
+    const colInfo = colInfoResult[0];
     if (colInfo && colInfo.data_type === 'uuid') {
       drinkCatalogUserIdIsUuid = true;
     } else if (colInfo) { // Column exists but is not UUID
@@ -213,7 +213,7 @@ exports.up = async function(knex) {
         `SELECT 1 FROM information_schema.table_constraints 
          WHERE constraint_schema = 'habit' AND table_name = 'drink_catalog' AND constraint_name = 'fk_drink_catalog_owner_user' AND constraint_type = 'FOREIGN KEY';`
     );
-    const fkExists = fkResult.rows.length > 0;
+    const fkExists = fkResult.length > 0;
 
     if (!fkExists) {
         await knex.schema.withSchema('habit').table('drink_catalog', function(table) {
@@ -238,7 +238,7 @@ exports.up = async function(knex) {
   let exercisesOriginalUserIdIsInteger = false;
   if (await knex.schema.withSchema('habit').hasColumn('exercises', 'user_id')) {
       const colTypeResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'exercises' AND column_name = 'user_id';");
-      exercisesOriginalUserIdIsInteger = colTypeResult.rows[0]?.data_type === 'integer';
+      exercisesOriginalUserIdIsInteger = colTypeResult[0]?.data_type === 'integer';
   }
 
   if (!await knex.schema.withSchema('habit').hasColumn('exercises', 'identity_user_id_temp')) {
@@ -271,7 +271,7 @@ exports.up = async function(knex) {
     let renameTempToUserId = true;
     if (await knex.schema.withSchema('habit').hasColumn('exercises', 'user_id')) {
       const finalUserColTypeResult = await knex.raw('SELECT data_type FROM information_schema.columns WHERE table_schema = \'habit\' AND table_name = \'exercises\' AND column_name = \'user_id\';');
-      const finalUserColTypeInfo = finalUserColTypeResult.rows[0];
+      const finalUserColTypeInfo = finalUserColTypeResult[0];
       if (finalUserColTypeInfo && finalUserColTypeInfo.data_type === 'uuid') { 
         await knex.schema.withSchema('habit').table('exercises', t => t.dropColumn('identity_user_id_temp')); 
         renameTempToUserId = false;
@@ -289,7 +289,7 @@ exports.up = async function(knex) {
   let finalExercisesUserColIsUuid = false;
   if (await knex.schema.withSchema('habit').hasColumn('exercises', 'user_id')) {
       const colInfoResult = await knex.raw('SELECT data_type FROM information_schema.columns WHERE table_schema = \'habit\' AND table_name = \'exercises\' AND column_name = \'user_id\';');
-      finalExercisesUserColIsUuid = colInfoResult.rows[0]?.data_type === 'uuid';
+      finalExercisesUserColIsUuid = colInfoResult[0]?.data_type === 'uuid';
   }
 
   if (finalExercisesUserColIsUuid) {
@@ -297,7 +297,7 @@ exports.up = async function(knex) {
         `SELECT 1 FROM information_schema.table_constraints 
          WHERE constraint_schema = 'habit' AND table_name = 'exercises' AND constraint_name = 'fk_exercises_owner_user' AND constraint_type = 'FOREIGN KEY';`
     );
-    const fkExists = fkExistsResult.rows.length > 0;
+    const fkExists = fkExistsResult.length > 0;
     if (!fkExists) {
       await knex.schema.withSchema('habit').table('exercises', function(table) {
         table.foreign('user_id', 'fk_exercises_owner_user').references('id').inTable('identity.users').onDelete('SET NULL');
@@ -316,7 +316,7 @@ exports.up = async function(knex) {
 
   if (stravaActivitiesHasUserIdColumn) {
     const colInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'strava_activities' AND column_name = 'user_id';");
-    const colInfo = colInfoResult.rows[0];
+    const colInfo = colInfoResult[0];
     if (colInfo && colInfo.data_type === 'uuid') {
       stravaActivitiesUserIdIsUuid = true;
     } else if (colInfo) { // Column exists but is not UUID
@@ -354,7 +354,7 @@ exports.up = async function(knex) {
         `SELECT 1 FROM information_schema.table_constraints 
          WHERE constraint_schema = 'habit' AND table_name = 'strava_activities' AND constraint_name = 'fk_strava_activities_identity_user' AND constraint_type = 'FOREIGN KEY';`
     );
-    const fkExists = fkExistsResult.rows.length > 0;
+    const fkExists = fkExistsResult.length > 0;
 
     if (!fkExists) {
         await knex.schema.withSchema('habit').table('strava_activities', function(table) {
@@ -374,7 +374,7 @@ exports.up = async function(knex) {
 
   if (stravaSyncLogHasUserIdColumn) {
     const colInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'strava_sync_log' AND column_name = 'user_id';");
-    const colInfo = colInfoResult.rows[0];
+    const colInfo = colInfoResult[0];
     if (colInfo && colInfo.data_type === 'uuid') {
       stravaSyncLogUserIdIsUuid = true;
     } else if (colInfo) { // Column exists but is not UUID
@@ -409,7 +409,7 @@ exports.up = async function(knex) {
         `SELECT 1 FROM information_schema.table_constraints 
          WHERE constraint_schema = 'habit' AND table_name = 'strava_sync_log' AND constraint_name = 'fk_strava_sync_log_identity_user' AND constraint_type = 'FOREIGN KEY';`
     );
-    const fkExists = fkExistsResult.rows.length > 0;
+    const fkExists = fkExistsResult.length > 0;
 
     if (!fkExists) {
         await knex.schema.withSchema('habit').table('strava_sync_log', function(table) {
@@ -429,7 +429,7 @@ exports.up = async function(knex) {
 
   if (stravaTokensHasUserIdColumn) {
     const colInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'strava_tokens' AND column_name = 'user_id';");
-    const colInfo = colInfoResult.rows[0];
+    const colInfo = colInfoResult[0];
     if (colInfo && colInfo.data_type === 'uuid') {
       stravaTokensUserIdIsUuid = true;
     } else if (colInfo) { // Column exists but is not UUID
@@ -464,7 +464,7 @@ exports.up = async function(knex) {
         `SELECT 1 FROM information_schema.table_constraints 
          WHERE constraint_schema = 'habit' AND table_name = 'strava_tokens' AND constraint_name = 'uq_strava_tokens_user_id' AND constraint_type = 'UNIQUE';`
     );
-    const uqExists = uqExistsResult.rows.length > 0;
+    const uqExists = uqExistsResult.length > 0;
     if (!uqExists) {
         await knex.schema.withSchema('habit').table('strava_tokens', function(table) {
             table.unique(['user_id'], 'uq_strava_tokens_user_id');
@@ -478,7 +478,7 @@ exports.up = async function(knex) {
         `SELECT 1 FROM information_schema.table_constraints 
          WHERE constraint_schema = 'habit' AND table_name = 'strava_tokens' AND constraint_name = 'fk_strava_tokens_identity_user' AND constraint_type = 'FOREIGN KEY';`
     );
-    const fkExists = fkExistsResult.rows.length > 0;
+    const fkExists = fkExistsResult.length > 0;
 
     if (!fkExists) {
         await knex.schema.withSchema('habit').table('strava_tokens', function(table) {
@@ -498,7 +498,7 @@ exports.up = async function(knex) {
 
   if (strengthSetsHasUserIdColumn) {
     const colInfoResult = await knex.raw("SELECT data_type FROM information_schema.columns WHERE table_schema = 'habit' AND table_name = 'strength_sets' AND column_name = 'user_id';");
-    const colInfo = colInfoResult.rows[0];
+    const colInfo = colInfoResult[0];
     if (colInfo && colInfo.data_type === 'uuid') {
       strengthSetsUserIdIsUuid = true;
     } else if (colInfo) { // Column exists but is not UUID
@@ -527,7 +527,7 @@ exports.up = async function(knex) {
         `SELECT 1 FROM information_schema.table_constraints 
          WHERE constraint_schema = 'habit' AND table_name = 'strength_sets' AND constraint_name = 'fk_strength_sets_identity_user' AND constraint_type = 'FOREIGN KEY';`
     );
-    const fkExists = fkExistsResult.rows.length > 0;
+    const fkExists = fkExistsResult.length > 0;
 
     if (!fkExists) {
         await knex.schema.withSchema('habit').table('strength_sets', function(table) {
@@ -661,7 +661,7 @@ exports.down = async function(knex) {
   // Handle habit_log user_id rename (UUID to temp, then drop temp, re-add int, populate int, re-add old FK)
   if (await knex.schema.withSchema('habit').hasColumn('habit_log', 'user_id')) {
     const habitLogUserColInfoResult = await knex.raw('SELECT pg_typeof("user_id")::text as col_type FROM habit.habit_log LIMIT 1;');
-    const habitLogUserColInfo = habitLogUserColInfoResult.rows[0];
+    const habitLogUserColInfo = habitLogUserColInfoResult[0];
     if (habitLogUserColInfo && habitLogUserColInfo.col_type === 'uuid') { // If user_id is UUID, it means rename from temp occurred in up()
       await knex.schema.withSchema('habit').table('habit_log', t => t.renameColumn('user_id', 'identity_user_id_temp'));
     }
@@ -670,7 +670,7 @@ exports.down = async function(knex) {
   let habitLogNeedsIntUserId = !await knex.schema.withSchema('habit').hasColumn('habit_log', 'user_id');
   if (!habitLogNeedsIntUserId && await knex.schema.withSchema('habit').hasColumn('habit_log', 'user_id')) {
     const currentHabitLogUserIdTypeResult = await knex.raw('SELECT pg_typeof("user_id")::text as col_type FROM habit.habit_log LIMIT 1;');
-    const currentHabitLogUserIdType = currentHabitLogUserIdTypeResult.rows[0]?.col_type;
+    const currentHabitLogUserIdType = currentHabitLogUserIdTypeResult[0]?.col_type;
     if (currentHabitLogUserIdType !== 'integer') {
       await knex.schema.withSchema('habit').table('habit_log', t => t.dropColumn('user_id'));
       habitLogNeedsIntUserId = true;

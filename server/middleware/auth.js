@@ -61,7 +61,7 @@ function authMiddleware(options = {}) {
                     [decoded.userId]
                 );
 
-                const user = result.rows[0];
+                const user = result[0];
                 if (!user) {
                     return res.status(401).json({ error: 'User not found' });
                 }
@@ -98,7 +98,7 @@ function authMiddleware(options = {}) {
                             [userData.googleSub]
                         );
 
-                        const user = result.rows[0];
+                        const user = result[0];
                         if (!user) {
                             return res.status(401).json({ error: 'User not found' });
                         }

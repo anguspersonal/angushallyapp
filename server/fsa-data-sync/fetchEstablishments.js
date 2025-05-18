@@ -17,7 +17,7 @@ const fetchEstablishments = async () => {
 
         // Log the first 5 establishments in development mode
         if (config.nodeEnv === 'development') {
-            // console.log('Establishments:', res.rows.slice(0, 5));
+            console.log('Establishments:', res.slice(0, 5));
         }
     } catch (err) {
         console.error(`Error fetching establishments from query at ${queryPath}:`, err.message);

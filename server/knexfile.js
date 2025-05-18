@@ -1,4 +1,5 @@
 const config = require('../config/env');
+const db = require('./db');
 
 // --- Optional: More robust debug connection --- 
 // This debug connection will now more reliably use the centralized config.
@@ -26,6 +27,15 @@ if (config.nodeEnv === 'development' || process.env.KNEX_DEBUG_CONNECT === 'true
     });
 }
 // --- End of Optional Debug Block ---
+
+// Debug queries using our db module
+const debugQueries = async () => {
+  const schemaResult = await db.query('SELECT current_schema()');
+  console.log('KNEXFILE_DEBUG: current_schema():', schemaResult[0].current_schema);
+
+  const tableResult = await db.query("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'knex_migrations')");
+  console.log('KNEXFILE_DEBUG: public.knex_migrations exists (using db module): ', tableResult[0].exists);
+};
 
 module.exports = {
   development: {

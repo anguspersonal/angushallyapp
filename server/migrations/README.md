@@ -332,3 +332,29 @@ console.log(response.rows); // ❌ Error: .rows is not available
 3. Test migrations thoroughly
 4. Update this documentation
 5. Submit a pull request 
+
+# Database Query Results
+
+IMPORTANT: The `db.query` function in this project returns only the rows array directly, not the full pg result object. This is different from the standard `pg` package behavior.
+
+## Correct Usage:
+```javascript
+const response = await db.query('SELECT * FROM my_table');
+console.log(response); // Array of rows
+const firstRow = response[0]; // Access first row directly
+```
+
+## Incorrect Usage:
+```javascript
+const response = await db.query('SELECT * FROM my_table');
+console.log(response.rows); // ❌ Error: .rows is not available
+const firstRow = response.rows[0]; // ❌ Error: .rows is not available
+```
+
+This design choice:
+1. Simplifies the application code
+2. Reduces boilerplate
+3. Makes the code more consistent
+4. Prevents common mistakes
+
+When writing migrations or database queries, always remember to access the results directly without `.rows`. 

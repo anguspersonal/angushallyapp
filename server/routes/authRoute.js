@@ -5,6 +5,7 @@ const { OAuth2Client } = require('google-auth-library');
 const { body, validationResult } = require('express-validator');
 const db = require('../db');
 const config = require('../../config/env');
+const { authMiddleware } = require('../middleware/auth');
 
 const router = express.Router();
 const googleClient = new OAuth2Client(config.auth.google.clientId);
@@ -158,90 +159,216 @@ router.post('/login', validateLogin, async (req, res) => {
 router.post('/google', async (req, res) => {
   try {
     const { token } = req.body;
+    if (!token) {
+      console.error('No token provided in request body');
+      return res.status(400).json({ error: 'No authentication token provided' });
+    }
+
+    // Verify Google token
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
       audience: config.auth.google.clientId
+    }).catch(error => {
+      console.error('Google token verification failed:', error);
+      throw new Error('Invalid Google token');
     });
 
     const payload = ticket.getPayload();
+    if (!payload) {
+      console.error('No payload in Google token');
+      return res.status(400).json({ error: 'Invalid Google token' });
+    }
+
     const { sub: googleSub, email, given_name: firstName, family_name: lastName } = payload;
+    console.log('Google auth payload:', { googleSub, email, firstName, lastName });
 
-    // Check if user exists
-    let result = await db.query(
-      `SELECT u.id, u.email, u.first_name, u.last_name, u.is_active,
-              ARRAY_AGG(r.name) as roles
-       FROM identity.users u
-       LEFT JOIN identity.user_roles ur ON u.id = ur.user_id
-       LEFT JOIN identity.roles r ON ur.role_id = r.id
-       WHERE u.google_sub = $1 OR (u.email = $2 AND u.auth_provider = 'google')
-       GROUP BY u.id`,
-      [googleSub, email]
-    );
+    await db.query('BEGIN');
 
-    let user = result.rows[0];
-
-    if (!user) {
-      // Create new user
-      result = await db.query(
-        `INSERT INTO identity.users 
-         (email, auth_provider, google_sub, first_name, last_name, is_active, email_verified_at)
-         VALUES ($1, 'google', $2, $3, $4, true, CURRENT_TIMESTAMP)
-         RETURNING id, email, first_name, last_name`,
-        [email, googleSub, firstName, lastName]
+    try {
+      // First, check if a user exists with this Google sub
+      let user = null;
+      const googleUserResult = await db.query(
+        `SELECT id, email, auth_provider, google_sub, first_name, last_name, is_active
+         FROM identity.users 
+         WHERE google_sub = $1`,
+        [googleSub]
       );
 
-      // Assign default role
-      await db.query(
-        `INSERT INTO identity.user_roles (user_id, role_id)
-         SELECT $1, id FROM identity.roles WHERE name = 'user'`,
-        [result.rows[0].id]
-      );
+      if (googleUserResult?.[0]) {
+        // User exists with this Google account
+        user = googleUserResult[0];
+      } else {
+        // Check if user exists with this email
+        const emailUserResult = await db.query(
+          `SELECT id, email, auth_provider, google_sub, first_name, last_name, is_active
+           FROM identity.users 
+           WHERE email = $1
+           ORDER BY created_at ASC
+           LIMIT 1`,
+          [email]
+        );
 
-      // Get user with roles
-      result = await db.query(
-        `SELECT u.id, u.email, u.first_name, u.last_name, ARRAY_AGG(r.name) as roles
+        if (emailUserResult?.[0]) {
+          const existingUser = emailUserResult[0];
+          
+          // If the existing user has no Google sub, update it
+          if (!existingUser.google_sub) {
+            const updateResult = await db.query(
+              `UPDATE identity.users 
+               SET google_sub = $1,
+                   auth_provider = 'google',
+                   first_name = COALESCE($2, first_name),
+                   last_name = COALESCE($3, last_name),
+                   updated_at = CURRENT_TIMESTAMP
+               WHERE id = $4
+               RETURNING id, email, first_name, last_name, google_sub, is_active`,
+              [googleSub, firstName, lastName, existingUser.id]
+            );
+
+            if (!updateResult?.[0]) {
+              throw new Error('Failed to update existing user');
+            }
+
+            user = updateResult[0];
+          } else {
+            // User exists with a different auth provider and already has a Google sub
+            await db.query('ROLLBACK');
+            return res.status(409).json({
+              error: 'Account exists with different auth provider',
+              details: `This email is already registered using ${existingUser.auth_provider} authentication`
+            });
+          }
+        } else {
+          // Create new user
+          const userResult = await db.query(
+            `INSERT INTO identity.users 
+             (email, auth_provider, google_sub, first_name, last_name, is_active, email_verified_at)
+             VALUES ($1, 'google', $2, $3, $4, true, CURRENT_TIMESTAMP)
+             RETURNING id, email, first_name, last_name, google_sub, is_active`,
+            [email, googleSub, firstName, lastName]
+          );
+
+          if (!userResult?.[0]) {
+            throw new Error('Failed to create new user record');
+          }
+
+          user = userResult[0];
+
+          // Assign default role
+          await db.query(
+            `INSERT INTO identity.user_roles (user_id, role_id)
+             SELECT $1, id FROM identity.roles WHERE name = 'user'`,
+            [user.id]
+          );
+        }
+      }
+
+      if (!user.is_active) {
+        await db.query('ROLLBACK');
+        return res.status(403).json({ error: 'Account is inactive' });
+      }
+
+      // Get user roles
+      const userWithRoles = await db.query(
+        `SELECT u.id, u.email, u.first_name, u.last_name, u.google_sub,
+                ARRAY_REMOVE(ARRAY_AGG(r.name), NULL) as roles
          FROM identity.users u
          LEFT JOIN identity.user_roles ur ON u.id = ur.user_id
          LEFT JOIN identity.roles r ON ur.role_id = r.id
          WHERE u.id = $1
-         GROUP BY u.id`,
-        [result.rows[0].id]
+         GROUP BY u.id, u.email, u.first_name, u.last_name, u.google_sub`,
+        [user.id]
       );
 
-      user = result.rows[0];
-    } else if (!user.is_active) {
-      return res.status(403).json({ error: 'Account is inactive' });
-    }
-
-    // Update last login timestamp
-    await db.query(
-      'UPDATE identity.users SET last_login_at = CURRENT_TIMESTAMP WHERE id = $1',
-      [user.id]
-    );
-
-    // Generate JWT token
-    const jwtToken = jwt.sign(
-      {
-        userId: user.id,
-        email: user.email,
-        roles: user.roles
-      },
-      config.auth.jwtSecret,
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      token: jwtToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        roles: user.roles
+      if (!userWithRoles?.[0]) {
+        throw new Error('Failed to retrieve user data');
       }
+
+      user = userWithRoles[0];
+      user.roles = user.roles || [];
+
+      // Update last login timestamp
+      await db.query(
+        'UPDATE identity.users SET last_login_at = CURRENT_TIMESTAMP WHERE id = $1',
+        [user.id]
+      );
+
+      await db.query('COMMIT');
+
+      // Generate JWT token
+      const jwtToken = jwt.sign(
+        {
+          userId: user.id,
+          email: user.email,
+          roles: user.roles
+        },
+        config.auth.jwtSecret,
+        { expiresIn: '24h' }
+      );
+
+      // Prepare response
+      const response = {
+        token: jwtToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.first_name,
+          lastName: user.last_name,
+          roles: user.roles
+        }
+      };
+
+      console.log('Successful authentication for:', email);
+      res.json(response);
+    } catch (dbError) {
+      await db.query('ROLLBACK');
+      console.error('Database operation failed:', dbError);
+      throw dbError;
+    }
+  } catch (error) {
+    console.error('Google auth error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      code: error.code
+    });
+    
+    if (error.message === 'Invalid Google token') {
+      res.status(401).json({ error: 'Invalid authentication token' });
+    } else if (error.name === 'TokenExpiredError') {
+      res.status(401).json({ error: 'Authentication token expired' });
+    } else if (error.name === 'JsonWebTokenError') {
+      res.status(401).json({ error: 'Invalid authentication token' });
+    } else if (error.code === '23505') {
+      res.status(409).json({ 
+        error: 'User already exists with this email',
+        details: error.detail
+      });
+    } else {
+      res.status(500).json({ 
+        error: 'Authentication failed. Please try again.',
+        details: error.message
+      });
+    }
+  }
+});
+
+/**
+ * Verify authentication status
+ */
+router.get('/verify', authMiddleware(), async (req, res) => {
+  try {
+    // Since we're using authMiddleware, if we get here, the user is authenticated
+    // and req.user is populated
+    res.json({
+      id: req.user.id,
+      email: req.user.email,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      roles: req.user.roles
     });
   } catch (error) {
-    console.error('Google auth error:', error);
+    console.error('Verify error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

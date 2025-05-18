@@ -11,6 +11,20 @@
  *   - `end(): Promise<void>`
  *   - `pool: pg.Pool`
  *
+ * IMPORTANT: The query function returns the rows array directly, not the full pg result object.
+ * This means you should access results like this:
+ *   const users = await db.query('SELECT * FROM users');
+ *   const firstUser = users[0];  // NOT users.rows[0]
+ *
+ * @example
+ * // Correct usage:
+ * const results = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+ * const user = results[0];  // Access first row directly
+ * 
+ * // Incorrect usage:
+ * const results = await db.query('SELECT * FROM users');
+ * const user = results.rows[0];  // Wrong! Results is already the rows array
+ *
  * @see {@link ./config/dbConfig.js|Database Configuration}
  * @see {@link https://node-postgres.com/|node-postgres documentation}
  * @author Angus Hally

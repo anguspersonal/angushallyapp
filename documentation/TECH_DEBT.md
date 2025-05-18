@@ -8,6 +8,20 @@ This file tracks known technical debt, areas for improvement, and potential refa
 - [ ] **Token Management - Rotation**: Implement token rotation for refresh tokens to enhance security.
 - [ ] **Token Management - Rate Limiting**: Add rate limiting to authentication endpoints (login, register, token refresh) to prevent brute force and denial-of-service attacks.
 - [ ] **Token Management - Session Invalidation**: Implement session invalidation on critical security events like password change or detected suspicious activity.
+- [ ] **Auth Operations - Loading States**: Add consistent loading states across all components that perform auth operations:
+  - Loading spinners for auth checks
+  - Disable interactive elements during auth operations
+  - Visual feedback for auth state changes
+- [ ] **Auth Operations - Retry Logic**: Implement retry mechanism for failed auth operations:
+  - Exponential backoff for repeated attempts
+  - Maximum retry limits
+  - User feedback during retry attempts
+  - Specific handling for different types of failures (network vs. auth)
+- [ ] **Auth Operations - TypeScript Migration**: Add TypeScript types for auth-related code:
+  - Type definitions for auth utilities
+  - Interface definitions for user and token data
+  - Type guards for error handling
+  - Proper typing for async operations
 
 ### Authentication - Error Handling
 - [ ] **Improved Messages**: Refine error messages for authentication failures to be more user-friendly without revealing too much system information.
@@ -62,6 +76,27 @@ This file tracks known technical debt, areas for improvement, and potential refa
 - [ ] **Foreign Key Updates**: Complete the process of updating all foreign keys in domain tables (`habit`, `crm`, `public_data`, `fsa`) to point to `identity.users.id`.
 - [ ] **Drop Deprecated Tables**: After data migration and FK updates are verified, create a migration to safely drop the old `_deprecated_users` and `_deprecated_customers` tables.
 
+### Auth Features (New Section)
+- [ ] **Enhanced Token Management**:
+  - Implement token refresh mechanism
+  - Add token blacklisting for logged-out tokens
+  - Support multiple active sessions
+  - Add device tracking for active sessions
+- [ ] **Auth State Persistence**:
+  - Add more granular control over "Remember me" functionality
+  - Implement secure token storage alternatives
+  - Add session recovery mechanisms
+- [ ] **Auth Flow Improvements**:
+  - Add progressive authentication (step-up auth)
+  - Implement 2FA/MFA support
+  - Add social login providers beyond Google
+  - Support account linking between providers
+- [ ] **Auth Monitoring**:
+  - Add detailed auth operation logging
+  - Implement auth attempt tracking
+  - Add suspicious activity detection
+  - Create auth activity dashboard
+
 ## Low Priority
 
 ### Documentation - Code & API
@@ -84,6 +119,28 @@ This file tracks known technical debt, areas for improvement, and potential refa
 ## Recently Added / To Be Prioritized
 
 <!-- New items can be quickly added here before being formally prioritized -->
+- [ ] **Authentication - Normalize with identity.auth_accounts Table:**
+  - Split authentication data into a separate table for better normalization and flexibility:
+    ```sql
+    identity.auth_accounts (
+      id UUID PRIMARY KEY,
+      user_id UUID REFERENCES identity.users(id),
+      provider TEXT,               -- 'google', 'local', 'github', etc.
+      provider_user_id TEXT,       -- e.g. Google sub or GitHub ID
+      email TEXT,
+      password_hash TEXT,
+      created_at TIMESTAMP
+    )
+    ```
+  - Benefits:
+    - Enables multiple login methods per user
+    - Provides full auditability and linking
+    - Supports more complex auth flows (e.g., account linking)
+  - JWT Enhancements:
+    - Current JWT payload (`{ userId, email, roles }`) can be extended to:
+      - Add provider information if needed
+      - Include session_id for logout tracking
+      - Support refresh tokens and rotating secrets
 - [ ] **Future Architecture: Unified "Person" or "Entity" Record:**
   - Investigate a more normalized data model where a central "Person" (or even a more abstract "Entity") table serves as the ultimate golden record.
   - Entities like `identity.users` (for authenticated app users), "inquirers" (from CRM), "authors" (from content), etc., would then flow from or be linked to this central record.
@@ -93,7 +150,18 @@ This file tracks known technical debt, areas for improvement, and potential refa
   - This would likely require new linking tables or columns to associate `identity.users` with `fsa.establishments`, but the core FSA data itself currently has no direct user links and doesn't require schema changes for user identity integration at this stage.
 - [ ] **Blog - Display Author Names:** Implement display of author names on blog post lists (snippets) and full post views once multiple authors are supported or if deemed necessary for single-author context.
 - [ ] **Blog - List Pagination UI:** Implement frontend UI components (e.g., Mantine Pagination) to interact with the pagination data now provided by the `/api/content/posts` endpoint.
-<!-- Example: - [ ] Investigate GraphQL for public API -->
+- [ ] **Database - Standardize Query Result Access Pattern:**
+  - Current Issue: Direct `.rows` access on database query results is inconsistent and error-prone
+  - Required Actions:
+    - Grep codebase for all instances of `.rows` access
+    - Standardize query result handling across all database operations
+    - Add ESLint rule to prevent direct `.rows` access (e.g., `no-pg-rows-access`)
+    - Create automated tests to verify query result handling patterns
+  - Benefits:
+    - Consistent error handling
+    - Reduced potential for runtime errors
+    - Better type safety when TypeScript is adopted
+    - Easier maintenance and debugging
 
 ## Completed Items
 

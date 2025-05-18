@@ -52,7 +52,7 @@ const fetchPendingLocalAuthorities = async () => {
                 WHERE processing_status = 'Completed';
                 `;
             const numOfCompleted = await db.query(queryNumOfCompletedLAs);
-            console.log(`Number of local authorities with status "Completed": ${numOfCompleted.rows[0].count}`);
+            console.log(`Number of local authorities with status "Completed": ${numOfCompleted[0].count}`);
             return;
         }
         console.log(`Found ${localAuthorities.length} pending local authorities.`);

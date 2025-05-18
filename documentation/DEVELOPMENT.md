@@ -101,18 +101,42 @@ This file tracks development progress, current status, and next steps for the pr
       - Application running on Heroku
       - Database schemas verified in production
 
-## Current Focus (as of 17/05/2025)
+15. **Phase 2.1 - Authentication System Enhancement (Date: Current)**
+    - Fixed Google OAuth Integration:
+      - ✅ Resolved duplicate user issues in database
+      - ✅ Improved error handling in `authRoute.js`
+      - ✅ Enhanced Google Sign-In button configuration
+      - ✅ Added proper CORS and security headers
+    - Enhanced Authentication Flow:
+      - ✅ Added graceful handling of verification errors
+      - ✅ Improved token management
+      - ✅ Added better error messages for users
+      - ✅ Updated AuthContext to handle auth states better
+    - Current Status:
+      - ✅ Google Sign-In working correctly
+      - ✅ User authentication flow stable
+      - ✅ Error handling improved
+      - ⏳ User registration frontend pending
+      - ⏳ Email verification flow pending
+      - ⏳ Role-based access control implementation pending
 
-**Phase 2: Auth Integration Planning**
-   - **Completed in Phase 1:**
-     1. ✅ Fixed migration issues and stabilized schema across environments
-     2. ✅ Verified all migrations work in both development and production
-     3. ✅ Completed holistic review of Phase 1 changes
+## Current Focus (as of Current Date)
+
+**Phase 2: Auth Integration Implementation**
+   - **Completed:**
+     1. ✅ Centralized configuration management
+     2. ✅ Core authentication endpoints
+     3. ✅ Enhanced middleware with role-based auth
+     4. ✅ Google Sign-In integration
+     5. ✅ Authentication error handling
    - **Next Steps:** 
-     1. Implement core authentication endpoints (`/auth/register`, `/auth/login`)
-     2. Add role-based middleware and authorization
-     3. Update existing routes with proper auth checks
-   - *Associated Tasks from Implementation Plan:* Phase 2 tasks below
+     1. Implement user registration frontend
+     2. Add email verification flow
+     3. Complete role-based access control implementation
+     4. Add token refresh mechanism
+     5. Implement session management
+     6. Deploy changes to production
+   - *Associated Tasks from Implementation Plan:* Phase 2.2 and 2.3 tasks below
 
 ## Implementation Plan
 
@@ -147,38 +171,38 @@ This file tracks development progress, current status, and next steps for the pr
 
 ### Phase 2: Auth Integration (Current Focus)
 
-#### 2.1 Core Authentication (Sprint 1)
-- [ ] Implement `/auth/register` endpoint
-  - Email/password registration
-  - Input validation
-  - Email verification flow
-  - Default role assignment
-- [ ] Implement `/auth/login` endpoint
-  - Local authentication
-  - JWT issuance
-  - Remember me functionality
-  - Rate limiting
-- [ ] Extend Google OAuth
-  - Update `/auth/google` callback
-  - Implement upsert into `identity.users`
-  - Handle role assignment
-  - Manage OAuth tokens
+#### 2.1 Core Authentication (Sprint 1) - ✅ MOSTLY COMPLETE
+- ✅ Implement `/auth/register` endpoint
+  - ✅ Email/password registration
+  - ✅ Input validation
+  - ⏳ Email verification flow
+  - ✅ Default role assignment
+- ✅ Implement `/auth/login` endpoint
+  - ✅ Local authentication
+  - ✅ JWT issuance
+  - ✅ Remember me functionality
+  - ⏳ Rate limiting
+- ✅ Extend Google OAuth
+  - ✅ Update `/auth/google` callback
+  - ✅ Implement upsert into `identity.users`
+  - ✅ Handle role assignment
+  - ✅ Fix Google Sign-In integration issues
 
-#### 2.2 Authorization Framework (Sprint 2)
-- [ ] Implement role-based middleware
-  - Create `authorize(roles...)` middleware
-  - Add role verification
-  - Handle unauthorized access
-  - Log access attempts
-- [ ] Add user activation checks
-  - Verify `is_active` status
-  - Handle inactive accounts
-  - Implement activation flow
-- [ ] Update JWT handling
-  - Include roles in payload
-  - Add token refresh
-  - Implement token blacklisting
-  - Handle token expiration
+#### 2.2 Authorization Framework (Sprint 2) - 🔄 IN PROGRESS
+- ✅ Implement role-based middleware
+  - ✅ Create `authorize(roles...)` middleware
+  - ✅ Add role verification
+  - ✅ Handle unauthorized access
+  - ⏳ Log access attempts
+- ✅ Add user activation checks
+  - ✅ Verify `is_active` status
+  - ✅ Handle inactive accounts
+  - ⏳ Implement activation flow
+- 🔄 Update JWT handling
+  - ✅ Include roles in payload
+  - ⏳ Add token refresh
+  - ⏳ Implement token blacklisting
+  - ✅ Handle token expiration
 
 #### 2.3 Route Updates (Sprint 3)
 - [ ] Update existing routes
@@ -375,3 +399,69 @@ Heroku has a mechanism for running migrations, often as part of its release phas
     *   Ensure your application code (e.g., `server/routes/contentRoute.js`, `server/routes/dbRoute.js`, `server/index.js` with mounted route, frontend changes in `fetchBlogData.js`) is committed.
     *   `git add .`
     *   `git commit -m "Implementing content schema, refactoring posts/authors, updating APIs"`
+
+### Environment Variables
+Required environment variables for the application:
+
+#### Development
+```env
+# Database
+DEV_DB_HOST=localhost
+DEV_DB_NAME=your_dev_db
+DEV_DB_USER=your_dev_user
+DEV_DB_PASSWORD=your_dev_password
+DEV_DB_PORT=5432
+DEV_DB_SEARCH_PATH=public,identity,habit,crm,fsa,content
+
+# Authentication
+JWT_SECRET=your_jwt_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Optional
+GOOGLE_MAPS_API_KEY=your_maps_api_key
+GOOGLE_MAPS_MAP_ID=your_maps_map_id
+```
+
+#### Production
+```env
+# Database (either DATABASE_URL or individual credentials)
+DATABASE_URL=your_database_url
+# OR
+PROD_DB_HOST=your_prod_host
+PROD_DB_NAME=your_prod_db
+PROD_DB_USER=your_prod_user
+PROD_DB_PASSWORD=your_prod_password
+PROD_DB_PORT=5432
+PROD_DB_SEARCH_PATH=public,identity,habit,crm,fsa,content
+
+# Authentication
+JWT_SECRET=your_jwt_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Optional
+GOOGLE_MAPS_API_KEY=your_maps_api_key
+GOOGLE_MAPS_MAP_ID=your_maps_map_id
+```
+
+## Deployment Checklist
+
+1. **Pre-deployment Tasks:**
+   - [ ] Run all tests
+   - ✅ Update Google OAuth configuration for production domain
+   - ✅ Environment variables verified (using existing configuration)
+   - [ ] Backup production database
+
+2. **Deployment Steps:**
+   - [ ] Push changes to GitHub
+   - [ ] Deploy to Heroku
+   - [ ] Run database migrations
+   - [ ] Verify authentication flow in production
+   - [ ] Monitor for any errors
+
+3. **Post-deployment Verification:**
+   - [ ] Test Google Sign-In
+   - [ ] Verify JWT handling
+   - [ ] Check database queries
+   - [ ] Monitor error logs
