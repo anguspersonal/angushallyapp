@@ -1,7 +1,6 @@
-console.log('Executing searchMatchingPostcode.js - V_LATEST_DEBUG_01');
+console.log('FORCE UPDATE searchMatchingPostcode.js - V002');
 const config = require('../../config/env');
 const db = require('../db'); // Database connection module
-// const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
 
 
 
@@ -11,9 +10,8 @@ const db = require('../db'); // Database connection module
  * @returns {Object.<string, Array>} Dictionary of place names to matching establishments
  */
 const searchMatchingPostcode = async (places) => {
-    // Check database connection
-    // testDatabaseConnection();
-
+    // Database connection check removed
+    console.log('Running searchMatchingPostcode function - V002');
 
     // Log the places array to debug
     // console.log('Received places:', places);
