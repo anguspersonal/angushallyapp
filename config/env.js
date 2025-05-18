@@ -25,16 +25,22 @@ function loadEnv() {
         }
     });
 
-    // Validate required environment variables
-    const requiredVars = [
-        // Database (development)
-        'DEV_DB_HOST',
-        'DEV_DB_NAME',
-        'DEV_DB_USER',
-        // Authentication
+    // Base required variables (needed in all environments)
+    const baseRequiredVars = [
         'JWT_SECRET',
         'GOOGLE_CLIENT_ID',
     ];
+
+    // Environment-specific required variables
+    const requiredVars = NODE_ENV === 'development' 
+        ? [
+            ...baseRequiredVars,
+            // Database (development only)
+            'DEV_DB_HOST',
+            'DEV_DB_NAME',
+            'DEV_DB_USER',
+          ]
+        : baseRequiredVars;
 
     if (NODE_ENV === 'production') {
         // In production, we need either DATABASE_URL or all PROD_DB_ variables
