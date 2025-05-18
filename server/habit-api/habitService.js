@@ -1,4 +1,5 @@
 // Habit Api
+console.log('Executing habitService.js - V001 - Fixed testDatabaseConnection');
 
 const config = require('../../config/env');
 
@@ -7,14 +8,11 @@ const config = require('../../config/env');
  */
 
 const db = require('../db.js'); // Database connection module
-const { testDatabaseConnection } = require('../tests/testDatabaseConnection.js');
 
 // Check the value type of the input.
 const { checkValueType } = require('../utils/checkValueType');
 
 const logHabitLog = async (googleUserId, habitType, value = null, metric = null, extraData = {}) => {
-    await testDatabaseConnection(); // Ensure DB connection works
-
     const query = `
         INSERT INTO habit.habit_log (google_user_id, habit_type, value, metric, extra_data, created_at)
         VALUES ($1, $2, $3, $4, $5::jsonb, NOW()) RETURNING id;
@@ -31,9 +29,6 @@ const logHabitLog = async (googleUserId, habitType, value = null, metric = null,
 };
 
 const getHabitLogsFromDB = async (googleUserId) => {
-    // test the database connection
-    await testDatabaseConnection();
-
     console.log('Fetching habit logs from database...');
 
     const query = `
