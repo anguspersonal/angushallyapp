@@ -2,7 +2,7 @@ const config = require('../../config/env');
 const path = require('path'); // Import the path module
 const Fuse = require('fuse.js');
 
-const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
+// const { testDatabaseConnection } = require('../tests/testDatabaseConnection');
 const searchMatchingPostcode = require('./searchMatchingPostcode');
 const fuseThresholdLevels = require('./fuseThresholdLevels');
 
@@ -22,7 +22,7 @@ const fuseThresholdLevels = require('./fuseThresholdLevels');
 const matchGPlacesToFSAEstab = async (places) => {
 
     // Check database connection
-    testDatabaseConnection();
+    // testDatabaseConnection();
 
     // Match places with establishments based on postcodes efficiently by batching.
     const estsMatchingPostcode = await searchMatchingPostcode(places);
