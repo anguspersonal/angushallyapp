@@ -1,17 +1,19 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
+import { getStoredToken, clearAuthData } from './authUtils.js';
 
-async function getAuthToken() {
-    // Try localStorage first (for "Remember me")
-    let token = localStorage.getItem('googleToken');
-    if (!token) {
-        // Fall back to sessionStorage
-        token = sessionStorage.getItem('googleToken');
+// Use environment variable with fallback
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+
+class ApiError extends Error {
+    constructor(message, status, data) {
+        super(message);
+        this.name = 'ApiError';
+        this.status = status;
+        this.data = data;
     }
-    return token;
 }
 
 async function apiClient(endpoint, options = {}) {
-    const token = await getAuthToken();
+    const token = await getStoredToken();
     
     const headers = {
         'Content-Type': 'application/json',
@@ -22,30 +24,74 @@ async function apiClient(endpoint, options = {}) {
     const config = {
         ...options,
         headers,
+        credentials: 'include', // Include cookies if needed
     };
 
     try {
+        console.log(`Making ${options.method || 'GET'} request to:`, API_BASE_URL + endpoint);
         const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
         
-        if (response.status === 401) {
-            // Token is invalid or expired
-            localStorage.removeItem('googleToken');
-            localStorage.removeItem('tokenExpiration');
-            sessionStorage.removeItem('googleToken');
-            window.location.href = '/login';
-            return;
+        // Handle HTML responses (usually error pages)
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('text/html')) {
+            throw new ApiError('Received HTML response instead of JSON', response.status, null);
         }
 
-        const data = await response.json();
+        // For non-204 responses, try to parse JSON
+        let data = null;
+        if (response.status !== 204) {
+            try {
+                data = await response.json();
+            } catch (e) {
+                console.error('Failed to parse JSON response:', e);
+                throw new ApiError('Invalid JSON response from server', response.status, null);
+            }
+        }
         
         if (!response.ok) {
-            throw new Error(data.error || 'Something went wrong');
+            // Handle authentication errors
+            if (response.status === 401) {
+                await clearAuthData();
+            }
+
+            // Throw error with status and data
+            throw new ApiError(
+                data?.error || getErrorMessage(response.status),
+                response.status,
+                data
+            );
         }
 
         return data;
     } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+            throw new ApiError('Network error - please check your connection', 0, null);
+        }
         console.error('API request failed:', error);
-        throw error;
+        throw new ApiError(error.message, 0, null);
+    }
+}
+
+// Helper function to get meaningful error messages
+function getErrorMessage(status) {
+    switch (status) {
+        case 400:
+            return 'Bad request - please check your input';
+        case 401:
+            return 'Unauthorized - please log in again';
+        case 403:
+            return 'Forbidden - you do not have access to this resource';
+        case 404:
+            return 'Resource not found';
+        case 429:
+            return 'Too many requests - please try again later';
+        case 500:
+            return 'Server error - please try again later';
+        default:
+            return 'An error occurred';
     }
 }
 
@@ -62,4 +108,13 @@ export const api = {
         body: JSON.stringify(data),
     }),
     delete: (endpoint, options = {}) => apiClient(endpoint, { ...options, method: 'DELETE' }),
+    
+    // Helper method to check if user is authenticated
+    isAuthenticated: async () => {
+        const token = await getStoredToken();
+        return !!token;
+    },
+    
+    // Export ApiError class for type checking
+    ApiError
 }; 

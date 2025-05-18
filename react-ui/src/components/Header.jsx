@@ -11,45 +11,21 @@ import {
 } from '@tabler/icons-react';
 import { useMediaQuery, useMounted } from '@mantine/hooks';
 import '../general.css';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 function Header() {
   const isPhoneSize = useMediaQuery('(max-width: 768px)');
   const mounted = useMounted();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   
-  const checkAuth = () => {
-    // Check localStorage first (for "Remember me")
-    const token = localStorage.getItem('googleToken');
-    const expiration = localStorage.getItem('tokenExpiration');
-    
-    if (token && expiration) {
-      // Check if token has expired
-      const expirationDate = new Date(expiration);
-      if (expirationDate > new Date()) {
-        return true;
-      }
-      // Clear expired token
-      localStorage.removeItem('googleToken');
-      localStorage.removeItem('tokenExpiration');
-    }
-    
-    // Check sessionStorage (for regular session)
-    const sessionToken = sessionStorage.getItem('googleToken');
-    return !!sessionToken;
-  };
-
-  const isAuthenticated = checkAuth();
-
   const handleLogout = () => {
-    // Clear both storage types
-    localStorage.removeItem('googleToken');
-    localStorage.removeItem('tokenExpiration');
-    sessionStorage.removeItem('googleToken');
+    logout();
     navigate('/login');
   };
 
   const renderAuthButton = () => {
-    if (isAuthenticated) {
+    if (user) {
       return (
         <Button
           variant="subtle"
@@ -162,7 +138,7 @@ function Header() {
               Collab
             </Menu.Item>
 
-            {isAuthenticated ? (
+            {user ? (
               <Menu.Item
                 leftSection={<IconLogout size={18} />}
                 onClick={handleLogout}

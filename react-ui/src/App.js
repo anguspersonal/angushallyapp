@@ -1,5 +1,5 @@
 // App.js
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import "./index.css";
@@ -21,6 +21,7 @@ import Collab from "./pages/Collab.jsx";
 import Login from "./pages/Login.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
 import { theme } from './theme.js'; // Import your theme
+import { AuthProvider } from './contexts/AuthContext.jsx';
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
@@ -29,27 +30,29 @@ function App() {
   const hideFooterRoutes = ["/projects/data-value-game"];
 
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <MantineProvider theme={theme}>
-        <div className="App">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<Blogpost />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/collab" element={<Collab />} />
-          <Route path="/projects/eat-safe-uk" element={<EatSafeUK />} />
-          <Route path="/projects/data-value-game" element={<DataValueGame />} />
-          <Route path="/projects/strava" element={<Strava />} />
-          <Route path="/projects/habit" element={<Habit />} />
-            <Route path="/login" element={<Login />} />
-        </Routes>
-        {!hideFooterRoutes.includes(location.pathname) && <Footer />}
-      </div>
+    <MantineProvider theme={theme}>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <AuthProvider>
+          <div className="App">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<Blogpost />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/collab" element={<Collab />} />
+              <Route path="/projects/eat-safe-uk" element={<EatSafeUK />} />
+              <Route path="/projects/data-value-game" element={<DataValueGame />} />
+              <Route path="/projects/strava" element={<Strava />} />
+              <Route path="/projects/habit" element={<Habit />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+            {!hideFooterRoutes.includes(location.pathname) && <Footer />}
+          </div>
+        </AuthProvider>
+      </GoogleOAuthProvider>
     </MantineProvider>
-    </GoogleOAuthProvider>
   );
 }
 
