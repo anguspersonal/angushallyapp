@@ -25,10 +25,15 @@ function loadEnv() {
         }
     });
 
+    // Explicitly set server port to avoid confusion with database port
+    const SERVER_PORT = process.env.PORT || '5000';
+    process.env.PORT = SERVER_PORT;
+
     // Base required variables (needed in all environments)
     const baseRequiredVars = [
         'JWT_SECRET',
         'GOOGLE_CLIENT_ID',
+        'OPENAI_API_KEY',
     ];
 
     // Environment-specific required variables
@@ -62,7 +67,7 @@ function loadEnv() {
     return {
         // Application
         nodeEnv: NODE_ENV,
-        port: parseInt(process.env.PORT || '5000', 10),
+        port: parseInt(SERVER_PORT, 10),
         
         // Database
         database: {
@@ -125,6 +130,11 @@ function loadEnv() {
         security: {
             recaptchaSecret: process.env.RECAPTCHA_SECRET_KEY,
             recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY
+        },
+
+        // OpenAI
+        openai: {
+            apiKey: process.env.OPENAI_API_KEY
         },
 
         // Heroku specific

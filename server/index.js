@@ -10,7 +10,9 @@ const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
 
 const isDev = config.nodeEnv !== 'production';
+// Use the port from config which already handles the default value
 const PORT = config.port;
+console.log('Server will start on port:', PORT);
 // console.log(process.env.NODE_ENV,process.env.PORT);
 
 // console.log('TEST_VAR:', process.env.TEST_VAR);
@@ -96,6 +98,10 @@ app.use('/api/habit', habitRoute);
 // ✅ Auth API routes
 const authRoute = require('./routes/authRoute');
 app.use('/api/auth', authRoute);
+
+// ✅ AI API routes
+const aiRoute = require('./routes/aiRoute');
+app.use('/api/ai', aiRoute);
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {

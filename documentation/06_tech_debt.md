@@ -236,6 +236,17 @@ This document tracks known technical debt, architectural issues, and improvement
 
 ## Deployment & DevOps
 
+### Environment Configuration Management
+- **Description**: Environment configuration is fragile and prone to conflicts (e.g., recent port conflict between Express and PostgreSQL)
+- **Priority**: High
+- **Resolution**: 
+  - Create separate configuration files for different services (web server, database, etc.)
+  - Implement strict validation for required environment variables
+  - Add clear documentation for all environment variables
+  - Consider using a configuration management library
+- **Created**: 2025-05-19
+- **Status**: 🔴 Not Started
+
 ### Heroku Release Phase Improvements
 - **Description**: Current release phase lacks proper validation and rollback mechanisms
 - **Priority**: Medium 
