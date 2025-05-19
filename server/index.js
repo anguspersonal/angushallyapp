@@ -10,8 +10,8 @@ const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
 
 const isDev = config.nodeEnv !== 'production';
-// Use the port from config which already handles the default value
-const PORT = config.port;
+// Use the validated web server port from the config
+const PORT = config.ports.webServer;
 console.log('Server will start on port:', PORT);
 // console.log(process.env.NODE_ENV,process.env.PORT);
 

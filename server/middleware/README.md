@@ -203,12 +203,6 @@ const authOptions = {
 npm test middleware/auth.test.js
 ```
 
-### Adding New Authentication Methods
-1. Create a new authentication strategy
-2. Implement token generation and validation
-3. Add user creation/update logic
-4. Update the middleware to handle the new method
-
 ## Dependencies
 - `google-auth-library`: Google OAuth verification
 - `jsonwebtoken`: JWT handling

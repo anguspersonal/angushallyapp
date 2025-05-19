@@ -34,6 +34,13 @@ export default function getProjectList() {
             "desc": "A simple application designed to help build positive routines and track daily habit streaks effectively.",
             "route": "/projects/habit",
             "created_at": "2025-02-23"
+        },
+        {
+            "id": 5,
+            "name": "AI Text Analysis",
+            "desc": "Experimental project using OpenAI's GPT model to analyze text input and provide structured insights.",
+            "route": "/projects/ai",
+            "created_at": "2025-05-19"
         }
     ];
     return projectList;

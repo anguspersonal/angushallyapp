@@ -226,4 +226,5 @@ Table public_data.posts {
   title string [not null]
   content string [nullable]
   author_id integer [ref: > public_data.authors.id] // Or ref: > identity.users.id if authors are users
-  created_at timestamptz [default: `
+  created_at timestamptz [default: `now()`]
+}

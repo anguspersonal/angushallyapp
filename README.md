@@ -4,7 +4,7 @@ A personal website combining a blog, portfolio, and a playground for custom tool
 
 ---
 
-## 🔧 Features
+## 🔍 Overview
 
 * **Blog & Content**: Create, fetch, and display posts and authors with pagination and slugs.
 * **Habit Tracking**: Log and visualize habits (e.g., alcohol, exercise) with per-user data isolation.
@@ -56,49 +56,13 @@ A personal website combining a blog, portfolio, and a playground for custom tool
 
 ---
 
-## 🛠️ Getting Started
+## 🛠️ Quick Start
 
 ### Prerequisites
 
 * **Node.js** v14+ and **npm** or **Yarn**
 * **PostgreSQL** (local or remote)
 * A Google Cloud project for OAuth credentials
-* (Optional) Heroku CLI for deployment
-
-### Environment Variables
-
-Create a `.env` in `server/`:
-
-```ini
-# Database (development)
-DEV_DB_HOST=localhost
-DEV_DB_PORT=5432
-DEV_DB_NAME=angushallyapp_dev
-DEV_DB_USER=your_db_user
-DEV_DB_PASSWORD=your_db_password
-
-# Production (Heroku will set DATABASE_URL automatically)
-# DATABASE_URL=postgres://user:pass@host:port/dbname
-
-# Auth & APIs
-JWT_SECRET=your_jwt_secret
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-RECAPTCHA_SECRET_KEY=your_recaptcha_secret
-
-# Strava & FSA (optional)
-STRAVA_CLIENT_ID=...
-STRAVA_CLIENT_SECRET=...
-FSA_API_KEY=...
-```
-
-Create a `.env` in `react-ui/`:
-
-```ini
-REACT_APP_API_BASE_URL=http://localhost:5000/api
-REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
-REACT_APP_GOOGLE_MAPS_API_KEY=your_maps_api_key
-```
 
 ### Setup & Run
 
@@ -107,10 +71,6 @@ REACT_APP_GOOGLE_MAPS_API_KEY=your_maps_api_key
    ```bash
    # In root
    npm install
-
-   # Or individually
-   cd server && npm install
-   cd ../react-ui && npm install
    ```
 
 2. **Database migrations**
@@ -135,6 +95,20 @@ REACT_APP_GOOGLE_MAPS_API_KEY=your_maps_api_key
    ```
 
 Visit [http://localhost:3000](http://localhost:3000) to view the app.
+
+---
+
+## 📚 Documentation
+
+For comprehensive documentation, please refer to the following resources:
+
+* [Documentation Guidance](documentation/01_guidance.md) - How to navigate and update docs
+* [Project Roadmap](documentation/02_roadmap.md) - High-level vision and milestones
+* [Change Log](documentation/03_updates.md) - Detailed, chronological change log
+* [Database Schema](documentation/04_schema.md) - Human-readable DB schema overview
+* [Database Guide](documentation/05_database.md) - Database setup and migrations guide
+* [Technical Debt](documentation/06_tech_debt.md) - Known architectural and code-quality debt
+* [Feature Backlog](documentation/07_backlog.md) - Feature wishlist and prioritization
 
 ---
 

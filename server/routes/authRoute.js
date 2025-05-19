@@ -134,7 +134,7 @@ router.post('/login', validateLogin, async (req, res) => {
         roles: user.roles
       },
       config.auth.jwtSecret,
-      { expiresIn: '24h' }
+      { expiresIn: '7d' }
     );
 
     res.json({
@@ -303,7 +303,7 @@ router.post('/google', async (req, res) => {
           roles: user.roles
         },
         config.auth.jwtSecret,
-        { expiresIn: '24h' }
+        { expiresIn: '7d' }
       );
 
       // Prepare response

@@ -91,20 +91,29 @@ This document outlines the high-level vision, goals, and planned development pha
      - Fixed migration ordering and deployment issues
    
    - Phase 2: Auth Integration 🔄
-     - Implemented Google OAuth 2.0 with proper error handling
-     - Created JWT token management and verification
-     - Added "Remember me" functionality
-     - Built role-based middleware and authorization framework
+     - Implement Google OAuth 2.0 with proper error handling
+     - Create JWT token management and verification
+     - Add "Remember me" functionality
+     - Build role-based middleware and authorization framework
      - Enhanced security with proper CORS and headers
 
-## Current Focus
+   - Phase 3: Access-Request Workflow (Backlogged)
+     - Client form to POST /identity/access_requests
+     - Admin UI (React) to list pending requests
+     - Endpoints to approve/reject requests
+     - Automatic role assignment on approval
 
-**Auth System Enhancement**
-- User registration frontend
-- Email verification flow
-- Role-based access control implementation
-- Token refresh mechanism
-- Session management
+   - Phase 4: RBAC Middleware & Data Guards (Backlogged)
+     - Build authorize(roles…) middleware
+     - Apply to admin routes
+     - Update existing routes to filter by req.user.id
+     - Write integration tests
+
+   - Phase 5: Frontend Integration (1-2 weeks)
+     - Complete Google Sign-In implementation
+     - Update JWT storage in apiClient
+     - Implement Auth context
+     - Build Admin dashboard
 
 ## Upcoming Phases
 

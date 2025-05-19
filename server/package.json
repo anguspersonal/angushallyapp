@@ -2,5 +2,8 @@
   "name": "angushallyapp-server",
   "version": "1.0.0",
   "private": true,
-  "description": "Server component for angushallyapp"
+  "description": "Server component for angushallyapp",
+  "dependencies": {
+    "openai": "^4.100.0"
+  }
 }
