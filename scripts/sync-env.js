@@ -6,7 +6,7 @@ const config = require('../config/env');
 
 // Define which variables should be exposed to the frontend
 function generateEnvContent(isDev = true) {
-    const baseUrl = isDev ? `http://localhost:${config.port}` : '';
+    const baseUrl = isDev ? `http://localhost:${config.ports.webServer}` : '';
     
     const vars = {
         REACT_APP_API_BASE_URL: `${baseUrl}/api`,

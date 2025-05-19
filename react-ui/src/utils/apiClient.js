@@ -1,7 +1,8 @@
 import { getStoredToken, clearAuthData } from './authUtils.js';
 
-// Use environment variable with fallback
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+// Prefer env variable; otherwise default to same-origin 
+// relative path so it works in any environment (proxy handles it in dev)
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
 
 class ApiError extends Error {
     constructor(message, status, data) {

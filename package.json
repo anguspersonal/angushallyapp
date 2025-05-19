@@ -9,10 +9,12 @@
   "scripts": {
     "start": "node server",
     "build": "npm run sync-env && cd react-ui/ && npm install && npm run build",
-    "dev": "npm run sync-env && cd react-ui/ && npm install && npm start",
+    "dev": "npm run sync-env && concurrently \"npm run server\" \"npm run client\"",
     "test": "npx jest server/tests",
     "test--verbose": "npx jest server/tests --verbose",
     "sync-env": "node scripts/sync-env.js",
+    "server": "nodemon server/index.js",
+    "client": "cd react-ui && npm start",
     "prestart": "npm run sync-env",
     "predevelop": "npm run sync-env"
   },

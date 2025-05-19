@@ -1,9 +1,9 @@
-import axios from 'axios';
+import { api } from '../../../utils/apiClient.js';
 
 export async function analyzeText(input) {
   try {
-    const response = await axios.post('/api/ai/analyze', { text: input });
-    return response.data.analysis;
+    const response = await api.post('/ai/analyze', { text: input });
+    return response.analysis;
   } catch (error) {
     console.error('Error analyzing text:', error);
     throw error;

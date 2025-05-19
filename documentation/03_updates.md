@@ -4,13 +4,13 @@ This file tracks chronological changes to the project, with the most recent upda
 
 ## [Unreleased] – Current
 
-### Server Port Configuration Enhancement - 2025-05-19
-- Implemented robust port configuration system in config/env.js
-- Added port validation and conflict detection
-- Enforced explicit port separation between web server (5000) and database (5432)
-- Added clear error messages for port conflicts
-- Updated environment configuration documentation
-- Fixed initial issue where Express server was incorrectly using PostgreSQL port
+### Development Workflow Improvement - 2025-05-19
+- Added dedicated scripts for separate backend and frontend development:
+  - `npm run server`: Starts only the Node backend with nodemon for auto-reloading
+  - `npm run client`: Starts only the React frontend
+- Refactored `npm run dev` to use concurrently for running both services simultaneously
+- Improved robustness of development workflow with explicit server and client scripts
+
 
 ### Experimental AI Integration - 2025-05-19
 - Added experimental AI text analysis feature using OpenAI's GPT model
@@ -18,7 +18,29 @@ This file tracks chronological changes to the project, with the most recent upda
 - Implemented backend API integration with OpenAI
 - Note: This is a temporary detour from the main authentication implementation
 
-### Phase 2: Auth Integration Implementation - 2025-05-19
+### Frontend API Base URL & Environment Sync Fix – 2025-05-19
+#### API Endpoint Resolution
+- Added defensive fallback in `react-ui/src/utils/apiClient.js` to use `'/api'` when `REACT_APP_API_BASE_URL` is missing or invalid
+- Ensures frontend always targets same-origin backend, relying on CRA proxy in development
+- Resolved `http://localhost:undefined/...` fetch error caused by stray shell variables
+
+#### Environment Configuration
+- Enhanced `scripts/sync-env.js` documentation/comments to clarify automatic generation of React `.env.*` files
+- Added guidance on unsetting stray shell variables that override `.env` values
+- Fixed AI text analysis connection issues by ensuring proper server availability
+
+#### Server Configuration
+- Implemented robust port configuration system in config/env.js
+- Added port validation and conflict detection
+- Enforced explicit port separation between web server (5000) and database (5432)
+- Added clear error messages for port conflicts
+- Updated environment configuration documentation
+- Fixed initial issue where Express server was incorrectly using PostgreSQL port
+- Resolved environment synchronization problems that prevented API requests from reaching the server
+
+
+
+### Phase 2: Auth Integration Implementation 
 
 #### 🚧 Next Steps
 - Implement session management

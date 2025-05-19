@@ -7,14 +7,18 @@ import {
   Title, 
   Text, 
   Box,
-  LoadingOverlay
+  LoadingOverlay,
+  Alert
 } from '@mantine/core';
 import { analyzeText } from './ai';
+import { useAuth } from '../../../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 export default function AI() {
   const [input, setInput] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleSubmit = async () => {
     if (!input.trim()) return;
@@ -24,12 +28,34 @@ export default function AI() {
       const result = await analyzeText(input);
       setResponse(result);
     } catch (error) {
-      setResponse('Error: Failed to analyze text. Please try again.');
+      if (error.status === 401) {
+        setResponse('Please log in to use the AI Text Analysis feature.');
+      } else {
+        setResponse('Error: Failed to analyze text. Please try again.');
+      }
       console.error('Analysis error:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  if (!user) {
+    return (
+      <Container size="md" py="xl">
+        <Title order={1} align="center" mb="xl">
+          AI Text Analysis
+        </Title>
+        <Paper p="md" radius="md" withBorder>
+          <Alert color="blue" title="Authentication Required" mb="md">
+            Please <Link to="/login">log in</Link> to use the AI Text Analysis feature.
+          </Alert>
+          <Text c="dimmed">
+            This feature is available to registered users. Sign in to analyze text using our AI-powered tool.
+          </Text>
+        </Paper>
+      </Container>
+    );
+  }
 
   return (
     <Container size="md" py="xl">

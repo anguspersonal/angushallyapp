@@ -243,6 +243,7 @@ This document tracks known technical debt, architectural issues, and improvement
   - ✅ Implemented port validation and conflict detection
   - ✅ Separated web server and database port configuration
   - ✅ Added clear error messages for configuration issues
+  - ✅ Implemented same-origin API base URL fallback in frontend to avoid invalid port issues
   - TODO: Create separate configuration files for different services
   - TODO: Add comprehensive validation for all environment variables
   - TODO: Consider using a configuration management library for larger scale
