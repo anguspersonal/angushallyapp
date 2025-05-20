@@ -4,6 +4,20 @@ This file tracks chronological changes to the project, with the most recent upda
 
 ## [Unreleased] – Current
 
+### Mantine Layout Standardization - 2025-05-20
+- Standardized layout hierarchy across all JSX files following Mantine best practices:
+  - Root level: `Box > Container` for page structure
+  - Component level: `Container > Box` for:
+    - Animation wrappers (motion.div)
+    - Layout control (flex, grid, positioning)
+    - Component grouping
+    - Style application
+  - Background sections: `Box > Container > content` for full-width colored backgrounds
+- Updated affected components:
+  - Fixed AI.jsx header width issues
+  - Refactored Collab.jsx layout structure
+  - Verified consistency across Blog, Home, About, and Projects pages
+
 ### Development Workflow Improvement - 2025-05-19
 - Added dedicated scripts for separate backend and frontend development:
   - `npm run server`: Starts only the Node backend with nodemon for auto-reloading

@@ -1,18 +1,20 @@
 import { useState } from 'react';
-import { 
-  Container, 
-  TextInput, 
-  Button, 
-  Paper, 
-  Title, 
-  Text, 
+import {
+  Container,
+  TextInput,
+  Button,
+  Paper,
+  Title,
+  Text,
   Box,
   LoadingOverlay,
-  Alert
+  Alert,
+  Anchor
 } from '@mantine/core';
 import { analyzeText } from './ai';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import Header from "../../../components/Header";
 
 export default function AI() {
   const [input, setInput] = useState('');
@@ -22,7 +24,7 @@ export default function AI() {
 
   const handleSubmit = async () => {
     if (!input.trim()) return;
-    
+
     setLoading(true);
     try {
       const result = await analyzeText(input);
@@ -41,57 +43,42 @@ export default function AI() {
 
   if (!user) {
     return (
-      <Container size="md" py="xl">
-        <Title order={1} align="center" mb="xl">
-          AI Text Analysis
-        </Title>
-        <Paper p="md" radius="md" withBorder>
-          <Alert color="blue" title="Authentication Required" mb="md">
-            Please <Link to="/login">log in</Link> to use the AI Text Analysis feature.
-          </Alert>
-          <Text c="dimmed">
-            This feature is available to registered users. Sign in to analyze text using our AI-powered tool.
-          </Text>
-        </Paper>
-      </Container>
+      <Box>
+        <Header />
+        <Container py="xl">
+          <Title order={1} align="center" mb="xl">
+            AI Text Analysis
+          </Title>
+
+          <Paper p="md" radius="md" withBorder>
+            <LoadingOverlay visible={loading} overlayBlur={2} />
+
+            <TextInput
+              placeholder="Add input here"
+              value={input}
+              onChange={(event) => setInput(event.currentTarget.value)}
+              mb="md"
+              size="lg"
+            />
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button
+                onClick={handleSubmit}
+                disabled={!input.trim() || loading}
+              >
+                Analyze
+              </Button>
+            </Box>
+
+            {response && (
+              <Paper mt="xl" p="md" withBorder>
+                <Title order={3} mb="md">Analysis Result</Title>
+                <Text>{response}</Text>
+              </Paper>
+            )}
+          </Paper>
+        </Container>
+      </Box>
     );
   }
-
-  return (
-    <Container size="md" py="xl">
-      <Title order={1} align="center" mb="xl">
-        AI Text Analysis
-      </Title>
-      
-      <Paper p="md" radius="md" withBorder>
-        <Box pos="relative">
-          <LoadingOverlay visible={loading} overlayBlur={2} />
-          
-          <TextInput
-            placeholder="Add input here"
-            value={input}
-            onChange={(event) => setInput(event.currentTarget.value)}
-            mb="md"
-            size="lg"
-          />
-          
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button 
-              onClick={handleSubmit}
-              disabled={!input.trim() || loading}
-            >
-              Analyze
-            </Button>
-          </Box>
-
-          {response && (
-            <Paper mt="xl" p="md" withBorder>
-              <Title order={3} mb="md">Analysis Result</Title>
-              <Text>{response}</Text>
-            </Paper>
-          )}
-        </Box>
-      </Paper>
-    </Container>
-  );
 } 
