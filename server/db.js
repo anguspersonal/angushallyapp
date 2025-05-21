@@ -35,27 +35,59 @@
 
 // Note: dotenv.config() is now called within dbConfig.js
 const { Pool } = require('pg');
-const poolConfig = require('./config/dbConfig'); // Import the configuration
+const poolConfig = require('./config/dbConfig');
+
+// Singleton pool instance
+let pool;
 
 /**
- * The PostgreSQL connection pool instance.
- * @type {import('pg').Pool}
+ * Gets or creates the PostgreSQL connection pool instance.
+ * @returns {import('pg').Pool} The database pool instance
  */
-const pool = new Pool(poolConfig);
+function getPool() {
+  if (!pool) {
+    pool = new Pool(poolConfig);
 
-pool.on('connect', () => {
-  console.log('DB Pool: Connected to PostgreSQL using config:', 
-    poolConfig.connectionString ? 
-    'DATABASE_URL (production)' : 
-    `${poolConfig.host}:${poolConfig.port}/${poolConfig.database}`
-  );
-  console.log('Search path:', poolConfig.searchPath);
-});
+    pool.on('connect', () => {
+      console.log('DB Pool: Connected to PostgreSQL using config:', 
+        poolConfig.connectionString ? 
+        'DATABASE_URL (production)' : 
+        `${poolConfig.host}:${poolConfig.port}/${poolConfig.database}`
+      );
+      console.log('Search path:', poolConfig.searchPath);
+    });
 
-pool.on('error', (err) => {
-  console.error('DB Pool: Unexpected error on idle client', err);
-  process.exit(-1);
-});
+    pool.on('error', (err) => {
+      console.error('DB Pool: Unexpected error on idle client', err);
+      process.exit(-1);
+    });
+
+    // Handle process termination signals
+    const cleanup = async () => {
+      console.log('Cleaning up database connections...');
+      try {
+        await end();
+        console.log('Database connections closed.');
+        process.exit(0);
+      } catch (err) {
+        console.error('Error during cleanup:', err);
+        process.exit(1);
+      }
+    };
+
+    process.on('SIGTERM', cleanup);
+    process.on('SIGINT', cleanup);
+    process.on('SIGUSR2', cleanup); // For Nodemon restart
+    process.on('beforeExit', cleanup);
+    process.on('exit', () => {
+      if (pool) {
+        console.log('Process exiting, closing pool sync');
+        pool.end();
+      }
+    });
+  }
+  return pool;
+}
 
 /**
  * Helper function to safely quote PostgreSQL identifiers (table names, column names).
@@ -83,7 +115,7 @@ const quoteIdent = (identifier) => {
  */
 const query = async (text, params = [], retries = 3) => {
   console.log('Executing query:', { text, params });
-  const client = await pool.connect();
+  const client = await getPool().connect();
   try {
     console.log('Got client from pool, executing query...');
     const res = await client.query(text, params);
@@ -115,8 +147,12 @@ const query = async (text, params = [], retries = 3) => {
  * @function end
  * @returns {Promise<void>} A promise that resolves when the pool has ended.
  */
-const end = () => {
-  return pool.end();
+const end = async () => {
+  if (pool) {
+    const p = pool;
+    pool = null; // Clear the reference first
+    await p.end();
+  }
 };
 
 /**
@@ -149,7 +185,7 @@ const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
   }
 
   const selectedColumnsSQL = effectiveColumns.map(quoteIdent).join(', ');
-  const safeTableSQL = quoteIdent(table); // Now correctly handles schema.table
+  const safeTableSQL = quoteIdent(table);
 
   let queryText = `SELECT ${selectedColumnsSQL} FROM ${safeTableSQL}`;
   const queryParams = [];
@@ -175,4 +211,4 @@ const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
   return await query(queryText, queryParams);
 };
 
-module.exports = { query, end, select, pool };
+module.exports = { query, end, select, pool: getPool() };

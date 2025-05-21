@@ -2,15 +2,13 @@ const config = require('../../config/env');
 /**
  * testHygieneScoreRoute.test.js
  *
- * Tests the hygieneScoreRoute.js, which is currently mounted at
+ * Tests the hygieneScoreRoute.js, which is mounted at
  * app.use('/api/hygieneScoreRoute', hygieneScoreRoute);
  *
- * and the router path is router.post('/api/hygieneScoreRoute', ...)
+ * The route path is simply '/', so the final route is:
+ *  POST /api/hygieneScoreRoute
  *
- * That yields a final route of:
- *  POST /api/hygieneScoreRoute/api/hygieneScoreRoute
- *
- * We'll call exactly that endpoint, passing a "places" array.
+ * We'll call this endpoint, passing a "places" array.
  *
  * Usage:
  * 1. In one terminal: `npm start` (server must be on port 5000)

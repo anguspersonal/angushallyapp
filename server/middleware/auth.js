@@ -5,6 +5,16 @@ const config = require('../../config/env');
 
 const client = new OAuth2Client(config.auth.google.clientId);
 
+// Test user for development/testing
+const TEST_USER = {
+    id: '00000000-0000-0000-0000-000000000000',
+    email: 'test@example.com',
+    firstName: 'Test',
+    lastName: 'User',
+    roles: ['member'],
+    is_active: true
+};
+
 /**
  * Verify Google OAuth token and return user data
  */
@@ -31,6 +41,7 @@ async function verifyGoogleToken(token) {
 /**
  * Middleware to authenticate requests using JWT
  * Supports both JWT tokens and Google OAuth tokens
+ * In test mode (NODE_ENV=test), accepts a test token
  */
 function authMiddleware(options = {}) {
     return async (req, res, next) => {
@@ -43,6 +54,12 @@ function authMiddleware(options = {}) {
             const [bearer, token] = authHeader.split(' ');
             if (bearer !== 'Bearer' || !token) {
                 return res.status(401).json({ error: 'Invalid token format' });
+            }
+
+            // Special handling for test mode
+            if (process.env.NODE_ENV === 'test' && token === 'test-token') {
+                req.user = TEST_USER;
+                return next();
             }
 
             try {

@@ -10,12 +10,12 @@ process.env.NODE_ENV = 'test';
 
 // Mock user for testing
 const TEST_USER = {
-  id: '95288f22-6049-4651-85ae-4932ededb5ab', // Use the same UUID as in migrations
+  id: '00000000-0000-0000-0000-000000000000', // Use the same UUID as auth middleware
   email: 'test@example.com',
   firstName: 'Test',
   lastName: 'User',
   roles: ['member'],
-  googleUserId: '95288f22-6049-4651-85ae-4932ededb5ab' // Add this for backward compatibility
+  googleUserId: '00000000-0000-0000-0000-000000000000' // Add this for backward compatibility
 };
 
 // Mock checkValueType function

@@ -41,7 +41,7 @@ router.use(authMiddleware());
 // Get all habit logs for the authenticated user
 router.get('/', async (req, res) => {
     try {
-        const logs = await getHabitLogsFromDB(req.user.googleUserId);
+        const logs = await getHabitLogsFromDB(req.user.id);
         res.json(logs);
     } catch (error) {
         console.error("Error fetching habit logs:", error);
@@ -56,19 +56,19 @@ router.post('/:habitType', async (req, res) => {
     const { habitType } = req.params;
     
     try {
-        // Log the habit in `habit_log` with the user's Google ID
-        const logId = await logHabitLog(req.user.googleUserId, habitType, value, metric, extraData);
-        console.log(`✅ Habit log created for user ${req.user.googleUserId} with ID: ${logId}`);
+        // Log the habit in `habit_log` with the user's ID
+        const logId = await logHabitLog(req.user.id, habitType, value, metric, extraData);
+        console.log(`✅ Habit log created for user ${req.user.id} with ID: ${logId}`);
 
         let result;
 
         // Call the correct habit service based on habit type
         switch (habitType) {
             case "alcohol":
-                result = await logAlcohol(logId, extraData, req.user.googleUserId);
+                result = await logAlcohol(logId, extraData, req.user.id);
                 break;
             case "exercise":
-                result = await logExercise(logId, extraData, req.user.googleUserId);
+                result = await logExercise(logId, extraData, req.user.id);
                 break;
             default:
                 return res.status(400).json({ error: "Invalid habit type" });
@@ -84,7 +84,7 @@ router.post('/:habitType', async (req, res) => {
 
 // Get habit-specific data (e.g., drink catalog)
 router.get('/:habitType/data', async (req, res) => {
-        const { habitType } = req.params;
+    const { habitType } = req.params;
     try {
         let data;
         switch (habitType) {
@@ -105,7 +105,7 @@ router.get('/:habitType/data', async (req, res) => {
 router.get('/stats/:period', async (req, res) => {
     const { period } = req.params;
     try {
-        const stats = await getAggregateStats(period, req.user.googleUserId);
+        const stats = await getAggregateStats(period, req.user.id);
         res.json(stats);
     } catch (error) {
         console.error("Error fetching aggregate stats:", error);
