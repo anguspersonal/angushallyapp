@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Container, Title, SimpleGrid, useMantineTheme } from '@mantine/core';
 import { motion } from 'framer-motion';
-import Header from '../components/Header';
-import projectList from '../data/projectList';
-import ProjectSnippet from '../components/ProjectSnippet';
-import "../general.css";
+import Header from '../../../components/Header';
+import projectList from '../../../data/projectList';
+import ProjectSnippet from '../../../components/ProjectSnippet';
+import "../../../general.css";
 
 // Animation variants
 const containerVariants = {
@@ -12,10 +12,10 @@ const containerVariants = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.1, // Stagger snippets
-            delayChildren: 0.2 // Delay after title
-        }
-    }
+            staggerChildren: 0.1,
+            delayChildren: 0.2,
+        },
+    },
 };
 
 const itemVariants = {
@@ -23,30 +23,30 @@ const itemVariants = {
     visible: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.5, ease: "easeOut" }
-    }
+        transition: { duration: 0.5, ease: 'easeOut' },
+    },
 };
 
-function Projects() {
+function AIProjects() {
     const theme = useMantineTheme();
-    const projects = projectList;
-    // console.log('Projects.js: projects:', projects);
+    const projects = projectList.filter(
+        (project) => project.tags && project.tags.includes('ai')
+    );
 
     return (
         <Box>
             <Header />
             <Container py="xl">
-                <Title order={1} ta="center" mb="xl">My Projects</Title>
+                <Title order={1} ta="center" mb="xl">
+                    AI Projects
+                </Title>
 
                 <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
                 >
-                    <SimpleGrid
-                        cols={{ base: 1, sm: 2, md: 3 }} // Responsive columns
-                        spacing="lg"
-                    >
+                    <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
                         {projects.map((project, index) => (
                             <motion.div key={index} variants={itemVariants}>
                                 <ProjectSnippet project={project} />
@@ -59,4 +59,4 @@ function Projects() {
     );
 }
 
-export default Projects;
+export default AIProjects; 

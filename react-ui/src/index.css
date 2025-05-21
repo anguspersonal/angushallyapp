@@ -36,6 +36,16 @@ Styles set on :root apply globally to the entire document. */
   /* Global min button size (width & height 44px = 2.75 em) */
   /* --button-min :2.75em; */
 
+  /* Core colour palette */
+  --primary-color: #384C37;
+  --secondary-color: #88A5BC;
+  --background-color: #FFFFFF;
+  --text-color: #282c34;
+  --accent-color: #E1C8BC;
+  --button-background-color: var(--primary-color);
+  --button-text-color: #F4F0EB;
+  --button-border-color: var(--primary-color);
+
 }
 
 /* Dark theme ----------------------------------------------------- */

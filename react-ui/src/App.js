@@ -17,7 +17,9 @@ import Blogpost from "./pages/blog/BlogPost.jsx";
 import Strava from "./pages/projects/strava/Strava.jsx";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Habit from "./pages/projects/habit/Habit.jsx";
-import AI from "./pages/projects/ai/AI.jsx";
+import AIProjects from "./pages/projects/ai/AIProjects.jsx";
+import TextAnalysisAI from "./pages/projects/ai/TextAnalysisAI.jsx";
+import Instapaper from "./pages/projects/ai/Instapaper.jsx";
 import Collab from "./pages/Collab.jsx";
 import Login from "./pages/Login.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
@@ -47,7 +49,9 @@ function App() {
               <Route path="/projects/data-value-game" element={<DataValueGame />} />
               <Route path="/projects/strava" element={<Strava />} />
               <Route path="/projects/habit" element={<Habit />} />
-              <Route path="/projects/ai" element={<AI />} />
+              <Route path="/projects/ai" element={<AIProjects />} />
+              <Route path="/projects/ai/text-analysis" element={<TextAnalysisAI />} />
+              <Route path="/projects/ai/instapaper" element={<Instapaper />} />
               <Route path="/login" element={<Login />} />
             </Routes>
             {!hideFooterRoutes.includes(location.pathname) && <Footer />}

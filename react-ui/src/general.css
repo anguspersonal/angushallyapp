@@ -258,6 +258,7 @@ button:hover, a.button:hover {
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .grid-item:hover {
@@ -540,3 +541,38 @@ h3 {
 #headerlogo {
     height: calc(1.5*var(--header-height));
 }
+
+/* Tag styles */
+.tag-container {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.tag {
+    display: inline-block;
+    padding: 2px 6px;
+    font-size: 0.75em;
+    border-radius: 4px;
+    color: #fff;
+    white-space: nowrap;
+}
+
+/* Individual tag colours aligned with site colour scheme */
+.tag-ai { background-color: #384C37; }
+.tag-data { background-color: #88A5BC; }
+.tag-map { background-color: #5B7A9A; }
+.tag-food { background-color: #E1C8BC; color: #000; }
+.tag-game { background-color: #6B9F70; }
+.tag-education { background-color: #2A3929; }
+.tag-nlp { background-color: #4A6A8A; }
+.tag-fitness { background-color: #497D4E; }
+.tag-visualization { background-color: #75A57B; }
+.tag-productivity { background-color: #758775; }
+.tag-habit { background-color: #5E735E; }
+.tag-writing { background-color: #8CA5BE; }
+.tag-tech { background-color: #475F47; }
+.tag-learning { background-color: #BAC3BA; }

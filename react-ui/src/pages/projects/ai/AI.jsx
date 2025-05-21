@@ -9,18 +9,49 @@ import {
   Box,
   LoadingOverlay,
   Alert,
-  Anchor
+  Anchor,
+  SimpleGrid, 
+  useMantineTheme
 } from '@mantine/core';
+import { motion } from 'framer-motion';
 import { analyzeText } from './ai';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import Header from "../../../components/Header";
+import projectList from '../../../data/projectList';
+import ProjectSnippet from '../../../components/ProjectSnippet';
+import "../../../general.css";
+
 
 export default function AI() {
   const [input, setInput] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const theme = useMantineTheme();
+  const projects = projectList;
+
+  // Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+      opacity: 1,
+      transition: {
+          staggerChildren: 0.1, // Stagger snippets
+          delayChildren: 0.2 // Delay after title
+      }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
+  }
+};
+
 
   const handleSubmit = async () => {
     if (!input.trim()) return;
@@ -49,7 +80,26 @@ export default function AI() {
           <Title order={1} align="center" mb="xl">
             AI Text Analysis
           </Title>
+            <Container py="xl">
+                <Title order={1} ta="center" mb="xl">My Projects</Title>
 
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <SimpleGrid
+                        cols={{ base: 1, sm: 2, md: 3 }} // Responsive columns
+                        spacing="lg"
+                    >
+                        {projects.map((project, index) => (
+                            <motion.div key={index} variants={itemVariants}>
+                                <ProjectSnippet project={project} />
+                            </motion.div>
+                        ))}
+                    </SimpleGrid>
+                </motion.div>
+            </Container>
           <Paper p="md" radius="md" withBorder>
             <LoadingOverlay visible={loading} overlayBlur={2} />
 

@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import Snippet from '../components/Snippet';
 import ProjectSnippet from '../components/ProjectSnippet';
 import { fetchLatestBlog } from '../pages/blog/fetchBlogData';
-import getProjectList from '../data/projectList';
+import projectList from '../data/projectList';
 import { assets } from '../theme';
 import "../general.css";
 
@@ -42,8 +42,7 @@ function Home() {
   useEffect(() => {
     async function getLatestProject() {
       try {
-        const projects = getProjectList();
-        const latestProjectData = projects
+        const latestProjectData = projectList
           .filter(p => p.created_at)
           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
         setProject(latestProjectData);
