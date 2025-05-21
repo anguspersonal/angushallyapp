@@ -4,6 +4,19 @@ This file tracks chronological changes to the project, with the most recent upda
 
 ## [Unreleased] – Current
 
+### Test Suite Improvements - 2025-05-20
+- Enhanced test suite reliability and coverage:
+  - Fixed foreign key constraint issues in bookmark and habit tests
+  - Added proper test user setup with UUID matching migrations
+  - Implemented proper mocking of checkValueType utility
+  - Improved test cleanup and database connection handling
+  - Added Jest configuration for better async operation handling
+  - Fixed undefined user ID issues in habit logging tests
+  - Standardized test environment setup across all test suites
+
+### Instapaper API - 2025-05-20
+- Began work on instapaper api
+
 ### Mantine Layout Standardization - 2025-05-20
 - Standardized layout hierarchy across all JSX files following Mantine best practices:
   - Root level: `Box > Container` for page structure
