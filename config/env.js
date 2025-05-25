@@ -70,6 +70,13 @@ function loadEnv() {
     // Track which file sets each variable
     const variableSources = {};
 
+    // First, track any variables already in process.env (e.g., from Heroku)
+    Object.keys(process.env).forEach(key => {
+        if (key.startsWith('DATABASE_') || key.startsWith('DB_') || key === 'NODE_ENV') {
+            variableSources[key] = 'process.env (pre-existing)';
+        }
+    });
+
     // Load each env file if it exists
     envFiles.forEach(file => {
         if (fs.existsSync(file)) {
@@ -81,20 +88,21 @@ function loadEnv() {
                     variableSources[key] = file;
                 });
             }
-
-            if (process.env.DATABASE_URL) {
-                console.log(`DATABASE_URL is set to: ${process.env.DATABASE_URL.split('@')[1]?.split('/')[0]} (from ${variableSources['DATABASE_URL']})`);
-            }
         }
     });
+
+    // Log DATABASE_URL if it exists
+    if (process.env.DATABASE_URL) {
+        console.log(`DATABASE_URL is set to: ${process.env.DATABASE_URL.split('@')[1]?.split('/')[0]} (from ${variableSources['DATABASE_URL'] || 'process.env'})`);
+    }
 
     // Log final environment configuration
     console.log('Environment configuration:', {
         NODE_ENV,
-        DATABASE_URL_SOURCE: variableSources['DATABASE_URL'] || 'Not set',
-        DB_HOST_SOURCE: variableSources['DB_HOST'] || 'Not set',
-        DB_NAME_SOURCE: variableSources['DB_NAME'] || 'Not set',
-        DB_SEARCH_PATH_SOURCE: variableSources['DB_SEARCH_PATH'] || 'Using fallback'
+        DATABASE_URL_SOURCE: variableSources['DATABASE_URL'] || (process.env.DATABASE_URL ? 'process.env' : 'Not set'),
+        DB_HOST_SOURCE: variableSources['DB_HOST'] || (process.env.DB_HOST ? 'process.env' : 'Not set'),
+        DB_NAME_SOURCE: variableSources['DB_NAME'] || (process.env.DB_NAME ? 'process.env' : 'Not set'),
+        DB_SEARCH_PATH_SOURCE: variableSources['DB_SEARCH_PATH'] || variableSources['PROD_DB_SEARCH_PATH'] || (process.env.DB_SEARCH_PATH || process.env.PROD_DB_SEARCH_PATH ? 'process.env' : 'Using fallback')
     });
 
     // Load and validate service ports
