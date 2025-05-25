@@ -38,7 +38,7 @@ const getAuthUrl = (state) => {
     state
   });
   
-  const authUrl = `https://raindrop.io/oauth/authorize?${params.toString()}`;
+  const authUrl = `https://raindrop.io/oauth/v2/authorize?${params.toString()}`;
   console.log('\n=== Generated Raindrop Auth URL ===');
   console.log(authUrl);
   console.log('===================================\n');
@@ -54,7 +54,7 @@ const getAuthUrl = (state) => {
 const exchangeCodeForTokens = async (code) => {
   try {
     const response = await axios.post(
-      'https://raindrop.io/oauth/access_token',
+      'https://raindrop.io/oauth/v2/access_token',
       new URLSearchParams({
         client_id: RAINDROP_CLIENT_ID,
         client_secret: RAINDROP_CLIENT_SECRET,
