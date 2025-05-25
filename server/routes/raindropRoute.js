@@ -33,7 +33,7 @@ router.get('/oauth/start', authMiddleware(), (req, res) => {
       state,
       userId: id
     });
-    res.json({ authUrl });
+    res.redirect(authUrl);
   } catch (err) {
     console.error('OAuth start error:', err);
     
