@@ -107,24 +107,22 @@ function loadEnv() {
         'OPENAI_API_KEY',
     ];
 
-    // Now we always require the discrete pieces in all envs:
-    const requiredVars = [
-        ...baseRequiredVars,
-        'DB_HOST',
-        'DB_PORT',
-        'DB_NAME',
-        'DB_USER',
-        'DB_PASSWORD'
-    ];
+    // In production, we use DATABASE_URL, so we don't need individual DB_* vars
+    const requiredVars = NODE_ENV === 'production' 
+        ? baseRequiredVars
+        : [
+            ...baseRequiredVars,
+            'DB_HOST',
+            'DB_PORT',
+            'DB_NAME',
+            'DB_USER',
+            'DB_PASSWORD'
+        ];
 
     if (NODE_ENV === 'production') {
-        // In production, accept either DATABASE_URL or the discrete DB_* vars
-        if (!process.env.DATABASE_URL && 
-            !(process.env.DB_HOST &&
-              process.env.DB_NAME &&
-              process.env.DB_USER &&
-              process.env.DB_PASSWORD)) {
-            throw new Error('Production requires either DATABASE_URL or all DB_* variables');
+        // In production, we must have DATABASE_URL
+        if (!process.env.DATABASE_URL) {
+            throw new Error('Production requires DATABASE_URL');
         }
     }
 
@@ -146,8 +144,9 @@ function loadEnv() {
             
             // Search path configuration
             // Prefer DB_SEARCH_PATH from environment files
+            // Also check PROD_DB_SEARCH_PATH for production environments
             // Fallback to default schemas if not specified
-            searchPath: process.env.DB_SEARCH_PATH?.split(',') || [
+            searchPath: (process.env.DB_SEARCH_PATH || process.env.PROD_DB_SEARCH_PATH)?.split(',') || [
                 'public',      // Default PostgreSQL schema
                 'identity',    // User authentication and profiles
                 'habit',       // Habit tracking
