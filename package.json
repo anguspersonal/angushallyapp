@@ -18,7 +18,6 @@
     "kill-ports": "npx kill-port 5000 3000",
     "test": "cd server && npx jest tests",
     "test--verbose": "cd server && npx jest tests --verbose",
-    "prestart": "npm run sync-env:dev",
     "predevelop": "npm run sync-env:dev"
   },
   "type": "commonjs",
