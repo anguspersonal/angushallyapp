@@ -22,7 +22,7 @@ import TextAnalysisAI from "./pages/projects/ai/TextAnalysisAI.jsx";
 import Instapaper from "./pages/projects/ai/Instapaper.jsx";
 import Collab from "./pages/Collab.jsx";
 import Login from "./pages/Login.jsx";
-import Raindrop from "./pages/projects/bookmarks/Raindrop.jsx";
+import Raindrop from "./pages/projects/bookmarks/raindrop.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
 import { theme } from './theme.js'; // Import your theme
 import { AuthProvider } from './contexts/AuthContext.jsx';
