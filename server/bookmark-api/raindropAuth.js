@@ -23,6 +23,14 @@ console.log('================================\n');
  * @returns {string} The authorization URL with required parameters
  */
 const getAuthUrl = (state) => {
+  // Validate required configuration
+  if (!RAINDROP_CLIENT_ID) {
+    throw new Error('RAINDROP_CLIENT_ID is not configured');
+  }
+  if (!RAINDROP_REDIRECT_URI) {
+    throw new Error('RAINDROP_REDIRECT_URI is not configured. Please set this environment variable.');
+  }
+
   const params = new URLSearchParams({
     client_id: RAINDROP_CLIENT_ID,
     redirect_uri: RAINDROP_REDIRECT_URI,

@@ -36,7 +36,16 @@ router.get('/oauth/start', authMiddleware(), (req, res) => {
     res.json({ authUrl });
   } catch (err) {
     console.error('OAuth start error:', err);
-    res.status(500).json({ error: 'Failed to start OAuth flow' });
+    
+    // Provide specific error message for missing configuration
+    if (err.message.includes('RAINDROP_REDIRECT_URI')) {
+      res.status(500).json({ 
+        error: 'Raindrop OAuth is not properly configured. Please contact support.',
+        details: 'Missing redirect URI configuration'
+      });
+    } else {
+      res.status(500).json({ error: 'Failed to start OAuth flow' });
+    }
   }
 });
 
