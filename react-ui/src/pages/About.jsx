@@ -94,7 +94,7 @@ function About() {
                     <motion.div custom={7} variants={contentVariants}>
                         <Text mb="md">
                             If you have any thoughts, feedback, or just want to chat, feel free to reach out via the
-                            <Anchor component={Link} to="/contact"> Contact Me</Anchor> page.
+                            <Anchor component={Link} to="/contact">Contact Me</Anchor> page.
                         </Text>
                     </motion.div>
 
