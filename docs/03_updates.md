@@ -196,3 +196,53 @@ This file tracks chronological changes to the project, with the most recent upda
 - ✅ Defined and created migration for new `crm.inquiries` table with links to `identity.users`
 - ✅ Updated `server/routes/contact.js` to use the new `crm.inquiries` table
 - ✅ Created migration to drop legacy `
+
+### Raindrop Connection UI Fix - 2025-01-27
+- Fixed issue where "Connect Raindrop" button wasn't appearing:
+  - Problem: Test tokens in database caused verify endpoint to return `isConnected: true`
+  - Solution: Created `scripts/clear-raindrop-tokens.js` utility to remove test tokens
+  - The UI correctly shows "Connect Raindrop" when no valid tokens exist
+  - The verify endpoint checks for token existence, not validity (by design)
+- Note: If you see "Sync Bookmarks" instead of "Connect Raindrop", run:
+  ```bash
+  node scripts/clear-raindrop-tokens.js <user-id>
+  ```
+- Created database migration for raindrop schema:
+  - Added `raindrop.bookmarks` table for storing synced bookmarks
+  - Added `raindrop.collections` table for future collection support
+  - Migration handles existing `raindrop.tokens` table gracefully
+- Updated documentation:
+  - Added raindrop schema to `docs/04_schema.md`
+  - Updated database documentation in `docs/05_database.md`
+- Organized test files according to project structure:
+  - Moved `insert_test_tokens.js` and `test_raindrop_sync.js` to `server/tests/`
+- Created `scripts/check-raindrop-bookmarks.js` utility for debugging bookmark sync issues
+- **Next steps for user**: Click "Sync Bookmarks" button in the UI to fetch bookmarks from Raindrop
+
+## 2025-01-27
+
+### Feature Work
+- **Raindrop.io Integration** - Successfully implemented and debugged bookmark syncing functionality
+  - Fixed API endpoint issue - was using incorrect endpoint for fetching bookmarks
+  - Changed from iterating through collections to using collection ID 0 (all bookmarks)
+  - Fixed database query result handling in `saveBookmarks.js`
+  - Added comprehensive error logging and debugging
+  - Successfully synced 3 bookmarks from user's Raindrop account
+  - Frontend now properly displays synced bookmarks with title, link, and tags
+
+### Bug Fixes
+- Fixed Raindrop API endpoint from `/rest/v1/raindrops/{collectionId}` (was missing the 's')
+- Fixed `saveBookmarks` function to use `result.rows[0]` instead of `result[0]`
+- Added proper error handling and state management in React component
+- Added debug logging to help diagnose display issues
+
+### Technical Details
+- Created test script `scripts/test-raindrop-sync.js` for manual testing
+- Verified OAuth flow, token storage, and API communication all working correctly
+- Database schema properly stores bookmarks with user association
+
+### Next Steps
+- Consider adding pagination for large bookmark collections
+- Add bookmark search/filter functionality
+- Implement bookmark categories/collections display
+- Add ability to delete bookmarks from the UI
