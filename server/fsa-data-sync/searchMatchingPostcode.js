@@ -1,4 +1,4 @@
-console.log('FORCE UPDATE searchMatchingPostcode.js - V002');
+//console.log('FORCE UPDATE searchMatchingPostcode.js - V002');
 const config = require('../../config/env');
 const db = require('../db'); // Database connection module
 

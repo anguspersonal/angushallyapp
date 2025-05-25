@@ -1,8 +1,20 @@
 import { getStoredToken, clearAuthData } from './authUtils.js';
 
-// Prefer env variable; otherwise default to same-origin 
-// relative path so it works in any environment (proxy handles it in dev)
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
+// Get API base URL from environment, with fallback
+const isDevelopment = process.env.NODE_ENV === 'development';
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL?.replace(/\/$/, ''); // strip any trailing slash
+
+// Log environment details for debugging
+console.log('Environment details:', {
+  NODE_ENV: process.env.NODE_ENV,
+  REACT_APP_API_BASE_URL: process.env.REACT_APP_API_BASE_URL,
+  isDevelopment,
+  apiBaseUrl,
+  fallbackUsed: !apiBaseUrl
+});
+
+// Use the environment-specific API base URL
+export const API_BASE = apiBaseUrl || (isDevelopment ? 'http://localhost:5000/api' : '/api');
 
 class ApiError extends Error {
     constructor(message, status, data) {
@@ -28,13 +40,34 @@ async function apiClient(endpoint, options = {}) {
         credentials: 'include', // Include cookies if needed
     };
 
+    const fullUrl = `${API_BASE}${endpoint}`;
+    console.log('Making request to:', {
+        method: options.method || 'GET',
+        url: fullUrl,
+        headers: headers,
+        hasToken: !!token
+    });
+
     try {
-        console.log(`Making ${options.method || 'GET'} request to:`, API_BASE_URL + endpoint);
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+        const response = await fetch(fullUrl, config);
+        
+        // Log response details
+        console.log('Response received:', {
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            url: response.url
+        });
         
         // Handle HTML responses (usually error pages)
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('text/html')) {
+            const text = await response.text();
+            console.error('Received HTML instead of JSON:', {
+                contentType,
+                status: response.status,
+                text: text.substring(0, 500) // Log first 500 chars of response
+            });
             throw new ApiError('Received HTML response instead of JSON', response.status, null);
         }
 
@@ -69,6 +102,11 @@ async function apiClient(endpoint, options = {}) {
             throw error;
         }
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+            console.error('Network error details:', {
+                url: fullUrl,
+                error: error.message,
+                stack: error.stack
+            });
             throw new ApiError('Network error - please check your connection', 0, null);
         }
         console.error('API request failed:', error);

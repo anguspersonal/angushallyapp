@@ -1,5 +1,4 @@
 // Habit Api
-console.log('Executing habitService.js - V001 - Fixed testDatabaseConnection');
 
 const config = require('../../config/env');
 

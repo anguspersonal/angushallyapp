@@ -7,11 +7,11 @@ let directPgClient;
 if (config.nodeEnv === 'development' || process.env.KNEX_DEBUG_CONNECT === 'true') {
   const pg = require('pg');
   directPgClient = new pg.Client({
-    host: config.database.development.host,
-    port: config.database.development.port,
-    database: config.database.development.name,
-    user: config.database.development.user,
-    password: config.database.development.password
+    host: config.database.host,
+    port: config.database.port,
+    database: config.database.name,
+    user: config.database.user,
+    password: config.database.password
   });
 
   directPgClient.connect()
@@ -40,14 +40,16 @@ const debugQueries = async () => {
 module.exports = {
   development: {
     client: 'postgresql',
-    connection: {
-      host: config.database.development.host,
-      port: config.database.development.port,
-      database: config.database.development.name,
-      user: config.database.development.user,
-      password: config.database.development.password,
-      searchPath: config.database.development.searchPath
-    },    
+    connection: config.database.url
+      ? { connectionString: config.database.url }
+      : {
+          host: config.database.host,
+          port: config.database.port,
+          database: config.database.name,
+          user: config.database.user,
+          password: config.database.password,
+          searchPath: config.database.searchPath
+        },
     pool: {
       min: 2,
       max: 10
@@ -71,23 +73,25 @@ module.exports = {
 
   production: {
     client: 'postgresql',
-    connection: config.database.url ? {
-      connectionString: config.database.url,
-      ssl: {
-        rejectUnauthorized: false
-      },
-      searchPath: config.database.production.searchPath
-    } : {
-      host: config.database.production.host,
-      port: config.database.production.port,
-      database: config.database.production.name,
-      user: config.database.production.user,
-      password: config.database.production.password,
-      ssl: {
-        rejectUnauthorized: false
-      },
-      searchPath: config.database.production.searchPath
-    },
+    connection: config.database.url
+      ? {
+          connectionString: config.database.url,
+          ssl: {
+            rejectUnauthorized: false
+          },
+          searchPath: config.database.searchPath
+        }
+      : {
+          host: config.database.host,
+          port: config.database.port,
+          database: config.database.name,
+          user: config.database.user,
+          password: config.database.password,
+          ssl: {
+            rejectUnauthorized: false
+          },
+          searchPath: config.database.searchPath
+        },
     pool: {
       min: 2,
       max: 10

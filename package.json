@@ -7,16 +7,18 @@
     "npm": "8.x"
   },
   "scripts": {
-    "start": "node server",
-    "build": "npm run sync-env && cd react-ui/ && npm install && npm run build",
-    "dev": "npm run sync-env && concurrently \"npm run server\" \"npm run client\"",
+    "sync-env:dev": "cross-env NODE_ENV=development node scripts/sync-env.js",
+    "sync-env:prod": "cross-env NODE_ENV=production node scripts/sync-env.js",
+    "server": "cross-env NODE_ENV=development nodemon server/index.js",
+    "client": "cd react-ui && npm start",
+    "build-client": "npm run build --prefix react-ui",
+    "dev": "npm run sync-env:dev && concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run sync-env:prod && npm run build-client",
+    "kill-ports": "npx kill-port 5000 3000",
     "test": "cd server && npx jest tests",
     "test--verbose": "cd server && npx jest tests --verbose",
-    "sync-env": "node scripts/sync-env.js",
-    "server": "nodemon server/index.js",
-    "client": "cd react-ui && npm start",
-    "prestart": "npm run sync-env",
-    "predevelop": "npm run sync-env"
+    "prestart": "npm run sync-env:dev",
+    "predevelop": "npm run sync-env:dev"
   },
   "type": "commonjs",
   "cacheDirectories": [
@@ -26,6 +28,7 @@
   "dependencies": {
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
@@ -44,7 +47,9 @@
     "@googlemaps/js-api-loader": "^1.16.8",
     "@googlemaps/markerclusterer": "^2.5.3",
     "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
+    "kill-port": "^2.0.1",
     "nodemon": "^2.0.15",
     "puppeteer": "^24.1.1",
     "supertest": "^7.1.1",

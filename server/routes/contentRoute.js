@@ -6,7 +6,7 @@ const router = express.Router();
 
 // GET /api/content/posts - Fetch multiple posts with author names
 router.get('/posts', async (req, res) => {
-  console.log('Received request for /api/content/posts with query:', req.query);
+  // console.log('Received request for /api/content/posts with query:', req.query);
   
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = parseInt(req.query.offset, 10) || 0;
@@ -26,7 +26,7 @@ router.get('/posts', async (req, res) => {
       FROM information_schema.schemata 
       WHERE schema_name IN ('content', 'identity');
     `);
-    console.log('Available schemas:', schemaCheck);
+    // console.log('Available schemas:', schemaCheck);
 
     // Then verify the tables exist
     const tableCheck = await db.query(`
@@ -35,7 +35,7 @@ router.get('/posts', async (req, res) => {
       WHERE table_schema IN ('content', 'identity') 
       AND table_name IN ('posts', 'users');
     `);
-    console.log('Available tables:', tableCheck);
+    // console.log('Available tables:', tableCheck);
 
     const postsQuery = `
       SELECT 
@@ -70,13 +70,13 @@ router.get('/posts', async (req, res) => {
       OFFSET $2;
     `;
     
-    console.log('Executing posts query...');
+    // console.log('Executing posts query...');
     const posts = await db.query(postsQuery, [limit, offset]);
-    console.log(`Retrieved ${posts.length} posts`);
+    // console.log(`Retrieved ${posts.length} posts`);
     
     const totalPostsResult = await db.query('SELECT COUNT(*) AS total FROM content.posts;');
     const total = totalPostsResult[0] ? parseInt(totalPostsResult[0].total, 10) : 0;
-    console.log('Total posts count:', total);
+    // console.log('Total posts count:', total);
 
     res.json({
       data: posts,

@@ -5,9 +5,10 @@ const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 const axios = require('axios'); // Add axios for API calls
 const Fuse = require('fuse.js'); // Import Fuse.js for fuzzy search
-const config = require('../config/env');
+const config = require('../config/env.js');
 const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
+const { authMiddleware } = require('./middleware/auth.js');
 
 const isDev = config.nodeEnv !== 'production';
 // Use the validated web server port from the config
@@ -17,12 +18,37 @@ console.log('Server will start on port:', PORT);
 
 // console.log('TEST_VAR:', process.env.TEST_VAR);
 
+// console log node_env, JWT_secret, googleclientid and googleclientsecret
+// console.log('node_env:', process.env.NODE_ENV);
+// console.log('JWT_secret:', process.env.JWT_SECRET);
+// console.log('googleclientid:', process.env.GOOGLE_CLIENT_ID);
+// console.log('googleclientsecret:', process.env.GOOGLE_CLIENT_SECRET);
+
 const app = express();
+
+// Add request logging middleware
+app.use((req, res, next) => {
+  console.log('Incoming request:', {
+    method: req.method,
+    path: req.path,
+    query: req.query,
+    headers: req.headers
+  });
+  next();
+});
 
 // Security headers
 app.use((req, res, next) => {
   // CORS headers
-  res.header('Access-Control-Allow-Origin', isDev ? 'http://localhost:3000' : 'https://your-production-domain.com');
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5000',
+    'https://angushally.com'
+  ];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -102,6 +128,16 @@ app.use('/api/auth', authRoute);
 // ✅ AI API routes
 const aiRoute = require('./routes/aiRoute');
 app.use('/api/ai', aiRoute);
+
+// ✅ Raindrop API routes
+const raindropRoute = require('./routes/raindropRoute');
+const raindropCallbackRoute = require('./routes/raindropCallback');
+
+// Mount the callback route
+app.use('/api/raindrop/oauth/callback', raindropCallbackRoute);
+
+// Mount all other Raindrop routes with auth middleware
+app.use('/api/raindrop', authMiddleware(), raindropRoute);
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {

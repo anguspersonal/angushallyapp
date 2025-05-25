@@ -67,11 +67,34 @@ function loadEnv() {
         path.join(rootDir, '.env.local')               // Local overrides (git-ignored)
     ];
 
+    // Track which file sets each variable
+    const variableSources = {};
+
     // Load each env file if it exists
     envFiles.forEach(file => {
         if (fs.existsSync(file)) {
-            dotenv.config({ path: file });
+            console.log(`Loading environment from: ${file}`);
+            const result = dotenv.config({ path: file });
+            
+            if (result.parsed) {
+                Object.keys(result.parsed).forEach(key => {
+                    variableSources[key] = file;
+                });
+            }
+
+            if (process.env.DATABASE_URL) {
+                console.log(`DATABASE_URL is set to: ${process.env.DATABASE_URL.split('@')[1]?.split('/')[0]} (from ${variableSources['DATABASE_URL']})`);
+            }
         }
+    });
+
+    // Log final environment configuration
+    console.log('Environment configuration:', {
+        NODE_ENV,
+        DATABASE_URL_SOURCE: variableSources['DATABASE_URL'] || 'Not set',
+        DB_HOST_SOURCE: variableSources['DB_HOST'] || 'Not set',
+        DB_NAME_SOURCE: variableSources['DB_NAME'] || 'Not set',
+        DB_SEARCH_PATH_SOURCE: variableSources['DB_SEARCH_PATH'] || 'Using fallback'
     });
 
     // Load and validate service ports
@@ -84,25 +107,24 @@ function loadEnv() {
         'OPENAI_API_KEY',
     ];
 
-    // Environment-specific required variables
-    const requiredVars = NODE_ENV === 'development' 
-        ? [
-            ...baseRequiredVars,
-            // Database (development only)
-            'DEV_DB_HOST',
-            'DEV_DB_NAME',
-            'DEV_DB_USER',
-          ]
-        : baseRequiredVars;
+    // Now we always require the discrete pieces in all envs:
+    const requiredVars = [
+        ...baseRequiredVars,
+        'DB_HOST',
+        'DB_PORT',
+        'DB_NAME',
+        'DB_USER',
+        'DB_PASSWORD'
+    ];
 
     if (NODE_ENV === 'production') {
-        // In production, we need either DATABASE_URL or all PROD_DB_ variables
+        // In production, accept either DATABASE_URL or the discrete DB_* vars
         if (!process.env.DATABASE_URL && 
-            !(process.env.PROD_DB_HOST && 
-              process.env.PROD_DB_NAME && 
-              process.env.PROD_DB_USER && 
-              process.env.PROD_DB_PASSWORD)) {
-            throw new Error('Production requires either DATABASE_URL or all PROD_DB_ variables');
+            !(process.env.DB_HOST &&
+              process.env.DB_NAME &&
+              process.env.DB_USER &&
+              process.env.DB_PASSWORD)) {
+            throw new Error('Production requires either DATABASE_URL or all DB_* variables');
         }
     }
 
@@ -122,25 +144,25 @@ function loadEnv() {
             // Main production URL (e.g., from Heroku)
             url: process.env.DATABASE_URL,
             
-            // Detailed production config
-            production: {
-                host: process.env.PROD_DB_HOST,
-                port: servicePorts.database, // Use validated database port
-                name: process.env.PROD_DB_NAME,
-                user: process.env.PROD_DB_USER,
-                password: process.env.PROD_DB_PASSWORD,
-                searchPath: process.env.PROD_DB_SEARCH_PATH?.split(',') || ['public', 'identity', 'habit', 'crm', 'fsa', 'content']
-            },
+            // Search path configuration
+            // Prefer DB_SEARCH_PATH from environment files
+            // Fallback to default schemas if not specified
+            searchPath: process.env.DB_SEARCH_PATH?.split(',') || [
+                'public',      // Default PostgreSQL schema
+                'identity',    // User authentication and profiles
+                'habit',       // Habit tracking
+                'crm',        // Customer relationship management
+                'fsa',        // Financial services
+                'content',    // Content management
+                'raindrop'    // Raindrop.io integration
+            ],
             
-            // Development config
-            development: {
-                host: process.env.DEV_DB_HOST,
-                port: servicePorts.database, // Use validated database port
-                name: process.env.DEV_DB_NAME,
-                user: process.env.DEV_DB_USER,
-                password: process.env.DEV_DB_PASSWORD,
-                searchPath: process.env.DEV_DB_SEARCH_PATH?.split(',') || ['public', 'identity', 'habit', 'crm', 'fsa', 'content']
-            }
+            // Database config (now using generic DB_* vars)
+            host: process.env.DB_HOST,
+            port: servicePorts.database,
+            name: process.env.DB_NAME,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD
         },
 
         // Authentication
@@ -183,6 +205,13 @@ function loadEnv() {
         // OpenAI
         openai: {
             apiKey: process.env.OPENAI_API_KEY
+        },
+
+        // Raindrop.io
+        raindrop: {
+            clientId: process.env.RAINDROP_CLIENT_ID,
+            clientSecret: process.env.RAINDROP_CLIENT_SECRET,
+            redirectUri: process.env.RAINDROP_REDIRECT_URI
         },
 
         // Heroku specific

@@ -94,7 +94,8 @@ export function AuthProvider({ children }) {
     logout,
     checkAuth,
     isLoading,
-    handleAuthError
+    handleAuthError,
+    token: user?.token
   };
 
   if (isLoading) {

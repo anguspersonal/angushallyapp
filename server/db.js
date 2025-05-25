@@ -2,8 +2,8 @@
  * @module db
  * @description Database Connection and Query Module for PostgreSQL.
  *
- * Establishes a PostgreSQL connection pool (via `pg` package) using configuration 
- * from `./config/dbConfig.js`. Exports utility functions for executing SQL queries.
+ * Establishes a PostgreSQL connection pool (via `pg` package) using configuration
+ * from `../config/env.js`. Exports utility functions for executing SQL queries.
  *
  * Key Exports:
  *   - `query(text: string, params?: any[], retries?: number): Promise<any[]>`
@@ -25,17 +25,32 @@
  * const results = await db.query('SELECT * FROM users');
  * const user = results.rows[0];  // Wrong! Results is already the rows array
  *
- * @see {@link ./config/dbConfig.js|Database Configuration}
+ * @see {@link ../config/env.js|Environment Configuration}
  * @see {@link https://node-postgres.com/|node-postgres documentation}
  * @author Angus Hally
- * @version 1.2.0 
- * @since 2025-02-28 
- * @updated 2025-05-12 - Refactored to separate config logic; JSDoc updates.
+ * @version 1.3.0
+ * @since 2025-02-28
+ * @updated 2025-05-24 - Inlined config from env.js and removed dbConfig dependency.
  */
 
-// Note: dotenv.config() is now called within dbConfig.js
 const { Pool } = require('pg');
-const poolConfig = require('./config/dbConfig');
+const config = require('../config/env');
+
+// Determine pool configuration based on environment
+const poolConfig = config.database.url
+  ? {
+      connectionString: config.database.url,
+      ssl: { rejectUnauthorized: false },
+      searchPath: config.database.searchPath,
+    }
+  : {
+      host: config.database.host,
+      port: config.database.port,
+      database: config.database.name,
+      user: config.database.user,
+      password: config.database.password,
+      searchPath: config.database.searchPath,
+    };
 
 // Singleton pool instance
 let pool;
@@ -48,13 +63,26 @@ function getPool() {
   if (!pool) {
     pool = new Pool(poolConfig);
 
-    pool.on('connect', () => {
-      console.log('DB Pool: Connected to PostgreSQL using config:', 
-        poolConfig.connectionString ? 
-        'DATABASE_URL (production)' : 
-        `${poolConfig.host}:${poolConfig.port}/${poolConfig.database}`
-      );
-      console.log('Search path:', poolConfig.searchPath);
+    // Set up connection initialization
+    pool.on('connect', async (client) => {
+      try {
+        // Set the search path for each new connection
+        const searchPath = config.database.searchPath.join(', ');
+        await client.query(`SET search_path TO ${searchPath}`);
+        
+        // Get current database name
+        const dbResult = await client.query('SELECT current_database()');
+        const dbName = dbResult.rows[0].current_database;
+        
+        console.log('DB Pool: Connected to PostgreSQL using config:', {
+          environment: config.nodeEnv,
+          connectionType: poolConfig.connectionString ? 'DATABASE_URL' : 'Direct Connection',
+          database: dbName,
+          searchPath: searchPath
+        });
+      } catch (err) {
+        console.error('Error setting search path:', err);
+      }
     });
 
     pool.on('error', (err) => {
@@ -64,10 +92,10 @@ function getPool() {
 
     // Handle process termination signals
     const cleanup = async () => {
-      console.log('Cleaning up database connections...');
+      // console.log('Cleaning up database connections...');
       try {
         await end();
-        console.log('Database connections closed.');
+        // console.log('Database connections closed.');
         process.exit(0);
       } catch (err) {
         console.error('Error during cleanup:', err);
@@ -81,7 +109,7 @@ function getPool() {
     process.on('beforeExit', cleanup);
     process.on('exit', () => {
       if (pool) {
-        console.log('Process exiting, closing pool sync');
+        // console.log('Process exiting, closing pool sync');
         pool.end();
       }
     });
@@ -114,12 +142,16 @@ const quoteIdent = (identifier) => {
  * @throws {Error} If the query fails after all retries.
  */
 const query = async (text, params = [], retries = 3) => {
-  console.log('Executing query:', { text, params });
+  // console.log('Executing query:', { text, params });
   const client = await getPool().connect();
   try {
-    console.log('Got client from pool, executing query...');
+    // Verify search path
+    const searchPathResult = await client.query('SHOW search_path');
+    console.log('Current search path:', searchPathResult.rows[0].search_path);
+    
+    // console.log('Got client from pool, executing query...');
     const res = await client.query(text, params);
-    console.log('Query completed successfully, row count:', res.rowCount);
+    // console.log('Query completed successfully, row count:', res.rowCount);
     return res.rows;
   } catch (error) {
     console.error('Database query error:', {
@@ -129,15 +161,15 @@ const query = async (text, params = [], retries = 3) => {
       params,
       retries_left: retries
     });
-    
+
     if (retries > 0) {
-      console.log(`Retrying query, ${retries - 1} retries left...`);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
+      // console.log('DB Pool: Retrying query...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
       return query(text, params, retries - 1);
     }
     throw error;
   } finally {
-    console.log('Releasing client back to pool');
+    // console.log('Releasing client back to pool');
     client.release();
   }
 };
@@ -150,7 +182,7 @@ const query = async (text, params = [], retries = 3) => {
 const end = async () => {
   if (pool) {
     const p = pool;
-    pool = null; // Clear the reference first
+    pool = null;
     await p.end();
   }
 };
@@ -168,7 +200,7 @@ const end = async () => {
  * @throws {Error} If the table name is invalid or if the query fails.
  */
 const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
-  if (!allowedTables[table]) { 
+  if (!allowedTables[table]) {
     throw new Error(`Invalid table name or table not in allowed list: ${table}`);
   }
 
@@ -189,8 +221,8 @@ const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
 
   let queryText = `SELECT ${selectedColumnsSQL} FROM ${safeTableSQL}`;
   const queryParams = [];
-  
   const filterKeys = Object.keys(filters);
+
   if (filterKeys.length > 0) {
     const conditions = filterKeys.map((key, index) => {
       if (!allowedColumnsForTable.includes(key)) {
@@ -211,4 +243,4 @@ const select = async (table, allowedTables, filters = {}, columns = ['*']) => {
   return await query(queryText, queryParams);
 };
 
-module.exports = { query, end, select, pool: getPool() };
+module.exports = { query, select, end, pool: getPool() };

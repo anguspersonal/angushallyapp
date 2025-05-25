@@ -1,47 +1,37 @@
 const fs = require('fs');
 const path = require('path');
+const dotenv = require('dotenv');
 
-// Load the main configuration
-const config = require('../config/env');
+// 1) Load the "base" vars from .env (shared across all envs)
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-// Define which variables should be exposed to the frontend
-function generateEnvContent(isDev = true) {
-    const baseUrl = isDev ? `http://localhost:${config.ports.webServer}` : '';
-    
-    const vars = {
-        REACT_APP_API_BASE_URL: `${baseUrl}/api`,
-        REACT_APP_GOOGLE_CLIENT_ID: config.auth.google.clientId,
-        REACT_APP_GOOGLE_MAPS_API_KEY: config.google?.mapsApiKey || '',
-        REACT_APP_GOOGLE_MAPS_MAP_ID: config.google?.mapsMapId || '',
-        REACT_APP_RECAPTCHA_SITE_KEY: config.security.recaptchaSiteKey || '',
-        NODE_ENV: isDev ? 'development' : 'production'
-    };
+// 2) Determine mode and override with .env.development or .env.production
+const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
-    return Object.entries(vars)
-        .map(([key, value]) => `${key}=${value}`)
-        .join('\n');
-}
+dotenv.config({ path: path.resolve(__dirname, `../.env.${mode}`) });
+console.log(`🔄 sync-env loading .env.${mode}`, {
+  NODE_ENV: process.env.NODE_ENV,
+  API_BASE_URL: process.env.API_BASE_URL,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+  GOOGLE_MAPS_MAP_ID: process.env.GOOGLE_MAPS_MAP_ID,
+  RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY
+});
 
-// Ensure the react-ui directory exists
-const reactUiDir = path.resolve(__dirname, '../react-ui');
-if (!fs.existsSync(reactUiDir)) {
-    console.error('react-ui directory not found!');
-    process.exit(1);
-}
+// Build the React-style vars object
+const out = {
+  NODE_ENV: mode,
+  REACT_APP_API_BASE_URL: process.env.API_BASE_URL || (mode === 'production' ? '/api' : ''),
+  REACT_APP_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
+  REACT_APP_GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || '',
+  REACT_APP_GOOGLE_MAPS_MAP_ID: process.env.GOOGLE_MAPS_MAP_ID || '',
+  REACT_APP_RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY || ''
+};
 
-// Write development environment variables
-const devEnvPath = path.join(reactUiDir, '.env.development');
-fs.writeFileSync(devEnvPath, generateEnvContent(true));
-console.log('Development environment variables written to:', devEnvPath);
+// Write to react-ui/.env
+const dest = path.resolve(__dirname, '../react-ui/.env');
+fs.writeFileSync(dest,
+  Object.entries(out).map(([k,v]) => `${k}=${v}`).join('\n') + '\n'
+);
 
-// Write production environment variables
-const prodEnvPath = path.join(reactUiDir, '.env.production');
-fs.writeFileSync(prodEnvPath, generateEnvContent(false));
-console.log('Production environment variables written to:', prodEnvPath);
-
-// Write default .env (can be overridden locally)
-const defaultEnvPath = path.join(reactUiDir, '.env');
-if (!fs.existsSync(defaultEnvPath)) {
-    fs.writeFileSync(defaultEnvPath, generateEnvContent(true));
-    console.log('Default environment variables written to:', defaultEnvPath);
-} 
+console.log('✅ Generated', dest, out); 

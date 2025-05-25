@@ -54,6 +54,14 @@ export const projectList = [
         "route": "/projects/ai/instapaper",
         "tags": ["ai", "nlp", "data"],
         "created_at": "2025-05-21"
+    },
+    {
+        "id": 7,
+        "name": "Raindrop Bookmarks",
+        "desc": "Import and manage your Raindrop.io bookmarks with automatic syncing and tag organization.",
+        "route": "/projects/bookmarks/raindrop",
+        "tags": ["bookmarks", "productivity", "api"],
+        "created_at": "2025-05-22"
     }
 ];
 

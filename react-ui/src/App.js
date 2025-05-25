@@ -22,6 +22,7 @@ import TextAnalysisAI from "./pages/projects/ai/TextAnalysisAI.jsx";
 import Instapaper from "./pages/projects/ai/Instapaper.jsx";
 import Collab from "./pages/Collab.jsx";
 import Login from "./pages/Login.jsx";
+import Raindrop from "./pages/projects/bookmarks/raindrop.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
 import { theme } from './theme.js'; // Import your theme
 import { AuthProvider } from './contexts/AuthContext.jsx';
@@ -52,6 +53,7 @@ function App() {
               <Route path="/projects/ai" element={<AIProjects />} />
               <Route path="/projects/ai/text-analysis" element={<TextAnalysisAI />} />
               <Route path="/projects/ai/instapaper" element={<Instapaper />} />
+              <Route path="/projects/bookmarks/raindrop" element={<Raindrop />} />
               <Route path="/login" element={<Login />} />
             </Routes>
             {!hideFooterRoutes.includes(location.pathname) && <Footer />}

@@ -23,7 +23,7 @@ export async function storeAuthData(token, user, rememberMe = false) {
 }
 
 /**
- * Clear all authentication data from both storage types
+ * Clear all authentication data from both storage types and cookies
  */
 export async function clearAuthData() {
   // Clear localStorage
@@ -34,6 +34,10 @@ export async function clearAuthData() {
   // Clear sessionStorage
   sessionStorage.removeItem('jwt');
   sessionStorage.removeItem('user');
+
+  // Clear cookies
+  document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
 
 /**
@@ -42,7 +46,15 @@ export async function clearAuthData() {
  */
 export async function getStoredToken() {
   try {
-    // Check localStorage first (for "Remember me")
+    // First check for cookie-based token
+    const cookies = document.cookie.split(';');
+    const authCookie = cookies.find(cookie => cookie.trim().startsWith('auth_token='));
+    if (authCookie) {
+      const token = authCookie.split('=')[1].trim();
+      return token;
+    }
+
+    // If no cookie token, check localStorage (for "Remember me")
     let token = localStorage.getItem('jwt');
     const expiration = localStorage.getItem('tokenExpiration');
 
@@ -56,11 +68,6 @@ export async function getStoredToken() {
     if (!token) {
       token = sessionStorage.getItem('jwt');
     }
-
-    // Here you could add token refresh logic if needed
-    // if (token && shouldRefreshToken(token)) {
-    //   token = await refreshToken(token);
-    // }
 
     return token;
   } catch (error) {
@@ -78,9 +85,16 @@ export async function getStoredUser() {
   try {
     const localUser = localStorage.getItem('user');
     const sessionUser = sessionStorage.getItem('user');
+    const token = await getStoredToken();
     
-    if (localUser) return JSON.parse(localUser);
-    if (sessionUser) return JSON.parse(sessionUser);
+    if (localUser) {
+      const user = JSON.parse(localUser);
+      return { ...user, token };
+    }
+    if (sessionUser) {
+      const user = JSON.parse(sessionUser);
+      return { ...user, token };
+    }
     return null;
   } catch (error) {
     console.error('Error parsing stored user data:', error);

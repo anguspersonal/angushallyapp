@@ -94,6 +94,12 @@ beforeEach(async () => {
   await dbPool.query('DELETE FROM bookmark.bookmarks WHERE user_id = $1', [TEST_USER.id]);
   await dbPool.query('DELETE FROM bookmark.bookmark_sync_logs WHERE user_id = $1', [TEST_USER.id]);
   
+  // Verify cleanup
+  const remainingBookmarks = await dbPool.query('SELECT COUNT(*) FROM bookmark.bookmarks WHERE user_id = $1', [TEST_USER.id]);
+  if (remainingBookmarks[0].count > 0) {
+    throw new Error('Cleanup failed - bookmarks still exist');
+  }
+  
   // Clear all mocks
   jest.clearAllMocks();
 });

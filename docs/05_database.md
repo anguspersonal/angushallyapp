@@ -12,35 +12,121 @@ Key schemas include:
 - **crm**: Customer relationship management, primarily inquiries.
 - **fsa**: Data synchronized from the Food Standards Agency.
 - **content**: Blog posts, authors, and public content (moved from public schema).
+- **raindrop**: Bookmark management and Raindrop.io integration.
 
-## Environment-Specific Configuration
+## Environment Configuration
 
-The application uses environment-specific database configurations:
+The application uses a unified database configuration approach that works across all environments. Database configuration can be provided in two ways:
+
+1. **Connection String (Recommended for Production)**
+   ```env
+   DATABASE_URL=postgres://user:password@host:port/database
+   ```
+
+2. **Individual Parameters**
+   ```env
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=your_database
+   DB_USER=your_user
+   DB_PASSWORD=your_password
+   DB_SEARCH_PATH=public,identity,habit,crm,fsa,content,raindrop
+   ```
+
+### Environment-Specific Configuration
+
+Database configuration can be split across environment files:
+
+1. `.env` - Base configuration
+2. `.env.development` - Development overrides
+3. `.env.production` - Production overrides
+4. `.env.local` - Local machine overrides (git-ignored)
+
+Example `.env.development`:
+```env
+DB_HOST=localhost
+DB_NAME=angushallyapp_dev
+DB_USER=angus_dev
+DB_PASSWORD=dev_password
+```
+
+Example `.env.production`:
+```env
+DATABASE_URL=postgres://prod_user:prod_password@prod-host:5432/prod_db
+```
+
+## Database Connection Management
+
+The application uses `knexfile.js` to manage database connections for different environments:
 
 ### Development
-- Uses local PostgreSQL instance
-- Configuration via environment variables:
-  - `DEV_DB_HOST`
-  - `DEV_DB_PORT`
-  - `DEV_DB_NAME`
-  - `DEV_DB_USER`
-  - `DEV_DB_PASSWORD`
-- Configured in local `.env` file
+
+- Uses environment variables defined in `.env` and `.env.development`
+- Connects to a local or WSL-based PostgreSQL instance
+- Knex commands use the `development` configuration block:
+  ```bash
+  npx knex migrate:latest --env development
+  ```
 
 ### Production
-- Uses Heroku PostgreSQL
-- Configuration via `DATABASE_URL`
-- Enhanced connection pool settings:
-  - Connection timeout: 10 seconds
-  - Idle timeout: 30 seconds
-  - Pool size: 2-10 connections
-- SSL enabled with rejectUnauthorized: false
 
-### Search Paths
-Both environments use the following search path:
-```sql
-['public', 'identity', 'habit', 'crm', 'fsa', 'content']
-```
+- Typically uses a single `DATABASE_URL` environment variable (provided by Heroku or another hosting platform)
+- Includes SSL configuration for secure connections:
+  ```javascript
+  production: {
+    client: 'postgresql',
+    connection: {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
+    },
+    // ... migrations, seeds
+  }
+  ```
+
+## Development Setup
+
+1. Create a PostgreSQL database:
+   ```bash
+   createdb angushallyapp_dev
+   ```
+
+2. Configure environment variables in `.env.development`:
+   ```env
+   DB_HOST=localhost
+   DB_NAME=angushallyapp_dev
+   DB_USER=your_dev_user
+   DB_PASSWORD=your_dev_password
+   DB_PORT=5432
+   DB_SEARCH_PATH=public,identity,habit,crm,fsa,content,raindrop
+   ```
+
+3. Run migrations:
+   ```bash
+   npx knex migrate:latest --env development
+   ```
+
+## Production Setup
+
+1. Configure environment variables in `.env.production`:
+   ```env
+   # Option 1: Using connection string (recommended)
+   DATABASE_URL=postgres://prod_user:prod_password@prod-host:5432/prod_db
+
+   # Option 2: Using individual parameters
+   DB_HOST=your_prod_host
+   DB_NAME=your_prod_db
+   DB_USER=your_prod_user
+   DB_PASSWORD=your_prod_password
+   DB_PORT=5432
+   DB_SEARCH_PATH=public,identity,habit,crm,fsa,content,raindrop
+   ```
+
+2. Run migrations:
+   ```bash
+   npx knex migrate:latest --env production
+   ```
+
+The application will automatically use the appropriate configuration based on what's available.
 
 ## Schema Definitions & Diagrams
 
@@ -103,6 +189,7 @@ The application uses a multi-schema PostgreSQL database with the following struc
 | `habit`     | Habit tracking and activity data                      |
 | `crm`       | Contact form submissions and inquiry management       |
 | `fsa`       | Food Standards Agency data for hygiene ratings        |
+| `raindrop`  | Bookmark management and Raindrop.io integration       |
 
 ## Environment Configuration
 
@@ -153,34 +240,6 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_MAPS_API_KEY=your_maps_api_key
 GOOGLE_MAPS_MAP_ID=your_maps_map_id
 ```
-
-## Database Connection Management
-
-The application uses `knexfile.js` to manage database connections for different environments:
-
-### Development
-
-- Uses environment variables prefixed with `DEV_` (e.g., `DEV_DB_HOST`, `DEV_DB_NAME`, etc.) defined in `server/.env`.
-- Connects to a local or WSL-based PostgreSQL instance.
-- Knex commands use the `development` configuration block:
-  ```bash
-  npx knex migrate:latest --env development
-  ```
-
-### Production
-
-- Typically uses a single `DATABASE_URL` environment variable (provided by Heroku or another hosting platform).
-- Includes SSL configuration for secure connections:
-  ```javascript
-  production: {
-    client: 'postgresql',
-    connection: {
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }
-    },
-    // ... migrations, seeds
-  }
-  ```
 
 ## Migration Management
 
