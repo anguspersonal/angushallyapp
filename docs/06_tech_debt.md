@@ -339,6 +339,18 @@ This document tracks known technical debt, architectural issues, and improvement
 - **Created**: 2025-05-17
 - **Status**: 🔴 Not Started
 
+### Production Script Dependencies
+- **Description**: NPM scripts should not rely on devDependencies in production environments
+- **Priority**: High
+- **Resolution**: 
+  - Review all npm scripts that might run in production (start, prestart, postinstall, etc.)
+  - Ensure they only use dependencies available in production
+  - Consider moving critical build tools to dependencies if needed for production builds
+  - Add documentation about which scripts are dev-only vs production-safe
+- **Created**: 2025-01-27
+- **Status**: 🔴 Not Started
+- **Context**: Discovered when `prestart` script using `cross-env` (a devDependency) caused production crash
+
 ### Clean Up Debug Messages
 - **Description**: Debug console.log statements need cleanup
 - **Priority**: Medium

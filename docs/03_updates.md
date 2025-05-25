@@ -4,6 +4,18 @@ This file tracks chronological changes to the project, with the most recent upda
 
 ## [Unreleased] – Current
 
+### Heroku Deployment Fix - 2025-01-27
+- **Bug Fix**: Resolved production deployment crash caused by `prestart` script
+  - Problem: `prestart` script was using `cross-env` which is a devDependency not available in production
+  - Solution: Removed `prestart` script from package.json
+  - Heroku only installs production dependencies, not devDependencies
+  - App is now successfully running on Heroku (release v136)
+- **Environment Variable Loading**: Fixed issues with environment configuration
+  - Updated `config/env.js` to properly handle `DATABASE_URL` parsing
+  - Made database migration script idempotent to handle existing tables
+  - Added proper `start` script for Heroku deployment
+- **Deployment Status**: Application is now live and running correctly on production
+
 ### Raindrop Authentication Issues - 2025-05-24
 - Identified issues with Raindrop OAuth flow:
   - Network connection errors affecting login functionality
