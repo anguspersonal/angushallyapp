@@ -60,33 +60,6 @@ router.get('/', async (req, res) => {
     });
     console.log('Successfully stored tokens in database');
 
-    // Generate new application JWT
-    const appJwt = jwt.sign(
-      { 
-        userId: userId,
-        timestamp: Date.now()
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    // Set JWT in cookie with proper configuration
-    res.cookie('Authorization', `Bearer ${appJwt}`, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      path: '/' // Ensure cookie is available for all paths
-    });
-
-    // Also set a non-httpOnly cookie for the frontend to read
-    res.cookie('auth_token', appJwt, {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/'
-    });
-
     // Redirect back to the frontend with success
     res.redirect('/projects/bookmarks/raindrop?success=true');
   } catch (err) {

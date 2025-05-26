@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken');
 
 // server/routes/raindropRoute.js
 
-// 1) Kick off the OAuth flow
+// 1) Get OAuth URL (authenticated API call)
 router.get('/oauth/start', authMiddleware(), (req, res) => {
   try {
     const { id } = req.user;
@@ -33,7 +33,9 @@ router.get('/oauth/start', authMiddleware(), (req, res) => {
       state,
       userId: id
     });
-    res.redirect(authUrl);
+    
+    // Return the auth URL instead of redirecting
+    res.json({ authUrl });
   } catch (err) {
     console.error('OAuth start error:', err);
     

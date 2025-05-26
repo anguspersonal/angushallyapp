@@ -41,40 +41,19 @@ async function verifyGoogleToken(token) {
 /**
  * Middleware to authenticate requests using JWT
  * Supports both JWT tokens and Google OAuth tokens
- * Checks Authorization header first, then falls back to cookies
  * In test mode (NODE_ENV=test), accepts a test token
  */
 function authMiddleware(options = {}) {
     return async (req, res, next) => {
         try {
-            let token = null;
-            
-            // First, try to get token from Authorization header
             const authHeader = req.headers.authorization;
-            if (authHeader) {
-                const [bearer, headerToken] = authHeader.split(' ');
-                if (bearer === 'Bearer' && headerToken) {
-                    token = headerToken;
-                }
-            }
-            
-            // If no token in header, try cookies
-            if (!token && req.cookies) {
-                // Check for 'Authorization' cookie (format: "Bearer <token>")
-                if (req.cookies.Authorization) {
-                    const [bearer, cookieToken] = req.cookies.Authorization.split(' ');
-                    if (bearer === 'Bearer' && cookieToken) {
-                        token = cookieToken;
-                    }
-                }
-                // Also check for 'auth_token' cookie (direct token)
-                else if (req.cookies.auth_token) {
-                    token = req.cookies.auth_token;
-                }
-            }
-            
-            if (!token) {
+            if (!authHeader) {
                 return res.status(401).json({ error: 'No token provided' });
+            }
+
+            const [bearer, token] = authHeader.split(' ');
+            if (bearer !== 'Bearer' || !token) {
+                return res.status(401).json({ error: 'Invalid token format' });
             }
 
             // Special handling for test mode
