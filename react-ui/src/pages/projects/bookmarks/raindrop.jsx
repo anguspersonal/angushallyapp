@@ -142,7 +142,11 @@ const Raindrop = () => {
   const handleConnect = async () => {
     try {
       const response = await api.get('/raindrop/oauth/start');
-      window.location.href = response.authUrl;
+      // Ensure we're using the full URL by checking if it starts with http
+      const authUrl = response.authUrl.startsWith('http') 
+        ? response.authUrl 
+        : `${window.location.origin}${response.authUrl}`;
+      window.location.href = authUrl;
     } catch (error) {
       notifications.show({
         title: 'Error',
