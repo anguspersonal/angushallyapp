@@ -139,19 +139,19 @@ const Raindrop = () => {
     }
   };
 
-  const handleConnect = async () => {
-    try {
-      const response = await api.get('/raindrop/oauth/start');
-      window.location.href = response.authUrl;
-    } catch (error) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to start Raindrop connection',
-        color: 'red'
-      });
-      console.error('Error starting Raindrop connection:', error);
-    }
-  };
+  // const handleConnect = async () => {
+  //   try {
+  //     const response = await api.get('/raindrop/oauth/start');
+  //     window.location.href = response.authUrl;
+  //   } catch (error) {
+  //     notifications.show({
+  //       title: 'Error',
+  //       message: 'Failed to start Raindrop connection',
+  //       color: 'red'
+  //     });
+  //     console.error('Error starting Raindrop connection:', error);
+  //   }
+  // };
 
   const handleSync = async () => {
     try {
@@ -214,8 +214,9 @@ const Raindrop = () => {
         <Group>
           {!isConnected ? (
             <Button
+              component="a"
+              href={`${API_BASE}/raindrop/oauth/start`}
               leftIcon={<IconLink size={16} />}
-              onClick={handleConnect}
               variant="filled"
             >
               Connect Raindrop
