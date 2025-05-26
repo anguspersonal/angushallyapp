@@ -5,6 +5,7 @@ const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 const axios = require('axios'); // Add axios for API calls
 const Fuse = require('fuse.js'); // Import Fuse.js for fuzzy search
+const cookieParser = require('cookie-parser'); // Add cookie-parser
 const config = require('../config/env.js');
 const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
@@ -69,6 +70,9 @@ app.use((req, res, next) => {
 
 // Use body-parsing middleware
 app.use(express.json());
+
+// Add cookie parsing middleware
+app.use(cookieParser());
 
 // Priority serve any static files.
 app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
