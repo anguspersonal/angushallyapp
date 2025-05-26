@@ -28,11 +28,20 @@ router.get('/oauth/start', authMiddleware(), (req, res) => {
     );
 
     const authUrl = getAuthUrl(state);
+    console.log('=== OAuth Start Debug ===');
     console.log('Generated OAuth URL:', {
       authUrl,
       state,
-      userId: id
+      userId: id,
+      urlCheck: {
+        startsWithHttp: authUrl?.startsWith('http'),
+        includesV2: authUrl?.includes('/v2/'),
+        includesApiDomain: authUrl?.includes('api.raindrop.io'),
+        correctDomain: authUrl?.includes('raindrop.io/oauth/authorize')
+      }
     });
+    console.log('Full URL being sent:', authUrl);
+    console.log('=== End OAuth Debug ===');
     
     // Return the auth URL instead of redirecting
     res.json({ authUrl });
