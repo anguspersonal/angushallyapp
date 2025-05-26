@@ -2,7 +2,7 @@ const axios = require("axios");
 const config = require('../../config/env');
 
 const db = require("../db.js");
-const { testDatabaseConnection } = require("../tests/testDatabaseConnection.js");
+// const { testDatabaseConnection } = require("../tests/testDatabaseConnection.js");
 
 const STRAVA_CLIENT_ID = config.strava.clientId;
 const STRAVA_CLIENT_SECRET = config.strava.clientSecret;

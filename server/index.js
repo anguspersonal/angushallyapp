@@ -13,7 +13,7 @@ const { authMiddleware } = require('./middleware/auth.js');
 const isDev = config.nodeEnv !== 'production';
 // Use the validated web server port from the config
 const PORT = config.ports.webServer;
-console.log('Server will start on port:', PORT);
+// console.log('Server will start on port:', PORT);
 // console.log(process.env.NODE_ENV,process.env.PORT);
 
 // console.log('TEST_VAR:', process.env.TEST_VAR);
@@ -28,12 +28,12 @@ const app = express();
 
 // Add request logging middleware
 app.use((req, res, next) => {
-  console.log('Incoming request:', {
-    method: req.method,
-    path: req.path,
-    query: req.query,
-    headers: req.headers
-  });
+  // console.log('Incoming request:', {
+  //   method: req.method,
+  //   path: req.path,
+  //   query: req.query,
+  //   headers: req.headers
+  // });
   next();
 });
 
@@ -163,5 +163,5 @@ app.get('*', function (request, response) {
 
 
 app.listen(PORT, function () {
-  console.error(`Node ${isDev ? 'dev server' : 'cluster worker ' + process.pid}: listening on port ${PORT}`);
+  // console.error(`Node ${isDev ? 'dev server' : 'cluster worker ' + process.pid}: listening on port ${PORT}`);
 });

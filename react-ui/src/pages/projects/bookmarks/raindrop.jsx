@@ -114,7 +114,7 @@ const Raindrop = () => {
       if (response && response.bookmarks && Array.isArray(response.bookmarks)) {
         setBookmarks(response.bookmarks);
       } else {
-        console.error('Invalid bookmarks response:', response);
+        // console.error('Invalid bookmarks response:', response);
         setBookmarks([]);
       }
     } catch (error) {
@@ -131,7 +131,7 @@ const Raindrop = () => {
           message: 'Failed to fetch bookmarks',
           color: 'red'
         });
-        console.error('Error fetching bookmarks:', error);
+        // console.error('Error fetching bookmarks:', error);
       }
       setBookmarks([]); // Ensure bookmarks is always an array
     } finally {
@@ -141,27 +141,27 @@ const Raindrop = () => {
 
   const handleConnect = async () => {
     try {
-      console.log('=== Raindrop OAuth Debug ===');
-      console.log('1. Starting OAuth flow...');
+      // console.log('=== Raindrop OAuth Debug ===');
+      // console.log('1. Starting OAuth flow...');
       
       const response = await api.get('/raindrop/oauth/start');
-      console.log('2. Response from server:', response);
-      console.log('3. Auth URL received:', response.authUrl);
-      console.log('4. URL type check:', {
-        startsWithHttp: response.authUrl?.startsWith('http'),
-        startsWithHttps: response.authUrl?.startsWith('https'),
-        includesRaindrop: response.authUrl?.includes('raindrop.io'),
-        includesApiRaindrop: response.authUrl?.includes('api.raindrop.io')
-      });
+      // console.log('2. Response from server:', response);
+      // console.log('3. Auth URL received:', response.authUrl);
+      // console.log('4. URL type check:', {
+      //   startsWithHttp: response.authUrl?.startsWith('http'),
+      //   startsWithHttps: response.authUrl?.startsWith('https'),
+      //   includesRaindrop: response.authUrl?.includes('raindrop.io'),
+      //   includesApiRaindrop: response.authUrl?.includes('api.raindrop.io')
+      // });
       
       // Ensure we're using the full URL by checking if it starts with http
       const authUrl = response.authUrl.startsWith('http') 
         ? response.authUrl 
         : `${window.location.origin}${response.authUrl}`;
       
-      console.log('5. Final auth URL:', authUrl);
-      console.log('6. Window location before redirect:', window.location.href);
-      console.log('=== End Debug ===');
+      // console.log('5. Final auth URL:', authUrl);
+      // console.log('6. Window location before redirect:', window.location.href);
+      // console.log('=== End Debug ===');
       
       window.location.href = authUrl;
     } catch (error) {
@@ -170,7 +170,7 @@ const Raindrop = () => {
         message: 'Failed to start Raindrop connection',
         color: 'red'
       });
-      console.error('Error starting Raindrop connection:', error);
+      // console.error('Error starting Raindrop connection:', error);
     }
   };
 
@@ -198,7 +198,7 @@ const Raindrop = () => {
           message: 'Failed to sync bookmarks',
           color: 'red'
         });
-        console.error('Error syncing bookmarks:', error);
+        // console.error('Error syncing bookmarks:', error);
       }
     } finally {
       setSyncing(false);

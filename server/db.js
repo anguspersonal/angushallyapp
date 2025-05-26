@@ -74,19 +74,19 @@ function getPool() {
         const dbResult = await client.query('SELECT current_database()');
         const dbName = dbResult.rows[0].current_database;
         
-        console.log('DB Pool: Connected to PostgreSQL using config:', {
-          environment: config.nodeEnv,
-          connectionType: poolConfig.connectionString ? 'DATABASE_URL' : 'Direct Connection',
-          database: dbName,
-          searchPath: searchPath
-        });
+        // console.log('DB Pool: Connected to PostgreSQL using config:', {
+        //   environment: config.nodeEnv,
+        //   connectionType: poolConfig.connectionString ? 'DATABASE_URL' : 'Direct Connection',
+        //   database: dbName,
+        //   searchPath: searchPath
+        // });
       } catch (err) {
-        console.error('Error setting search path:', err);
+        // console.error('Error setting search path:', err);
       }
     });
 
     pool.on('error', (err) => {
-      console.error('DB Pool: Unexpected error on idle client', err);
+      // console.error('DB Pool: Unexpected error on idle client', err);
       process.exit(-1);
     });
 
@@ -98,7 +98,7 @@ function getPool() {
         // console.log('Database connections closed.');
         process.exit(0);
       } catch (err) {
-        console.error('Error during cleanup:', err);
+        // console.error('Error during cleanup:', err);
         process.exit(1);
       }
     };
@@ -147,20 +147,20 @@ const query = async (text, params = [], retries = 3) => {
   try {
     // Verify search path
     const searchPathResult = await client.query('SHOW search_path');
-    console.log('Current search path:', searchPathResult.rows[0].search_path);
+    // console.log('Current search path:', searchPathResult.rows[0].search_path);
     
     // console.log('Got client from pool, executing query...');
     const res = await client.query(text, params);
     // console.log('Query completed successfully, row count:', res.rowCount);
     return res.rows;
   } catch (error) {
-    console.error('Database query error:', {
-      error: error.message,
-      stack: error.stack,
-      query: text,
-      params,
-      retries_left: retries
-    });
+    // console.error('Database query error:', {
+    //   error: error.message,
+    //   stack: error.stack,
+    //   query: text,
+    //   params,
+    //   retries_left: retries
+    // });
 
     if (retries > 0) {
       // console.log('DB Pool: Retrying query...');

@@ -5,13 +5,13 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL?.replace(/\/$/, ''); // strip any trailing slash
 
 // Log environment details for debugging
-console.log('Environment details:', {
-  NODE_ENV: process.env.NODE_ENV,
-  REACT_APP_API_BASE_URL: process.env.REACT_APP_API_BASE_URL,
-  isDevelopment,
-  apiBaseUrl,
-  fallbackUsed: !apiBaseUrl
-});
+// console.log('Environment details:', {
+//   NODE_ENV: process.env.NODE_ENV,
+//   REACT_APP_API_BASE_URL: process.env.REACT_APP_API_BASE_URL,
+//   isDevelopment,
+//   apiBaseUrl,
+//   fallbackUsed: !apiBaseUrl
+// });
 
 // Use the environment-specific API base URL
 export const API_BASE = apiBaseUrl || (isDevelopment ? 'http://localhost:5000/api' : '/api');
@@ -41,33 +41,33 @@ async function apiClient(endpoint, options = {}) {
     };
 
     const fullUrl = `${API_BASE}${endpoint}`;
-    console.log('Making request to:', {
-        method: options.method || 'GET',
-        url: fullUrl,
-        headers: headers,
-        hasToken: !!token
-    });
+    // console.log('Making request to:', {
+    //     method: options.method || 'GET',
+    //     url: fullUrl,
+    //     headers: headers,
+    //     hasToken: !!token
+    // });
 
     try {
         const response = await fetch(fullUrl, config);
         
         // Log response details
-        console.log('Response received:', {
-            status: response.status,
-            statusText: response.statusText,
-            headers: Object.fromEntries(response.headers.entries()),
-            url: response.url
-        });
+        // console.log('Response received:', {
+        //     status: response.status,
+        //     statusText: response.statusText,
+        //     headers: Object.fromEntries(response.headers.entries()),
+        //     url: response.url
+        // });
         
         // Handle HTML responses (usually error pages)
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('text/html')) {
             const text = await response.text();
-            console.error('Received HTML instead of JSON:', {
-                contentType,
-                status: response.status,
-                text: text.substring(0, 500) // Log first 500 chars of response
-            });
+            // console.error('Received HTML instead of JSON:', {
+            //     contentType,
+            //     status: response.status,
+            //     text: text.substring(0, 500) // Log first 500 chars of response
+            // });
             throw new ApiError('Received HTML response instead of JSON', response.status, null);
         }
 
@@ -77,7 +77,7 @@ async function apiClient(endpoint, options = {}) {
             try {
                 data = await response.json();
             } catch (e) {
-                console.error('Failed to parse JSON response:', e);
+                // console.error('Failed to parse JSON response:', e);
                 throw new ApiError('Invalid JSON response from server', response.status, null);
             }
         }
@@ -102,14 +102,14 @@ async function apiClient(endpoint, options = {}) {
             throw error;
         }
         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-            console.error('Network error details:', {
-                url: fullUrl,
-                error: error.message,
-                stack: error.stack
-            });
+            // console.error('Network error details:', {
+            //     url: fullUrl,
+            //     error: error.message,
+            //     stack: error.stack
+            // });
             throw new ApiError('Network error - please check your connection', 0, null);
         }
-        console.error('API request failed:', error);
+        // console.error('API request failed:', error);
         throw new ApiError(error.message, 0, null);
     }
 }

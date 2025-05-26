@@ -8,14 +8,14 @@ const RAINDROP_CLIENT_SECRET = config.raindrop.clientSecret;
 const RAINDROP_REDIRECT_URI = config.raindrop.redirectUri;
 
 // Log configuration values
-console.log('\n=== Raindrop.io Configuration ===');
-console.log('Client ID:', RAINDROP_CLIENT_ID ? '✅ Set' : '❌ Missing');
-console.log('Client Secret:', RAINDROP_CLIENT_SECRET ? '✅ Set' : '❌ Missing');
-console.log('Redirect URI:', RAINDROP_REDIRECT_URI ? '✅ Set' : '❌ Missing');
-if (RAINDROP_REDIRECT_URI) {
-    console.log('  Value:', RAINDROP_REDIRECT_URI);
-}
-console.log('================================\n');
+// console.log('\n=== Raindrop.io Configuration ===');
+// console.log('Client ID:', RAINDROP_CLIENT_ID ? '✅ Set' : '❌ Missing');
+// console.log('Client Secret:', RAINDROP_CLIENT_SECRET ? '✅ Set' : '❌ Missing');
+// console.log('Redirect URI:', RAINDROP_REDIRECT_URI ? '✅ Set' : '❌ Missing');
+// if (RAINDROP_REDIRECT_URI) {
+//     console.log('  Value:', RAINDROP_REDIRECT_URI);
+// }
+// console.log('================================\n');
 
 /**
  * Get the Raindrop.io OAuth authorization URL
@@ -39,9 +39,9 @@ const getAuthUrl = (state) => {
   });
   
   const authUrl = `https://raindrop.io/oauth/authorize?${params.toString()}`;
-  console.log('\n=== Generated Raindrop Auth URL ===');
-  console.log(`Authorization URL: ${authUrl}`);
-  console.log('===================================\n');
+  // console.log('\n=== Generated Raindrop Auth URL ===');
+  // console.log(`Authorization URL: ${authUrl}`);
+  // console.log('===================================\n');
   
   return authUrl;
 };
@@ -75,7 +75,7 @@ const exchangeCodeForTokens = async (code) => {
       expires_in: response.data.expires_in
     };
   } catch (error) {
-    console.error('Error exchanging auth code:', error.response?.data || error.message);
+    // console.error('Error exchanging auth code:', error.response?.data || error.message);
     throw error;
   }
 };
@@ -96,7 +96,7 @@ const refreshAccessToken = async (refreshToken) => {
 
     return response.data;
   } catch (error) {
-    console.error('Error refreshing access token:', error.response?.data || error.message);
+    // console.error('Error refreshing access token:', error.response?.data || error.message);
     throw error;
   }
 };

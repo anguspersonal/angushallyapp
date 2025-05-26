@@ -7,27 +7,27 @@ const config = require('../../config/env');
  * @returns {Promise<Object>} The Raindrop tokens
  */
 async function getRaindropTokens(userId) {
-    console.log('Getting Raindrop tokens for user:', userId);
-    console.log('Database config:', {
-        isProduction: config.nodeEnv === 'production',
-        database: config.database.url ? 'DATABASE_URL' : config.database.name,
-        searchPath: config.database.searchPath
-    });
+    // console.log('Getting Raindrop tokens for user:', userId);
+    // console.log('Database config:', {
+    //     isProduction: config.nodeEnv === 'production',
+    //     database: config.database.url ? 'DATABASE_URL' : config.database.name,
+    //     searchPath: config.database.searchPath
+    // });
     
     const result = await db.query(
         'SELECT * FROM raindrop.tokens WHERE user_id = $1',
         [userId]
     );
-    console.log('Query result:', {
-        rowCount: result.length,
-        hasData: result.length > 0,
-        firstRow: result[0] ? {
-            user_id: result[0].user_id,
-            hasAccessToken: !!result[0].access_token,
-            hasRefreshToken: !!result[0].refresh_token,
-            expires_at: result[0].expires_at
-        } : null
-    });
+    // console.log('Query result:', {
+    //     rowCount: result.length,
+    //     hasData: result.length > 0,
+    //     firstRow: result[0] ? {
+    //         user_id: result[0].user_id,
+    //         hasAccessToken: !!result[0].access_token,
+    //         hasRefreshToken: !!result[0].refresh_token,
+    //         expires_at: result[0].expires_at
+    //     } : null
+    // });
     return result[0];
 }
 
@@ -41,7 +41,7 @@ async function getRaindropTokens(userId) {
  * @returns {Promise<void>}
  */
 async function saveRaindropTokens({ userId, accessToken, refreshToken, expiresInSecs }) {
-    console.log('Saving Raindrop tokens for user:', userId);
+    // console.log('Saving Raindrop tokens for user:', userId);
     
     await db.query(
         `INSERT INTO raindrop.tokens (user_id, access_token, refresh_token, expires_at)
