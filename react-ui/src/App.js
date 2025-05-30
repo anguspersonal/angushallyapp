@@ -23,6 +23,7 @@ import Instapaper from "./pages/projects/ai/Instapaper.jsx";
 import Collab from "./pages/Collab.jsx";
 import Login from "./pages/Login.jsx";
 import Raindrop from "./pages/projects/bookmarks/raindrop.jsx";
+import SoftwareCV from "./pages/SoftwareCV.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
 import { theme } from './theme.js'; // Import your theme
 import { AuthProvider } from './contexts/AuthContext.jsx';
@@ -55,6 +56,7 @@ function App() {
               <Route path="/projects/ai/instapaper" element={<Instapaper />} />
               <Route path="/projects/bookmarks/raindrop" element={<Raindrop />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/cv" element={<SoftwareCV />} />
             </Routes>
             {!hideFooterRoutes.includes(location.pathname) && <Footer />}
           </div>
