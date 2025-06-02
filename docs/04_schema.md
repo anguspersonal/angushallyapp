@@ -300,7 +300,12 @@ Table raindrop.bookmarks {
   tags text[] [note: 'Array of tags from Raindrop']
   created_at timestamptz [default: `now()`]
   updated_at timestamptz [default: `now()`]
-  Note: 'This table will be deprecated in favor of bookmarks.bookmarks'
+  
+  Indexes {
+    (user_id) [name: 'bookmarks_user_id_index']
+    (created_at) [name: 'bookmarks_created_at_index']
+    (user_id, raindrop_id) [unique, name: 'bookmarks_user_id_raindrop_id_unique']
+  }
 }
 
 Table raindrop.collections {

@@ -23,6 +23,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.cursor/
 
 # Environment files
 # Root environment files
@@ -57,3 +58,10 @@ build/
 dist/
 
 
+
+# Testing
+coverage/
+server/coverage/
+react-ui/coverage/
+*.lcov
+.nyc_output/

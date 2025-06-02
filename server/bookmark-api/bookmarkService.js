@@ -25,13 +25,21 @@
  * 
  * Dependencies:
  * - ../db.js: PostgreSQL database connection
- * - lodash.chunk: For batch processing
+ * - Simple chunk implementation: For batch processing
  * 
  * @module bookmarkService
  */
 
 const db = require('../db');
-const { chunk } = require('lodash');
+
+// Simple chunk implementation to replace lodash.chunk
+const chunk = (array, size) => {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+};
 
 class BookmarkService {
   /**
@@ -128,6 +136,56 @@ class BookmarkService {
        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)`,
       [userId, itemCount, status, errorMsg]
     );
+  }
+
+  /**
+   * Gets unorganised bookmarks for a user
+   * @param {string} userId - The user's ID
+   * @returns {Promise<Array>} - Array of unorganised bookmarks
+   */
+  async getUnorganisedBookmarks(userId) {
+    return db.query(
+      'SELECT * FROM bookmark.bookmarks WHERE user_id = $1 AND is_organised = false ORDER BY created_at DESC',
+      [userId]
+    );
+  }
+
+  /**
+   * Updates bookmark metadata
+   * @param {string} userId - The user's ID
+   * @param {number} bookmarkId - The bookmark's ID
+   * @param {Object} metadata - The metadata to update
+   * @returns {Promise<Object>} - Updated bookmark
+   */
+  async updateBookmarkMetadata(userId, bookmarkId, metadata) {
+    const {
+      title,
+      description,
+      image,
+      site_name,
+      resolved_url,
+      is_organised
+    } = metadata;
+
+    const result = await db.query(
+      `UPDATE bookmark.bookmarks 
+       SET title = COALESCE($1, title),
+           description = COALESCE($2, description),
+           image = COALESCE($3, image),
+           site_name = COALESCE($4, site_name),
+           resolved_url = COALESCE($5, resolved_url),
+           is_organised = COALESCE($6, is_organised),
+           updated_at = CURRENT_TIMESTAMP
+       WHERE user_id = $7 AND id = $8
+       RETURNING *`,
+      [title, description, image, site_name, resolved_url, is_organised, userId, bookmarkId]
+    );
+
+    if (result.length === 0) {
+      throw new Error('Bookmark not found');
+    }
+
+    return result[0];
   }
 }
 

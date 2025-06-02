@@ -302,7 +302,7 @@ const SoftwareCV = () => {
                                                     withBorder
                                                     h="31em"
                                                 >
-                                                   
+
                                                     <MotionBox
                                                         sx={{
                                                             overflow: 'hidden',
@@ -331,13 +331,13 @@ const SoftwareCV = () => {
                                                                 pointerEvents: 'none'
                                                             }}
                                                         />
-                                                         <Image
-                                                        src={imageErrors[index] ? '/20250418_3BY2_Default_Image_Placeholder.png' : project.image}
-                                                        height={200}
-                                                        fit="cover"
-                                                        onError={() => handleImageError(index)}
-                                                        alt={project.alt || 'Project visualization'}
-                                                    />
+                                                        <Image
+                                                            src={imageErrors[index] ? '/20250418_3BY2_Default_Image_Placeholder.png' : project.image}
+                                                            height={200}
+                                                            fit="cover"
+                                                            onError={() => handleImageError(index)}
+                                                            alt={project.alt || 'Project visualization'}
+                                                        />
                                                     </MotionBox>
                                                     <Group position="apart" mb="md" p="md">
                                                         <Title order={3} size="h4">{project.title}</Title>

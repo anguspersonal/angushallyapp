@@ -115,10 +115,21 @@ function loadEnv() {
         'OPENAI_API_KEY',
     ];
 
-    // In production, we use DATABASE_URL, so we don't need individual DB_* vars
-    const requiredVars = NODE_ENV === 'production' 
-        ? baseRequiredVars
-        : [
+    // Environment-specific required variables
+    let requiredVars;
+    
+    if (NODE_ENV === 'production') {
+        // Production only needs base vars (uses DATABASE_URL)
+        requiredVars = baseRequiredVars;
+    } else if (NODE_ENV === 'test') {
+        // Test environment only needs minimal variables
+        // Most services will be mocked in tests
+        requiredVars = [
+            'JWT_SECRET'
+        ];
+    } else {
+        // Development needs full database configuration
+        requiredVars = [
             ...baseRequiredVars,
             'DB_HOST',
             'DB_PORT',
@@ -126,6 +137,7 @@ function loadEnv() {
             'DB_USER',
             'DB_PASSWORD'
         ];
+    }
 
     if (NODE_ENV === 'production') {
         // In production, we must have DATABASE_URL

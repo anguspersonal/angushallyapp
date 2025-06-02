@@ -55,6 +55,11 @@ router.post('/:habitType', async (req, res) => {
     const { value, metric, extraData } = req.body;
     const { habitType } = req.params;
     
+    // Validate habit type first before doing any database operations
+    if (!['alcohol', 'exercise'].includes(habitType)) {
+        return res.status(400).json({ error: "Invalid habit type" });
+    }
+    
     try {
         // Log the habit in `habit_log` with the user's ID
         const logId = await logHabitLog(req.user.id, habitType, value, metric, extraData);
@@ -70,8 +75,6 @@ router.post('/:habitType', async (req, res) => {
             case "exercise":
                 result = await logExercise(logId, extraData, req.user.id);
                 break;
-            default:
-                return res.status(400).json({ error: "Invalid habit type" });
         }
 
         res.json({ message: "Habit logged successfully", logId, ...result });

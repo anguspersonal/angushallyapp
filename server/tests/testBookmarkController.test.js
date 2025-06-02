@@ -1,7 +1,41 @@
+// Mock the database before any imports
+jest.mock('../db', () => ({
+    query: jest.fn(),
+    end: jest.fn(),
+    pool: {
+        connect: jest.fn()
+    }
+}));
+
+// Mock the bookmark service
+jest.mock('../bookmark-api/bookmarkService', () => ({
+    addBookmark: jest.fn(),
+    upsertBookmarks: jest.fn(),
+    getBookmarks: jest.fn(),
+    logSync: jest.fn()
+}));
+
+// Mock auth middleware
+jest.mock('../middleware/auth', () => ({
+    authMiddleware: () => {
+        return (req, res, next) => {
+            req.user = {
+                id: '95288f22-6049-4651-85ae-4932ededb5ab',
+                email: 'test@example.com',
+                firstName: 'Test',
+                lastName: 'User',
+                roles: ['member']
+            };
+            next();
+        };
+    }
+}));
+
 const config = require('../../config/env');
 const path = require('path');
 const request = require('supertest');
 const db = require("../db");
+const bookmarkService = require('../bookmark-api/bookmarkService');
 const express = require('express');
 const bookmarkRoute = require('../routes/bookmarkRoutes');
 
@@ -36,95 +70,39 @@ const TEST_USER = {
  * ────────────────────────────────────────────────────────────────────────────
  */
 let app;
-let server;
-let dbPool;
 
 beforeAll(async () => {
-  // Initialize database connection
-  dbPool = db;
-  
-  // Create test user
-  await dbPool.query(`
-    INSERT INTO identity.users (id, email, first_name, last_name, is_active)
-    VALUES ($1, $2, $3, $4, true)
-    ON CONFLICT (id) DO UPDATE SET
-      email = EXCLUDED.email,
-      first_name = EXCLUDED.first_name,
-      last_name = EXCLUDED.last_name,
-      is_active = EXCLUDED.is_active
-  `, [TEST_USER.id, TEST_USER.email, TEST_USER.firstName, TEST_USER.lastName]);
-
-  // Create member role if it doesn't exist
-  await dbPool.query(`
-    INSERT INTO identity.roles (name)
-    VALUES ('member')
-    ON CONFLICT (name) DO NOTHING
-    RETURNING id
-  `);
-
-  // Get role ID
-  const roleResult = await dbPool.query('SELECT id FROM identity.roles WHERE name = $1', ['member']);
-  const roleId = roleResult[0].id;
-
-  // Link user to role
-  await dbPool.query(`
-    INSERT INTO identity.user_roles (user_id, role_id)
-    VALUES ($1, $2)
-    ON CONFLICT (user_id, role_id) DO NOTHING
-  `, [TEST_USER.id, roleId]);
-
   // Setup Express app for testing
   app = express();
   app.use(express.json());
   
-  // Mock auth middleware
+  // Mock auth middleware - inject user into request
   app.use((req, res, next) => {
     req.user = TEST_USER;
     next();
   });
   
   app.use('/api/bookmarks', bookmarkRoute);
-
-  // Start server on a random port
-  server = app.listen(0);
 });
 
 beforeEach(async () => {
-  // Clean up test data before each test
-  await dbPool.query('DELETE FROM bookmark.bookmarks WHERE user_id = $1', [TEST_USER.id]);
-  await dbPool.query('DELETE FROM bookmark.bookmark_sync_logs WHERE user_id = $1', [TEST_USER.id]);
-  
-  // Verify cleanup
-  const remainingBookmarks = await dbPool.query('SELECT COUNT(*) FROM bookmark.bookmarks WHERE user_id = $1', [TEST_USER.id]);
-  if (remainingBookmarks[0].count > 0) {
-    throw new Error('Cleanup failed - bookmarks still exist');
-  }
-  
   // Clear all mocks
   jest.clearAllMocks();
+  
+  // Set default successful mock behavior
+  bookmarkService.getBookmarks.mockResolvedValue([]);
+  bookmarkService.addBookmark.mockResolvedValue({});
+  bookmarkService.upsertBookmarks.mockResolvedValue([]);
+  bookmarkService.logSync.mockResolvedValue();
 });
 
 afterEach(async () => {
-  // Clean up test data after each test
-  await dbPool.query('DELETE FROM bookmark.bookmarks WHERE user_id = $1', [TEST_USER.id]);
-  await dbPool.query('DELETE FROM bookmark.bookmark_sync_logs WHERE user_id = $1', [TEST_USER.id]);
+  // Clear mocks after each test
+  jest.clearAllMocks();
 });
 
 afterAll(async () => {
-  // Close server
-  if (server) {
-    await new Promise((resolve) => server.close(resolve));
-  }
-  
-  // Clean up test data one final time
-  await dbPool.query('DELETE FROM bookmark.bookmarks WHERE user_id = $1', [TEST_USER.id]);
-  await dbPool.query('DELETE FROM bookmark.bookmark_sync_logs WHERE user_id = $1', [TEST_USER.id]);
-  
-  // Close database connection
-  await dbPool.end();
-  
-  // Clear all timers
-  jest.clearAllTimers();
+  // No cleanup needed for mocked tests
 });
 
 /*
@@ -135,6 +113,9 @@ afterAll(async () => {
 describe("Bookmark Controller API", () => {
   describe("GET /api/bookmarks", () => {
     test("✅ Should return empty array when no bookmarks exist", async () => {
+      // Mock empty result
+      bookmarkService.getBookmarks.mockResolvedValueOnce([]);
+
       const response = await request(app)
         .get('/api/bookmarks')
         .set('Authorization', 'Bearer test-token');
@@ -142,20 +123,25 @@ describe("Bookmark Controller API", () => {
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
       expect(response.body).toHaveLength(0);
+      expect(bookmarkService.getBookmarks).toHaveBeenCalledWith(TEST_USER.id);
     });
 
     test("✅ Should return array of bookmarks when they exist", async () => {
-      // First create a bookmark
-      const createResponse = await request(app)
-        .post('/api/bookmarks')
-        .set('Authorization', 'Bearer test-token')
-        .send({
-          url: 'https://example.com'
-        });
+      const mockBookmarks = [
+        {
+          id: 1,
+          url: 'https://example.com',
+          title: 'Test Title',
+          description: 'Test Description',
+          user_id: TEST_USER.id,
+          created_at: new Date(),
+          updated_at: new Date()
+        }
+      ];
 
-      expect(createResponse.status).toBe(201);
+      // Mock existing bookmarks
+      bookmarkService.getBookmarks.mockResolvedValueOnce(mockBookmarks);
 
-      // Then fetch bookmarks
       const response = await request(app)
         .get('/api/bookmarks')
         .set('Authorization', 'Bearer test-token');
@@ -164,11 +150,25 @@ describe("Bookmark Controller API", () => {
       expect(Array.isArray(response.body)).toBe(true);
       expect(response.body).toHaveLength(1);
       expect(response.body[0]).toHaveProperty('url', 'https://example.com');
+      expect(bookmarkService.getBookmarks).toHaveBeenCalledWith(TEST_USER.id);
     });
   });
 
   describe("POST /api/bookmarks", () => {
     test("✅ Should create a new bookmark with metadata", async () => {
+      const mockBookmark = {
+        id: 1,
+        url: 'https://example.com',
+        title: 'Test Title',
+        description: 'Test Description',
+        user_id: TEST_USER.id,
+        created_at: new Date(),
+        updated_at: new Date()
+      };
+
+      // Mock bookmark service response
+      bookmarkService.addBookmark.mockResolvedValueOnce(mockBookmark);
+
       const response = await request(app)
         .post('/api/bookmarks')
         .set('Authorization', 'Bearer test-token')
@@ -181,6 +181,14 @@ describe("Bookmark Controller API", () => {
       expect(response.body).toHaveProperty('user_id', TEST_USER.id);
       expect(response.body).toHaveProperty('title', 'Test Title');
       expect(response.body).toHaveProperty('description', 'Test Description');
+      expect(bookmarkService.addBookmark).toHaveBeenCalledWith(
+        TEST_USER.id,
+        expect.objectContaining({
+          url: 'https://example.com',
+          title: 'Test Title',
+          description: 'Test Description'
+        })
+      );
     });
 
     test("❌ Should reject invalid URLs", async () => {
@@ -193,6 +201,8 @@ describe("Bookmark Controller API", () => {
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error', 'Invalid URL format');
+      // Should not call service for invalid URLs
+      expect(bookmarkService.addBookmark).not.toHaveBeenCalled();
     });
 
     test("❌ Should reject missing URL", async () => {
@@ -203,11 +213,33 @@ describe("Bookmark Controller API", () => {
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error', 'URL is required');
+      // Should not call service for missing URL
+      expect(bookmarkService.addBookmark).not.toHaveBeenCalled();
     });
   });
 
   describe("POST /api/bookmarks/batch", () => {
     test("✅ Should create multiple bookmarks", async () => {
+      const mockBookmarks = [
+        {
+          id: 1,
+          url: 'https://example1.com',
+          title: 'Test Title',
+          user_id: TEST_USER.id,
+          created_at: new Date()
+        },
+        {
+          id: 2,
+          url: 'https://example2.com',
+          title: 'Test Title',
+          user_id: TEST_USER.id,
+          created_at: new Date()
+        }
+      ];
+
+      // Mock batch upsert response
+      bookmarkService.upsertBookmarks.mockResolvedValueOnce(mockBookmarks);
+
       const response = await request(app)
         .post('/api/bookmarks/batch')
         .set('Authorization', 'Bearer test-token')
@@ -223,6 +255,21 @@ describe("Bookmark Controller API", () => {
       expect(response.body).toHaveLength(2);
       expect(response.body[0]).toHaveProperty('url', 'https://example1.com');
       expect(response.body[1]).toHaveProperty('url', 'https://example2.com');
+      expect(bookmarkService.upsertBookmarks).toHaveBeenCalledWith(
+        TEST_USER.id,
+        expect.arrayContaining([
+          expect.objectContaining({ 
+            url: 'https://example1.com',
+            title: 'Test Title',
+            description: 'Test Description'
+          }),
+          expect.objectContaining({ 
+            url: 'https://example2.com',
+            title: 'Test Title',
+            description: 'Test Description'
+          })
+        ])
+      );
     });
 
     test("❌ Should reject invalid request format", async () => {
@@ -235,6 +282,8 @@ describe("Bookmark Controller API", () => {
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error', 'Bookmarks must be an array');
+      // Should not call service for invalid format
+      expect(bookmarkService.upsertBookmarks).not.toHaveBeenCalled();
     });
 
     test("❌ Should reject empty bookmark array", async () => {
@@ -247,6 +296,8 @@ describe("Bookmark Controller API", () => {
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error', 'At least one bookmark is required');
+      // Should not call service for empty array
+      expect(bookmarkService.upsertBookmarks).not.toHaveBeenCalled();
     });
   });
 }); 

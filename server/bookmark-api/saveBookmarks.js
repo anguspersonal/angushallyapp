@@ -13,7 +13,8 @@ const normalizeBookmark = (bookmark, userId) => {
     title: bookmark.title,
     link: bookmark.link,
     tags: bookmark.tags || [],
-    created_at: new Date(bookmark.created)
+    created_at: new Date(bookmark.created),
+    is_organised: false
   };
 };
 
@@ -28,14 +29,15 @@ const saveBookmark = async (bookmark, userId) => {
   
   try {
     const result = await db.query(
-      `INSERT INTO raindrop.bookmarks (user_id, raindrop_id, title, link, tags, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO raindrop.bookmarks (user_id, raindrop_id, title, link, tags, created_at, is_organised)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        ON CONFLICT (user_id, raindrop_id) 
        DO UPDATE SET 
          title = EXCLUDED.title,
          link = EXCLUDED.link,
          tags = EXCLUDED.tags,
-         created_at = EXCLUDED.created_at
+         created_at = EXCLUDED.created_at,
+         is_organised = EXCLUDED.is_organised
        RETURNING *`,
       [
         normalizedBookmark.user_id,
@@ -43,7 +45,8 @@ const saveBookmark = async (bookmark, userId) => {
         normalizedBookmark.title,
         normalizedBookmark.link,
         normalizedBookmark.tags,
-        normalizedBookmark.created_at
+        normalizedBookmark.created_at,
+        normalizedBookmark.is_organised
       ]
     );
     
@@ -81,14 +84,15 @@ const saveBookmarks = async (bookmarks, userId) => {
       const savedBookmarks = [];
       for (const bookmark of normalizedBookmarks) {
         const result = await client.query(
-          `INSERT INTO raindrop.bookmarks (user_id, raindrop_id, title, link, tags, created_at)
-           VALUES ($1, $2, $3, $4, $5, $6)
+          `INSERT INTO raindrop.bookmarks (user_id, raindrop_id, title, link, tags, created_at, is_organised)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)
            ON CONFLICT (user_id, raindrop_id) 
            DO UPDATE SET 
              title = EXCLUDED.title,
              link = EXCLUDED.link,
              tags = EXCLUDED.tags,
-             created_at = EXCLUDED.created_at
+             created_at = EXCLUDED.created_at,
+             is_organised = EXCLUDED.is_organised
            RETURNING *`,
           [
             bookmark.user_id,
@@ -96,7 +100,8 @@ const saveBookmarks = async (bookmarks, userId) => {
             bookmark.title,
             bookmark.link,
             bookmark.tags,
-            bookmark.created_at
+            bookmark.created_at,
+            bookmark.is_organised
           ]
         );
         savedBookmarks.push(result.rows[0]);
