@@ -229,8 +229,58 @@ Table public_data.posts {
   created_at timestamptz [default: `now()`]
 }
 
+// --- Schema: bookmarks ---
+// Unified bookmark storage system for all bookmark sources
+
+Table bookmarks.bookmarks {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, ref: > identity.users.id]
+  title text [not null]
+  url text [not null]
+  description text [nullable]
+  source_type string [not null, note: 'e.g., raindrop, pocket, instapaper']
+  source_id string [not null, note: 'ID from the original source']
+  source_metadata jsonb [nullable, note: 'Additional data from the source']
+  is_organized boolean [not null, default: false]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (user_id) [name: 'ix_bookmarks_user_id']
+    (source_type, source_id) [unique, name: 'uq_bookmarks_source']
+    (url) [name: 'ix_bookmarks_url']
+    (is_organized) [name: 'ix_bookmarks_is_organized']
+  }
+}
+
+Table bookmarks.categories {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, ref: > identity.users.id]
+  name string [not null]
+  description text [nullable]
+  parent_id uuid [nullable, ref: > bookmarks.categories.id]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (user_id) [name: 'ix_categories_user_id']
+    (parent_id) [name: 'ix_categories_parent_id']
+  }
+}
+
+Table bookmarks.bookmark_categories {
+  bookmark_id uuid [not null, ref: > bookmarks.bookmarks.id]
+  category_id uuid [not null, ref: > bookmarks.categories.id]
+  created_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (bookmark_id, category_id) [unique, name: 'uq_bookmark_categories']
+  }
+}
+
 // --- Schema: raindrop ---
 // Manages Raindrop.io bookmark integration
+// Note: This schema will be deprecated in favor of the unified bookmarks schema
 
 Table raindrop.tokens {
   user_id uuid [pk, ref: > identity.users.id, note: 'User who connected their Raindrop account']
@@ -250,12 +300,7 @@ Table raindrop.bookmarks {
   tags text[] [note: 'Array of tags from Raindrop']
   created_at timestamptz [default: `now()`]
   updated_at timestamptz [default: `now()`]
-  
-  Indexes {
-    (user_id) [name: 'bookmarks_user_id_index']
-    (created_at) [name: 'bookmarks_created_at_index']
-    (user_id, raindrop_id) [unique, name: 'bookmarks_user_id_raindrop_id_unique']
-  }
+  Note: 'This table will be deprecated in favor of bookmarks.bookmarks'
 }
 
 Table raindrop.collections {

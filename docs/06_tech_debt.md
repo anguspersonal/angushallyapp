@@ -210,6 +210,28 @@ This document tracks known technical debt, architectural issues, and improvement
 
 ## Feature-Specific Issues
 
+### Bookmark System Consolidation
+- **Description**: Confusion between `raindrop.bookmarks` and `bookmarks.bookmarks` tables, with unclear data flow
+- **Priority**: High
+- **Resolution**: 
+  - Document clear data flow between schemas
+  - Plan migration strategy for unified bookmark storage
+  - Design bookmark categorization system
+  - Implement genAI integration for automatic categorization
+- **Created**: 2025-05-25
+- **Status**: 🟡 In Progress
+
+### Bookmark Source Integration
+- **Description**: Current bookmark system tightly coupled to Raindrop.io
+- **Priority**: Medium
+- **Resolution**: 
+  - Design extensible bookmark source interface
+  - Implement additional bookmark sources (e.g., Pocket, Instapaper)
+  - Create unified bookmark sync system
+  - Build source-specific configuration UI
+- **Created**: 2025-05-25
+- **Status**: 🔴 Not Started
+
 ### Habit Tracking Improvements
 - **Description**: Habit tracking module lacks streak calculation and goal setting
 - **Priority**: Low

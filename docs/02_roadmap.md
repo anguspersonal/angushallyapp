@@ -125,6 +125,25 @@ This document outlines the high-level vision, goals, and planned development pha
 
 ## Upcoming Phases
 
+### Bookmark System Enhancement
+- **Phase 1: Schema Consolidation**
+  - Document and clarify data flow between `raindrop.bookmarks` and `bookmarks.bookmarks`
+  - Design unified bookmark storage strategy
+  - Plan migration path for existing bookmarks
+  - Update schema documentation
+
+- **Phase 2: Categorization System**
+  - Design bookmark categorization schema
+  - Implement genAI integration for automatic categorization
+  - Create manual categorization override system
+  - Build categorization management UI
+
+- **Phase 3: Multi-Source Integration**
+  - Design extensible bookmark source interface
+  - Implement additional bookmark sources (e.g., Pocket, Instapaper)
+  - Create unified bookmark sync system
+  - Build source-specific configuration UI
+
 ### Enhanced Habit Tracker
 - Improved data visualization
 - Goal setting and tracking

@@ -4,6 +4,25 @@ This file tracks chronological changes to the project, with the most recent upda
 
 ## [Unreleased] – Current
 
+### Test Suite Refactoring & Bookmark System Planning - 2025-05-25
+- **Test Suite Improvements**:
+  - Refactored test files to clearly separate unit, integration, and controller tests
+  - Added `setup.js` for centralized test configuration
+  - Implemented proper database connection mocking for unit tests
+  - Fixed test reliability issues across all test suites
+  - Added proper environment variable handling in tests
+  - Improved test organization and naming conventions
+
+- **Bookmark System Planning**:
+  - Identified schema confusion between `raindrop.bookmarks` and `bookmarks.bookmarks`
+  - Need to clarify data flow from Raindrop (and future bookmark sources) to unified bookmarks table
+  - Planning phase for genAI-supported bookmark categorization
+  - Next steps:
+    1. Document clear data flow between schemas
+    2. Plan migration strategy for unified bookmark storage
+    3. Design bookmark categorization system
+    4. Implement genAI integration for automatic categorization
+
 ### Heroku Deployment Fix - 2025-01-27
 - **Bug Fix**: Resolved production deployment crash caused by `prestart` script
   - Problem: `prestart` script was using `cross-env` which is a devDependency not available in production
@@ -248,29 +267,4 @@ This file tracks chronological changes to the project, with the most recent upda
   - `react-ui/src/utils/apiClient.js`
   - `server/db.js`
   - `server/index.js`
-- **Strava Integration**: Addressed a `MODULE_NOT_FOUND` error in `server/strava-api/stravaAuth.js` by removing an incorrect import of a test file.
-
-### Planned Commit
-- The above changes (Raindrop stabilization, console log cleanup, Strava auth fix) will be committed.
-
-## _DATE_ <!-- Replace _DATE_ with today's date in YYYY-MM-DD format -->
-
-### Feature Work
-- **Raindrop.io Integration**: Finalized and stabilized the Raindrop OAuth flow and bookmark display.
-  - Ensured correct Raindrop API endpoints are used.
-  - Implemented robust state management for user authentication during OAuth callback.
-
-### Refactoring & Cleanup
-- **Code Cleanup**: Commented out numerous `console.log` and `console.error` statements across frontend and backend files related to Raindrop integration and general API/DB interactions. Files cleaned include:
-  - `react-ui/src/pages/projects/bookmarks/raindrop.jsx`
-  - `server/routes/raindropRoute.js`
-  - `server/routes/raindropCallback.js`
-  - `server/bookmark-api/raindropAuth.js`
-  - `server/bookmark-api/raindropTokens.js`
-  - `react-ui/src/utils/apiClient.js`
-  - `server/db.js`
-  - `server/index.js`
-- **Strava Integration**: Addressed a `MODULE_NOT_FOUND` error in `server/strava-api/stravaAuth.js` by removing an incorrect import of a test file.
-
-### Planned Commit
-- The above changes (Raindrop stabilization, console log cleanup, Strava auth fix) will be committed.
+- **Strava Integration**: Addressed a `MODULE_NOT_FOUND` error in `server/strava-api/stravaAuth.js`
