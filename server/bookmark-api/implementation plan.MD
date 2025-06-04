@@ -2,135 +2,178 @@
 
 **Context & Scope**
 
-* We are building a dedicated bookmark service within our existing full-stack app, bypassing third-party APIs for now.
-* The PWA share-target approach is backlogged.
-* All code will live under `/server/bookmark-api` and integrate with existing auth, DB, and React UI.
+* We have built a bookmark service that integrates with Raindrop.io to sync user bookmarks
+* The service includes metadata enrichment using both OpenGraph and AI-powered tagging
+* All code lives under `/server/bookmark-api` and integrates with existing auth, DB, and React UI
+* The PWA share-target approach remains backlogged
 
 ---
 
-### 1. Decisions
+### 1. Current Implementation
 
-1. **Service-First**: Roll our own bookmark service immediately, no Instapaper or OAuth for v1.
-2. **Folder Structure**: Use `/server/bookmark-api/` for all back-end code.
-3. **Routes**:
+1. **Raindrop Integration**:
+   * Users can connect their Raindrop.io account
+   * Bookmarks are synced from Raindrop to our database
+   * Metadata is enriched using OpenGraph data
+   * AI-powered tagging based on metadata
 
-   * **POST** `/api/bookmarks` → add one bookmark
-   * **GET** `/api/bookmarks` → list bookmarks
-   * *(Optional later)* **POST** `/api/bookmarks/batch`
-   * *(Optional later)* **GET** `/api/bookmarks/add?url=…`
-4. **Data Model**:
+2. **Data Model**:
+   * `bookmark.bookmarks` table stores URL, metadata, user association, and source
+   * `raindrop.bookmarks` table for Raindrop-specific data
+   * `bookmark_sync_logs` table for audit tracking
 
-   * `bookmarks` table to store URL, metadata, user association, and source.
-   * `bookmark_sync_logs` table for audit (backfilled if needed).
-5. **Metadata**: Use an optional `openGraph.js` module to fetch page title/description on create.
-6. **Auth**: Use existing JWT-based `authMiddleware` for all bookmark routes.
-7. **Testing**: Jest + Supertest for unit and integration; migrations on a test DB.
-8. **Front-End**: Extend React API client and add `<BookmarkList />` and `<AddBookmarkForm />` components.
-9. **Backlog**: PWA share-target and Android intent handling deferred to later.
+3. **Metadata Enrichment**:
+   * OpenGraph metadata extraction
+   * AI-powered tag generation using OpenAI
+   * Support for basic metadata fields (title, description, images)
 
 ---
 
-### 2. Phase-by-Phase Implementation Tasks -- Done✅
+### 2. Next Phase: Enhanced Content Analysis
 
-#### 🔧 A. Database & Migrations
+#### A. Content Type Identification System
 
-* Create a Knex migration: `create_bookmarks_and_logs.js`
+1. **Initial Content Type Detection**:
+   * URL pattern analysis
+   * Meta tag inspection
+   * File extension checking
+   * Platform-specific detection (YouTube, Instagram, etc.)
 
-  ```
-  exports.up = function(knex) {
-    return knex.schema
-      .createTable('bookmarks', tbl => {
-        tbl.increments('id').primary();
-        tbl.uuid('user_id').notNullable().references('users.user_id');
-        tbl.text('url').notNullable();
-        tbl.text('resolved_url');
-        tbl.text('title');
-        tbl.text('description');
-        tbl.text('source').notNullable().defaultTo('manual');
-        tbl.timestamp('created_at').defaultTo(knex.fn.now());
-      })
-      .createTable('bookmark_sync_logs', tbl => {
-        tbl.increments('id').primary();
-        tbl.uuid('user_id').notNullable();
-        tbl.integer('item_count').notNullable();
-        tbl.text('status').notNullable();
-        tbl.text('error_msg');
-        tbl.timestamp('started_at').defaultTo(knex.fn.now());
-        tbl.timestamp('finished_at');
-      });
-  };
+2. **Embedded Content Detection**:
+   * Identify multiple content types within a single URL
+   * Map content hierarchy and relationships
+   * Determine primary and secondary content types
 
-  exports.down = function(knex) {
-    return knex.schema
-      .dropTableIfExists('bookmark_sync_logs')
-      .dropTableIfExists('bookmarks');
-  };
-  ```
-* Run `knex migrate:latest` and verify tables.
+3. **Processing Strategy Selection**:
+   * Map content types to appropriate processing techniques
+   * Prioritize processing order
+   * Handle rate limits and access restrictions
 
-#### 🛠 B. Back-End Implementation
+#### B. Content Ingestion Pipeline
 
-1. **Service Layer** (`/server/bookmark-api/bookmarkService.js`)
+1. **Text Content Processing**:
+   * HTML parsing and text extraction
+   * PDF content extraction
+   * Plain text processing
+   * Language detection and translation if needed
 
-   * `upsertBookmarks(userId, bookmarks[])` with batch chunking (100 items).
-   * `addBookmark(userId, data)` wrapper for single.
-2. **Metadata Fetcher** (`/server/bookmark-api/openGraph.js`)
+2. **Audio Content Processing**:
+   * Audio stream extraction
+   * Whisper API integration for transcription
+   * Audio metadata analysis
+   * Podcast/show notes extraction
 
-   * Optional `fetchMetadata(url)` using `open-graph-scraper`.
-3. **Controller** (`/server/bookmark-api/bookmarkController.js`)
+3. **Video Content Processing**:
+   * Video stream extraction
+   * Key frame analysis using GPT-4 Vision
+   * Audio transcription
+   * Thumbnail and visual content analysis
 
-   * `list(req, res)` → return all user bookmarks.
-   * `createSingle(req, res)` → fetch metadata if needed, then add.
-4. **Routes** (`/server/bookmark-api/bookmarkRoutes.js`)
+4. **Image Content Processing**:
+   * Image downloading and analysis
+   * OCR for text extraction
+   * Visual content analysis using GPT-4 Vision
+   * Image metadata extraction
 
-   ```
-   router.get('/', list);
-   router.post('/', createSingle);
-   router.get('/health', (req, res) => {
-     res.status(200).json({ status: 'ok', timestamp: new Date() });
-   });
-   module.exports = router;
-   ```
-5. \*\*Mount in \*\*\`\`
+#### C. Front-End Updates
 
-   ```
-   const bookmarkRouter = require('./bookmark-api/bookmarkRoutes');
-   app.use('/api/bookmarks', authMiddleware, bookmarkRouter);
-   ```
+1. **Unified Bookmark Display**:
+   * Show bookmarks from both `bookmark.bookmarks` and `raindrop.bookmarks`
+   * Implement duplicate detection and handling:
+     - URL-based matching
+     - Title and description similarity checking
+     - User confirmation for potential duplicates
+   * Display source indicator (Raindrop vs. Manual)
+   * Show sync status for Raindrop bookmarks
 
-#### 🧪 C. Testing
+2. **Tag Display and Management**:
+   * Update UI to show AI-generated tags
+   * Add tag filtering and search
+   * Implement tag editing capabilities
+   * Show content type indicators
 
-* **Unit Tests**:
-  * Mock DB calls to verify upsert logic and conflict resolution.
-  * Mock `open-graph-scraper` for `fetchMetadata`.
-  * Standardized test user setup with consistent UUIDs
-  * Proper mocking of utility functions
-* **Integration Tests**:
-  * Use Supertest + test database.
-  * Cover `GET /api/bookmarks` and `POST /api/bookmarks` end-to-end.
-  * Enhanced database cleanup and connection handling
-  * Fixed foreign key constraint issues
-  * Improved async operation handling
+3. **Content Preview**:
+   * Enhanced preview cards based on content type
+   * Thumbnail generation for videos
+   * Audio player integration
+   * Image galleries
 
-#### 🎨 D. Front-End Integration
-
-* **API Client** (`/react-ui/src/api/bookmarks.js`)
-
-  ```
-  export const fetchBookmarks = () => api.get('/bookmarks');
-  export const addBookmark     = url => api.post('/bookmarks', { url });
-  ```
-* **Components**:
-
-  * `<AddBookmarkForm />`: input + submit button.
-  * `<BookmarkList />`: list cards/table of bookmarks.
-
-#### 🚀 E. Deployment & Verification
-
-* Deploy new migrations and code to staging.
-* Verify endpoints with Postman and React UI.
-* Validate auth and error handling.
+4. **Sync Controls & Token Management**:
+   * Sync Options:
+     - Automatic sync toggle for Raindrop bookmarks
+     - Manual sync button for selected bookmarks
+     - Batch sync for multiple bookmarks
+     - Re-sync option for failed or outdated bookmarks
+   * Token Usage:
+     - Display current token usage/limits
+     - Token usage breakdown by content type
+     - Warning system for approaching limits
+     - Token usage optimization options:
+       - Skip certain content types
+       - Limit processing depth
+       - Choose processing priority
+   * Sync Status Dashboard:
+     - Show sync progress
+     - Display last sync time
+     - List pending/failed syncs
+     - Provide retry options
 
 ---
 
-**Next Step**: Kick off the migration and scaffold the `/server/bookmark-api` folder with empty files. Let me know when you're ready to start coding!
+### 3. Technical Considerations
+
+1. **Rate Limiting & Performance**:
+   * Implement exponential backoff for API calls
+   * Cache results to avoid re-processing
+   * Respect robots.txt and site policies
+   * Handle timeouts and errors gracefully
+
+2. **Storage & Processing**:
+   * Efficient storage of extracted content
+   * Processing queue management
+   * Background job system for long-running tasks
+   * Result caching strategy
+
+3. **Error Handling**:
+   * Graceful fallbacks for each content type
+   * Comprehensive error logging
+   * User feedback for processing status
+   * Retry mechanisms for failed processing
+
+---
+
+### 4. Implementation Phases
+
+1. **Phase 1: Content Type Identification**
+   * Implement URL and meta tag analysis
+   * Build content type detection system
+   * Create processing strategy selector
+   * Add basic error handling
+
+2. **Phase 2: Basic Content Processing**
+   * Implement text content processing
+   * Add basic image analysis
+   * Set up audio transcription
+   * Create processing pipeline
+
+3. **Phase 3: Advanced Processing**
+   * Add video content analysis
+   * Implement multi-content type handling
+   * Enhance tag generation
+   * Optimize processing performance
+
+4. **Phase 4: Front-End Integration**
+   * Update UI for new content types
+   * Implement tag management
+   * Add content previews
+   * Enhance user experience
+
+---
+
+**Next Steps**:
+1. Begin implementation of content type identification system
+2. Set up basic processing pipeline
+3. Update front-end to display current AI-generated tags
+4. Implement rate limiting and error handling
+
+Let me know when you're ready to start implementing any of these phases!

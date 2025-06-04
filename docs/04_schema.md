@@ -237,7 +237,12 @@ Table bookmarks.bookmarks {
   user_id uuid [not null, ref: > identity.users.id]
   title text [not null]
   url text [not null]
+  resolved_url text [nullable, note: 'Final URL after any redirects']
   description text [nullable]
+  image_url text [nullable, note: 'URL of the main image']
+  image_alt text [nullable, note: 'Alt text for the main image']
+  site_name text [nullable, note: 'Name of the website']
+  tags text[] [nullable, note: 'Array of AI-generated and user tags']
   source_type string [not null, note: 'e.g., raindrop, pocket, instapaper']
   source_id string [not null, note: 'ID from the original source']
   source_metadata jsonb [nullable, note: 'Additional data from the source']
@@ -249,7 +254,7 @@ Table bookmarks.bookmarks {
     (user_id) [name: 'ix_bookmarks_user_id']
     (source_type, source_id) [unique, name: 'uq_bookmarks_source']
     (url) [name: 'ix_bookmarks_url']
-    (is_organized) [name: 'ix_bookmarks_is_organized']
+    (tags) [name: 'ix_bookmarks_tags', type: 'gin']
   }
 }
 
@@ -279,49 +284,44 @@ Table bookmarks.bookmark_categories {
 }
 
 // --- Schema: raindrop ---
-// Manages Raindrop.io bookmark integration
-// Note: This schema will be deprecated in favor of the unified bookmarks schema
-
-Table raindrop.tokens {
-  user_id uuid [pk, ref: > identity.users.id, note: 'User who connected their Raindrop account']
-  access_token text [not null, note: 'OAuth access token for Raindrop API']
-  refresh_token text [not null, note: 'OAuth refresh token for token renewal']
-  expires_at timestamptz [not null, note: 'When the access token expires']
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
-}
+// Raindrop.io specific data and sync status
 
 Table raindrop.bookmarks {
-  id integer [pk, increment]
+  id uuid [pk, default: `gen_random_uuid()`]
   user_id uuid [not null, ref: > identity.users.id]
-  raindrop_id string [not null, note: 'Unique ID from Raindrop.io']
-  title text [not null]
+  raindrop_id string [not null, note: 'ID from Raindrop.io API']
   link text [not null]
-  tags text[] [note: 'Array of tags from Raindrop']
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
-  
+  title text [nullable]
+  description text [nullable]
+  is_organized boolean [not null, default: false]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
   Indexes {
-    (user_id) [name: 'bookmarks_user_id_index']
-    (created_at) [name: 'bookmarks_created_at_index']
-    (user_id, raindrop_id) [unique, name: 'bookmarks_user_id_raindrop_id_unique']
+    (user_id) [name: 'ix_raindrop_bookmarks_user_id']
+    (raindrop_id) [unique, name: 'uq_raindrop_bookmarks_id']
   }
 }
 
-Table raindrop.collections {
-  id integer [pk, increment]
+Table raindrop.sync_logs {
+  id uuid [pk, default: `gen_random_uuid()`]
   user_id uuid [not null, ref: > identity.users.id]
-  raindrop_id string [not null, note: 'Collection ID from Raindrop.io']
-  title string [not null]
-  count integer [default: 0, note: 'Number of bookmarks in collection']
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
-  
+  status text [not null, note: 'success, error, partial_success']
+  item_count integer [not null]
+  error_message text [nullable]
+  started_at timestamptz [not null, default: `now()`]
+  finished_at timestamptz [nullable]
+
   Indexes {
-    (user_id) [name: 'collections_user_id_index']
-    (user_id, raindrop_id) [unique, name: 'collections_user_id_raindrop_id_unique']
+    (user_id) [name: 'ix_raindrop_sync_logs_user_id']
+    (started_at) [name: 'ix_raindrop_sync_logs_started_at']
   }
 }
+
+// Relationships for bookmark schemas
+Ref: bookmarks.bookmarks.user_id > identity.users.id [delete: cascade]
+Ref: raindrop.bookmarks.user_id > identity.users.id [delete: cascade]
+Ref: raindrop.sync_logs.user_id > identity.users.id [delete: cascade]
 
 ## `raindrop` Schema
 
