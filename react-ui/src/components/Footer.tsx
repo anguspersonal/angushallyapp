@@ -2,9 +2,9 @@ import React from 'react';
 import '../index.css';
 import "../general.css";
 
-function Footer() {
-  const currentYear = new Date().getFullYear();
-  const buildInfo = process.env.REACT_APP_BUILD_NUMBER || 'dev';
+const Footer: React.FC = () => {
+  const currentYear: number = new Date().getFullYear();
+  const buildInfo: string = process.env.REACT_APP_BUILD_NUMBER || 'dev';
   
   return (
     <div className='Footer'>
@@ -20,6 +20,6 @@ function Footer() {
       <p>© {currentYear} Angus Hally. All rights reserved.</p>
     </div>
   );
-}
+};
 
 export default Footer;

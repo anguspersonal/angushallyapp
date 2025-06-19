@@ -5,7 +5,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import "./index.css";
 import "./general.css"; // Ensure general.css is imported
 import Home from "./pages/Home.jsx";
-import Footer from "./components/Footer.jsx";
+import Footer from "./components/Footer.tsx";
 import Header from "./components/Header.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
