@@ -1,277 +1,284 @@
-// Mock the database before requiring the service
-jest.mock('../db', () => ({
-    query: jest.fn(),
-    pool: {
-        connect: jest.fn()
-    }
-}));
-
-const db = require('../db');
+const axios = require('axios');
 const bookmarkService = require('../bookmark-api/bookmarkService');
+const db = require('../db');
+
+// Mock axios for API calls
+jest.mock('axios');
+const mockedAxios = axios;
+
+// Mock db for database operations
+jest.mock('../db');
+const mockedDb = db;
 
 describe('BookmarkService', () => {
-    const TEST_USER_ID = '95288f22-6049-4651-85ae-4932ededb5ab';
-    
-    // Sample data - define these at the top level
-    const sampleBookmark = {
-        url: 'https://example.com',
-        title: 'Example Website',
-        description: 'An example website for testing',
-        source: 'manual'
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('Bookmark Fetching Functions', () => {
+    const mockAccessToken = 'test-access-token';
+
+    describe('getRaindropCollections', () => {
+      it('should fetch collections successfully', async () => {
+        const mockResponse = {
+          data: {
+            items: [
+              { _id: 1, title: 'Collection 1' },
+              { _id: 2, title: 'Collection 2' }
+            ]
+          }
+        };
+
+        mockedAxios.get.mockResolvedValue(mockResponse);
+
+        const result = await bookmarkService.getRaindropCollections(mockAccessToken);
+
+        expect(mockedAxios.get).toHaveBeenCalledWith(
+          'https://api.raindrop.io/rest/v1/collections',
+          {
+            headers: {
+              'Authorization': `Bearer ${mockAccessToken}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        expect(result).toEqual(mockResponse.data.items);
+      });
+
+      it('should throw error when response format is invalid', async () => {
+        const mockResponse = { data: {} };
+        mockedAxios.get.mockResolvedValue(mockResponse);
+
+        await expect(bookmarkService.getRaindropCollections(mockAccessToken))
+          .rejects.toThrow('Invalid response format from Raindrop.io');
+      });
+
+      it('should handle API errors', async () => {
+        const mockError = new Error('API Error');
+        mockError.response = { data: { error: 'Unauthorized' } };
+        mockedAxios.get.mockRejectedValue(mockError);
+
+        await expect(bookmarkService.getRaindropCollections(mockAccessToken))
+          .rejects.toThrow('API Error');
+      });
+    });
+
+    describe('getRaindropBookmarksFromCollection', () => {
+      it('should fetch bookmarks from collection successfully', async () => {
+        const collectionId = '123';
+        const mockResponse = {
+          data: {
+            items: [
+              { _id: 'bookmark1', title: 'Test Bookmark 1', link: 'https://example1.com' },
+              { _id: 'bookmark2', title: 'Test Bookmark 2', link: 'https://example2.com' }
+            ]
+          }
+        };
+
+        mockedAxios.get.mockResolvedValue(mockResponse);
+
+        const result = await bookmarkService.getRaindropBookmarksFromCollection(mockAccessToken, collectionId);
+
+        expect(mockedAxios.get).toHaveBeenCalledWith(
+          `https://api.raindrop.io/rest/v1/raindrops/${collectionId}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${mockAccessToken}`,
+              'Content-Type': 'application/json'
+            },
+            params: {
+              perpage: 50,
+              page: 0
+            }
+          }
+        );
+
+        expect(result).toEqual(mockResponse.data.items);
+      });
+
+      it('should handle empty collections', async () => {
+        const mockResponse = { data: { items: [] } };
+        mockedAxios.get.mockResolvedValue(mockResponse);
+
+        const result = await bookmarkService.getRaindropBookmarksFromCollection(mockAccessToken, '123');
+        expect(result).toEqual([]);
+      });
+    });
+
+    describe('getAllRaindropBookmarks', () => {
+      it('should fetch all bookmarks from all collections', async () => {
+        const mockCollections = [
+          { _id: 1, title: 'Collection 1' },
+          { _id: 2, title: 'Collection 2' }
+        ];
+
+        const mockBookmarks1 = [
+          { _id: 'bookmark1', title: 'Bookmark 1', link: 'https://example1.com' }
+        ];
+
+        const mockBookmarks2 = [
+          { _id: 'bookmark2', title: 'Bookmark 2', link: 'https://example2.com' }
+        ];
+
+        // Mock getRaindropCollections
+        mockedAxios.get
+          .mockResolvedValueOnce({ data: { items: mockCollections } })
+          .mockResolvedValueOnce({ data: { items: mockBookmarks1 } })
+          .mockResolvedValueOnce({ data: { items: mockBookmarks2 } });
+
+        const result = await bookmarkService.getAllRaindropBookmarks(mockAccessToken);
+
+        expect(result).toHaveLength(2);
+        expect(result).toEqual([...mockBookmarks1, ...mockBookmarks2]);
+      });
+    });
+  });
+
+  describe('Bookmark Saving Functions', () => {
+    const mockUserId = 'user-123';
+    const mockBookmark = {
+      _id: 'raindrop-123',
+      title: 'Test Bookmark',
+      link: 'https://example.com',
+      tags: ['test', 'example'],
+      created: '2025-01-01T00:00:00Z'
     };
 
-    const sampleBookmarks = [
-        {
-            url: 'https://example1.com',
-            title: 'Example 1',
-            description: 'First example'
-        },
-        {
-            url: 'https://example2.com',
-            title: 'Example 2',
-            description: 'Second example'
-        }
-    ];
-    
-    beforeEach(() => {
-        jest.clearAllMocks();
-        
-        // Setup default mock behavior - return empty array by default
-        db.query.mockResolvedValue([]);
+    describe('normalizeRaindropBookmark', () => {
+      it('should normalize bookmark from Raindrop format', () => {
+        const result = bookmarkService.normalizeRaindropBookmark(mockBookmark, mockUserId);
+
+        expect(result).toEqual({
+          user_id: mockUserId,
+          raindrop_id: mockBookmark._id,
+          title: mockBookmark.title,
+          link: mockBookmark.link,
+          tags: mockBookmark.tags,
+          created_at: new Date(mockBookmark.created),
+          is_organised: false
+        });
+      });
+
+      it('should handle bookmarks without tags', () => {
+        const bookmarkWithoutTags = { ...mockBookmark, tags: undefined };
+        const result = bookmarkService.normalizeRaindropBookmark(bookmarkWithoutTags, mockUserId);
+
+        expect(result.tags).toEqual([]);
+      });
     });
 
-    describe('addBookmark', () => {
-        it('should create a new bookmark', async () => {
-            const mockBookmark = {
-                id: 1,
-                url: 'https://example.com',
-                title: 'Example Website',
-                user_id: TEST_USER_ID,
-                created_at: new Date(),
-                updated_at: new Date()
-            };
-            
-            // Mock the database responses
-            db.query
-                .mockResolvedValueOnce([]) // First call (check existing)
-                .mockResolvedValueOnce([mockBookmark]); // Second call (create)
+    describe('saveRaindropBookmark', () => {
+      it('should save a single bookmark successfully', async () => {
+        const mockDbResult = [{ id: 1, ...mockBookmark }];
+        mockedDb.query.mockResolvedValue(mockDbResult);
 
-            const result = await bookmarkService.addBookmark(TEST_USER_ID, sampleBookmark);
-            
-            expect(result).toEqual(mockBookmark);
-            expect(db.query).toHaveBeenCalledTimes(2);
-        });
+        const result = await bookmarkService.saveRaindropBookmark(mockBookmark, mockUserId);
 
-        it('should update existing bookmark', async () => {
-            const existingBookmark = { 
-                id: 1, 
-                url: sampleBookmark.url, 
-                title: 'Old Title',
-                user_id: TEST_USER_ID,
-                created_at: new Date(),
-                updated_at: new Date()
-            };
-            const updatedBookmark = { ...existingBookmark, title: 'Updated Title' };
-            
-            // Mock responses for update flow
-            db.query
-                .mockResolvedValueOnce([existingBookmark]) // Find existing
-                .mockResolvedValueOnce([updatedBookmark]); // Update
-            
-            const updatedData = {
-                ...sampleBookmark,
-                title: 'Updated Title'
-            };
-            
-            const result = await bookmarkService.addBookmark(TEST_USER_ID, updatedData);
-            
-            expect(result.title).toBe('Updated Title');
-            expect(result.url).toBe(sampleBookmark.url);
-            expect(db.query).toHaveBeenCalledTimes(2);
-        });
+        expect(mockedDb.query).toHaveBeenCalledWith(
+          expect.stringContaining('INSERT INTO raindrop.bookmarks'),
+          expect.arrayContaining([
+            mockUserId,
+            mockBookmark._id,
+            mockBookmark.title,
+            mockBookmark.link,
+            mockBookmark.tags,
+            expect.any(Date),
+            false
+          ])
+        );
+
+        expect(result).toEqual(mockDbResult[0]);
+      });
+
+      it('should handle database errors', async () => {
+        const mockError = new Error('Database error');
+        mockedDb.query.mockRejectedValue(mockError);
+
+        await expect(bookmarkService.saveRaindropBookmark(mockBookmark, mockUserId))
+          .rejects.toThrow('Database error');
+      });
     });
 
-    describe('upsertBookmarks', () => {
-        it('should handle batch creation of bookmarks', async () => {
-            const mockResults = sampleBookmarks.map((bookmark, index) => ({
-                id: index + 1,
-                ...bookmark,
-                user_id: TEST_USER_ID,
-                created_at: new Date(),
-                updated_at: new Date()
-            }));
-            
-            // Dynamic mock implementation that does not rely on call order
-            db.query.mockImplementation((sql, params) => {
-                // SELECT → no existing bookmark
-                if (/SELECT\s+\*/i.test(sql)) {
-                    return Promise.resolve([]);
-                }
+    describe('saveRaindropBookmarks', () => {
+      it('should save multiple bookmarks in transaction', async () => {
+        const mockBookmarks = [mockBookmark, { ...mockBookmark, _id: 'raindrop-456' }];
+        const mockClient = {
+          query: jest.fn()
+            .mockResolvedValueOnce(undefined) // BEGIN
+            .mockResolvedValueOnce({ rows: [{ id: 1 }] }) // First INSERT
+            .mockResolvedValueOnce({ rows: [{ id: 2 }] }) // Second INSERT
+            .mockResolvedValueOnce(undefined), // COMMIT
+          release: jest.fn()
+        };
 
-                // INSERT → return newly created bookmark based on URL parameter
-                if (/INSERT\s+INTO/i.test(sql)) {
-                    const url = params[1];
-                    const created = mockResults.find(bm => bm.url === url);
-                    return Promise.resolve([created]);
-                }
+        mockedDb.pool = {
+          connect: jest.fn().mockResolvedValue(mockClient)
+        };
 
-                // Default fallback (should not hit for this test)
-                return Promise.resolve([]);
-            });
+        const result = await bookmarkService.saveRaindropBookmarks(mockBookmarks, mockUserId);
 
-            const results = await bookmarkService.upsertBookmarks(TEST_USER_ID, sampleBookmarks);
-            
-            expect(results).toBeDefined();
-            expect(Array.isArray(results)).toBe(true);
-            expect(results).toHaveLength(2);
-            
-            // Verify bookmark properties
-            expect(results[0]).toEqual(expect.objectContaining({
-                url: sampleBookmarks[0].url,
-                title: sampleBookmarks[0].title
-            }));
-            expect(results[1]).toEqual(expect.objectContaining({
-                url: sampleBookmarks[1].url,
-                title: sampleBookmarks[1].title
-            }));
-            
-            // We expect 4 queries (2 SELECT, 2 INSERT)
-            expect(db.query).toHaveBeenCalledTimes(4);
-        });
+        expect(mockClient.query).toHaveBeenCalledWith('BEGIN');
+        expect(mockClient.query).toHaveBeenCalledWith('COMMIT');
+        expect(mockClient.release).toHaveBeenCalled();
+        expect(result).toHaveLength(2);
+      });
 
-        it('should handle mixed create and update operations', async () => {
-            const existingBookmark = { 
-                id: 1, 
-                ...sampleBookmarks[0], 
-                user_id: TEST_USER_ID,
-                created_at: new Date(),
-                updated_at: new Date()
-            };
-            const updatedBookmark = {
-                ...existingBookmark,
-                title: 'Updated First Example',
-                updated_at: new Date()
-            };
-            const newBookmark = { 
-                id: 2, 
-                ...sampleBookmarks[1], 
-                user_id: TEST_USER_ID,
-                created_at: new Date(),
-                updated_at: new Date()
-            };
-            
-            // Dynamic mock implementation to reflect mixed operations
-            db.query.mockImplementation((sql, params) => {
-                const url = params[1];
+      it('should rollback transaction on error', async () => {
+        const mockBookmarks = [mockBookmark];
+        const mockClient = {
+          query: jest.fn()
+            .mockResolvedValueOnce(undefined) // BEGIN
+            .mockRejectedValueOnce(new Error('Insert failed')) // INSERT fails
+            .mockResolvedValueOnce(undefined), // ROLLBACK
+          release: jest.fn()
+        };
 
-                // SELECT path
-                if (/SELECT\s+\*/i.test(sql)) {
-                    if (url === sampleBookmarks[0].url) {
-                        // First bookmark exists already
-                        return Promise.resolve([existingBookmark]);
-                    }
-                    // Second bookmark does not exist
-                    return Promise.resolve([]);
-                }
+        mockedDb.pool = {
+          connect: jest.fn().mockResolvedValue(mockClient)
+        };
 
-                // UPDATE path for first bookmark
-                if (/UPDATE\s+bookmark\.bookmarks/i.test(sql)) {
-                    return Promise.resolve([updatedBookmark]);
-                }
+        await expect(bookmarkService.saveRaindropBookmarks(mockBookmarks, mockUserId))
+          .rejects.toThrow('Insert failed');
 
-                // INSERT path for second bookmark
-                if (/INSERT\s+INTO/i.test(sql)) {
-                    return Promise.resolve([newBookmark]);
-                }
-
-                return Promise.resolve([]);
-            });
-
-            const updatedBookmarksInput = [
-                { ...sampleBookmarks[0], title: 'Updated First Example' },
-                sampleBookmarks[1]
-            ];
-            
-            const results = await bookmarkService.upsertBookmarks(TEST_USER_ID, updatedBookmarksInput);
-            
-            expect(results).toBeDefined();
-            expect(Array.isArray(results)).toBe(true);
-            expect(results).toHaveLength(2);
-            
-            // Verify bookmark properties
-            expect(results[0]).toEqual(expect.objectContaining({
-                title: 'Updated First Example'
-            }));
-            expect(results[1]).toEqual(expect.objectContaining({
-                url: sampleBookmarks[1].url
-            }));
-            
-            // Expected call counts: SELECT (2) + UPDATE (1) + INSERT (1) = 4
-            expect(db.query).toHaveBeenCalledTimes(4);
-        });
+        expect(mockClient.query).toHaveBeenCalledWith('ROLLBACK');
+        expect(mockClient.release).toHaveBeenCalled();
+      });
     });
 
-    describe('getBookmarks', () => {
-        it('should retrieve all bookmarks for a user', async () => {
-            const mockBookmarks = [
-                { 
-                    id: 1, 
-                    url: 'https://example1.com', 
-                    title: 'Example 1',
-                    user_id: TEST_USER_ID,
-                    created_at: new Date() 
-                },
-                { 
-                    id: 2, 
-                    url: 'https://example2.com', 
-                    title: 'Example 2',
-                    user_id: TEST_USER_ID,
-                    created_at: new Date() 
-                }
-            ];
-            
-            db.query.mockResolvedValueOnce(mockBookmarks);
-            
-            const results = await bookmarkService.getBookmarks(TEST_USER_ID);
-            
-            expect(results).toHaveLength(2);
-            expect(results[0].created_at).toBeInstanceOf(Date);
-        });
+    describe('getUserRaindropBookmarks', () => {
+      it('should fetch user bookmarks successfully', async () => {
+        const mockBookmarks = [
+          { id: 1, title: 'Bookmark 1', user_id: mockUserId },
+          { id: 2, title: 'Bookmark 2', user_id: mockUserId }
+        ];
 
-        it('should return empty array for user with no bookmarks', async () => {
-            db.query.mockResolvedValueOnce([]);
-            
-            const results = await bookmarkService.getBookmarks(TEST_USER_ID);
-            
-            expect(results).toEqual([]);
-        });
+        mockedDb.query.mockResolvedValue(mockBookmarks);
+
+        const result = await bookmarkService.getUserRaindropBookmarks(mockUserId);
+
+        expect(mockedDb.query).toHaveBeenCalledWith(
+          'SELECT * FROM raindrop.bookmarks WHERE user_id = $1 ORDER BY created_at DESC',
+          [mockUserId]
+        );
+
+        expect(result).toEqual(mockBookmarks);
+      });
+
+      it('should handle empty results', async () => {
+        mockedDb.query.mockResolvedValue([]);
+
+        const result = await bookmarkService.getUserRaindropBookmarks(mockUserId);
+        expect(result).toEqual([]);
+      });
+
+      it('should handle database errors', async () => {
+        const mockError = new Error('Database connection failed');
+        mockedDb.query.mockRejectedValue(mockError);
+
+        await expect(bookmarkService.getUserRaindropBookmarks(mockUserId))
+          .rejects.toThrow('Database connection failed');
+      });
     });
-
-    describe('logSync', () => {
-        it('should create sync log entry', async () => {
-            // Mock successful log creation - logSync doesn't return anything
-            db.query.mockResolvedValueOnce([{ id: 1, user_id: TEST_USER_ID, bookmarks_processed: 5, status: 'success' }]);
-            
-            await bookmarkService.logSync(TEST_USER_ID, 5, 'success');
-            
-            expect(db.query).toHaveBeenCalledWith(
-                expect.stringContaining('INSERT INTO bookmark.bookmark_sync_logs'),
-                [TEST_USER_ID, 5, 'success', null]
-            );
-        });
-
-        it('should handle error messages in sync log', async () => {
-            const errorMsg = 'Test error message';
-            
-            // Mock successful log creation - logSync doesn't return anything
-            db.query.mockResolvedValueOnce([{ id: 1, user_id: TEST_USER_ID, bookmarks_processed: 0, status: 'error' }]);
-            
-            await bookmarkService.logSync(TEST_USER_ID, 0, 'error', errorMsg);
-            
-            expect(db.query).toHaveBeenCalledWith(
-                expect.stringContaining('INSERT INTO bookmark.bookmark_sync_logs'),
-                [TEST_USER_ID, 0, 'error', errorMsg]
-            );
-        });
-    });
+  });
 }); 

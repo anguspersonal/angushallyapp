@@ -3,8 +3,7 @@ const { getAuthUrl,
         exchangeCodeForTokens,
         refreshAccessToken } = require('../bookmark-api/raindropAuth.js');
 const { saveRaindropTokens, getRaindropTokens } = require('../bookmark-api/raindropTokens.js');
-const { getCollections, getBookmarksFromCollection } = require('../bookmark-api/fetchBookmarks.js');
-const { saveBookmarks, getUserBookmarks } = require('../bookmark-api/saveBookmarks.js');
+const { getRaindropCollections, getRaindropBookmarksFromCollection, saveRaindropBookmarks, getUserRaindropBookmarks } = require('../bookmark-api/bookmarkService.js');
 const router = express.Router();
 const { authMiddleware } = require('../middleware/auth.js');
 const config = require('../../config/env.js'); // Your existing config loader
@@ -114,7 +113,7 @@ router.post('/sync', authMiddleware(), async (req, res) => {
       // });
 
       // Fetch all bookmarks (collection ID 0 means all bookmarks)
-      const allBookmarks = await getBookmarksFromCollection(tokens.access_token, 0);
+      const allBookmarks = await getRaindropBookmarksFromCollection(tokens.access_token, 0);
       
       // console.log('Fetched bookmarks:', {
       //   count: allBookmarks.length,
@@ -124,8 +123,8 @@ router.post('/sync', authMiddleware(), async (req, res) => {
       //   } : null
       // });
 
-      // Save all bookmarks using the saveBookmarks service
-      await saveBookmarks(allBookmarks, req.user.id);
+      // Save all bookmarks using the saveRaindropBookmarks service
+      await saveRaindropBookmarks(allBookmarks, req.user.id);
 
       res.json({ 
         message: 'Bookmarks synced successfully',
@@ -140,7 +139,7 @@ router.post('/sync', authMiddleware(), async (req, res) => {
 // 5) Get user's bookmarks
 router.get('/bookmarks', authMiddleware(), async (req, res) => {
     try {
-      const bookmarks = await getUserBookmarks(req.user.id);
+      const bookmarks = await getUserRaindropBookmarks(req.user.id);
       res.json({ bookmarks });
     } catch (err) {
       // console.error('Bookmarks fetch error:', err);

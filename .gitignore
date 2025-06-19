@@ -65,3 +65,19 @@ server/coverage/
 react-ui/coverage/
 *.lcov
 .nyc_output/
+
+# Scripts
+scripts/
+
+# coverage
+coverage/
+server/coverage/
+react-ui/coverage/
+*.lcov
+.nyc_output/
+
+# node_modules
+node_modules/
+server/node_modules/
+react-ui/node_modules/
+

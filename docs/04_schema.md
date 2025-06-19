@@ -230,40 +230,40 @@ Table public_data.posts {
 }
 
 // --- Schema: bookmarks ---
-// Unified bookmark storage system for all bookmark sources
+// 🆕 Schema added January 2025 for unified bookmark storage across multiple sources
 
 Table bookmarks.bookmarks {
   id uuid [pk, default: `gen_random_uuid()`]
-  user_id uuid [not null, ref: > identity.users.id]
+  user_id uuid [ref: > identity.users.id, not null, note: 'Link to unified user ID']
   title text [not null]
   url text [not null]
-  resolved_url text [nullable, note: 'Final URL after any redirects']
+  resolved_url text [nullable]
   description text [nullable]
-  image_url text [nullable, note: 'URL of the main image']
-  image_alt text [nullable, note: 'Alt text for the main image']
-  site_name text [nullable, note: 'Name of the website']
-  tags text[] [nullable, note: 'Array of AI-generated and user tags']
-  source_type string [not null, note: 'e.g., raindrop, pocket, instapaper']
-  source_id string [not null, note: 'ID from the original source']
-  source_metadata jsonb [nullable, note: 'Additional data from the source']
-  is_organized boolean [not null, default: false]
+  image_url text [nullable]
+  image_alt text [nullable]
+  site_name text [nullable]
+  tags text[] [nullable, note: 'Array of tags for bookmark organization']
+  source_type string [not null, note: 'Source platform: raindrop, pocket, instapaper, etc.']
+  source_id string [not null, note: 'Original ID from the source platform']
+  source_metadata jsonb [nullable, note: 'Additional metadata from source platform']
+  is_organized boolean [not null, default: false, note: 'Indicates if bookmark has been processed/organized']
   created_at timestamptz [not null, default: `now()`]
   updated_at timestamptz [not null, default: `now()`]
 
   Indexes {
     (user_id) [name: 'ix_bookmarks_user_id']
-    (source_type, source_id) [unique, name: 'uq_bookmarks_source']
     (url) [name: 'ix_bookmarks_url']
     (tags) [name: 'ix_bookmarks_tags', type: 'gin']
+    (source_type, source_id) [unique, name: 'uq_bookmarks_source']
   }
 }
 
 Table bookmarks.categories {
   id uuid [pk, default: `gen_random_uuid()`]
-  user_id uuid [not null, ref: > identity.users.id]
+  user_id uuid [ref: > identity.users.id, not null, note: 'Link to unified user ID']
   name string [not null]
   description text [nullable]
-  parent_id uuid [nullable, ref: > bookmarks.categories.id]
+  parent_id uuid [ref: > bookmarks.categories.id, nullable, note: 'For hierarchical categories']
   created_at timestamptz [not null, default: `now()`]
   updated_at timestamptz [not null, default: `now()`]
 
@@ -274,8 +274,8 @@ Table bookmarks.categories {
 }
 
 Table bookmarks.bookmark_categories {
-  bookmark_id uuid [not null, ref: > bookmarks.bookmarks.id]
-  category_id uuid [not null, ref: > bookmarks.categories.id]
+  bookmark_id uuid [ref: > bookmarks.bookmarks.id, not null]
+  category_id uuid [ref: > bookmarks.categories.id, not null]
   created_at timestamptz [not null, default: `now()`]
 
   Indexes {
@@ -284,7 +284,7 @@ Table bookmarks.bookmark_categories {
 }
 
 // --- Schema: raindrop ---
-// Raindrop.io specific data and sync status
+// Legacy schema for Raindrop.io integration - will be migrated to bookmarks schema
 
 Table raindrop.bookmarks {
   id uuid [pk, default: `gen_random_uuid()`]

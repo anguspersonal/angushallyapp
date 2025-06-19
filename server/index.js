@@ -126,8 +126,8 @@ const authRoute = require('./routes/authRoute');
 app.use('/api/auth', authRoute);
 
 // ✅ AI API routes
-const aiRoute = require('./routes/aiRoute');
-app.use('/api/ai', aiRoute);
+const analyseTextRoute  = require('./routes/analyseTextRoute');
+app.use('/api/analyseText', analyseTextRoute);
 
 // ✅ Raindrop API routes
 const raindropRoute = require('./routes/raindropRoute');
@@ -138,6 +138,8 @@ app.use('/api/raindrop/oauth/callback', raindropCallbackRoute);
 
 // Mount raindrop routes (auth applied selectively within the route file)
 app.use('/api/raindrop', raindropRoute);
+
+// Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {
