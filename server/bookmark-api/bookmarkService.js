@@ -247,6 +247,474 @@ const getUserRaindropBookmarks = async (userId) => {
   }
 };
 
+/**
+ * Check if a bookmark already exists in canonical store by source
+ * @param {string} userId - The user's ID
+ * @param {string} sourceType - The source type (e.g., 'raindrop')
+ * @param {string} sourceId - The source ID from the platform
+ * @returns {Promise<Object|null>} Existing bookmark or null
+ */
+const checkCanonicalBookmarkExists = async (userId, sourceType, sourceId) => {
+  try {
+    const result = await db.query(
+      'SELECT * FROM bookmarks.bookmarks WHERE user_id = $1 AND source_type = $2 AND source_id = $3',
+      [userId, sourceType, sourceId]
+    );
+    
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error('Error checking canonical bookmark existence:', error);
+    throw error;
+  }
+};
+
+/**
+ * Transfer a single Raindrop bookmark to canonical store
+ * @param {Object} raindropBookmark - The Raindrop bookmark to transfer
+ * @returns {Promise<Object>} The transferred canonical bookmark
+ */
+const transferRaindropBookmarkToCanonical = async (raindropBookmark) => {
+  try {
+    // Check if bookmark already exists in canonical store by source
+    const existingBookmark = await checkCanonicalBookmarkExists(
+      raindropBookmark.user_id, 
+      'raindrop',
+      raindropBookmark.raindrop_id
+    );
+
+    
+    // If bookmark exists in canonical store, update it
+    if (existingBookmark) {
+      // Update existing bookmark with any new metadata
+      const result = await db.query(
+        `UPDATE bookmarks.bookmarks 
+         SET title = COALESCE($1, title),
+             url = COALESCE($2, url),
+             tags = COALESCE($3, tags),
+             source_metadata = COALESCE($4, source_metadata),
+             updated_at = NOW()
+         WHERE id = $5
+         RETURNING *`,
+        [
+          raindropBookmark.title,
+          raindropBookmark.link,
+          raindropBookmark.tags,
+          { raindrop_id: raindropBookmark.raindrop_id },
+          existingBookmark.id
+        ]
+      );
+      
+      // Mark as organized in staging table
+      await db.query(
+        'UPDATE raindrop.bookmarks SET is_organized = true WHERE id = $1',
+        [raindropBookmark.id]
+      );
+      
+      return result[0];
+    }
+    
+    // If bookmark does not exist in canonical store, create it
+    const result = await db.query(
+      `INSERT INTO bookmarks.bookmarks (
+        user_id, title, url, tags, source_type, source_id, source_metadata, 
+        is_organized, created_at, updated_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING *`,
+      [
+        raindropBookmark.user_id,
+        raindropBookmark.title,
+        raindropBookmark.link,
+        raindropBookmark.tags,
+        'raindrop',
+        raindropBookmark.raindrop_id,
+        { raindrop_id: raindropBookmark.raindrop_id },
+        false, // Will be set to true after enrichment
+        raindropBookmark.created_at,
+        new Date()
+      ]
+    );
+    
+    // Mark as organized in staging table
+    await db.query(
+      'UPDATE raindrop.bookmarks SET is_organized = true WHERE id = $1',
+      [raindropBookmark.id]
+    );
+    
+    return result[0];
+  } catch (error) {
+    console.error('Error transferring Raindrop bookmark to canonical:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get unorganized Raindrop bookmarks for a user
+ * @param {string} userId - The user's ID
+ * @returns {Promise<Array>} Array of unorganized Raindrop bookmarks
+ */
+const getUnorganizedRaindropBookmarks = async (userId) => {
+  try {
+    const bookmarks = await db.query(
+      'SELECT * FROM raindrop.bookmarks WHERE user_id = $1 AND is_organized = false ORDER BY created_at ASC',
+      [userId]
+    );
+    
+    return bookmarks;
+  } catch (error) {
+    console.error('Error getting unorganized Raindrop bookmarks:', error);
+    throw error;
+  }
+};
+
+/**
+ * Mark a Raindrop bookmark as organized in the staging table
+ * @param {number} bookmarkId - The bookmark ID in raindrop.bookmarks
+ * @returns {Promise<Object>} The updated bookmark
+ */
+const markRaindropBookmarkAsOrganized = async (bookmarkId) => {
+  try {
+    const result = await db.query(
+      'UPDATE raindrop.bookmarks SET is_organized = true, updated_at = NOW() WHERE id = $1 RETURNING *',
+      [bookmarkId]
+    );
+    
+    if (result.length === 0) {
+      throw new Error(`Bookmark with ID ${bookmarkId} not found`);
+    }
+    
+    return result[0];
+  } catch (error) {
+    console.error('Error marking bookmark as organized:', error);
+    throw error;
+  }
+};
+
+/**
+ * Transfer all unorganized Raindrop bookmarks to canonical store
+ * @param {string} userId - The user's ID
+ * @returns {Promise<Object>} Transfer results with success/failure counts
+ */
+const transferUnorganizedRaindropBookmarks = async (userId) => {
+  console.log(`🔄 Starting transfer of unorganized Raindrop bookmarks for user ${userId}`);
+  
+  try {
+    // Get all unorganized bookmarks
+    const unorganizedBookmarks = await getUnorganizedRaindropBookmarks(userId);
+    
+    if (unorganizedBookmarks.length === 0) {
+      console.log('ℹ️  No unorganized bookmarks found for transfer');
+      return {
+        success: 0,
+        failed: 0,
+        total: 0,
+        errors: [],
+        message: 'No unorganized bookmarks found'
+      };
+    }
+    
+    console.log(`📦 Found ${unorganizedBookmarks.length} unorganized bookmarks to transfer`);
+    
+    const results = {
+      success: 0,
+      failed: 0,
+      total: unorganizedBookmarks.length,
+      errors: [],
+      transferredBookmarks: []
+    };
+    
+    // Process each bookmark
+    for (const bookmark of unorganizedBookmarks) {
+      try {
+        console.log(`🔄 Transferring bookmark: ${bookmark.title || 'Untitled'} (ID: ${bookmark.id})`);
+        
+        // Transfer to canonical store
+        const transferredBookmark = await transferRaindropBookmarkToCanonical(bookmark);
+        
+        // Note: transferRaindropBookmarkToCanonical already marks the bookmark as organized
+        // No need to call markRaindropBookmarkAsOrganized separately
+        
+        results.success++;
+        results.transferredBookmarks.push({
+          stagingId: bookmark.id,
+          canonicalId: transferredBookmark.id,
+          title: transferredBookmark.title
+        });
+        
+        console.log(`✅ Successfully transferred bookmark: ${transferredBookmark.title}`);
+        
+      } catch (error) {
+        console.error(`❌ Failed to transfer bookmark ${bookmark.id}:`, error.message);
+        results.failed++;
+        results.errors.push({
+          bookmarkId: bookmark.id,
+          title: bookmark.title || 'Untitled',
+          error: error.message
+        });
+      }
+    }
+    
+    console.log(`🎉 Transfer completed: ${results.success} successful, ${results.failed} failed`);
+    
+    return results;
+    
+  } catch (error) {
+    console.error('Error in transferUnorganizedRaindropBookmarks:', error);
+    throw error;
+  }
+};
+
+/**
+ * Validate bookmark data before transfer to canonical store
+ * @param {Object} bookmark - The bookmark data to validate
+ * @returns {Object} Validation result with isValid boolean and errors array
+ */
+const validateBookmarkData = (bookmark) => {
+  const errors = [];
+  
+  // Required fields validation
+  if (bookmark.user_id === undefined || bookmark.user_id === null) {
+    errors.push('user_id is required');
+  } else if (typeof bookmark.user_id !== 'string' || !bookmark.user_id.trim()) {
+    errors.push('user_id must be a non-empty string');
+  }
+  
+  if (bookmark.title === undefined || bookmark.title === null) {
+    errors.push('title is required');
+  } else if (typeof bookmark.title !== 'string' || !bookmark.title.trim()) {
+    errors.push('title must be a non-empty string');
+  }
+  
+  if (bookmark.url === undefined || bookmark.url === null) {
+    errors.push('url is required');
+  } else if (typeof bookmark.url !== 'string' || !bookmark.url.trim()) {
+    errors.push('url must be a non-empty string');
+  } else {
+    // Basic URL validation
+    try {
+      new URL(bookmark.url);
+    } catch (e) {
+      errors.push('url must be a valid URL format');
+    }
+  }
+  
+  if (bookmark.source_type === undefined || bookmark.source_type === null) {
+    errors.push('source_type is required');
+  } else if (typeof bookmark.source_type !== 'string' || !bookmark.source_type.trim()) {
+    errors.push('source_type must be a non-empty string');
+  }
+  
+  if (bookmark.source_id === undefined || bookmark.source_id === null) {
+    errors.push('source_id is required');
+  } else if (typeof bookmark.source_id !== 'string' || !bookmark.source_id.trim()) {
+    errors.push('source_id must be a non-empty string');
+  }
+  
+  // Optional fields validation
+  if (bookmark.resolved_url !== undefined && bookmark.resolved_url !== null) {
+    if (typeof bookmark.resolved_url !== 'string') {
+      errors.push('resolved_url must be a string if provided');
+    } else if (bookmark.resolved_url.trim()) {
+      try {
+        new URL(bookmark.resolved_url);
+      } catch (e) {
+        errors.push('resolved_url must be a valid URL format if provided');
+      }
+    }
+  }
+  
+  if (bookmark.description !== undefined && bookmark.description !== null) {
+    if (typeof bookmark.description !== 'string') {
+      errors.push('description must be a string if provided');
+    }
+  }
+  
+  if (bookmark.image_url !== undefined && bookmark.image_url !== null) {
+    if (typeof bookmark.image_url !== 'string') {
+      errors.push('image_url must be a string if provided');
+    } else if (bookmark.image_url.trim()) {
+      try {
+        new URL(bookmark.image_url);
+      } catch (e) {
+        errors.push('image_url must be a valid URL format if provided');
+      }
+    }
+  }
+  
+  if (bookmark.image_alt !== undefined && bookmark.image_alt !== null) {
+    if (typeof bookmark.image_alt !== 'string') {
+      errors.push('image_alt must be a string if provided');
+    }
+  }
+  
+  if (bookmark.site_name !== undefined && bookmark.site_name !== null) {
+    if (typeof bookmark.site_name !== 'string') {
+      errors.push('site_name must be a string if provided');
+    }
+  }
+  
+  if (bookmark.tags !== undefined && bookmark.tags !== null) {
+    if (!Array.isArray(bookmark.tags)) {
+      errors.push('tags must be an array if provided');
+    } else {
+      // Validate each tag is a string
+      bookmark.tags.forEach((tag, index) => {
+        if (typeof tag !== 'string') {
+          errors.push(`tags[${index}] must be a string`);
+        }
+      });
+    }
+  }
+  
+  if (bookmark.source_metadata !== undefined && bookmark.source_metadata !== null) {
+    if (typeof bookmark.source_metadata !== 'object' || Array.isArray(bookmark.source_metadata)) {
+      errors.push('source_metadata must be an object if provided');
+    }
+  }
+  
+  if (bookmark.is_organized !== undefined && bookmark.is_organized !== null) {
+    if (typeof bookmark.is_organized !== 'boolean') {
+      errors.push('is_organized must be a boolean if provided');
+    }
+  }
+  
+  if (bookmark.created_at !== undefined && bookmark.created_at !== null) {
+    if (!(bookmark.created_at instanceof Date) && isNaN(Date.parse(bookmark.created_at))) {
+      errors.push('created_at must be a valid date if provided');
+    }
+  }
+  
+  // Field length validation
+  if (bookmark.title && bookmark.title.length > 1000) {
+    errors.push('title must be 1000 characters or less');
+  }
+  
+  if (bookmark.url && bookmark.url.length > 2048) {
+    errors.push('url must be 2048 characters or less');
+  }
+  
+  if (bookmark.resolved_url && bookmark.resolved_url.length > 2048) {
+    errors.push('resolved_url must be 2048 characters or less');
+  }
+  
+  if (bookmark.description && bookmark.description.length > 5000) {
+    errors.push('description must be 5000 characters or less');
+  }
+  
+  if (bookmark.image_url && bookmark.image_url.length > 2048) {
+    errors.push('image_url must be 2048 characters or less');
+  }
+  
+  if (bookmark.image_alt && bookmark.image_alt.length > 500) {
+    errors.push('image_alt must be 500 characters or less');
+  }
+  
+  if (bookmark.site_name && bookmark.site_name.length > 200) {
+    errors.push('site_name must be 200 characters or less');
+  }
+  
+  if (bookmark.source_type && bookmark.source_type.length > 50) {
+    errors.push('source_type must be 50 characters or less');
+  }
+  
+  if (bookmark.source_id && bookmark.source_id.length > 255) {
+    errors.push('source_id must be 255 characters or less');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors: errors
+  };
+};
+
+/**
+ * Create a new bookmark in the canonical bookmarks.bookmarks table
+ * @param {Object} enrichedData - The enriched bookmark data
+ * @returns {Promise<Object>} The created canonical bookmark
+ */
+const createCanonicalBookmark = async (enrichedData) => {
+  try {
+    const result = await db.query(
+      `INSERT INTO bookmarks.bookmarks (
+        user_id, title, url, resolved_url, description, image_url, image_alt, site_name,
+        tags, source_type, source_id, source_metadata, 
+        is_organized, created_at, updated_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+      RETURNING *`,
+      [
+        enrichedData.user_id,
+        enrichedData.title,
+        enrichedData.url,
+        enrichedData.resolved_url || enrichedData.url,
+        enrichedData.description,
+        enrichedData.image_url,
+        enrichedData.image_alt,
+        enrichedData.site_name,
+        enrichedData.tags || [],
+        enrichedData.source_type,
+        enrichedData.source_id,
+        enrichedData.source_metadata || {},
+        enrichedData.is_organized || false,
+        enrichedData.created_at || new Date(),
+        new Date()
+      ]
+    );
+    
+    return result[0];
+  } catch (error) {
+    console.error('Error creating canonical bookmark:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update an existing bookmark in the canonical bookmarks.bookmarks table
+ * @param {string} bookmarkId - The canonical bookmark ID
+ * @param {Object} data - The data to update
+ * @returns {Promise<Object>} The updated canonical bookmark
+ */
+const updateCanonicalBookmark = async (bookmarkId, data) => {
+  try {
+    const result = await db.query(
+      `UPDATE bookmarks.bookmarks 
+       SET title = COALESCE($1, title),
+           url = COALESCE($2, url),
+           resolved_url = COALESCE($3, resolved_url),
+           description = COALESCE($4, description),
+           image_url = COALESCE($5, image_url),
+           image_alt = COALESCE($6, image_alt),
+           site_name = COALESCE($7, site_name),
+           tags = COALESCE($8, tags),
+           source_metadata = COALESCE($9, source_metadata),
+           is_organized = COALESCE($10, is_organized),
+           updated_at = NOW()
+       WHERE id = $11
+       RETURNING *`,
+      [
+        data.title,
+        data.url,
+        data.resolved_url,
+        data.description,
+        data.image_url,
+        data.image_alt,
+        data.site_name,
+        data.tags,
+        data.source_metadata,
+        data.is_organized,
+        bookmarkId
+      ]
+    );
+    
+    if (result.length === 0) {
+      throw new Error(`Canonical bookmark with ID ${bookmarkId} not found`);
+    }
+    
+    return result[0];
+  } catch (error) {
+    console.error('Error updating canonical bookmark:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   // Raindrop bookmark fetching functions
   getRaindropCollections,
@@ -256,5 +724,14 @@ module.exports = {
   normalizeRaindropBookmark,
   saveRaindropBookmark,
   saveRaindropBookmarks,
-  getUserRaindropBookmarks
+  getUserRaindropBookmarks,
+  checkCanonicalBookmarkExists,
+  transferRaindropBookmarkToCanonical,
+  getUnorganizedRaindropBookmarks,
+  markRaindropBookmarkAsOrganized,
+  transferUnorganizedRaindropBookmarks,
+  // Canonical bookmark operations
+  validateBookmarkData,
+  createCanonicalBookmark,
+  updateCanonicalBookmark
 }; 

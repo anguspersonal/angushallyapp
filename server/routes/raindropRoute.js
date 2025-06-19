@@ -3,7 +3,7 @@ const { getAuthUrl,
         exchangeCodeForTokens,
         refreshAccessToken } = require('../bookmark-api/raindropAuth.js');
 const { saveRaindropTokens, getRaindropTokens } = require('../bookmark-api/raindropTokens.js');
-const { getRaindropCollections, getRaindropBookmarksFromCollection, saveRaindropBookmarks, getUserRaindropBookmarks } = require('../bookmark-api/bookmarkService.js');
+const { getRaindropCollections, getRaindropBookmarksFromCollection, saveRaindropBookmarks, getUserRaindropBookmarks, transferUnorganizedRaindropBookmarks } = require('../bookmark-api/bookmarkService.js');
 const router = express.Router();
 const { authMiddleware } = require('../middleware/auth.js');
 const config = require('../../config/env.js'); // Your existing config loader
@@ -166,6 +166,32 @@ router.post('/refresh', authMiddleware(), async (req, res) => {
     } catch (err) {
       // console.error('Refresh error:', err);
       res.status(500).json({ error: 'Failed to refresh token' });
+    }
+});
+
+// 7) Transfer unorganized Raindrop bookmarks to canonical store
+router.post('/transfer', authMiddleware(), async (req, res) => {
+    try {
+      console.log(`🔄 Starting transfer for user ${req.user.id}`);
+      
+      const result = await transferUnorganizedRaindropBookmarks(req.user.id);
+      
+      console.log(`✅ Transfer completed for user ${req.user.id}:`, {
+        success: result.success,
+        failed: result.failed,
+        total: result.total
+      });
+      
+      res.json({
+        message: 'Transfer completed',
+        ...result
+      });
+    } catch (err) {
+      console.error('Transfer error:', err);
+      res.status(500).json({ 
+        error: 'Failed to transfer bookmarks',
+        details: err.message 
+      });
     }
 });
 

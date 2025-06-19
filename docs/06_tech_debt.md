@@ -561,4 +561,28 @@ This document tracks known technical debt, architectural issues, and improvement
   2. Implement proper error handling for OAuth flow
   3. Add comprehensive logging for debugging
   4. Create test suite for OAuth flow
-- **Estimated Effort**: 2-3 days 
+- **Estimated Effort**: 2-3 days
+
+### Bookmark Data Validation Integration
+- **Description**: validateBookmarkData function exists but is not yet integrated into the automatic transfer workflow
+- **Priority**: Medium
+- **Resolution**: 
+  - Integrate validateBookmarkData into transferRaindropBookmarkToCanonical function
+  - Add validation step to transferUnorganizedRaindropBookmarks batch process
+  - Implement validation error logging and reporting for failed transfers
+  - Add API endpoints to manually trigger transfer with validation
+  - Create admin UI to review and retry failed validations
+- **Created**: 2025-06-19
+- **Status**: 🔴 Not Started
+- **Context**: Function implemented with comprehensive test coverage, ready for integration into transfer pipeline
+
+### Bookmark Source Integration
+- **Description**: Current bookmark system tightly coupled to Raindrop.io
+- **Priority**: Medium
+- **Resolution**: 
+  - Design extensible bookmark source interface
+  - Implement additional bookmark sources (e.g., Pocket, Instapaper)
+  - Create unified bookmark sync system
+- **Created**: 2025-05-17
+- **Status**: 🟡 In Progress
+- **Notes**: 2025-01-27 - Improved function naming consistency with "Raindrop" prefix to prepare for multi-platform architecture. Merged bookmark service files for better organization. 
