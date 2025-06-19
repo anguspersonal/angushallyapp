@@ -228,8 +228,20 @@ This document tracks known technical debt, architectural issues, and improvement
   - Design extensible bookmark source interface
   - Implement additional bookmark sources (e.g., Pocket, Instapaper)
   - Create unified bookmark sync system
-  - Build source-specific configuration UI
-- **Created**: 2025-05-25
+- **Created**: 2025-05-17
+- **Status**: 🟡 In Progress
+- **Notes**: 2025-01-27 - Improved function naming consistency with "Raindrop" prefix to prepare for multi-platform architecture. Merged bookmark service files for better organization.
+
+### Raindrop API Error Handling
+- **Description**: Missing comprehensive error handling for Raindrop API integration
+- **Priority**: Medium
+- **Resolution**:
+  - Implement rate limiting (429) response handling with exponential backoff
+  - Add revoked scope (403) detection and user notification
+  - Add network timeout handling for API calls
+  - Implement partial sync failure recovery mechanisms
+  - Add retry logic for transient failures
+- **Created**: 2025-05-31
 - **Status**: 🔴 Not Started
 
 ### Habit Tracking Improvements

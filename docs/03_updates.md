@@ -4,6 +4,33 @@ This file tracks chronological changes to the project, with the most recent upda
 
 ## [Unreleased] – Current
 
+### Bookmark API Reorganization & Function Naming Consistency - 2025-01-27
+
+**Feature Work:**
+- **File Structure Reorganization**: Merged `fetchBookmarks.js` and `saveBookmarks.js` into unified `bookmarkService.js` for better domain organization
+- **Function Naming Consistency**: Renamed all bookmark service functions to include "Raindrop" prefix for clarity and future multi-platform support:
+  - `getCollections` → `getRaindropCollections`
+  - `getBookmarksFromCollection` → `getRaindropBookmarksFromCollection`
+  - `getAllBookmarks` → `getAllRaindropBookmarks`
+  - `normalizeBookmark` → `normalizeRaindropBookmark`
+  - `saveBookmark` → `saveRaindropBookmark`
+  - `saveBookmarks` → `saveRaindropBookmarks`
+  - `getUserBookmarks` → `getUserRaindropBookmarks`
+
+**Refactoring & Cleanup:**
+- **Code Organization**: Improved domain separation in bookmark-api folder:
+  - Bookmark handling: `bookmarkService.js` (core operations)
+  - Metadata enhancement: `openGraph.js` (separate domain)
+  - Third-party integrations: `raindropAuth.js`, `raindropTokens.js`, `instapaper.js` (separate domain)
+- **Dependency Updates**: Updated all imports across codebase to use new unified service
+- **Test Suite**: Created comprehensive test suite `testBookmarkService.test.js` covering both fetching and saving functionality
+- **Documentation**: Updated README.md and changelog to reflect new structure and function names
+
+**Planned Commits:**
+- Bookmark API reorganization and function naming consistency
+- Updated test suite and documentation
+- Cleanup of old files and unused components
+
 ### Test Suite Refactoring & Bookmark System Planning - 2025-05-25
 - **Test Suite Improvements**:
   - Refactored test files to clearly separate unit, integration, and controller tests
