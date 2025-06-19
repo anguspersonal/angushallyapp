@@ -758,6 +758,22 @@ npm run dev
 
 Environment variables: see `config/env.example` and docs in `config/env.js`.
 
+### 🚀 Production Deployment
+
+**Database Migrations**: Migrations run **automatically** during Heroku deployment via the release phase. When you push to production:
+
+1. Heroku builds the application
+2. **Release phase executes**: `npx knex migrate:latest` runs automatically
+3. If migrations fail, deployment is aborted
+4. Only if migrations succeed does the web dyno start
+
+**Configuration**: This is handled by the `Procfile` release phase:
+```
+release: if [ "$NODE_ENV" = "production" ]; then cd server && npx knex migrate:latest --knexfile knexfile.js --env production || exit 1; fi 
+```
+
+> **Note**: You do **not** need to run migrations manually in production. They are automatically executed during deployment, ensuring database schema stays in sync with your code changes.
+
 ---
 
 ## 🧪 Testing
