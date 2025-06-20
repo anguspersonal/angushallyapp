@@ -281,6 +281,20 @@ This document tracks known technical debt, architectural issues, and improvement
 
 ## Deployment & DevOps
 
+### Production Deployment Safety
+- **Description**: Production deployments lacked preflight environment consistency checks
+- **Priority**: High
+- **Resolution**: ✅ **RESOLVED** - Implemented `scripts/checkEnvSync.js` for comprehensive environment validation
+- **Created**: 2025-12-30
+- **Status**: ✅ Complete
+- **Details**: 
+  - Verifies database connectivity between dev and prod environments
+  - Validates table existence and schema consistency
+  - Compares migration versions and data freshness
+  - Provides clear pass/fail output with actionable troubleshooting
+  - Integrates with CI/CD pipelines via exit codes
+  - Comprehensive test coverage and documentation included
+
 ### Environment Configuration Management
 - **Description**: Environment configuration management needs ongoing maintenance and improvements
 - **Priority**: Medium
