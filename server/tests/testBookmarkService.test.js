@@ -677,7 +677,8 @@ describe('BookmarkService', () => {
         expect(result.errors[0]).toEqual({
           bookmarkId: 2,
           title: 'Test Bookmark 2',
-          error: 'Transfer failed for second bookmark'
+          error: 'Transfer failed for second bookmark',
+          errorType: 'database'
         });
         expect(result.transferredBookmarks).toHaveLength(1);
       });
@@ -688,6 +689,204 @@ describe('BookmarkService', () => {
 
         await expect(bookmarkService.transferUnorganizedRaindropBookmarks(mockUserId))
           .rejects.toThrow('Database connection failed');
+      });
+
+      it('should handle validation errors gracefully in batch transfer', async () => {
+        const invalidBookmarks = [
+          {
+            id: 1,
+            user_id: mockUserId,
+            raindrop_id: 12345,
+            title: '', // Invalid: empty title (not null/undefined, so not converted to 'Untitled')
+            link: 'not-a-valid-url', // Invalid: bad URL format
+            tags: ['test'],
+            is_organized: false,
+            created_at: new Date()
+          },
+          {
+            id: 2,
+            user_id: mockUserId,
+            raindrop_id: 12346,
+            title: 'Valid Bookmark',
+            link: 'https://example.com/2',
+            tags: ['test'],
+            is_organized: false,
+            created_at: new Date()
+          }
+        ];
+
+        const mockCanonicalBookmark = {
+          id: 'canonical-uuid-2',
+          user_id: mockUserId,
+          title: 'Valid Bookmark',
+          url: 'https://example.com/2',
+          source_type: 'raindrop',
+          source_id: '12346',
+          is_organized: false
+        };
+
+        mockedDb.query
+          // getUnorganizedRaindropBookmarks
+          .mockResolvedValueOnce(invalidBookmarks)
+          // First bookmark will fail validation (no DB calls for failed validation)
+          // checkCanonicalBookmarkExists - second bookmark (not found)
+          .mockResolvedValueOnce([])
+          // transferRaindropBookmarkToCanonical - second bookmark (INSERT)
+          .mockResolvedValueOnce([mockCanonicalBookmark])
+          // transferRaindropBookmarkToCanonical - second bookmark (UPDATE staging)
+          .mockResolvedValueOnce([{ id: 2, is_organized: true }]);
+
+        const result = await bookmarkService.transferUnorganizedRaindropBookmarks(mockUserId);
+
+        expect(result.success).toBe(1);
+        expect(result.failed).toBe(1);
+        expect(result.total).toBe(2);
+        expect(result.errors).toHaveLength(1);
+        expect(result.errors[0]).toEqual({
+          bookmarkId: 1,
+          title: '',
+          error: 'Validation failed: title must be a non-empty string, url must be a valid URL format',
+          errorType: 'validation'
+        });
+        expect(result.transferredBookmarks).toHaveLength(1);
+        expect(result.transferredBookmarks[0]).toEqual({
+          stagingId: 2,
+          canonicalId: 'canonical-uuid-2',
+          title: 'Valid Bookmark'
+        });
+      });
+    });
+
+    describe('transferRaindropBookmarkToCanonical validation integration', () => {
+      const mockValidRaindropBookmark = {
+        id: 1,
+        user_id: mockUserId,
+        raindrop_id: 12345,
+        title: 'Valid Test Bookmark',
+        link: 'https://example.com',
+        tags: ['test'],
+        is_organized: false,
+        created_at: new Date()
+      };
+
+      it('should successfully transfer valid bookmark with validation', async () => {
+        const mockCanonicalBookmark = {
+          id: 'canonical-uuid-1',
+          user_id: mockUserId,
+          title: 'Valid Test Bookmark',
+          url: 'https://example.com',
+          source_type: 'raindrop',
+          source_id: '12345',
+          is_organized: false
+        };
+
+        mockedDb.query
+          // checkCanonicalBookmarkExists (not found)
+          .mockResolvedValueOnce([])
+          // transferRaindropBookmarkToCanonical (INSERT)
+          .mockResolvedValueOnce([mockCanonicalBookmark])
+          // transferRaindropBookmarkToCanonical (UPDATE staging)
+          .mockResolvedValueOnce([{ id: 1, is_organized: true }]);
+
+        const result = await bookmarkService.transferRaindropBookmarkToCanonical(mockValidRaindropBookmark);
+
+        expect(result).toEqual(mockCanonicalBookmark);
+        expect(mockedDb.query).toHaveBeenCalledTimes(3);
+      });
+
+      it('should reject bookmark with validation errors', async () => {
+        const mockInvalidRaindropBookmark = {
+          id: 1,
+          user_id: mockUserId,
+          raindrop_id: 12345,
+          title: '', // Invalid: empty title (not null/undefined, so not converted to 'Untitled')
+          link: 'not-a-valid-url', // Invalid: bad URL format
+          tags: ['test'],
+          is_organized: false,
+          created_at: new Date()
+        };
+
+        await expect(bookmarkService.transferRaindropBookmarkToCanonical(mockInvalidRaindropBookmark))
+          .rejects.toThrow('Bookmark validation failed: title must be a non-empty string, url must be a valid URL format');
+
+        // Should not make any database calls due to validation failure
+        expect(mockedDb.query).not.toHaveBeenCalled();
+      });
+
+      it('should handle missing title by defaulting to "Untitled"', async () => {
+        const mockBookmarkNoTitle = {
+          id: 1,
+          user_id: mockUserId,
+          raindrop_id: 12345,
+          title: null, // Will be converted to 'Untitled'
+          link: 'https://example.com',
+          tags: ['test'],
+          is_organized: false,
+          created_at: new Date()
+        };
+
+        const mockCanonicalBookmark = {
+          id: 'canonical-uuid-1',
+          user_id: mockUserId,
+          title: 'Untitled',
+          url: 'https://example.com',
+          source_type: 'raindrop',
+          source_id: '12345',
+          is_organized: false
+        };
+
+        mockedDb.query
+          // checkCanonicalBookmarkExists (not found)
+          .mockResolvedValueOnce([])
+          // transferRaindropBookmarkToCanonical (INSERT)
+          .mockResolvedValueOnce([mockCanonicalBookmark])
+          // transferRaindropBookmarkToCanonical (UPDATE staging)
+          .mockResolvedValueOnce([{ id: 1, is_organized: true }]);
+
+        const result = await bookmarkService.transferRaindropBookmarkToCanonical(mockBookmarkNoTitle);
+
+        expect(result.title).toBe('Untitled');
+        expect(mockedDb.query).toHaveBeenCalledTimes(3);
+      });
+
+      it('should convert raindrop_id to string for source_id validation', async () => {
+        const mockBookmarkNumericId = {
+          id: 1,
+          user_id: mockUserId,
+          raindrop_id: 12345, // Numeric ID
+          title: 'Test Bookmark',
+          link: 'https://example.com',
+          tags: ['test'],
+          is_organized: false,
+          created_at: new Date()
+        };
+
+        const mockCanonicalBookmark = {
+          id: 'canonical-uuid-1',
+          user_id: mockUserId,
+          title: 'Test Bookmark',
+          url: 'https://example.com',
+          source_type: 'raindrop',
+          source_id: '12345', // Should be converted to string
+          is_organized: false
+        };
+
+        mockedDb.query
+          // checkCanonicalBookmarkExists (not found)
+          .mockResolvedValueOnce([])
+          // transferRaindropBookmarkToCanonical (INSERT)
+          .mockResolvedValueOnce([mockCanonicalBookmark])
+          // transferRaindropBookmarkToCanonical (UPDATE staging)
+          .mockResolvedValueOnce([{ id: 1, is_organized: true }]);
+
+        const result = await bookmarkService.transferRaindropBookmarkToCanonical(mockBookmarkNumericId);
+
+        // Verify the checkCanonicalBookmarkExists was called with string source_id
+        expect(mockedDb.query).toHaveBeenNthCalledWith(1,
+          'SELECT * FROM bookmarks.bookmarks WHERE user_id = $1 AND source_type = $2 AND source_id = $3',
+          [mockUserId, 'raindrop', '12345']
+        );
+        expect(result).toEqual(mockCanonicalBookmark);
       });
     });
 

@@ -139,6 +139,10 @@ app.use('/api/raindrop/oauth/callback', raindropCallbackRoute);
 // Mount raindrop routes (auth applied selectively within the route file)
 app.use('/api/raindrop', raindropRoute);
 
+// ✅ Bookmark API routes (canonical bookmarks)
+const bookmarkRoute = require('./routes/bookmarkRoute');
+app.use('/api/bookmarks', bookmarkRoute);
+
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
 // Answer all other API requests.

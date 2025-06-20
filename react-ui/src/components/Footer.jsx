@@ -2,6 +2,8 @@ import React from 'react';
 import '../index.css';
 import "../general.css";
 
+// TODO: Add a link to the privacy policy
+
 function Footer() {
   const currentYear = new Date().getFullYear();
   const buildInfo = process.env.REACT_APP_BUILD_NUMBER || 'dev';
