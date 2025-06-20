@@ -1,5 +1,6 @@
 const axios = require('axios');
 const db = require('../db');
+const openGraph = require('./openGraph');
 
 // ===== BOOKMARK FETCHING FUNCTIONS =====
 
@@ -269,29 +270,68 @@ const checkCanonicalBookmarkExists = async (userId, sourceType, sourceId) => {
 };
 
 /**
- * Transfer a single Raindrop bookmark to canonical store
+ * Transfer a single Raindrop bookmark to canonical store with metadata enrichment
  * @param {Object} raindropBookmark - The Raindrop bookmark to transfer
  * @returns {Promise<Object>} The transferred canonical bookmark
  */
 const transferRaindropBookmarkToCanonical = async (raindropBookmark) => {
   try {
-    // Transform Raindrop format to canonical format for validation
+    console.log(`🔄 Starting transfer for bookmark: ${raindropBookmark.title || 'Untitled'} (ID: ${raindropBookmark.id})`);
+    
+    // Step 1: Fetch OpenGraph metadata from the URL
+    let enrichedMetadata = null;
+    if (raindropBookmark.link && openGraph.isValidUrl(raindropBookmark.link)) {
+      try {
+        console.log(`📡 Fetching metadata for: ${raindropBookmark.link}`);
+        enrichedMetadata = await openGraph.fetchMetadata(raindropBookmark.link);
+        
+        if (enrichedMetadata.error) {
+          console.warn(`⚠️  Metadata fetch failed for ${raindropBookmark.link}:`, enrichedMetadata.error.message);
+        } else {
+          console.log(`✅ Metadata fetched successfully for: ${raindropBookmark.link}`);
+        }
+      } catch (error) {
+        console.warn(`⚠️  Metadata enrichment failed for ${raindropBookmark.link}:`, error.message);
+        enrichedMetadata = null;
+      }
+    }
+
+    // Step 2: Merge Raindrop data with enriched metadata
+    // Priority: Raindrop data first, then OpenGraph data as fallback/enhancement
+    const mergedData = {
+      title: raindropBookmark.title || enrichedMetadata?.title || 'Untitled',
+      url: raindropBookmark.link,
+      resolved_url: enrichedMetadata?.resolved_url || raindropBookmark.link,
+      description: raindropBookmark.description || enrichedMetadata?.description,
+      image_url: enrichedMetadata?.image,
+      site_name: enrichedMetadata?.site_name,
+      tags: raindropBookmark.tags || []
+    };
+
+    // Step 3: Transform to canonical format for validation
     const canonicalFormat = {
       user_id: raindropBookmark.user_id,
-      title: (raindropBookmark.title === null || raindropBookmark.title === undefined) ? 'Untitled' : raindropBookmark.title,
-      url: raindropBookmark.link,
-      tags: raindropBookmark.tags || [],
+      title: mergedData.title,
+      url: mergedData.url,
+      resolved_url: mergedData.resolved_url,
+      description: mergedData.description,
+      image_url: mergedData.image_url,
+      site_name: mergedData.site_name,
+      tags: mergedData.tags,
       source_type: 'raindrop',
-      source_id: String(raindropBookmark.raindrop_id), // Convert to string as expected by validation
+      source_id: String(raindropBookmark.raindrop_id),
       source_metadata: { 
         raindrop_id: raindropBookmark.raindrop_id,
-        original_created_at: raindropBookmark.created_at
+        original_created_at: raindropBookmark.created_at,
+        metadata_enriched: !!enrichedMetadata,
+        metadata_source: enrichedMetadata ? 'opengraph' : null,
+        metadata_error: enrichedMetadata?.error || null
       },
       is_organized: false,
       created_at: raindropBookmark.created_at
     };
 
-    // Validate the bookmark data before processing
+    // Step 4: Validate the enriched bookmark data
     const validation = validateBookmarkData(canonicalFormat);
     if (!validation.isValid) {
       const validationError = new Error(`Bookmark validation failed: ${validation.errors.join(', ')}`);
@@ -300,37 +340,50 @@ const transferRaindropBookmarkToCanonical = async (raindropBookmark) => {
       throw validationError;
     }
 
-    // Check if bookmark already exists in canonical store by source
+    // Step 5: Check if bookmark already exists in canonical store
     const existingBookmark = await checkCanonicalBookmarkExists(
       raindropBookmark.user_id, 
       'raindrop',
       String(raindropBookmark.raindrop_id)
     );
 
-    
-    // If bookmark exists in canonical store, update it
+    // Step 6: Update or create bookmark in canonical store
     if (existingBookmark) {
-      // Prepare update data in canonical format for validation
+      console.log(`🔄 Updating existing bookmark: ${existingBookmark.id}`);
+      
+      // Prepare update data with enriched metadata
       const updateData = {
         title: canonicalFormat.title,
         url: canonicalFormat.url,
+        resolved_url: canonicalFormat.resolved_url,
+        description: canonicalFormat.description,
+        image_url: canonicalFormat.image_url,
+        site_name: canonicalFormat.site_name,
         tags: canonicalFormat.tags,
         source_metadata: canonicalFormat.source_metadata
       };
 
-      // Update existing bookmark with validated data
+      // Update existing bookmark with enriched data
       const result = await db.query(
         `UPDATE bookmarks.bookmarks 
          SET title = COALESCE($1, title),
              url = COALESCE($2, url),
-             tags = COALESCE($3, tags),
-             source_metadata = COALESCE($4, source_metadata),
+             resolved_url = COALESCE($3, resolved_url),
+             description = COALESCE($4, description),
+             image_url = COALESCE($5, image_url),
+             site_name = COALESCE($6, site_name),
+             tags = COALESCE($7, tags),
+             source_metadata = COALESCE($8, source_metadata),
              updated_at = NOW()
-         WHERE id = $5
+         WHERE id = $9
          RETURNING *`,
         [
           updateData.title,
           updateData.url,
+          updateData.resolved_url,
+          updateData.description,
+          updateData.image_url,
+          updateData.site_name,
           updateData.tags,
           updateData.source_metadata,
           existingBookmark.id
@@ -343,37 +396,47 @@ const transferRaindropBookmarkToCanonical = async (raindropBookmark) => {
         [raindropBookmark.id]
       );
       
+      console.log(`✅ Updated bookmark: ${existingBookmark.id}`);
+      return result[0];
+    } else {
+      console.log(`🆕 Creating new bookmark with enriched metadata`);
+      
+      // Create new bookmark with enriched data
+      const result = await db.query(
+        `INSERT INTO bookmarks.bookmarks (
+          user_id, title, url, resolved_url, description, image_url, image_alt, site_name,
+          tags, source_type, source_id, source_metadata, 
+          is_organized, created_at, updated_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        RETURNING *`,
+        [
+          canonicalFormat.user_id,
+          canonicalFormat.title,
+          canonicalFormat.url,
+          canonicalFormat.resolved_url,
+          canonicalFormat.description,
+          canonicalFormat.image_url,
+          null, // image_alt - not currently supported by OpenGraph service
+          canonicalFormat.site_name,
+          canonicalFormat.tags,
+          canonicalFormat.source_type,
+          canonicalFormat.source_id,
+          canonicalFormat.source_metadata,
+          canonicalFormat.is_organized,
+          canonicalFormat.created_at,
+          new Date()
+        ]
+      );
+      
+      // Mark as organized in staging table
+      await db.query(
+        'UPDATE raindrop.bookmarks SET is_organized = true WHERE id = $1',
+        [raindropBookmark.id]
+      );
+      
+      console.log(`✅ Created new bookmark: ${result[0].id}`);
       return result[0];
     }
-    
-    // If bookmark does not exist in canonical store, create it with validated data
-    const result = await db.query(
-      `INSERT INTO bookmarks.bookmarks (
-        user_id, title, url, tags, source_type, source_id, source_metadata, 
-        is_organized, created_at, updated_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      RETURNING *`,
-      [
-        canonicalFormat.user_id,
-        canonicalFormat.title,
-        canonicalFormat.url,
-        canonicalFormat.tags,
-        canonicalFormat.source_type,
-        canonicalFormat.source_id,
-        canonicalFormat.source_metadata,
-        canonicalFormat.is_organized,
-        canonicalFormat.created_at,
-        new Date()
-      ]
-    );
-    
-    // Mark as organized in staging table
-    await db.query(
-      'UPDATE raindrop.bookmarks SET is_organized = true WHERE id = $1',
-      [raindropBookmark.id]
-    );
-    
-    return result[0];
   } catch (error) {
     // Enhanced error logging with validation details
     if (error.name === 'ValidationError') {
@@ -383,7 +446,7 @@ const transferRaindropBookmarkToCanonical = async (raindropBookmark) => {
         validationErrors: error.details
       });
     } else {
-      console.error('Error transferring Raindrop bookmark to canonical:', error);
+      console.error('❌ Error transferring Raindrop bookmark to canonical:', error);
     }
     throw error;
   }
@@ -455,13 +518,19 @@ const transferUnorganizedRaindropBookmarks = async (userId) => {
     }
     
     console.log(`📦 Found ${unorganizedBookmarks.length} unorganized bookmarks to transfer`);
+    console.log(`🔍 Metadata enrichment will be attempted for each bookmark`);
     
     const results = {
       success: 0,
       failed: 0,
       total: unorganizedBookmarks.length,
       errors: [],
-      transferredBookmarks: []
+      transferredBookmarks: [],
+      enrichmentStats: {
+        enriched: 0,
+        failed: 0,
+        skipped: 0
+      }
     };
     
     // Process each bookmark
@@ -469,17 +538,29 @@ const transferUnorganizedRaindropBookmarks = async (userId) => {
       try {
         console.log(`🔄 Transferring bookmark: ${bookmark.title || 'Untitled'} (ID: ${bookmark.id})`);
         
-        // Transfer to canonical store with validation
+        // Transfer to canonical store with metadata enrichment
         const transferredBookmark = await transferRaindropBookmarkToCanonical(bookmark);
         
-        // Note: transferRaindropBookmarkToCanonical already marks the bookmark as organized
-        // No need to call markRaindropBookmarkAsOrganized separately
+        // Track enrichment statistics from source_metadata
+        if (transferredBookmark.source_metadata) {
+          if (transferredBookmark.source_metadata.metadata_enriched) {
+            results.enrichmentStats.enriched++;
+            console.log(`✅ Bookmark enriched with metadata from: ${transferredBookmark.source_metadata.metadata_source}`);
+          } else if (transferredBookmark.source_metadata.metadata_error) {
+            results.enrichmentStats.failed++;
+            console.log(`⚠️  Metadata enrichment failed: ${transferredBookmark.source_metadata.metadata_error.message}`);
+          } else {
+            results.enrichmentStats.skipped++;
+            console.log(`ℹ️  Metadata enrichment skipped (invalid URL or other reason)`);
+          }
+        }
         
         results.success++;
         results.transferredBookmarks.push({
           stagingId: bookmark.id,
           canonicalId: transferredBookmark.id,
-          title: transferredBookmark.title
+          title: transferredBookmark.title,
+          enriched: transferredBookmark.source_metadata?.metadata_enriched || false
         });
         
         console.log(`✅ Successfully transferred bookmark: ${transferredBookmark.title}`);
@@ -511,7 +592,12 @@ const transferUnorganizedRaindropBookmarks = async (userId) => {
       }
     }
     
+    // Final summary with enrichment statistics
     console.log(`🎉 Transfer completed: ${results.success} successful, ${results.failed} failed`);
+    console.log(`📊 Metadata enrichment summary:`);
+    console.log(`   - Enriched: ${results.enrichmentStats.enriched}`);
+    console.log(`   - Failed enrichment: ${results.enrichmentStats.failed}`);
+    console.log(`   - Skipped enrichment: ${results.enrichmentStats.skipped}`);
     
     return results;
     

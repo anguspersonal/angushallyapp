@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Badge, Loader, Text, Group, Stack, Title, Container, Box } from '@mantine/core';
+import { Button, Loader, Text, Group, Stack, Title, Container, Box } from '@mantine/core';
 import { IconLink, IconRefresh } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api, API_BASE } from '../../../utils/apiClient';
 import { useLocation } from 'react-router-dom';
 import Header from '../../../components/Header';
+import BookmarkCard from './components/BookmarkCard';
 import "../../../general.css";
 
-const Raindrop = () => {
+const Raindrops = () => {
   const { user } = useAuth();
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -94,8 +95,6 @@ const Raindrop = () => {
     initialize();
   }, [user]);
 
-
-
   const checkConnectionStatus = async () => {
     try {
       const response = await api.get('/raindrop/verify');
@@ -138,29 +137,8 @@ const Raindrop = () => {
 
   const handleConnect = async () => {
     try {
-      // console.log('=== Raindrop OAuth Debug ===');
-      // console.log('1. Starting OAuth flow...');
-      
       const response = await api.get('/raindrop/oauth/start');
-      // console.log('2. Response from server:', response);
-      // console.log('3. Auth URL received:', response.authUrl);
-      // console.log('4. URL type check:', {
-      //   startsWithHttp: response.authUrl?.startsWith('http'),
-      //   startsWithHttps: response.authUrl?.startsWith('https'),
-      //   includesRaindrop: response.authUrl?.includes('raindrop.io'),
-      //   includesApiRaindrop: response.authUrl?.includes('api.raindrop.io')
-      // });
-      
-      // Ensure we're using the full URL by checking if it starts with http
-      const authUrl = response.authUrl.startsWith('http') 
-        ? response.authUrl 
-        : `${window.location.origin}${response.authUrl}`;
-      
-      // console.log('5. Final auth URL:', authUrl);
-      // console.log('6. Window location before redirect:', window.location.href);
-      // console.log('=== End Debug ===');
-      
-      window.location.href = authUrl;
+      window.location.href = response.authUrl;
     } catch (error) {
       notifications.show({
         title: 'Error',
@@ -282,74 +260,11 @@ const Raindrop = () => {
             {bookmarks && bookmarks.length > 0 ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
                 {bookmarks.map((bookmark) => (
-                  <Card key={bookmark.id || bookmark.raindrop_id} shadow="sm" p="lg" radius="md" withBorder>
-                    <Stack spacing="xs">
-                      <Text
-                        component="a"
-                        href={bookmark.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        size="lg"
-                        weight={500}
-                        color="blue"
-                        style={{ textDecoration: 'none' }}
-                      >
-                        {bookmark.title}
-                      </Text>
-                      {bookmark.description && (
-                        <Text size="sm" color="dimmed" lineClamp={2}>
-                          {bookmark.description}
-                        </Text>
-                      )}
-                      <Group spacing="xs" mt="xs">
-                        {bookmark.tags && bookmark.tags.length > 0 ? (
-                          bookmark.tags.map((tag, index) => (
-                            <Badge 
-                              key={`${bookmark.id}-tag-${index}`} 
-                              color="blue" 
-                              variant="light"
-                              style={{ cursor: 'pointer' }}
-                              onClick={() => {
-                                // TODO: Implement tag filtering
-                                notifications.show({
-                                  title: 'Tag Filter',
-                                  message: `Filtering by tag: ${tag}`,
-                                  color: 'blue'
-                                });
-                              }}
-                            >
-                              {tag}
-                            </Badge>
-                          ))
-                        ) : (
-                          <Text size="xs" color="dimmed" italic>
-                            No tags
-                          </Text>
-                        )}
-                      </Group>
-                      <Group position="apart" mt="xs">
-                        <Text size="xs" color="dimmed">
-                          {new Date(bookmark.created_at).toLocaleDateString()}
-                        </Text>
-                        <Group spacing="xs">
-                          <Button
-                            variant="subtle"
-                            size="xs"
-                            onClick={() => {
-                              // TODO: Implement tag editing
-                              notifications.show({
-                                title: 'Edit Tags',
-                                message: 'Tag editing coming soon',
-                                color: 'blue'
-                              });
-                            }}
-                          >
-                            Edit Tags
-                          </Button>
-                        </Group>
-                      </Group>
-                    </Stack>
-                  </Card>
+                  <BookmarkCard 
+                    key={bookmark.id || bookmark.raindrop_id} 
+                    bookmark={bookmark}
+                    onRefresh={fetchBookmarks}
+                  />
                 ))}
               </div>
             ) : (
@@ -366,4 +281,4 @@ const Raindrop = () => {
   );
 };
 
-export default Raindrop;
+export default Raindrops; 

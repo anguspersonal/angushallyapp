@@ -22,7 +22,7 @@ import TextAnalysisAI from "./pages/projects/ai/TextAnalysisAI.jsx";
 import Instapaper from "./pages/projects/ai/Instapaper.jsx";
 import Collab from "./pages/Collab.jsx";
 import Login from "./pages/Login.jsx";
-import Raindrop from "./pages/projects/bookmarks/raindrop.jsx";
+import Raindrops from "./pages/projects/bookmarks/Raindrops.jsx";
 import Bookmarks from "./pages/projects/bookmarks/Bookmarks.jsx";
 import SoftwareCV from "./pages/SoftwareCV.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
@@ -55,8 +55,8 @@ function App() {
               <Route path="/projects/ai" element={<AIProjects />} />
               <Route path="/projects/ai/text-analysis" element={<TextAnalysisAI />} />
               <Route path="/projects/ai/instapaper" element={<Instapaper />} />
-              <Route path="/projects/bookmarks/raindrop" element={<Raindrop />} />
-              <Route path="/projects/bookmarks/bookmarks" element={<Bookmarks />} />
+              <Route path="/projects/bookmarks" element={<Bookmarks />} />
+              <Route path="/projects/bookmarks/raindrop" element={<Raindrops />} />
               <Route path="/login" element={<Login />} />
               <Route path="/cv" element={<SoftwareCV />} />
             </Routes>

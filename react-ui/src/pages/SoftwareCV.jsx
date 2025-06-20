@@ -99,7 +99,7 @@ const SoftwareCV = () => {
             color: 'orange',
             image: '/20250530_neural_network.jpg',
             alt: 'AI-generated visualization of interconnected neural networks',
-            link: '/projects/bookmarks/raindrop',
+            link: '/projects/bookmarks',
             listIcon: <IconBookmark size={rem(14)} />,
             features: [
                 'OAuth2 authentication flow',

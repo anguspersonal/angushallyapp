@@ -57,9 +57,9 @@ export const projectList = [
     },
     {
         "id": 7,
-        "name": "Raindrop Bookmarks",
-        "desc": "Import and manage your Raindrop.io bookmarks with automatic syncing and tag organization.",
-        "route": "/projects/bookmarks/raindrop",
+        "name": "Bookmarks",
+        "desc": "Import and manage your bookmarks from multiple sources including Raindrop.io with automatic syncing and tag organization.",
+        "route": "/projects/bookmarks",
         "tags": ["bookmarks", "productivity", "api"],
         "created_at": "2025-05-22"
     }
