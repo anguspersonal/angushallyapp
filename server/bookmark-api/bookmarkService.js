@@ -878,6 +878,78 @@ const getUserCanonicalBookmarks = async (userId) => {
   }
 };
 
+/**
+ * Get user's canonical bookmarks with automatic transfer from raindrop if canonical store is empty
+ * @param {string} userId - The user's ID
+ * @returns {Promise<Object>} Object containing bookmarks and metadata about auto-transfer
+ */
+const getUserCanonicalBookmarksWithAutoTransfer = async (userId) => {
+  try {
+    // Step 1: Check canonical store first
+    const canonicalBookmarks = await getUserCanonicalBookmarks(userId);
+    
+    // Step 2: If canonical store has bookmarks, return them directly
+    if (canonicalBookmarks.length > 0) {
+      console.log(`📚 Found ${canonicalBookmarks.length} canonical bookmarks for user ${userId}`);
+      return {
+        bookmarks: canonicalBookmarks,
+        _metadata: {
+          autoTransfer: false,
+          source: 'canonical',
+          totalBookmarks: canonicalBookmarks.length
+        }
+      };
+    }
+    
+    // Step 3: Canonical store is empty, check for unorganized Raindrop bookmarks
+    console.log(`📭 Canonical store empty for user ${userId}, checking for unorganized Raindrop bookmarks`);
+    const unorganizedBookmarks = await getUnorganizedRaindropBookmarks(userId);
+    
+    if (unorganizedBookmarks.length === 0) {
+      console.log(`ℹ️  No unorganized Raindrop bookmarks found for user ${userId}`);
+      return {
+        bookmarks: [],
+        _metadata: {
+          autoTransfer: false,
+          source: 'none',
+          totalBookmarks: 0,
+          message: 'No bookmarks found in either canonical or raindrop stores'
+        }
+      };
+    }
+    
+    // Step 4: Found unorganized bookmarks, trigger automatic transfer
+    console.log(`🔄 Found ${unorganizedBookmarks.length} unorganized Raindrop bookmarks, starting automatic transfer`);
+    
+    const transferResult = await transferUnorganizedRaindropBookmarks(userId);
+    
+    // Step 5: Get the transferred bookmarks from canonical store
+    const transferredBookmarks = await getUserCanonicalBookmarks(userId);
+    
+    console.log(`✅ Automatic transfer completed: ${transferResult.success} successful, ${transferResult.failed} failed`);
+    
+    return {
+      bookmarks: transferredBookmarks,
+      _metadata: {
+        autoTransfer: true,
+        source: 'raindrop',
+        totalBookmarks: transferredBookmarks.length,
+        transferStats: {
+          success: transferResult.success,
+          failed: transferResult.failed,
+          total: transferResult.total,
+          enrichmentStats: transferResult.enrichmentStats
+        },
+        message: `Automatic transfer completed: ${transferResult.success} bookmarks transferred with metadata enrichment`
+      }
+    };
+    
+  } catch (error) {
+    console.error('Error in getUserCanonicalBookmarksWithAutoTransfer:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   // Raindrop bookmark fetching functions
   getRaindropCollections,
@@ -897,5 +969,6 @@ module.exports = {
   validateBookmarkData,
   createCanonicalBookmark,
   updateCanonicalBookmark,
-  getUserCanonicalBookmarks
+  getUserCanonicalBookmarks,
+  getUserCanonicalBookmarksWithAutoTransfer
 }; 

@@ -38,6 +38,17 @@ const Bookmarks = () => {
       
       if (response && response.bookmarks && Array.isArray(response.bookmarks)) {
         setBookmarks(response.bookmarks);
+        
+        // Check if automatic transfer occurred and notify user
+        if (response._metadata && response._metadata.autoTransfer) {
+          const stats = response._metadata.transferStats;
+          notifications.show({
+            title: '📚 Bookmarks Automatically Imported!',
+            message: `Successfully imported ${stats.success} bookmarks from Raindrop with enhanced metadata (${stats.enrichmentStats.enriched} enriched with images and descriptions)`,
+            color: 'green',
+            autoClose: 8000
+          });
+        }
       } else {
         setBookmarks([]);
       }
