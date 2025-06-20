@@ -629,14 +629,21 @@ describe('BookmarkService', () => {
             {
               stagingId: 1,
               canonicalId: 'canonical-uuid-1',
-              title: 'Test Bookmark 1'
+              title: 'Test Bookmark 1',
+              enriched: false
             },
             {
               stagingId: 2,
               canonicalId: 'canonical-uuid-2',
-              title: 'Test Bookmark 2'
+              title: 'Test Bookmark 2',
+              enriched: false
             }
-          ]
+          ],
+          enrichmentStats: {
+            enriched: 0,
+            failed: 0,
+            skipped: 0
+          }
         });
       });
 
@@ -745,14 +752,15 @@ describe('BookmarkService', () => {
         expect(result.errors[0]).toEqual({
           bookmarkId: 1,
           title: '',
-          error: 'Validation failed: title must be a non-empty string, url must be a valid URL format',
+          error: 'Validation failed: url must be a valid URL format, resolved_url must be a valid URL format if provided',
           errorType: 'validation'
         });
         expect(result.transferredBookmarks).toHaveLength(1);
         expect(result.transferredBookmarks[0]).toEqual({
           stagingId: 2,
           canonicalId: 'canonical-uuid-2',
-          title: 'Valid Bookmark'
+          title: 'Valid Bookmark',
+          enriched: false
         });
       });
     });
@@ -807,7 +815,7 @@ describe('BookmarkService', () => {
         };
 
         await expect(bookmarkService.transferRaindropBookmarkToCanonical(mockInvalidRaindropBookmark))
-          .rejects.toThrow('Bookmark validation failed: title must be a non-empty string, url must be a valid URL format');
+          .rejects.toThrow('Bookmark validation failed: url must be a valid URL format, resolved_url must be a valid URL format if provided');
 
         // Should not make any database calls due to validation failure
         expect(mockedDb.query).not.toHaveBeenCalled();

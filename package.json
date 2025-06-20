@@ -18,7 +18,11 @@
     "kill-ports": "npx kill-port 5000 3000",
     "test": "cd server && npx jest tests",
     "test--verbose": "cd server && npx jest tests --verbose",
-    "predevelop": "npm run sync-env:dev"
+    "predevelop": "npm run sync-env:dev",
+    "migrate": "cd server && npx knex migrate:latest",
+    "migrate:rollback": "cd server && npx knex migrate:rollback",
+    "migrate:status": "cd server && npx knex migrate:status",
+    "migrate:make": "cd server && npx knex migrate:make"
   },
   "type": "commonjs",
   "cacheDirectories": [

@@ -376,6 +376,28 @@ Create two separate Raindrop.io applications for environment separation:
     * ✅ Graceful error handling for broken image URLs
     * ✅ Consistent card layout across all bookmark views
     * ✅ Unit tests for image handling scenarios
+* A3.2 – Automatic Bookmark Transfer System
+  * **Status**: ✅ **Complete** - 2025-01-27
+  * **Goal**: Automatically transfer bookmarks from staging to canonical store when users access bookmarks
+  * **Problem Solved**: Production issue where users saw "No bookmarks found" despite having bookmarks in raindrop staging table
+  * **Implemented**:
+    * ✅ `getUserCanonicalBookmarksWithAutoTransfer()` - Smart bookmark retrieval with automatic transfer
+    * ✅ Enhanced `GET /api/bookmarks` endpoint with auto-transfer logic
+    * ✅ Bulk migration via `npm run migrate` for existing users
+    * ✅ Frontend notification system for successful auto-transfers
+    * ✅ Comprehensive logging and error handling
+    * ✅ Transfer statistics and enrichment tracking
+    * ✅ Test coverage for all auto-transfer scenarios
+  * **User Experience**:
+    * ✅ Seamless first-time bookmark viewing (no manual transfer required)
+    * ✅ Rich metadata enrichment during transfer (OpenGraph integration)
+    * ✅ User feedback via notification system
+    * ✅ Zero-downtime deployment (backward compatible)
+  * **Technical Features**:
+    * ✅ Hybrid approach: on-demand transfer + bulk migration
+    * ✅ Enhanced API response format with `_metadata` object
+    * ✅ Enrichment statistics tracking (enriched, failed, skipped)
+    * ✅ Production-ready logging and monitoring
 * OpenGraph metadata fetching
   * 10-second timeout configuration with fallback handling.
   * Support for OpenGraph, Twitter cards, and regular HTML metadata.
