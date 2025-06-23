@@ -247,6 +247,11 @@ Table bookmarks.bookmarks {
   source_id string [not null, note: 'Original ID from the source platform']
   source_metadata jsonb [nullable, note: 'Additional metadata from source platform']
   is_organized boolean [not null, default: false, note: 'Indicates if bookmark has been processed/organized']
+  // F5 Universal Certainty Scoring Framework fields (added 2025-06-23)
+  intelligence_level integer [default: 1, note: 'Processing level: 1=metadata, 2=enhanced, 3=deep, 4=manual']
+  confidence_scores jsonb [nullable, note: 'Detailed confidence assessment with breakdown and recommendations']
+  platform_metadata jsonb [nullable, note: 'Platform-specific extracted metadata and context']
+  processing_status text [default: 'pending', note: 'Status: pending, processing, completed, failed, enhanced']
   created_at timestamptz [not null, default: `now()`]
   updated_at timestamptz [not null, default: `now()`]
 
@@ -255,6 +260,10 @@ Table bookmarks.bookmarks {
     (url) [name: 'ix_bookmarks_url']
     (tags) [name: 'ix_bookmarks_tags', type: 'gin']
     (source_type, source_id) [unique, name: 'uq_bookmarks_source']
+    // F5 Framework indexes
+    (intelligence_level) [name: 'idx_bookmarks_intelligence_level']
+    (processing_status) [name: 'idx_bookmarks_processing_status']
+    (user_id, intelligence_level) [name: 'idx_bookmarks_user_intelligence']
   }
 }
 

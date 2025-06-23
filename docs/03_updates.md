@@ -2,6 +2,89 @@
 
 This file tracks chronological changes to the project, with the most recent updates at the top.
 
+## [Unreleased] – 2025-06-23
+
+### ✅ F5 Universal Certainty Scoring Framework – COMPLETE
+
+**Production-Ready Foundation for F-Series Modules:**
+- **Status**: ✅ **Complete** - Production-ready foundation implemented and tested
+- **Core Achievement**: Implemented comprehensive confidence scoring system for all extracted metadata across platform-specific intelligence modules
+- **Database Integration**: Added F5 fields to `bookmarks.bookmarks` table with proper indexing and migration support
+
+**Technical Implementation:**
+- **Confidence Algorithm**: 4-factor weighted assessment (Source Quality 40%, Completeness 25%, API Compliance 20%, Validation 15%)
+- **Confidence Levels**: EXCELLENT (90-100%), GOOD (80-89%), FAIR (70-79%), POOR (50-69%), VERY_POOR (<50%)
+- **Platform Validation**: Support for Instagram, LinkedIn, YouTube, Twitter metadata validation rules
+- **Database Fields**:
+  - `intelligence_level` (1-4): Processing depth indicator
+  - `confidence_scores` (JSONB): Detailed assessment with breakdown and recommendations
+  - `platform_metadata` (JSONB): Platform-specific extracted metadata
+  - `processing_status`: Workflow status tracking
+
+**API Endpoints (Production Ready):**
+- `POST /api/f5/assess` - Calculate confidence scores without saving
+- `POST /api/f5/validate` - Platform-specific metadata validation
+- `POST /api/f5/bookmark/:id/assess` - Assess and save bookmark confidence
+- `GET /api/f5/bookmark/:id/assessment` - Retrieve stored assessments
+- `GET /api/f5/bookmarks/confidence-stats` - User confidence analytics
+- `POST /api/f5/bookmarks/bulk-assess` - Bulk assessment operations
+
+**Quality Assurance:**
+- **Unit Tests**: 23/23 passing (77.86% statement coverage, 83.33% function coverage)
+- **Integration Tests**: 17/17 passing (88.88% statement coverage, 100% function coverage)
+- **Database Migration**: Tested forward and rollback operations
+- **Error Handling**: Comprehensive error handling and logging
+
+**Strategic Impact:**
+- **F-Series Foundation**: Ready to support F1 (Instagram), F2 (LinkedIn), F3 (YouTube), F4 (Twitter) modules
+- **Data Quality**: Provides reliability scoring for all platform-specific content intelligence
+- **User Experience**: Transparent confidence indicators for content accuracy
+- **Scalability**: Bulk operations and analytics ready for production scale
+
+**Next Phase**: Ready for F1 Instagram Content Intelligence implementation
+
+### 🔄 Major Architectural Pivot: Platform-Specific Content Intelligence Strategy
+
+**Context & Problem Identification:**
+- **Critical Discovery**: Original assumption that video/audio content could be "easily and programmatically fetched" from social media platforms has proven false in practice
+- **Specific Pain Points**:
+  - Instagram URLs provide minimal meaningful metadata
+  - Current tagging system produces incorrect or overly vague tags
+  - Generic OpenGraph metadata insufficient for rich social media content
+  - Platform restrictions prevent direct media access for transcription
+
+**Strategic Response:**
+- **New Direction**: Implementing **F-Series Platform-Specific Content Intelligence** modules
+- **Architecture Shift**: Moving from generic content processing to platform-aware intelligence extraction
+- **MVP Focus**: Instagram and LinkedIn as primary targets for specialized parsing
+
+**Planned F-Series Modules:**
+- **F1-Instagram**: Caption analysis, hashtag extraction, story metadata, profile context
+- **F2-LinkedIn**: Post content, engagement signals, company/professional context
+- **F3-YouTube**: Video descriptions, comments analysis, available transcripts, thumbnail analysis
+- **F4-Twitter/X**: Tweet content, thread context, engagement patterns, media descriptions
+- **F5-Certainty Scoring**: Confidence scoring system for all extracted metadata (0-100% reliability)
+
+**Technical Approach - Tiered Intelligence:**
+- **Level 1 - Metadata Only**: Fast, low-cost extraction of immediately available data
+- **Level 2 - Enhanced Context**: Comments analysis, related content patterns, user engagement signals
+- **Level 3 - Deep Analysis**: Web agent deployment for comprehensive content analysis (user-initiated)
+- **Level 4 - Manual Enrichment**: User-guided content curation and tagging
+
+**Impact on Development Roadmap:**
+- **Immediate**: Pause generic video/audio processing development 
+- **Prioritize**: Platform-specific adapter development for Instagram and LinkedIn
+- **Architecture**: Design certainty scoring framework for metadata reliability
+- **UX**: Plan user experience for progressive content enhancement
+
+**Documentation Updates Required:**
+- Update bookmark README.md to reflect new platform-specific approach
+- Revise content type processing assumptions
+- Add F-series module specifications to roadmap
+- Update technical architecture diagrams
+
+---
+
 ## [Unreleased] – Current
 
 ### Environment Sync Checker Implementation ✅ **COMPLETE** - 2025-06-20

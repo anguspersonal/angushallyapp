@@ -143,6 +143,10 @@ app.use('/api/raindrop', raindropRoute);
 const bookmarkRoute = require('./routes/bookmarkRoute');
 app.use('/api/bookmarks', bookmarkRoute);
 
+// ✅ F5 Certainty Scoring Framework routes
+const f5CertaintyRoute = require('./routes/f5CertaintyRoute');
+app.use('/api/f5', f5CertaintyRoute);
+
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
 // Answer all other API requests.

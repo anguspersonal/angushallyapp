@@ -210,6 +210,26 @@ This document tracks known technical debt, architectural issues, and improvement
 
 ## Feature-Specific Issues
 
+### Bookmark System - Generic Content Processing Architecture Debt
+- **Description**: Major architectural assumption failure - generic video/audio content processing approach proven infeasible for social media platforms
+- **Priority**: Critical
+- **Resolution**: 
+  - ✅ **RESOLVED** - Architectural pivot to F-Series Platform-Specific Content Intelligence (2025-06-23)
+  - ✅ Deprecated C1 Content Ingestion Pipeline (generic approach)
+  - ✅ Designed F1-F4 platform-specific intelligence modules
+  - ✅ Implemented tiered processing approach (L1-L4) with certainty scoring
+  - ✅ Updated documentation across README, roadmap, and updates
+  - TODO: Implement F5 certainty scoring framework
+  - TODO: Build F1 Instagram intelligence module (MVP)
+  - TODO: Design user experience for progressive content enhancement
+- **Created**: 2025-06-23
+- **Status**: 🟡 In Progress - Pivot Complete, Implementation Pending
+- **Context**: 
+  - Original assumption that platforms like Instagram would provide meaningful metadata via OpenGraph/generic APIs has proven false
+  - Current tagging produces inaccurate results due to insufficient platform-specific intelligence
+  - Platform restrictions prevent direct media access for transcription
+  - New approach focuses on platform-aware metadata extraction with confidence scoring
+
 ### Bookmark System Consolidation
 - **Description**: Confusion between `raindrop.bookmarks` and `bookmarks.bookmarks` tables, with unclear data flow
 - **Priority**: High
