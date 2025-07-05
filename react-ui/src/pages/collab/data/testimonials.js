@@ -17,8 +17,9 @@ export const testimonials = [
         context: "Strategy, proposition shaping, early-stage product leadership",
         linkedTo: ["cs-future-factory-digital-pivot"],
         linkedinUrl: "https://www.linkedin.com/in/derek-peacock-7527297/",
-        image: "https://media.licdn.com/dms/image/v2/C4E03AQH3d_w8pewBAg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1667995424855?e=1750896000&v=beta&t=nZsLG6tNoLOjCBRfVifBUmumywyUmObmMtvoCEHUcWg"
+        image: "https://media.licdn.com/dms/image/v2/C4E03AQH3d_w8pewBAg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1667995424855?e=1756944000&v=beta&t=K0Hk6n2fFsBhOaoQoj2E-c4NuIxPr8wSHJWWKMHsDpM"
     },
+
     {
         id: 2,
         type: 'testimonial',
@@ -43,8 +44,8 @@ export const testimonials = [
         roleAtTime: "Senior Manager",
         roleCurrent: null,
         company: "", // No company explicitly mentioned
-        image: "https://media.licdn.com/dms/image/v2/C4D03AQFO8W8KhTqAGg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1600961150925?e=1750896000&v=beta&t=p9qt9YuK7yPNOR20LYRm_uqESGf4NUdQ49r0408h3y0",
-        linkedinUrl: "https://www.linkedin.com/in/emma-feggetter/"
+        image: "https://media.licdn.com/dms/image/v2/C4D03AQFO8W8KhTqAGg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1600961150925?e=1756944000&v=beta&t=rFbJWmcxZNg9ACctKa70CGF9gitdRKnwsgOVILNjP-I",
+        linkedinUrl: "https://www.linkedin.com/in/emma-feggetter/",
     },
     {
         id: 4,
@@ -57,7 +58,7 @@ export const testimonials = [
         roleAtTime: "Analyst",
         roleCurrent: null,
         company: "", // No company explicitly mentioned
-        image: "https://media.licdn.com/dms/image/v2/C4D03AQGjdCl7e3PXMg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1579363067855?e=1750896000&v=beta&t=bqH1DSHctK4EkH48ZahfEliNwHqJTmeUG8oTbe1xQhY",
+        image: "https://media.licdn.com/dms/image/v2/C4D03AQGjdCl7e3PXMg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1579363067855?e=1756944000&v=beta&t=ZpggXxoxF5sKKKdzqhSl9vQjhbfE_To6TNKD4fpHhPc",
         linkedinUrl: "https://www.linkedin.com/in/grace-griffiths-190808124/"
     },
     {
@@ -71,7 +72,7 @@ export const testimonials = [
         roleAtTime: "Analyst",
         roleCurrent: null,
         company: "", // No company explicitly mentioned
-        image: "https://media.licdn.com/dms/image/v2/D4E03AQFSUyT_isH5uQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1729500160939?e=1750896000&v=beta&t=gkvtFFs9g8J9z_GM6_aBx35eO8F8mwDB6QMToMusu2Y",
+        image: "https://media.licdn.com/dms/image/v2/D4E03AQFSUyT_isH5uQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1729500160939?e=1756944000&v=beta&t=TE6oeP0lRqaBzjMNpYu8nGnKLEtXq_FKcpVeiRalA24",
         linkedinUrl: "https://www.linkedin.com/in/alastair-ward-a7440a145/"
     },
     {
@@ -85,7 +86,7 @@ export const testimonials = [
         roleAtTime: "Analyst",
         roleCurrent: null,
         company: "", // No company explicitly mentioned
-        image: "https://media.licdn.com/dms/image/v2/D4D03AQGetnl9gNiMAw/profile-displayphoto-shrink_800_800/B4DZUjO5muHkAk-/0/1740052863832?e=1750896000&v=beta&t=Oc5i4qmnPxUi7vLeRUyKHDJeP-51cApdNAbCtkWdq4g",
+        image: "https://media.licdn.com/dms/image/v2/D4D03AQGetnl9gNiMAw/profile-displayphoto-shrink_800_800/B4DZUjO5muHkAk-/0/1740052863832?e=1756944000&v=beta&t=yASVU8paf1Mpnp8NlZ2GEWsp6uu0iNJiISc6UqwDKHc",
         linkedinUrl: "https://www.linkedin.com/in/harry-toumazis/"
     },
     {
@@ -103,6 +104,6 @@ export const testimonials = [
         roleCurrent: null,
         company: "Accenture Strategy & Consulting",
         linkedinURL: "https://www.linkedin.com/in/malik-ajani-jr-b314973/",
-        image: "https://media.licdn.com/dms/image/v2/D5603AQHq5lJw4AyBog/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1705051118840?e=1750896000&v=beta&t=MQRIxUxVMDm0dZbO3cE8WF1Se_id1_Aj4hXtmBft5wo"
+        image: "https://media.licdn.com/dms/image/v2/D5603AQHq5lJw4AyBog/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1705051118840?e=1756944000&v=beta&t=Ssu0ZmLe0U0ZtcLiU1Y2CkzWPCiMia9PXWhf3T-YD6Y"
     }
 ];
