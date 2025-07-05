@@ -1,150 +1,181 @@
 import React, { useState } from 'react';
-import { Card, Badge, Text, Group, Stack, Image, Button } from '@mantine/core';
+import { Card, Badge, Text, Group, Stack, Image, Box, Transition, Avatar } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { assets } from '../../../../theme';
+import { IconExternalLink, IconClock, IconBookmark, IconTag } from '@tabler/icons-react';
 
-const BookmarkCard = ({ bookmark, onRefresh }) => {
+const BookmarkCard = ({ bookmark }) => {
   const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
-  const getSourceIcon = (sourceType) => {
+  const getSourceBadgeProps = (sourceType) => {
     switch (sourceType) {
       case 'raindrop':
-        return '🌧️';
+        return { color: 'blue', label: 'Raindrop' };
       case 'manual':
-        return '✏️';
+        return { color: 'green', label: 'Manual' };
       case 'instapaper':
-        return '📱';
+        return { color: 'dark', label: 'Instapaper' };
       case 'readwise':
-        return '📚';
+        return { color: 'violet', label: 'Readwise' };
       default:
-        return '🔗';
+        return { color: 'gray', label: sourceType };
     }
   };
 
-  const getSourceLabel = (sourceType) => {
-    switch (sourceType) {
-      case 'raindrop':
-        return 'Raindrop';
-      case 'manual':
-        return 'Manual';
-      case 'instapaper':
-        return 'Instapaper';
-      case 'readwise':
-        return 'Readwise';
-      default:
-        return sourceType;
-    }
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays <= 1) return 'yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+    return `${Math.floor(diffDays / 365)} years ago`;
   };
 
   const handleImageError = () => {
     setImageError(true);
   };
 
-  const shouldShowImage = bookmark.image_url && !imageError;
+  const hasImage = bookmark.image_url && !imageError;
+  const sourceProps = getSourceBadgeProps(bookmark.source_type);
+  const domain = bookmark.site_name || (bookmark.url ? new URL(bookmark.url).hostname.replace('www.', '') : '');
+  const readTime = bookmark.metadata?.readingTime;
 
   return (
-    <Card shadow="sm" p="lg" radius="md" withBorder>
-      <Stack spacing="xs">
-        {/* Preview Image Section */}
-        {shouldShowImage && (
-          <Card.Section>
-            <Image
-              src={bookmark.image_url}
-              height={160}
-              alt={bookmark.image_alt || `Preview image for ${bookmark.title}`}
-              fit="cover"
-              onError={handleImageError}
-              fallbackSrc={assets.placeholderImage.landscape}
-            />
-          </Card.Section>
-        )}
+    <Card 
+      shadow="sm" 
+      p={0} 
+      radius="lg" 
+      withBorder
+      style={{
+        cursor: 'pointer',
+        transition: 'all 0.2s ease-in-out',
+        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+        boxShadow: isHovered ? 'var(--mantine-shadow-md)' : 'var(--mantine-shadow-sm)',
+        flex: '1 1 100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        minWidth: '120px',
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => {
+        if (bookmark.url) {
+          window.open(bookmark.url, '_blank', 'noopener,noreferrer');
+        }
+      }}
+    >
+      {/* Image or Header Section */}
+      {hasImage ? (
+        <Box pos="relative" h={180} style={{ overflow: 'hidden' }}>
+          <Image
+            src={bookmark.image_url}
+            height={180}
+            alt={bookmark.title}
+            fit="cover"
+            onError={handleImageError}
+            style={{
+              transition: 'transform 0.3s ease',
+              transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+            }}
+          />
+          <Transition mounted={isHovered} transition="fade" duration={200}>
+            {(styles) => (
+              <Box pos="absolute" top={12} right={12} style={styles}>
+                <IconExternalLink size={16} color="white" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }} />
+              </Box>
+            )}
+          </Transition>
+        </Box>
+      ) : (
+        <Box 
+          p="sm"
+          style={{
+            background: 'var(--mantine-color-gray-0)',
+            borderBottom: '1px solid var(--mantine-color-gray-2)'
+          }}
+        >
+          <Group position="apart">
+            <Group spacing="xs">
+              <Avatar src={bookmark.favicon_url || `https://www.google.com/s2/favicons?domain=${domain}&sz=32`} size="sm" radius="sm">
+                <IconBookmark size={16} /> 
+              </Avatar>
+              <Text size="xs" weight={500}>{domain}</Text>
+            </Group>
+            {readTime && (
+              <Text size="xs" color="dimmed">{readTime} min read</Text>
+            )}
+          </Group>
+        </Box>
+      )}
 
-        {/* Title and Source Badge */}
-        <Group position="apart" align="flex-start">
+      {/* Content Section */}
+      <Stack spacing="sm" p="md" style={{ flex: 1, justifyContent: 'space-between' }}>
+        <Stack spacing="sm">
           <Text
-            component="a"
-            href={bookmark.url || bookmark.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            size="lg"
-            weight={500}
-            color="blue"
-            style={{ textDecoration: 'none', flex: 1 }}
+            size="sm"
+            weight={600}
+            lineClamp={2}
+            style={{ 
+              transition: 'color 0.2s ease',
+              color: isHovered ? 'var(--mantine-color-blue-6)' : 'var(--mantine-color-black)',
+            }}
           >
             {bookmark.title}
           </Text>
-          <Badge 
-            color="gray" 
-            variant="light"
-            leftSection={getSourceIcon(bookmark.source_type)}
-          >
-            {getSourceLabel(bookmark.source_type)}
-          </Badge>
-        </Group>
-        
-        {/* Description */}
-        {bookmark.description && (
-          <Text size="sm" color="dimmed" lineClamp={2}>
-            {bookmark.description}
-          </Text>
-        )}
-        
-        {/* Site Name */}
-        {bookmark.site_name && (
-          <Text size="xs" color="dimmed">
-            {bookmark.site_name}
-          </Text>
-        )}
-        
-        {/* Tags */}
-        <Group spacing="xs" mt="xs">
-          {bookmark.tags && bookmark.tags.length > 0 ? (
-            bookmark.tags.map((tag, index) => (
-              <Badge 
-                key={`${bookmark.id}-tag-${index}`} 
-                color="blue" 
-                variant="light"
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  // TODO: Implement tag filtering
-                  notifications.show({
-                    title: 'Tag Filter',
-                    message: `Filtering by tag: ${tag}`,
-                    color: 'blue'
-                  });
-                }}
-              >
-                {tag}
-              </Badge>
-            ))
-          ) : (
-            <Text size="xs" color="dimmed" italic>
-              No tags
+          
+          {bookmark.description && (
+            <Text 
+              size="xs" 
+              color="dimmed" 
+              lineClamp={3}
+              style={{ lineHeight: 1.5 }}
+            >
+              {bookmark.description}
             </Text>
           )}
-        </Group>
+          
+          {bookmark.tags && bookmark.tags.length > 0 && (
+            <Group spacing={6} mt="xs">
+              {bookmark.tags.slice(0, 2).map((tag, index) => (
+                <Badge 
+                  key={`${bookmark.id}-tag-${index}`} 
+                  size="sm"
+                  variant="light"
+                  color="gray"
+                >
+                  {tag}
+                </Badge>
+              ))}
+              {bookmark.tags.length > 2 && (
+                <Badge variant="outline" color="gray" size="sm">
+                  +{bookmark.tags.length - 2}
+                </Badge>
+              )}
+            </Group>
+          )}
+        </Stack>
         
-        {/* Footer with Date and Actions */}
-        <Group position="apart" mt="xs">
-          <Text size="xs" color="dimmed">
-            {new Date(bookmark.created_at).toLocaleDateString()}
-          </Text>
-          <Group spacing="xs">
-            <Button
-              variant="subtle"
-              size="xs"
-              onClick={() => {
-                // TODO: Implement tag editing
-                notifications.show({
-                  title: 'Edit Tags',
-                  message: 'Tag editing coming soon',
-                  color: 'blue'
-                });
-              }}
-            >
-              Edit Tags
-            </Button>
+        {/* Footer with Date and Source */}
+        <Group position="apart" mt="md">
+          <Group spacing={6}>
+            <IconClock size={14} color="var(--mantine-color-gray-6)" />
+            <Text size="xs" color="dimmed">
+              {formatDate(bookmark.created_at)}
+            </Text>
           </Group>
+          
+          <Badge 
+            size="sm"
+            variant="light"
+            color={sourceProps.color}
+          >
+            {sourceProps.label}
+          </Badge>
         </Group>
       </Stack>
     </Card>

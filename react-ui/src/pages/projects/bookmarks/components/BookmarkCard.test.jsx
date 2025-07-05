@@ -1,31 +1,9 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { MantineProvider } from '@mantine/core';
+import { renderWithMantine, screen } from '../../../../__tests__/utils/testUtils';
 import BookmarkCard from './BookmarkCard';
 
-// Mock the theme assets
-jest.mock('../../../../../theme', () => ({
-  assets: {
-    placeholderImage: {
-      landscape: '/test-placeholder.jpg'
-    }
-  }
-}));
-
-// Mock notifications
-jest.mock('@mantine/notifications', () => ({
-  notifications: {
-    show: jest.fn()
-  }
-}));
-
-const renderWithProvider = (component) => {
-  return render(
-    <MantineProvider>
-      {component}
-    </MantineProvider>
-  );
-};
+// Import centralized mocks
+import '../../../../__tests__/mocks/componentMocks';
 
 describe('BookmarkCard', () => {
   const mockBookmark = {
@@ -40,7 +18,7 @@ describe('BookmarkCard', () => {
   };
 
   it('renders bookmark with basic information', () => {
-    renderWithProvider(<BookmarkCard bookmark={mockBookmark} />);
+    renderWithMantine(<BookmarkCard bookmark={mockBookmark} />);
     
     expect(screen.getByText('Test Bookmark')).toBeInTheDocument();
     expect(screen.getByText('A test bookmark description')).toBeInTheDocument();
@@ -57,7 +35,7 @@ describe('BookmarkCard', () => {
       image_alt: 'Test image'
     };
 
-    renderWithProvider(<BookmarkCard bookmark={bookmarkWithImage} />);
+    renderWithMantine(<BookmarkCard bookmark={bookmarkWithImage} />);
     
     const image = screen.getByAltText('Test image');
     expect(image).toBeInTheDocument();
@@ -65,7 +43,7 @@ describe('BookmarkCard', () => {
   });
 
   it('does not render image section when image_url is not provided', () => {
-    renderWithProvider(<BookmarkCard bookmark={mockBookmark} />);
+    renderWithMantine(<BookmarkCard bookmark={mockBookmark} />);
     
     // Should not find any image elements
     const images = screen.queryAllByRole('img');
@@ -78,7 +56,7 @@ describe('BookmarkCard', () => {
       description: null
     };
 
-    renderWithProvider(<BookmarkCard bookmark={bookmarkWithoutDescription} />);
+    renderWithMantine(<BookmarkCard bookmark={bookmarkWithoutDescription} />);
     
     expect(screen.getByText('Test Bookmark')).toBeInTheDocument();
     expect(screen.queryByText('A test bookmark description')).not.toBeInTheDocument();
@@ -90,7 +68,7 @@ describe('BookmarkCard', () => {
       tags: []
     };
 
-    renderWithProvider(<BookmarkCard bookmark={bookmarkWithoutTags} />);
+    renderWithMantine(<BookmarkCard bookmark={bookmarkWithoutTags} />);
     
     expect(screen.getByText('No tags')).toBeInTheDocument();
     expect(screen.queryByText('test')).not.toBeInTheDocument();
@@ -103,7 +81,7 @@ describe('BookmarkCard', () => {
       site_name: null
     };
 
-    renderWithProvider(<BookmarkCard bookmark={bookmarkWithoutSiteName} />);
+    renderWithMantine(<BookmarkCard bookmark={bookmarkWithoutSiteName} />);
     
     expect(screen.getByText('Test Bookmark')).toBeInTheDocument();
     expect(screen.queryByText('Example Site')).not.toBeInTheDocument();
@@ -124,14 +102,14 @@ describe('BookmarkCard', () => {
         source_type: type
       };
 
-      const { unmount } = renderWithProvider(<BookmarkCard bookmark={bookmarkWithSource} />);
+      const { unmount } = renderWithMantine(<BookmarkCard bookmark={bookmarkWithSource} />);
       expect(screen.getByText(expected)).toBeInTheDocument();
       unmount();
     });
   });
 
   it('renders link with correct URL', () => {
-    renderWithProvider(<BookmarkCard bookmark={mockBookmark} />);
+    renderWithMantine(<BookmarkCard bookmark={mockBookmark} />);
     
     const link = screen.getByText('Test Bookmark').closest('a');
     expect(link).toHaveAttribute('href', 'https://example.com');
@@ -145,7 +123,7 @@ describe('BookmarkCard', () => {
       link: 'https://raindrop.example.com' // Raindrop uses 'link' instead of 'url'
     };
 
-    renderWithProvider(<BookmarkCard bookmark={raindropBookmark} />);
+    renderWithMantine(<BookmarkCard bookmark={raindropBookmark} />);
     
     const link = screen.getByText('Test Bookmark').closest('a');
     expect(link).toHaveAttribute('href', 'https://raindrop.example.com');
