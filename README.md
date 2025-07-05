@@ -2,6 +2,15 @@
 
 A personal website combining a blog, portfolio, and a playground for custom tools (habit tracker, Strava integration, FSA lookup, and more). Built as a full-stack monorepo using React, Node.js/Express, and PostgreSQL.
 
+## 🔥 PRIORITY ITEMS (Next Session - 2025-01-27)
+
+**HIGH PRIORITY:**
+1. **Create Centralized Frontend Test Centre**
+   - Frontend testing infrastructure is currently fragmented/missing
+   - Need centralized location: `/react-ui/tests/` similar to `/server/tests/`
+   - Install missing dependencies: `@testing-library/react`, etc.
+   - Standardize testing patterns across frontend and backend
+
 ---
 
 ## 🔍 Overview
