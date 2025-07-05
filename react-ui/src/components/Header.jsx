@@ -1,21 +1,26 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Box, Button } from '@mantine/core';
+import { Menu, Button, Container, Group, Burger } from '@mantine/core';
 import {
   IconUser,
   IconArticle,
   IconRocket,
-  IconMenu2,
   IconFolder,
   IconLogout,
 } from '@tabler/icons-react';
-import { useMediaQuery, useMounted } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import '../general.css';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
+const links = [
+  { link: '/projects', label: 'Projects', icon: IconFolder },
+  { link: '/blog', label: 'Blog', icon: IconArticle },
+  { link: '/about', label: 'About', icon: IconUser },
+  { link: '/collab', label: 'Collab', icon: IconRocket },
+];
+
 function Header() {
-  const isPhoneSize = useMediaQuery('(max-width: 768px)');
-  const mounted = useMounted();
+  const [opened, { toggle }] = useDisclosure(false);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   
@@ -49,123 +54,148 @@ function Header() {
     );
   };
 
-  return (
-    <Box
-      className="Header"
-      sx={(theme) => ({
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '1em',
-        minHeight: '80px',
-        position: 'relative',
-        width: '100%',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        [`@media (max-width: ${theme.breakpoints.sm})`]: {
-          padding: '0.5em',
-          minHeight: '60px'
-        }
-      })}
-    >
-      <Box
-        sx={{
+  const items = links.map((link) => {
+    const Icon = link.icon;
+    
+    return (
+      <Link
+        key={link.label}
+        to={link.link}
+        style={{
+          textDecoration: 'none',
+          color: 'var(--text-color)',
+          fontWeight: 500,
+          fontSize: '1.1em',
+          transition: 'color 0.3s ease',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          gap: '0.5rem',
+          padding: '0.5rem 1rem',
+          borderRadius: '8px',
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.color = 'var(--primary-color)';
+          e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.color = 'var(--text-color)';
+          e.target.style.backgroundColor = 'transparent';
         }}
       >
-        <Link to="/">
-          <img 
-            src="/AH-logo-no-background.ico" 
-            alt="AH Logo" 
-            style={{
-              height: 'clamp(40px, 5vw, 60px)',
-              width: 'auto',
-              transition: 'height 0.3s ease'
-            }}
-          />
-        </Link>
-      </Box>
+        <Icon size={18} />
+        {link.label}
+      </Link>
+    );
+  });
 
-      {!mounted ? null : isPhoneSize ? (
-        <Menu
-          width={220}
-          shadow="md"
-          position="bottom-start"
-          withArrow
-          transition="pop"
-          withinPortal
-          trigger="click"
-          style={{ marginLeft: 'auto' }}
+  return (
+    <header
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        backgroundColor: 'var(--background-color)',
+        borderBottom: '1px solid rgba(233, 236, 239, 0.5)',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        minHeight: '80px',
+      }}
+    >
+      <Container size="xl">
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '1rem 0',
+            height: '80px',
+          }}
         >
-          <Menu.Target>
-            <div style={{ cursor: 'pointer' }}>
-              <IconMenu2 size={24} />
-            </div>
-          </Menu.Target>
+          {/* Logo */}
+          <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+            <img 
+              src="/AH-logo-no-background.ico" 
+              alt="AH Logo" 
+              style={{
+                height: 'clamp(40px, 5vw, 60px)',
+                width: 'auto',
+                transition: 'height 0.3s ease'
+              }}
+            />
+          </Link>
 
-          <Menu.Dropdown tabIndex={0}>
-            <Menu.Item
-              leftSection={<IconFolder size={18} />}
-              component={Link}
-              to="/projects"
-            >
-              Projects
-            </Menu.Item>
-            
-            <Menu.Item
-              leftSection={<IconArticle size={18} />}
-              component={Link}
-              to="/blog"
-            >
-              Blog
-            </Menu.Item>
+          {/* Desktop Navigation */}
+          <Group gap={5} visibleFrom="sm">
+            {items}
+            {renderAuthButton()}
+          </Group>
 
-            <Menu.Item
-              leftSection={<IconUser size={18} />}
-              component={Link}
-              to="/about"
-            >
-              About
-            </Menu.Item>
+          {/* Mobile Burger Menu */}
+          <Menu
+            width={220}
+            shadow="md"
+            position="bottom-end"
+            withArrow
+            transition="pop"
+            withinPortal
+            opened={opened}
+            onClose={() => toggle()}
+          >
+            <Menu.Target>
+              <Burger 
+                opened={opened} 
+                onClick={toggle} 
+                size="sm" 
+                hiddenFrom="sm"
+                style={{ cursor: 'pointer' }}
+              />
+            </Menu.Target>
 
-            <Menu.Item
-              leftSection={<IconRocket size={18} />}
-              component={Link}
-              to="/collab"
-            >
-              Collab
-            </Menu.Item>
-
-            {user ? (
-              <Menu.Item
-                leftSection={<IconLogout size={18} />}
-                onClick={handleLogout}
-              >
-                Logout
-              </Menu.Item>
-            ) : (
-              <Menu.Item
-                leftSection={<IconUser size={18} />}
-                component={Link}
-                to="/login"
-              >
-                Login
-              </Menu.Item>
-            )}
-          </Menu.Dropdown>
-        </Menu>
-      ) : (
-        <nav style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Link to="/projects">Projects</Link>
-          <Link to="/blog">Blog</Link>
-          <Link to="/about">About</Link>
-          <Link to="/collab">Collab</Link>
-          {renderAuthButton()}
-        </nav>
-      )}
-    </Box>
+            <Menu.Dropdown>
+              {links.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <Menu.Item
+                    key={link.label}
+                    leftSection={<Icon size={18} />}
+                    component={Link}
+                    to={link.link}
+                    onClick={() => toggle()}
+                  >
+                    {link.label}
+                  </Menu.Item>
+                );
+              })}
+              
+              <Menu.Divider />
+              
+              {user ? (
+                <Menu.Item
+                  leftSection={<IconLogout size={18} />}
+                  onClick={() => {
+                    handleLogout();
+                    toggle();
+                  }}
+                >
+                  Logout
+                </Menu.Item>
+              ) : (
+                <Menu.Item
+                  leftSection={<IconUser size={18} />}
+                  component={Link}
+                  to="/login"
+                  onClick={() => toggle()}
+                >
+                  Login
+                </Menu.Item>
+              )}
+            </Menu.Dropdown>
+          </Menu>
+        </div>
+      </Container>
+    </header>
   );
 }
 

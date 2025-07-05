@@ -92,7 +92,8 @@ body,
   display: flex !important;
   flex-direction: column;
   flex-grow: 1; /*Ensures app fill entire screen*/
-  justify-content: space-between;
+  min-height: 100vh;
+  padding-top: 80px; /* Account for fixed header */
 }
 
 div {

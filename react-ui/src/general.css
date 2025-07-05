@@ -182,9 +182,12 @@ nav a:hover {
 /* ✅ Footer */
 .Footer {
     background-color: var(--secondary-color);
-    margin: 1em 0 0 0;
-    width: 100vw;
+    margin-top: auto;
+    width: 100%;
+    padding: 1em 0;
     color: #282c34;
+    text-align: center;
+    flex-shrink: 0;
 }
 
 /* ✅ Buttons */

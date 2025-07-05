@@ -2,6 +2,59 @@
 
 This file tracks chronological changes to the project, with the most recent updates at the top.
 
+## [Unreleased] – 2025-05-07
+
+### 🎨 Header Modernization & Fixed Positioning
+
+**UI/UX Enhancement:**
+- **Fixed Header**: Updated Header.jsx to remain fixed at top of screen during scrolling
+- **Mantine Restructure**: Restructured header using modern Mantine components (Container, Group, Burger)
+- **Navigation Enhancement**: Added icons to navigation items for improved visual hierarchy and user experience
+- **Mobile Optimization**: Enhanced burger menu with proper dropdown navigation and menu state management
+- **Responsive Design**: Improved mobile experience with proper touch targets and visual feedback
+- **CSS Integration**: Added body padding-top (80px) to prevent content overlap with fixed header
+
+**Technical Implementation:**
+- **Component Architecture**: Replaced Box-based layout with Container + Group structure following Mantine best practices
+- **State Management**: Implemented useDisclosure hook for proper mobile menu state handling
+- **Authentication**: Maintained existing login/logout functionality with improved visual presentation
+- **Styling**: Added hover effects, proper spacing, and backdrop blur for modern appearance
+- **Import Cleanup**: Removed unused imports and optimized component dependencies
+
+**Impact:**
+- **User Experience**: Consistent navigation access while scrolling through content
+- **Visual Consistency**: Aligned with modern web design patterns and Mantine design system
+- **Mobile Experience**: Improved mobile navigation with proper touch interactions
+- **Performance**: Optimized component structure and reduced unnecessary re-renders
+
+### 🔄 Documentation Architecture Improvements
+
+**Feature Work:**
+- **Orchestration Updates**: Enhanced `.cursor/rules/orchestration.mdc` to include guidance for global documentation changes
+  - Added section for handling documentation changes not relevant to current working directory
+  - Directs contributors to use `docs/03_updates.md` for global documentation updates
+  - Maintains chronological format with proper categorization
+- **Project Guidance Migration**: Moved module development workflow from AI rules to project documentation
+  - Moved `module-development-flow.mdc` → `docs/08_module_development_flow.md`
+  - Updated orchestration references to new location
+  - Separated AI agent guidance (remains in .cursor/rules/) from project workflow guidance (moved to docs/)
+- **Documentation Structure**: Updated `docs/01_guidance.md` to include new module development flow document
+  - Added to documentation structure overview
+  - Included in doc file purposes section
+  - Maintains clear separation between AI agent instructions and project development guidance
+
+**Strategic Impact:**
+- **Cleaner Separation**: AI agent instructions vs. project development guidance
+- **Better Management**: Project guidance easier to manage outside of rules system
+- **Improved Navigation**: Clear documentation hierarchy for contributors
+- **Enhanced Workflow**: Streamlined guidance for handling documentation changes
+
+**Technical Implementation:**
+- Removed `.cursor/rules/module-development-flow.mdc`
+- Created `docs/08_module_development_flow.md` with identical content
+- Updated orchestration routing logic to reference new location
+- Updated documentation index and structure files
+
 ## [Unreleased] – 2025-06-23
 
 ### ✅ F5 Universal Certainty Scoring Framework – COMPLETE
