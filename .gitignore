@@ -57,8 +57,6 @@ database_backups/
 build/
 dist/
 
-
-
 # Testing
 coverage/
 server/coverage/
@@ -66,7 +64,12 @@ react-ui/coverage/
 *.lcov
 .nyc_output/
 
-# Scripts
+# Test directories (keep only the main test files)
+react-ui/src/__tests__/
+react-ui/src/tests/
+react-ui/tests/
+
+# Scripts (if they contain sensitive data)
 scripts/
 
 # coverage
@@ -75,9 +78,19 @@ server/coverage/
 react-ui/coverage/
 *.lcov
 .nyc_output/
+# Windows metadata files
+*.Zone.Identifier
 
-# node_modules
-node_modules/
-server/node_modules/
-react-ui/node_modules/
+# Temporary and cache files
+.tmp/
+.cache/
+*.tmp
+*.temp
+
+# IDE and editor files
+*.swp
+*.swo
+*~
+
+
 
