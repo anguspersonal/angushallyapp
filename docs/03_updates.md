@@ -2,6 +2,35 @@
 
 This file tracks chronological changes to the project, with the most recent updates at the top.
 
+## [Unreleased] – 2025-07-05
+
+### 🎨 Footer Modernization & Global CSS Fixes
+
+**UI/UX Enhancement:**
+- **Mantine Integration**: Converted Footer component from basic HTML/CSS to modern Mantine components (Container, Group, ActionIcon, Text)
+- **Social Media Integration**: Added professional social media links (LinkedIn, GitHub, Instagram) with proper accessibility attributes
+- **CSS Modules**: Implemented Footer.module.css with responsive design and dark mode support
+- **Responsive Design**: Enhanced mobile experience with centered layout and proper spacing
+- **Professional Links**: Updated social media URLs to professional profiles with proper external link handling
+
+**Global CSS Horizontal Scroll Fix:**
+- **Root Cause**: Fixed horizontal scroll issues caused by `100vw` usage that includes scrollbar width
+- **Global Impact**: Fixed width issues in `general.css`, `index.css`, and `EatSafeUK.css`
+- **Width Standardization**: Converted all `100vw` instances to `100%` for proper viewport handling
+- **Cross-Platform**: Resolved horizontal scroll issues across all pages including Habit, Bookmarks, and other sub-applications
+
+**Technical Implementation:**
+- **Component Testing**: Comprehensive test suite with 8 test cases covering rendering, environment variables, and accessibility
+- **Mantine Provider**: Proper integration with Mantine theme system and responsive breakpoints
+- **CSS Architecture**: Clean separation of concerns with CSS modules and proper class naming
+- **Build Integration**: Verified build process with no errors or warnings
+
+**Impact:**
+- **User Experience**: Consistent footer appearance across all applications (excluding DataValueGame)
+- **Performance**: Optimized component structure and eliminated horizontal scroll issues
+- **Accessibility**: Proper ARIA attributes and keyboard navigation for social media links
+- **Maintainability**: Modern component architecture following project standards
+
 ## [Unreleased] – 2025-05-07
 
 ### 🎨 Header Modernization & Fixed Positioning

@@ -1,11 +1,13 @@
 /* This is the css file for the EatSafeUK page. */
 
 .eatsafeuk {
-  width: 100vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin: 20px;
+  padding: 20px;
 }
 
 .eatsafeuk .search-bar,
