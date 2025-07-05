@@ -76,6 +76,17 @@ app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 // Trust proxy for express rate limit to work correctly
 app.set("trust proxy", 1);
 
+// Force HTTPS detection for OAuth redirects in production
+if (config.nodeEnv === 'production') {
+  app.use((req, res, next) => {
+    // Force HTTPS protocol detection for OAuth libraries
+    if (req.get('X-Forwarded-Proto') === 'https' || req.get('X-Forwarded-Ssl') === 'on') {
+      req.connection.encrypted = true;
+    }
+    next();
+  });
+}
+
 // ✅ Apply rate limiting BEFORE defining API routes
 const globalLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
