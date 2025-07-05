@@ -131,14 +131,14 @@ function Habit() {
 
 
   return (
-    <div className="Page">
+    <div className="Page" style={{ minHeight: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column' }}>
       <Header />
       <HabitHeader />
       <h1 className="dashboard-header">Habit Tracker</h1>
 
       {loading ? <p>Loading habits...</p> : null}
 
-      <div className="grid-container">
+      <div className="grid-container" style={{ flex: 1 }}>
         {habits.map((habit) => (
           <HabitTile key={habit.id} habit={habit} onClick={() => handleOpenHabit(habit)} />
         ))}
