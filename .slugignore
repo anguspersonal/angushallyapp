@@ -40,6 +40,30 @@ nodemon.json
 jest.config.js
 tsconfig.json
 
+# Database dumps and files that shouldn't be deployed
+e, pg_user
+*.dump
+*.sql
+*.backup
+
+# Windows metadata files
+*.Zone.Identifier
+
+# Large image files that should be optimized/compressed
+react-ui/public/20230208_AH_Profile.jpg
+react-ui/public/20230208_AH_Profile_Walking-Down-Steps.jpg
+react-ui/public/20230208_AH_Profile_Tree-Lean.jpg
+react-ui/public/20230208_AH_Profile_Professional_Balcony.jpg
+react-ui/public/20230208_AH_Profile-Professional.jpg
+react-ui/public/20230208_AH_Profile-Coffee.jpg
+react-ui/public/20230208_AH_Profile_Professional-Balcony-2.jpg
+react-ui/public/appshunter-io-KpuAFDLvj78-unsplash.jpg
+react-ui/public/rick-oldland-BVaGEkvF2LU-unsplash.jpg
+react-ui/public/ani-adigyozalyan-ILw49SKUe8M-unsplash.jpg
+react-ui/public/20240411_AH_Profile_Florence.jpg
+react-ui/public/20250329_AH_Profile_Wales.jpg
+react-ui/public/20250414_AH_Profile_CP_Summit.jpg
+
 # Misc
 *.log
 npm-debug.log*
