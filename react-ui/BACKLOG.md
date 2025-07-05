@@ -34,7 +34,17 @@
 
 ## Technical Debt
 - [ ] Refactor authentication logic into a custom hook
-- [ ] Add proper TypeScript types for auth-related code
+- [ ] **TypeScript Migration (Major)**
+  - [ ] Install TypeScript and configure React app for TS
+  - [ ] Create interfaces for data structures (Bookmark, User, etc.)  
+  - [ ] Convert existing components from .jsx to .tsx gradually
+  - [ ] Add proper TypeScript types for auth-related code
+  - [ ] Update build processes and tooling
+  - [ ] Establish TypeScript coding standards
+- [ ] **Testing Strategy Standardization**
+  - [ ] Decide on co-located vs centralized frontend testing
+  - [ ] Consider moving frontend tests to centralized location (like /react-ui/tests/) for consistency with /server/tests
+  - [ ] Standardize testing patterns across frontend and backend
 - [ ] Add unit tests for authentication components
 - [ ] Add integration tests for auth flow
 - [ ] Token Refresh Mechanism (Future Enhancement)
