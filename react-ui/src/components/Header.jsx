@@ -11,9 +11,8 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import '../general.css';
 import { useAuth } from '../contexts/AuthContext';
-import { NavigationLink } from '../types';
 
-const links: NavigationLink[] = [
+const links = [
   { link: '/projects', label: 'Projects', icon: IconFolder },
   { link: '/blog', label: 'Blog', icon: IconArticle },
   { link: '/about', label: 'About', icon: IconUser },
@@ -25,7 +24,7 @@ function Header() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   
-  const handleLogout = (): void => {
+  const handleLogout = () => {
     logout();
     navigate('/login');
   };
@@ -74,13 +73,13 @@ function Header() {
           padding: '0.5rem 1rem',
           borderRadius: '8px',
         }}
-        onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
-          const target = e.target as HTMLAnchorElement;
+        onMouseEnter={(e) => {
+          const target = e.target;
           target.style.color = 'var(--primary-color)';
           target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
         }}
-        onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
-          const target = e.target as HTMLAnchorElement;
+        onMouseLeave={(e) => {
+          const target = e.target;
           target.style.color = 'var(--text-color)';
           target.style.backgroundColor = 'transparent';
         }}
@@ -201,4 +200,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default Header; 
