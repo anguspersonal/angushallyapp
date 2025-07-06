@@ -341,6 +341,28 @@ Create two separate Raindrop.io applications for environment separation:
 - **G-series**: Frontend-Driven User Experience (MLP enhancements from user experimentation)
 
 ### ✅ Completed
+* **F1 – Instagram Content Intelligence** ✅ **COMPLETE** - 2025-07-06
+  * **Status**: Production-ready Instagram bookmark enhancement with AI-generated insights
+  * **Core Features**:
+    * ✅ API endpoints: `/api/instagram-intelligence/*` for content analysis
+    * ✅ Database integration: `bookmarks.instagram_analyses` table for storing AI insights
+    * ✅ Apify scraping service for Instagram metadata extraction
+    * ✅ OpenAI Assistant integration for structured content analysis
+    * ✅ Enhanced bookmark enrichment with AI-generated titles, descriptions, and tags
+    * ✅ Frontend visual indicators for AI-enhanced bookmarks
+    * ✅ Filtering capability for AI-enhanced bookmarks
+  * **Technical Implementation**:
+    * ✅ Structured AI response parsing (JSON + JavaScript object literal support)
+    * ✅ Bookmark enhancement pipeline with metadata tracking
+    * ✅ Smart tag merging without duplicates
+    * ✅ Comprehensive unit and integration test coverage
+    * ✅ Upsert handling for duplicate analysis prevention
+  * **User Experience**:
+    * ✅ AI-improved titles replacing generic "Instagram" labels
+    * ✅ Detailed AI-generated descriptions and tags
+    * ✅ "AI Enhanced" badges and status indicators
+    * ✅ Enhanced notifications for analysis success
+  * **Foundation established** for F2 (LinkedIn), F3 (YouTube), F4 (Twitter) content intelligence modules
 * **F5 – Universal Certainty Scoring Framework** ✅ **COMPLETE** - 2025-06-23
   * **Status**: Production-ready foundation for all F-series modules
   * **Core Implementation**:
@@ -465,11 +487,6 @@ Create two separate Raindrop.io applications for environment separation:
 
 ### 🔄 MVP (In Progress / Planned)
 
-* **F1 – Instagram Content Intelligence** (In Progress, 2025-07-06)
-  * API endpoints implemented: `/api/instagram-intelligence/*`
-  * DB table: `bookmarks.instagram_analyses`
-  * Service integrates Apify scraping and OpenAI Assistant
-  * Unit and integration tests included
 * A4 – Sync Scheduler (cron-ready background jobs)
   * Background job runner configured for routine syncs.
   * Foundation for cross-platform sync orchestration.

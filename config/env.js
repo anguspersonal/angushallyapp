@@ -233,6 +233,14 @@ function loadEnv() {
             redirectUri: process.env.RAINDROP_REDIRECT_URI
         },
 
+        // Apify
+        apify: {
+            apiToken: process.env.APIFY_API_TOKEN,
+            actors: {
+                instagramScraper: process.env.APIFY_INSTAGRAM_ACTOR_ID || 'pratikdani/instagram-posts-scraper'
+            }
+        },
+
         // Heroku specific
         heroku: {
             cli: process.env.HEROKU_CLI

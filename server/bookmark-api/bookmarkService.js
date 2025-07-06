@@ -862,12 +862,23 @@ const updateCanonicalBookmark = async (bookmarkId, data) => {
 /**
  * Get user's canonical bookmarks from the bookmarks.bookmarks table
  * @param {string} userId - The user's ID
- * @returns {Promise<Array>} Array of canonical bookmarks
+ * @returns {Promise<Array>} Array of canonical bookmarks with Instagram analysis info
  */
 const getUserCanonicalBookmarks = async (userId) => {
   try {
     const result = await db.query(
-      'SELECT * FROM bookmarks.bookmarks WHERE user_id = $1 ORDER BY created_at DESC',
+      `SELECT 
+        b.*,
+        CASE 
+          WHEN ia.id IS NOT NULL THEN TRUE 
+          ELSE FALSE 
+        END as has_instagram_analysis,
+        ia.analyzed_at as instagram_analyzed_at,
+        ia.id as instagram_analysis_id
+      FROM bookmarks.bookmarks b
+      LEFT JOIN bookmarks.instagram_analyses ia ON b.user_id = ia.user_id AND b.url = ia.instagram_url
+      WHERE b.user_id = $1 
+      ORDER BY b.created_at DESC`,
       [userId]
     );
     

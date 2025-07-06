@@ -128,4 +128,211 @@ describe('BookmarkCard', () => {
     const link = screen.getByText('Test Bookmark').closest('a');
     expect(link).toHaveAttribute('href', 'https://raindrop.example.com');
   });
+
+  describe('Instagram Intelligence Features', () => {
+    const mockOnInstagramAnalysisClick = jest.fn();
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('detects Instagram URLs correctly', () => {
+      const instagramBookmark = {
+        ...mockBookmark,
+        url: 'https://www.instagram.com/reel/ABC123/',
+        title: 'Instagram Reel'
+      };
+
+      renderWithMantine(
+        <BookmarkCard 
+          bookmark={instagramBookmark} 
+          onInstagramAnalysisClick={mockOnInstagramAnalysisClick}
+        />
+      );
+      
+      expect(screen.getByText('Reel')).toBeInTheDocument();
+    });
+
+    it('shows correct media type for different Instagram URLs', () => {
+      const testCases = [
+        { url: 'https://www.instagram.com/reel/ABC123/', expectedType: 'Reel' },
+        { url: 'https://instagram.com/p/DEF456/', expectedType: 'Post' },
+        { url: 'https://www.instagram.com/tv/GHI789/', expectedType: 'IGTV' }
+      ];
+
+      testCases.forEach(({ url, expectedType }) => {
+        const instagramBookmark = {
+          ...mockBookmark,
+          url: url,
+          title: `Instagram ${expectedType}`
+        };
+
+        const { unmount } = renderWithMantine(
+          <BookmarkCard 
+            bookmark={instagramBookmark} 
+            onInstagramAnalysisClick={mockOnInstagramAnalysisClick}
+          />
+        );
+        
+        expect(screen.getByText(expectedType)).toBeInTheDocument();
+        unmount();
+      });
+    });
+
+    it('shows AI Enhanced badge for analyzed bookmarks', () => {
+      const analyzedBookmark = {
+        ...mockBookmark,
+        url: 'https://www.instagram.com/reel/ABC123/',
+        source_metadata: {
+          instagram_analysis: true
+        }
+      };
+
+      renderWithMantine(
+        <BookmarkCard 
+          bookmark={analyzedBookmark} 
+          onInstagramAnalysisClick={mockOnInstagramAnalysisClick}
+        />
+      );
+      
+      expect(screen.getByText('AI Enhanced')).toBeInTheDocument();
+    });
+
+    it('calls onInstagramAnalysisClick when AI Enhanced badge is clicked', () => {
+      const analyzedBookmark = {
+        ...mockBookmark,
+        url: 'https://www.instagram.com/reel/ABC123/',
+        source_metadata: {
+          instagram_analysis: true
+        }
+      };
+
+      renderWithMantine(
+        <BookmarkCard 
+          bookmark={analyzedBookmark} 
+          onInstagramAnalysisClick={mockOnInstagramAnalysisClick}
+        />
+      );
+      
+      const aiEnhancedBadge = screen.getByText('AI Enhanced');
+      fireEvent.click(aiEnhancedBadge);
+      
+      expect(mockOnInstagramAnalysisClick).toHaveBeenCalledWith(analyzedBookmark);
+    });
+
+    it('shows AI Enhanced badge for bookmarks with intelligence_level > 1', () => {
+      const intelligentBookmark = {
+        ...mockBookmark,
+        url: 'https://www.instagram.com/reel/ABC123/',
+        intelligence_level: 2
+      };
+
+      renderWithMantine(
+        <BookmarkCard 
+          bookmark={intelligentBookmark} 
+          onInstagramAnalysisClick={mockOnInstagramAnalysisClick}
+        />
+      );
+      
+      expect(screen.getByText('AI Enhanced')).toBeInTheDocument();
+    });
+
+    it('shows AI Enhanced badge for bookmarks with metadata_enriched', () => {
+      const enrichedBookmark = {
+        ...mockBookmark,
+        url: 'https://www.instagram.com/reel/ABC123/',
+        source_metadata: {
+          metadata_enriched: true
+        }
+      };
+
+      renderWithMantine(
+        <BookmarkCard 
+          bookmark={enrichedBookmark} 
+          onInstagramAnalysisClick={mockOnInstagramAnalysisClick}
+        />
+      );
+      
+      expect(screen.getByText('AI Enhanced')).toBeInTheDocument();
+    });
+
+    it('does not show Instagram features for non-Instagram URLs', () => {
+      renderWithMantine(
+        <BookmarkCard 
+          bookmark={mockBookmark} 
+          onInstagramAnalysisClick={mockOnInstagramAnalysisClick}
+        />
+      );
+      
+      expect(screen.queryByText('Reel')).not.toBeInTheDocument();
+      expect(screen.queryByText('Post')).not.toBeInTheDocument();
+      expect(screen.queryByText('IGTV')).not.toBeInTheDocument();
+      expect(screen.queryByText('AI Enhanced')).not.toBeInTheDocument();
+    });
+
+    it('prevents event bubbling when AI Enhanced badge is clicked', () => {
+      const analyzedBookmark = {
+        ...mockBookmark,
+        url: 'https://www.instagram.com/reel/ABC123/',
+        source_metadata: {
+          instagram_analysis: true
+        }
+      };
+
+      const mockCardClick = jest.fn();
+      
+      const { container } = renderWithMantine(
+        <div onClick={mockCardClick}>
+          <BookmarkCard 
+            bookmark={analyzedBookmark} 
+            onInstagramAnalysisClick={mockOnInstagramAnalysisClick}
+          />
+        </div>
+      );
+      
+      const aiEnhancedBadge = screen.getByText('AI Enhanced');
+      fireEvent.click(aiEnhancedBadge);
+      
+      expect(mockOnInstagramAnalysisClick).toHaveBeenCalledWith(analyzedBookmark);
+      expect(mockCardClick).not.toHaveBeenCalled();
+    });
+
+    it('shows tooltip for AI Enhanced badge', () => {
+      const analyzedBookmark = {
+        ...mockBookmark,
+        url: 'https://www.instagram.com/reel/ABC123/',
+        source_metadata: {
+          instagram_analysis: true
+        }
+      };
+
+      renderWithMantine(
+        <BookmarkCard 
+          bookmark={analyzedBookmark} 
+          onInstagramAnalysisClick={mockOnInstagramAnalysisClick}
+        />
+      );
+      
+      const aiEnhancedBadge = screen.getByText('AI Enhanced').closest('[role="tooltip"]');
+      expect(aiEnhancedBadge).toBeInTheDocument();
+    });
+
+    it('handles missing onInstagramAnalysisClick gracefully', () => {
+      const analyzedBookmark = {
+        ...mockBookmark,
+        url: 'https://www.instagram.com/reel/ABC123/',
+        source_metadata: {
+          instagram_analysis: true
+        }
+      };
+
+      // Should not crash when onInstagramAnalysisClick is not provided
+      renderWithMantine(<BookmarkCard bookmark={analyzedBookmark} />);
+      
+      const aiEnhancedBadge = screen.getByText('AI Enhanced');
+      fireEvent.click(aiEnhancedBadge);
+      
+      // Should not throw an error
+    });
+  });
 }); 

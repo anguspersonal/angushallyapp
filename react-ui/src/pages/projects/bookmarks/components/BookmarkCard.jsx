@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Card, Badge, Text, Group, Stack, Image, Box, Transition, Avatar } from '@mantine/core';
+import { Card, Badge, Text, Group, Stack, Image, Box, Transition, Avatar, ActionIcon, Tooltip } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconExternalLink, IconClock, IconBookmark, IconTag } from '@tabler/icons-react';
+import { IconExternalLink, IconClock, IconBookmark, IconTag, IconBrain, IconTrendingUp } from '@tabler/icons-react';
 
-const BookmarkCard = ({ bookmark }) => {
+const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -37,6 +37,24 @@ const BookmarkCard = ({ bookmark }) => {
 
   const handleImageError = () => {
     setImageError(true);
+  };
+
+  const isInstagramUrl = (url) => {
+    const instagramPattern = /^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/[a-zA-Z0-9_-]+\/?/;
+    return instagramPattern.test(url);
+  };
+
+  const hasInstagramAnalysis = () => {
+    return bookmark.source_metadata?.instagram_analysis || 
+           bookmark.source_metadata?.metadata_enriched ||
+           bookmark.intelligence_level > 1;
+  };
+
+  const getInstagramMediaType = (url) => {
+    if (url.includes('/reel/')) return 'Reel';
+    if (url.includes('/tv/')) return 'IGTV';
+    if (url.includes('/p/')) return 'Post';
+    return 'Instagram';
   };
 
   const hasImage = bookmark.image_url && !imageError;
@@ -155,6 +173,41 @@ const BookmarkCard = ({ bookmark }) => {
                 <Badge variant="outline" color="gray" size="sm">
                   +{bookmark.tags.length - 2}
                 </Badge>
+              )}
+            </Group>
+          )}
+
+          {/* Instagram Intelligence Indicators */}
+          {isInstagramUrl(bookmark.url) && (
+            <Group spacing={6} mt="xs">
+              <Badge 
+                size="sm" 
+                variant="outline" 
+                color="pink"
+                leftSection={<IconBrain size={12} />}
+              >
+                {getInstagramMediaType(bookmark.url)}
+              </Badge>
+              {hasInstagramAnalysis() && (
+                <Tooltip label="Enhanced with Instagram Intelligence">
+                  <Badge 
+                    size="sm" 
+                    variant="light" 
+                    color="blue"
+                    style={{ cursor: 'pointer' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onInstagramAnalysisClick) {
+                        onInstagramAnalysisClick(bookmark);
+                      }
+                    }}
+                  >
+                    <Group spacing={4}>
+                      <IconTrendingUp size={12} />
+                      <Text size="xs">AI Enhanced</Text>
+                    </Group>
+                  </Badge>
+                </Tooltip>
               )}
             </Group>
           )}

@@ -27,21 +27,45 @@ router.post('/analyze', async (req, res) => {
         // Initialize the Instagram Intelligence service
         const instagramService = new InstagramIntelligenceService();
 
+        // Check if analysis already exists
+        const existingAnalysis = await instagramService.getExistingAnalysis(userId, instagramUrl);
+
         // Extract Instagram metadata
         const metadata = await instagramService.extractInstagramMetadata(instagramUrl);
 
         // Analyze with OpenAI
         const analysis = await instagramService.analyzeWithOpenAI(metadata);
 
-        // Save analysis to database
+        // Save analysis to database (upsert: update existing or create new)
         const savedAnalysis = await instagramService.saveAnalysis(analysis, userId);
+
+        // Update the bookmark with AI-generated insights (title, description, tags)
+        const enhancedBookmark = await instagramService.updateBookmarkWithInsights(
+            userId, 
+            instagramUrl, 
+            analysis.analysis
+        );
+
+        const isUpdate = existingAnalysis !== null;
+        const isEnhanced = enhancedBookmark !== null && analysis.analysis.isStructured;
+        
+        let message = isUpdate 
+            ? 'Instagram content re-analyzed and updated successfully'
+            : 'Instagram content analyzed successfully';
+        
+        if (isEnhanced) {
+            message += ' - Bookmark enhanced with AI insights';
+        }
 
         res.json({
             success: true,
             data: {
                 analysis: savedAnalysis,
                 metadata: metadata,
-                message: 'Instagram content analyzed successfully'
+                enhancedBookmark: enhancedBookmark,
+                isUpdate: isUpdate,
+                isEnhanced: isEnhanced,
+                message: message
             }
         });
 
@@ -118,7 +142,7 @@ router.get('/analysis/:id', async (req, res) => {
 
         const result = await require('../db').query(query, [analysisId, userId]);
 
-        if (result.rows.length === 0) {
+        if (result.length === 0) {
             return res.status(404).json({
                 error: 'Analysis not found or access denied'
             });
@@ -127,7 +151,7 @@ router.get('/analysis/:id', async (req, res) => {
         res.json({
             success: true,
             data: {
-                analysis: result.rows[0],
+                analysis: result[0],
                 message: 'Analysis retrieved successfully'
             }
         });
@@ -204,7 +228,7 @@ router.delete('/analysis/:id', async (req, res) => {
 
         const result = await require('../db').query(query, [analysisId, userId]);
 
-        if (result.rows.length === 0) {
+        if (result.length === 0) {
             return res.status(404).json({
                 error: 'Analysis not found or access denied'
             });
@@ -213,7 +237,7 @@ router.delete('/analysis/:id', async (req, res) => {
         res.json({
             success: true,
             data: {
-                deletedAnalysis: result.rows[0],
+                deletedAnalysis: result[0],
                 message: 'Analysis deleted successfully'
             }
         });
