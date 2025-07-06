@@ -22,6 +22,7 @@
   color: var(--mantine-color-gray-7);
   font-size: var(--mantine-font-size-sm);
   font-weight: 500;
+
 }
 
 .link:hover {
@@ -41,15 +42,18 @@
   min-width: 180px;
   padding: var(--mantine-spacing-xs);
   background-color: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-sm);
+  border: 1px solid var(--mantine-color-gray-3);
+  box-shadow: var(--mantine-shadow-sm);
 
-  @media (min-width: 48em) {
+  @media (min-width: var(--mantine-breakpoint-sm)) {
     display: none;
   }
 }
 
 .dropdown .link {
   display: block;
-  padding: 8px 12px;
+  padding: 8px 12px;    
   border-radius: var(--mantine-radius-sm);
   text-decoration: none;
   color: var(--mantine-color-gray-7);
