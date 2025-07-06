@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef } from 'react'; // useRef might still be useful for other things if needed
-import { motion } from 'framer-motion'; // Remove useScroll, useTransform
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Box, Title, Text, useMantineTheme } from '@mantine/core';
 import { IconRocket, IconUsers, IconMessageChatbot, IconFileDescription, IconChartBar } from '@tabler/icons-react';
 

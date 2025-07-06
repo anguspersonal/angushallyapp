@@ -68,7 +68,6 @@ const gridAreas = [
 const itemSizeVmin = 20; // Base size for desktop
 const mobileItemSizeVmin = 25; // Larger size for mobile
 const logoSizeVmin = itemSizeVmin * 0.6; // Logo size relative to item size
-const containerSizeVmin = itemSizeVmin * 3; // Grid is 3x3
 
 // Simpler animation variants for scale/opacity within grid cells
 const itemVariants = {

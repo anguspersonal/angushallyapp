@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   Combobox,
   InputBase,
-  useCombobox,
-  Group,
-  Text,
-  Badge
+  useCombobox
 } from "@mantine/core";
 
 function HabitCombobox({ options = [], value = [], onChange, placeholder = "Pick drinks", resetCombobox }) {
@@ -39,41 +36,6 @@ function HabitCombobox({ options = [], value = [], onChange, placeholder = "Pick
 
   const totalOptions = filteredGroups.reduce((sum, g) => sum + g.options.length, 0);
 
-  // ✅ Add a new drink to selected list
-  const addDrink = (option) => {
-    if (!selectedDrinks.some((d) => d.id === option.id)) {
-      const newDrink = {
-        id: option.id,
-        name: option.name,
-        icon: option.icon,
-        group: option.drink_type || "Other",
-        volumeML: option.default_volume_ml || 250,
-        abvPerc: option.default_abv || 12,
-      };
-      const updated = [...selectedDrinks, newDrink];
-      setSelectedDrinks(updated);
-      onChange(updated); // send full array to parent
-    }
-  };
-
-  // ✅ Handle Creatable Drink
-  const handleCreate = (query) => {
-    const id = `custom-${Date.now()}`;
-    const newDrink = {
-      id,
-      name: query,
-      icon: "🍹",
-      group: "Custom",
-      volumeML: 250,
-      abvPerc: 12,
-    };
-    const updated = [...selectedDrinks, newDrink];
-    setSelectedDrinks(updated);
-    onChange(updated);
-    setSearch("");
-    combobox.closeDropdown();
-  };
-
   // ✅ Reset support
   useEffect(() => {
     if (resetCombobox) {
@@ -83,7 +45,7 @@ function HabitCombobox({ options = [], value = [], onChange, placeholder = "Pick
         combobox.resetSelectedOption();
       });
     }
-  }, [resetCombobox]);
+  }, [resetCombobox, combobox]);
 
   return (
     <Combobox

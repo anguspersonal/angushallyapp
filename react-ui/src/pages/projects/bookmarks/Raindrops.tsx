@@ -3,7 +3,7 @@ import { Button, Loader, Text, Group, Stack, Title, Container, Box } from '@mant
 import { IconLink, IconRefresh } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../../../contexts/AuthContext';
-import { api, API_BASE } from '../../../utils/apiClient';
+import { api } from '../../../utils/apiClient';
 import { useLocation } from 'react-router-dom';
 import Header from '../../../components/Header';
 import BookmarkCard from './components/BookmarkCard';
@@ -94,15 +94,6 @@ const Raindrops = () => {
 
     initialize();
   }, [user]);
-
-  const checkConnectionStatus = async () => {
-    try {
-      const response = await api.get('/raindrop/verify');
-      setIsConnected(response.isConnected);
-    } catch (error) {
-      setIsConnected(false);
-    }
-  };
 
   const fetchBookmarks = async () => {
     try {

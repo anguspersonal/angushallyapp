@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Box, Loader, Text, Group, Stack, Title, Container, Card, Grid, Badge, Transition, Paper, Avatar, Progress, SimpleGrid } from '@mantine/core';
+import { Button, Box, Loader, Text, Group, Stack, Title, Container, Card, Badge, Paper, SimpleGrid } from '@mantine/core';
 import { IconRefresh, IconTrendingUp, IconBolt, IconUsers, IconBook, IconArrowRight, IconChevronRight, IconStar, IconTarget, IconBrain } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../../../contexts/AuthContext';

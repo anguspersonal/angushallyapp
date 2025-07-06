@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Badge, Text, Group, Stack, Image, Box, Transition, Avatar, ActionIcon, Tooltip } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { IconExternalLink, IconClock, IconBookmark, IconTag, IconBrain, IconTrendingUp } from '@tabler/icons-react';
+import { Card, Badge, Text, Group, Stack, Image, Box, Transition, Avatar, Tooltip } from '@mantine/core';
+import { IconExternalLink, IconClock, IconBookmark, IconBrain, IconTrendingUp } from '@tabler/icons-react';
 
 const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
   const [imageError, setImageError] = useState(false);
