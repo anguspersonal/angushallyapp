@@ -155,6 +155,10 @@ export interface DrinkCatalogItem {
   category: string;
   brand?: string;
   description?: string;
+  icon?: string;
+  drink_type?: string;
+  archived?: boolean;
+  catalog_type?: string;
 }
 
 export interface HabitStats {

@@ -1,18 +1,37 @@
-// @ts-nocheck
 import React, { useState, useEffect } from "react";
 import {
   Combobox,
   InputBase,
   useCombobox
 } from "@mantine/core";
+import { DrinkCatalogItem } from "../../../types/common";
 
-function HabitCombobox({ options = [], value = [], onChange, placeholder = "Pick drinks", resetCombobox }) {
+interface GroupedOptions {
+  label: string;
+  options: DrinkCatalogItem[];
+}
+
+interface HabitComboboxProps {
+  options?: DrinkCatalogItem[];
+  value?: DrinkCatalogItem[];
+  onChange: (option: DrinkCatalogItem | string) => void;
+  placeholder?: string;
+  resetCombobox?: (resetFn: () => void) => void;
+}
+
+const HabitCombobox: React.FC<HabitComboboxProps> = ({ 
+  options = [], 
+  value = [], 
+  onChange, 
+  placeholder = "Pick drinks", 
+  resetCombobox 
+}) => {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
-  const [search, setSearch] = useState("");
-  const [selectedDrinks, setSelectedDrinks] = useState(value);
+  const [search, setSearch] = useState<string>("");
+  const [selectedDrinks, setSelectedDrinks] = useState<DrinkCatalogItem[]>(value);
 
   // ✅ Ensure options is always an array
   const filteredOptions = Array.isArray(options)
@@ -20,7 +39,7 @@ function HabitCombobox({ options = [], value = [], onChange, placeholder = "Pick
     : [];
 
   // ✅ Group by drink_type
-  const groupedOptions = filteredOptions.reduce((acc, option) => {
+  const groupedOptions = filteredOptions.reduce((acc: Record<string, DrinkCatalogItem[]>, option) => {
     const group = option.drink_type || "Other";
     if (!acc[group]) acc[group] = [];
     acc[group].push(option);
@@ -28,9 +47,9 @@ function HabitCombobox({ options = [], value = [], onChange, placeholder = "Pick
   }, {});
 
   // ✅ Apply search filter to each group
-  const filteredGroups = Object.entries(groupedOptions).map(([group, opts]) => ({
+  const filteredGroups: GroupedOptions[] = Object.entries(groupedOptions).map(([group, opts]) => ({
     label: group,
-    options: opts.filter((opt) =>
+    options: (opts as DrinkCatalogItem[]).filter((opt) =>
       opt.name.toLowerCase().includes(search.toLowerCase().trim())
     ),
   }));
@@ -51,10 +70,14 @@ function HabitCombobox({ options = [], value = [], onChange, placeholder = "Pick
   return (
     <Combobox
       store={combobox}
-      onOptionSubmit={(val) => {
-        const selectedOption = filteredOptions.find((option) => option.id.toString() === val);
-        if (selectedOption) {
-          onChange(selectedOption);
+      onOptionSubmit={(val: string) => {
+        if (val === "__create") {
+          onChange(search.trim());
+        } else {
+          const selectedOption = filteredOptions.find((option) => option.id.toString() === val);
+          if (selectedOption) {
+            onChange(selectedOption);
+          }
         }
         setSearch(""); // Reset search
         combobox.closeDropdown();
@@ -77,9 +100,9 @@ function HabitCombobox({ options = [], value = [], onChange, placeholder = "Pick
       <Combobox.Dropdown>
         <Combobox.Search value={search} onChange={(e) => setSearch(e.currentTarget.value)} placeholder="Search or create…" />
         <Combobox.Options>
-          {filteredGroups.map((group) => (
+          {filteredGroups.map((group: GroupedOptions) => (
             <Combobox.Group label={group.label} key={group.label}>
-              {group.options.map((option) => (
+              {group.options.map((option: DrinkCatalogItem) => (
                 <Combobox.Option key={option.id} value={option.id.toString()}>
                   {option.icon} {option.name}
                 </Combobox.Option>
