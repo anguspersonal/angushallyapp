@@ -465,11 +465,11 @@ Create two separate Raindrop.io applications for environment separation:
 
 ### 🔄 MVP (In Progress / Planned)
 
-* **F1 – Instagram Content Intelligence** (Next Priority)
-  * Leverage F5 framework for Instagram-specific content processing
-  * Caption and hashtag analysis with confidence scoring
-  * Story and Reel metadata extraction
-  * Profile and engagement context assessment
+* **F1 – Instagram Content Intelligence** (In Progress, 2025-07-06)
+  * API endpoints implemented: `/api/instagram-intelligence/*`
+  * DB table: `bookmarks.instagram_analyses`
+  * Service integrates Apify scraping and OpenAI Assistant
+  * Unit and integration tests included
 * A4 – Sync Scheduler (cron-ready background jobs)
   * Background job runner configured for routine syncs.
   * Foundation for cross-platform sync orchestration.

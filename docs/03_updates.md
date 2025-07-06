@@ -814,3 +814,10 @@ This file tracks chronological changes to the project, with the most recent upda
   - Frontend component framework
   - Development environment setup
 - **Documentation**: Initial architecture and schema documentation
+
+### [2025-07-06] Feature Work: F1 – Instagram Content Intelligence
+- Implemented Instagram Content Intelligence API endpoints (`/api/instagram-intelligence/*`)
+- Added `bookmarks.instagram_analyses` table for storing analysis results
+- Created service for Apify scraping and OpenAI Assistant integration
+- Added unit and integration tests for service and API
+- Updated sub-project README and schema documentation
