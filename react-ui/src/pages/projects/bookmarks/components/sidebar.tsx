@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { 
   NavLink, 
@@ -22,7 +21,21 @@ import {
   IconChevronRight
 } from '@tabler/icons-react';
 
-const navigationItems = [
+type NavigationItemId = 'dashboard' | 'bookmarks' | 'search' | 'sync' | 'tags' | 'trending' | 'analytics' | 'archive' | 'settings';
+
+interface NavigationItem {
+  id: NavigationItemId;
+  label: string;
+  icon: React.ComponentType<{ size?: number }>;
+}
+
+interface SidebarProps {
+  activeView: NavigationItemId;
+  onViewChange: (view: NavigationItemId) => void;
+  onSidebarToggle: (collapsed: boolean) => void;
+}
+
+const navigationItems: NavigationItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: IconHome },
   { id: 'bookmarks', label: 'All Bookmarks', icon: IconBookmark },
   { id: 'search', label: 'Search', icon: IconSearch },
@@ -34,8 +47,8 @@ const navigationItems = [
   { id: 'settings', label: 'Settings', icon: IconSettings },
 ];
 
-export const Sidebar = ({ activeView, onViewChange, onSidebarToggle }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, onSidebarToggle }) => {
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   
   const toggleSidebar = () => {
     const newCollapsedState = !isCollapsed;
@@ -87,7 +100,7 @@ export const Sidebar = ({ activeView, onViewChange, onSidebarToggle }) => {
             }}
           >
             {/* Navigation Section */}
-            <Stack spacing="xs" style={{ marginTop: '40px' }}>
+            <Stack gap="xs" style={{ marginTop: '40px' }}>
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeView === item.id;
