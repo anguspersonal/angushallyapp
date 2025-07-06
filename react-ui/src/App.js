@@ -24,6 +24,7 @@ import Collab from "./pages/Collab.jsx";
 import Login from "./pages/Login.jsx";
 import Raindrops from "./pages/projects/bookmarks/Raindrops.jsx";
 import Bookmarks from "./pages/projects/bookmarks/Bookmarks.jsx";
+import ShareHandler from "./pages/projects/bookmarks/ShareHandler.jsx";
 import SoftwareCV from "./pages/SoftwareCV.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
 import { theme } from './theme.js'; // Import your theme
@@ -57,6 +58,7 @@ function App() {
               <Route path="/projects/ai/instapaper" element={<Instapaper />} />
               <Route path="/projects/bookmarks" element={<Bookmarks />} />
               <Route path="/projects/bookmarks/raindrop" element={<Raindrops />} />
+              <Route path="/share" element={<ShareHandler />} />
               <Route path="/login" element={<Login />} />
               <Route path="/cv" element={<SoftwareCV />} />
             </Routes>

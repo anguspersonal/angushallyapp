@@ -383,3 +383,24 @@ Stores bookmark collections/folders from Raindrop.io.
 
 **Indexes:**
 - UNIQUE INDEX on (user_id, raindrop_collection_id) - Prevents duplicate collections per user
+
+---
+### [2025-07-06] Added `bookmarks.instagram_analyses` (F1 – Instagram Content Intelligence)
+
+**Table:** `bookmarks.instagram_analyses`
+- `id` SERIAL PRIMARY KEY
+- `user_id` UUID NOT NULL — references `identity.users(id)`
+- `instagram_url` TEXT NOT NULL — the Instagram URL analyzed
+- `thread_id` TEXT NOT NULL — OpenAI Assistant thread ID
+- `run_id` TEXT NOT NULL — OpenAI Assistant run ID
+- `metadata` JSONB NOT NULL — raw Instagram metadata
+- `analysis_result` JSONB NOT NULL — OpenAI analysis result
+- `analyzed_at` TIMESTAMPTZ NOT NULL DEFAULT NOW() — when analysis completed
+- `created_at` TIMESTAMPTZ NOT NULL DEFAULT NOW()
+- `updated_at` TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+**Indexes:**
+- `user_id`, `analyzed_at DESC`, `thread_id`, `run_id`
+- Unique: (`user_id`, `instagram_url`)
+
+**Purpose:** Stores Instagram content intelligence analysis results for each user-requested analysis.

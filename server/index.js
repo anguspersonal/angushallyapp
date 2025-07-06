@@ -153,6 +153,10 @@ app.use('/api/bookmarks', bookmarkRoute);
 const f5CertaintyRoute = require('./routes/f5CertaintyRoute');
 app.use('/api/f5', f5CertaintyRoute);
 
+// ✅ Instagram Intelligence routes
+const instagramIntelligenceRoute = require('./routes/instagramIntelligenceRoute');
+app.use('/api/instagram-intelligence', instagramIntelligenceRoute);
+
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
 // Answer all other API requests.
