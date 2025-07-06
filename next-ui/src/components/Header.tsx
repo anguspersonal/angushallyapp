@@ -17,18 +17,18 @@ import classes from './Header.module.css';
 
 // Navigation links with proper typing
 interface NavigationLink {
-  link: string;
-  label: string;
+  readonly link: string;
+  readonly label: string;
 }
 
-const links: NavigationLink[] = [
+const links: readonly NavigationLink[] = [
   { link: '/next/', label: 'Home' },
   { link: '/next/about', label: 'About' },
   { link: '/next/blog', label: 'Blog' },
   { link: '/next/projects', label: 'Projects' },
   { link: '/next/contact', label: 'Contact' },
   { link: '/next/cv', label: 'CV' },
-];
+] as const;
 
 export default function Header() {
   const [opened, { toggle, close }] = useDisclosure(false);
