@@ -26,7 +26,7 @@ import ShareHandler from "./pages/projects/bookmarks/ShareHandler";
 import SoftwareCV from "./pages/SoftwareCV";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
 import { theme } from './theme'; // Import your theme
-import { AuthProvider } from './contexts/AuthContext.tsx';
+import { AuthProvider } from './contexts/AuthContext';
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 

@@ -2,9 +2,9 @@
 import React, { useState, useEffect, useDebugValue } from 'react';
 import './Gameboard.css'; // Ensure the correct path to the CSS file
 import industries from './Industries.json'; // Import industries from the JSON file
-import Win from './Win.jsx'; // Import the Win component
-import Lose from './Lose.jsx'; // Import the Lose component
-import CTAGuessAutomotive from './CTA-GuessAutomotive.jsx'; // Import the CTAGuessAutomotive component
+import Win from './Win'; // Import the Win component
+import Lose from './Lose'; // Import the Lose component
+import CTAGuessAutomotive from './CTA-GuessAutomotive'; // Import the CTAGuessAutomotive component
 
 
 //UseLabelState hook to add labels to state values

@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import "./general.css";
 import App from "./App";
-import * as serviceWorker from './serviceWorker.js';
+import * as serviceWorker from './serviceWorker';
 
 // ✅ Import Mantine for UI styling & theming
 import "@mantine/core/styles.css";
