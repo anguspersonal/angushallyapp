@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import "../general.css";
-import { assets, motionTransitions } from '../theme';
+import { assets } from '../theme';
 
 const contentVariants = {
     hidden: { opacity: 0, y: 20 },

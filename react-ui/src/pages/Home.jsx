@@ -105,7 +105,7 @@ function Home() {
           </motion.div>
         </motion.div>
       </Container>
-      <Box >
+      <Box ta="center" mb="xl">
         <Button
           component={Link}
           to="/contact"

@@ -1,4 +1,3 @@
-const config = require('../../config/env');
 const db = require('../db.js'); // Database connection module
 const { calculateUnits } = require('../utils/calculateUnits'); // Utility function to calculate units
 

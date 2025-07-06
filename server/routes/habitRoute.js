@@ -32,7 +32,6 @@ const { logExercise, getExerciseLogs } = require("../habit-api/exerciseService")
 const { getAggregateStats } = require("../habit-api/aggregateService");
 const { authMiddleware } = require("../middleware/auth");
 const router = express.Router();
-const config = require('../../config/env');
 
 
 // Apply authentication middleware to all routes

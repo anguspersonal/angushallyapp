@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { askForLocationPermission } from "./utils/askUserLocation";
 import { getDynamicPlaceholder } from "./utils/getDynamicPlaceholder";
 
 
@@ -34,11 +33,6 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSe
 
         if (!debouncedQuery) {
             console.warn("⚠️ No search query provided.");
-            return;
-        }
-
-        if (!GOOGLE_MAPS_API_KEY) {
-            console.error("❌ Google Maps API key is missing. Check your .env file.");
             return;
         }
 
