@@ -130,6 +130,8 @@ const config = require('../../config/env'); // UNUSED
 
 **Impact**: Importing config but never using it in the service.
 
+**Safety Check**: ✅ **VERIFIED SAFE** - Environment variables are still loaded by `server/index.js` at startup.
+
 **Recommendation**: ✅ **FIXED** - Removed unused config import.
 
 ### 11. `server/habit-api/habitService.js` - Unused import
@@ -183,6 +185,35 @@ import { useMantineTheme } from '@mantine/core'; // UNUSED
 **Impact**: Importing Mantine hook but never using it.
 
 **Recommendation**: ✅ **FIXED** - Removed unused useMantineTheme import.
+
+## Environment Variable Loading Safety Verification
+
+**🔍 CRITICAL ANALYSIS PERFORMED**: After removing multiple `config` imports, we verified that environment variable loading still works correctly.
+
+### **Why These Changes Are Safe:**
+
+1. **Main Entry Point Still Loads Config** ✅
+   - `server/index.js` (line 3): `const config = require('../config/env.js')`
+   - This triggers `dotenv.config()` and environment validation at startup
+
+2. **Critical Files Still Have Config Access** ✅
+   - `server/db.js` - Uses `config.database.*` extensively
+   - `server/middleware/auth.js` - Uses `config.auth.*`
+   - Route files that need config still import it
+
+3. **Removed Imports Were Truly Unused** ✅
+   - `alcoholService.js`, `habitService.js`, `habitRoute.js` - No `config.` property usage found
+   - These were importing config but never using the configuration object
+
+4. **Execution Order Preserved** ✅
+   ```
+   server/index.js → loads config → loads db.js → loads services
+   ```
+
+### **Environment Loading Still Works Because:**
+- **Development**: Config loaded early triggers `.env` file loading and validation
+- **Production**: Platform environment variables (Heroku) are validated by config module
+- **All environments**: Required variable validation still occurs at startup
 
 ## Summary
 
