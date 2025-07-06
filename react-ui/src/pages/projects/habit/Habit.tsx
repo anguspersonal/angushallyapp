@@ -5,12 +5,12 @@ import HabitTile from "./HabitTile";
 import HabitDrawer from "./HabitDrawer";
 import { useDisclosure } from "@mantine/hooks";
 import { getHabitLogs, getLogsByHabit } from "./habit";
-import { HabitLog } from "../../../types/common";
+import { HabitLog, HabitType } from "../../../types/common";
 import "../../../index.css";
 
 interface HabitDefinition {
   id: number;
-  name: string;
+  name: HabitType;
   displayName: string;
   icon: string;
   progress: number;
@@ -51,7 +51,7 @@ const Habit: React.FC = () => {
   const habits: HabitDefinition[] = [
     { id: 1, name: "alcohol", displayName: "Alcohol", icon: "🍷", progress: 60 },
     { id: 2, name: "exercise", displayName: "Exercise", icon: "🏋️", progress: 80 },
-    { id: 3, name: "coding", displayName: "Coding", icon: "💻", progress: 90 },
+    { id: 3, name: "custom", displayName: "Coding", icon: "💻", progress: 90 },
   ];
 
   // 🔹 Ensure selectedLogs updates properly when selectedHabit changes
