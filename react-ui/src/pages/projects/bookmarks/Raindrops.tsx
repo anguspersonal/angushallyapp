@@ -163,7 +163,7 @@ const Raindrops: React.FC = () => {
         color: 'green'
       });
       fetchBookmarks();
-    } catch (error) {
+    } catch (error: any) {
       if (error.status === 401) {
         notifications.show({
           title: 'Error',
@@ -205,7 +205,7 @@ const Raindrops: React.FC = () => {
       <Box>
         <Header />
         <Container size="xl" py="xl">
-          <Group position="center" h={400}>
+          <Group justify="center" h={400}>
             <Loader size="xl" />
           </Group>
         </Container>
@@ -217,20 +217,20 @@ const Raindrops: React.FC = () => {
     <Box>
       <Header />
       <Container size="xl" py="xl">
-        <Group position="apart" mb="xl">
+        <Group justify="space-between" mb="xl">
           <Title order={1}>Raindrop Bookmarks</Title>
           <Group>
             {!isConnected ? (
               <Button
                 onClick={handleConnect}
-                leftIcon={<IconLink size={16} />}
+                leftSection={<IconLink size={16} />}
                 variant="filled"
               >
                 Connect Raindrop
               </Button>
             ) : (
               <Button
-                leftIcon={<IconRefresh size={16} />}
+                leftSection={<IconRefresh size={16} />}
                 onClick={handleSync}
                 loading={syncing}
                 variant="light"
@@ -242,11 +242,11 @@ const Raindrops: React.FC = () => {
         </Group>
 
         {loading ? (
-          <Group position="center" h={400}>
+          <Group justify="center" h={400}>
             <Loader size="xl" />
           </Group>
         ) : (
-          <Stack spacing="md">
+          <Stack gap="md">
             {/* console.log('Rendering bookmarks:', bookmarks, 'Length:', bookmarks.length) */}
             {/* console.log('Is array?', Array.isArray(bookmarks)) */}
             {/* console.log('First bookmark:', bookmarks[0]) */}
@@ -265,14 +265,13 @@ const Raindrops: React.FC = () => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
                 {bookmarks.map((bookmark) => (
                   <BookmarkCard 
-                    key={bookmark.id || bookmark.raindrop_id} 
+                    key={bookmark.id} 
                     bookmark={bookmark}
-                    onRefresh={fetchBookmarks}
                   />
                 ))}
               </div>
             ) : (
-              <Text align="center" color="dimmed" size="lg" py="xl">
+              <Text ta="center" color="dimmed" size="lg" py="xl">
                 {isConnected
                   ? 'No bookmarks found. Try syncing your Raindrop account.'
                   : 'Connect your Raindrop account to view your bookmarks.'}
