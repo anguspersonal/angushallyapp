@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button } from "@mantine/core";
 import Header from "../../../components/Header";
 import HabitHeader from "./HabitHeader";
 import HabitTile from "./HabitTile";

@@ -1,10 +1,5 @@
 const express = require('express');
 const path = require('path');
-const { Client } = require('pg');
-const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
-const axios = require('axios'); // Add axios for API calls
-const Fuse = require('fuse.js'); // Import Fuse.js for fuzzy search
 const config = require('../config/env.js');
 const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
@@ -157,6 +152,10 @@ app.use('/api/bookmarks', bookmarkRoute);
 // ✅ F5 Certainty Scoring Framework routes
 const f5CertaintyRoute = require('./routes/f5CertaintyRoute');
 app.use('/api/f5', f5CertaintyRoute);
+
+// ✅ Instagram Intelligence routes
+const instagramIntelligenceRoute = require('./routes/instagramIntelligenceRoute');
+app.use('/api/instagram-intelligence', instagramIntelligenceRoute);
 
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 

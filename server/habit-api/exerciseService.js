@@ -1,5 +1,4 @@
 const db = require("../db");
-require("../routes/habitRoute");
 
 /**
  * Logs a workout session after it has been recorded in `habit_log`.

@@ -7,6 +7,8 @@ import { api } from '../../../utils/apiClient';
 import Header from '../../../components/Header';
 import BookmarkCard from './components/BookmarkCard';
 import { Sidebar } from './components/sidebar';
+import InstagramEnhancer from '../../../components/InstagramIntelligence/InstagramEnhancer';
+import InstagramAnalysisDisplay from '../../../components/InstagramIntelligence/InstagramAnalysisDisplay';
 import "../../../general.css";
 
 const Bookmarks = () => {
@@ -22,6 +24,10 @@ const Bookmarks = () => {
     knowledgeScore: 0,
     connections: 0
   });
+  const [instagramEnhancerOpened, setInstagramEnhancerOpened] = useState(false);
+  const [analysisDisplayOpened, setAnalysisDisplayOpened] = useState(false);
+  const [selectedAnalysisData, setSelectedAnalysisData] = useState(null);
+  const [selectedBookmarkData, setSelectedBookmarkData] = useState(null);
 
   // Mock insights data - in real implementation, this would come from API
   const mockInsights = [
@@ -175,6 +181,47 @@ const Bookmarks = () => {
     }
   };
 
+  const handleInstagramAnalysisClick = async (bookmark) => {
+    try {
+      // Fetch the analysis data for this bookmark
+      const response = await api.get(`/instagram-intelligence/history?limit=50`);
+      
+      if (response.success && response.data.history) {
+        // Find analysis for this specific URL
+        const analysis = response.data.history.find(item => 
+          item.instagram_url === bookmark.url
+        );
+        
+        if (analysis) {
+          setSelectedAnalysisData({
+            analysis: JSON.parse(analysis.analysis_result),
+            metadata: JSON.parse(analysis.metadata)
+          });
+          setSelectedBookmarkData(bookmark);
+          setAnalysisDisplayOpened(true);
+        } else {
+          notifications.show({
+            title: 'No Analysis Found',
+            message: 'No Instagram analysis found for this bookmark. Try enhancing it first.',
+            color: 'orange'
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching Instagram analysis:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to fetch Instagram analysis',
+        color: 'red'
+      });
+    }
+  };
+
+  const handleEnhancementComplete = (bookmarkId, analysisData) => {
+    // Refresh bookmarks to show updated data
+    fetchBookmarks();
+  };
+
   const renderMainContent = () => {
     switch (activeView) {
       case 'dashboard':
@@ -308,6 +355,15 @@ const Bookmarks = () => {
                   >
                     Refresh
                   </Button>
+                  <Button
+                    leftIcon={<IconBrain size={16} />}
+                    onClick={() => setInstagramEnhancerOpened(true)}
+                    variant="gradient"
+                    gradient={{ from: 'blue', to: 'violet' }}
+                    size="sm"
+                  >
+                    Instagram Intelligence
+                  </Button>
                 </Group>
                 {loading ? (
                   <Group position="center" h={300}>
@@ -328,6 +384,7 @@ const Bookmarks = () => {
                           <BookmarkCard 
                             key={bookmark.id}
                             bookmark={bookmark}
+                            onInstagramAnalysisClick={handleInstagramAnalysisClick}
                           />
                         ))}
                       </SimpleGrid>
@@ -408,15 +465,26 @@ const Bookmarks = () => {
     <Stack spacing="lg">
       <Group position="apart" align="center">
         <Title order={2}>All Bookmarks</Title>
-        <Button
-          leftIcon={<IconRefresh size={16} />}
-          onClick={fetchBookmarks}
-          loading={loading}
-          variant="light"
-          size="sm"
-        >
-          Refresh
-        </Button>
+        <Group>
+          <Button
+            leftIcon={<IconRefresh size={16} />}
+            onClick={fetchBookmarks}
+            loading={loading}
+            variant="light"
+            size="sm"
+          >
+            Refresh
+          </Button>
+          <Button
+            leftIcon={<IconBrain size={16} />}
+            onClick={() => setInstagramEnhancerOpened(true)}
+            variant="gradient"
+            gradient={{ from: 'blue', to: 'violet' }}
+            size="sm"
+          >
+            Instagram Intelligence
+          </Button>
+        </Group>
       </Group>
       {loading ? (
         <Group position="center" h={400}>
@@ -438,6 +506,7 @@ const Bookmarks = () => {
                 <BookmarkCard 
                   key={bookmark.id}
                   bookmark={bookmark}
+                  onInstagramAnalysisClick={handleInstagramAnalysisClick}
                 />
               ))}
             </SimpleGrid>
@@ -550,6 +619,20 @@ const Bookmarks = () => {
           {renderMainContent()}
         </Container>
       </div>
+
+      {/* Instagram Enhancement Modals */}
+      <InstagramEnhancer
+        opened={instagramEnhancerOpened}
+        onClose={() => setInstagramEnhancerOpened(false)}
+        onEnhancementComplete={handleEnhancementComplete}
+      />
+
+      <InstagramAnalysisDisplay
+        opened={analysisDisplayOpened}
+        onClose={() => setAnalysisDisplayOpened(false)}
+        analysisData={selectedAnalysisData}
+        bookmarkData={selectedBookmarkData}
+      />
     </div>
   );
 };

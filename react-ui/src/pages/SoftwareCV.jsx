@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Image, Overlay, Box } from '@mantine/core';
-import { IconCode, IconDatabase, IconServer, IconTools, IconBrandReact, IconBrandNodejs, IconBrandPython, IconChevronRight, IconExternalLink, IconBrandCss3, IconBrandJavascript, IconMapPin, IconBrain, IconBookmark, IconRun } from '@tabler/icons-react';
+import { IconDatabase, IconServer, IconTools, IconBrandReact, IconExternalLink, IconMapPin, IconBrain, IconBookmark, IconRun } from '@tabler/icons-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { motionTransitions } from '../theme';
 import { Link } from 'react-router-dom';

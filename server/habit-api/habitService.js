@@ -1,7 +1,5 @@
 // Habit Api
 
-const config = require('../../config/env');
-
 /**
  * Logs a habit entry into `habit_log` before specific service processing.
  */
