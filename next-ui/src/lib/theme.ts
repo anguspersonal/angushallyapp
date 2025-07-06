@@ -1,24 +1,16 @@
 import { createTheme, MantineColorsTuple, MantineThemeOverride } from '@mantine/core';
-
-// Define proper types for motion transitions
-interface MotionTransition {
-  type: 'spring';
-  stiffness: number;
-  damping: number;
-  duration: number;
-}
-
-interface ViewportTransition {
-  once?: boolean;
-  amount: number;
-}
+import type { 
+  MotionTransition, 
+  ViewportTransition, 
+  ThemeAssets 
+} from '../types/mantine';
 
 export const motionTransitions: {
-  spring: MotionTransition;
-  springFast: MotionTransition;
-  springSlow: MotionTransition;
-  viewportRepeat: ViewportTransition;
-  viewportOnce: ViewportTransition;
+  readonly spring: MotionTransition;
+  readonly springFast: MotionTransition;
+  readonly springSlow: MotionTransition;
+  readonly viewportRepeat: ViewportTransition;
+  readonly viewportOnce: ViewportTransition;
 } = {
   // Standard spring animation
   spring: {
@@ -107,14 +99,6 @@ const successColors: MantineColorsTuple = [
 ];
 
 // Global assets with proper typing
-export interface ThemeAssets {
-  placeholderImage: {
-    landscape: string;
-    square: string;
-    portrait: string;
-  };
-}
-
 export const assets: ThemeAssets = {
   placeholderImage: {
     landscape: '/20250418_3BY2_Default_Image_Placeholder.png',  // 3:2 ratio
@@ -123,7 +107,7 @@ export const assets: ThemeAssets = {
   }
 };
 
-// Define the theme configuration with proper typing
+// Define the theme configuration with comprehensive typing
 const themeConfig: MantineThemeOverride = {
   // Define standard breakpoints for clarity and customization
   breakpoints: {
@@ -132,7 +116,7 @@ const themeConfig: MantineThemeOverride = {
     md: '62em',  // 992px
     lg: '75em',  // 1200px
     xl: '88em',  // 1400px
-  },
+  } as const,
   colors: {
     dark: [
       '#C1C2C5',
@@ -145,12 +129,12 @@ const themeConfig: MantineThemeOverride = {
       '#1A1B1E',
       '#141517',
       '#101113',
-    ],
+    ] as MantineColorsTuple,
     primary: primaryColors,
     secondary: secondaryColors,
     accent: accentColors,
     success: successColors,
-  },
+  } as const,
   primaryColor: 'primary',
   primaryShade: 8, // This will use the base color (index 8)
   defaultRadius: 'md',
