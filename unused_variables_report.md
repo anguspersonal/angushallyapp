@@ -186,6 +186,26 @@ import { useMantineTheme } from '@mantine/core'; // UNUSED
 
 **Recommendation**: ✅ **FIXED** - Removed unused useMantineTheme import.
 
+### 16. `react-ui/src/pages/About.jsx` - Unused import
+**Location**: Line 7
+```javascript
+import { assets, motionTransitions } from '../theme'; // motionTransitions is UNUSED
+```
+
+**Impact**: Importing motionTransitions but never using it in the component.
+
+**Recommendation**: ✅ **FIXED** - Removed unused motionTransitions import.
+
+### 17. `react-ui/src/pages/SoftwareCV.jsx` - Multiple unused icon imports
+**Location**: Line 2
+```javascript
+import { IconCode, IconBrandNodejs, IconBrandPython, IconChevronRight, IconBrandCss3, IconBrandJavascript } from '@tabler/icons-react'; // ALL UNUSED
+```
+
+**Impact**: Importing 6 icons that are never used in the component.
+
+**Recommendation**: ✅ **FIXED** - Removed all unused icon imports.
+
 ## Environment Variable Loading Safety Verification
 
 **🔍 CRITICAL ANALYSIS PERFORMED**: After removing multiple `config` imports, we verified that environment variable loading still works correctly.
@@ -217,9 +237,9 @@ import { useMantineTheme } from '@mantine/core'; // UNUSED
 
 ## Summary
 
-**Total Issues Found**: 19 unused variables/imports
+**Total Issues Found**: 21 unused variables/imports
 
-**Files Affected**: 14 files
+**Files Affected**: 16 files
 - `server/index.js` (5 unused imports) ✅ **FIXED**
 - `server/fsa-data-sync/processSingleAuthority.js` (1 unused variable) ✅ **FIXED**
 - `server/habit-api/alcoholService.js` (1 unused import) ✅ **FIXED**
@@ -233,6 +253,8 @@ import { useMantineTheme } from '@mantine/core'; // UNUSED
 - `react-ui/src/pages/projects/strava/test.js` (3 unused imports) ✅ **FIXED**
 - `react-ui/src/pages/collab/components/Carousel.jsx` (4 unused parameters) ✅ **FIXED**
 - `react-ui/src/index.js` (multiple lines of commented code) ✅ **FIXED**
+- `react-ui/src/pages/About.jsx` (1 unused import) ✅ **FIXED**
+- `react-ui/src/pages/SoftwareCV.jsx` (6 unused icon imports) ✅ **FIXED**
 
 ## Impact Assessment
 
