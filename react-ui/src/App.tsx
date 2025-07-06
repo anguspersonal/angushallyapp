@@ -1,12 +1,11 @@
-// App.js
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import "./index.css";
 import "./general.css"; // Ensure general.css is imported
 import Home from "./pages/Home.jsx";
-import Footer from "./components/Footer.jsx";
-import Header from "./components/Header.jsx";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import Blog from "./pages/Blog.jsx";
@@ -28,7 +27,7 @@ import ShareHandler from "./pages/projects/bookmarks/ShareHandler.jsx";
 import SoftwareCV from "./pages/SoftwareCV.jsx";
 import { MantineProvider } from '@mantine/core'; // Import MantineProvider
 import { theme } from './theme.js'; // Import your theme
-import { AuthProvider } from './contexts/AuthContext.jsx';
+import { AuthProvider } from './contexts/AuthContext';
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
@@ -38,7 +37,7 @@ function App() {
 
   return (
     <MantineProvider theme={theme}>
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID || ''}>
         <AuthProvider>
           <div className="App">
             <Routes>

@@ -10,9 +10,10 @@ import {
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import '../general.css';
-import { useAuth } from '../contexts/AuthContext.jsx';
+import { useAuth } from '../contexts/AuthContext';
+import { NavigationLink } from '../types';
 
-const links = [
+const links: NavigationLink[] = [
   { link: '/projects', label: 'Projects', icon: IconFolder },
   { link: '/blog', label: 'Blog', icon: IconArticle },
   { link: '/about', label: 'About', icon: IconUser },
@@ -24,7 +25,7 @@ function Header() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     logout();
     navigate('/login');
   };
@@ -73,13 +74,15 @@ function Header() {
           padding: '0.5rem 1rem',
           borderRadius: '8px',
         }}
-        onMouseEnter={(e) => {
-          e.target.style.color = 'var(--primary-color)';
-          e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+        onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
+          const target = e.target as HTMLAnchorElement;
+          target.style.color = 'var(--primary-color)';
+          target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
         }}
-        onMouseLeave={(e) => {
-          e.target.style.color = 'var(--text-color)';
-          e.target.style.backgroundColor = 'transparent';
+        onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
+          const target = e.target as HTMLAnchorElement;
+          target.style.color = 'var(--text-color)';
+          target.style.backgroundColor = 'transparent';
         }}
       >
         <Icon size={18} />
@@ -138,7 +141,6 @@ function Header() {
             shadow="md"
             position="bottom-end"
             withArrow
-            transition="pop"
             withinPortal
             opened={opened}
             onClose={() => toggle()}
