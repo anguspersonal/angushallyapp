@@ -35,12 +35,30 @@ Routes marked with "Yes" require authentication via JWT token in the `Authorizat
   - **Response**: `{ bookmarks: Array<Bookmark> }`
   - **Error**: `{ error: string }` (500 on failure, 401 on auth failure)
 
+- `POST /api/bookmarks/share` - **Native Share Target** - Save shared URL directly ✨
+  - **Auth**: Required
+  - **Purpose**: Core A0 implementation for PWA/Android/iOS sharing
+  - **Body**: `{ url: string, text?: string, title?: string }`
+  - **Response**: `{ success: boolean, bookmark: Object, enriched: boolean }`
+  - **Features**:
+    - Direct canonical processing (bypasses staging)
+    - OpenGraph metadata enrichment
+    - URL deduplication via MD5 hash
+    - Rich source metadata tracking
+  - **Error Handling**: 
+    - 400: Missing/invalid URL, validation errors
+    - 500: Database or processing errors
+    - 401: Authentication required
+
 **Features**:
-- Displays unified view of bookmarks from multiple sources (Raindrop, Manual, etc.)
-- Shows source indicators and enhanced metadata
+- Displays unified view of bookmarks from multiple sources (Raindrop, Manual, Share, etc.)
+- Shows source indicators and enhanced metadata  
+- **Native Share Integration**: App appears in mobile share menus
 - Replaces staging table views with canonical data
 
-**Usage Example**:
+**Usage Examples**:
+
+**Retrieve Bookmarks:**
 ```javascript
 const response = await fetch('/api/bookmarks', {
   headers: {
@@ -49,6 +67,23 @@ const response = await fetch('/api/bookmarks', {
   }
 });
 const { bookmarks } = await response.json();
+```
+
+**Share Target (PWA/Native):**
+```javascript
+const response = await fetch('/api/bookmarks/share', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${jwtToken}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    url: 'https://example.com/article',
+    title: 'Interesting Article',
+    text: 'Shared from Instagram'
+  })
+});
+const { success, bookmark, enriched } = await response.json();
 ```
 
 ## Testing

@@ -8,12 +8,15 @@
 
 Enable users to effortlessly send any content (URLs, articles, media) to a personal Second Brain that:
 
-1. **Captures** information with _one click_ (from Raindrop today, more sources tomorrow)
+1. **Captures** information with _true one-click sharing_ (native share target + integrations)
 2. **Enriches** and organises it automatically (metadata, tags, NLP enrichment)
 3. **Surfaces** the right knowledge at the right moment (search, recommendations)
 
-**Key Principle: Cross-Platform Aggregation**
-The system is designed from the ground up to aggregate bookmarks from multiple sources (Raindrop, Instapaper, Readwise, manual entry) into a unified knowledge base. Raindrop is the first implementation, but the architecture supports seamless addition of other platforms.
+**Key Principle: Native Share Target First**
+The system is designed as a **native share destination** - users can share content directly from any app (Instagram, Twitter, Safari) via the native share interface. This provides a superior UX compared to traditional bookmark managers that require app switching and manual sync.
+
+**Secondary Principle: Cross-Platform Aggregation**
+For users with existing bookmark collections, the system aggregates from multiple sources (Raindrop, Instapaper, Readwise) into the unified knowledge base.
 
 Full context lives in the project-level docs but the essence is:
 
@@ -25,24 +28,55 @@ Full context lives in the project-level docs but the essence is:
 
 **Example:** While browsing Instagram, a user sees "10 Hidden Gem Restaurants in London."
 
-* Taps "Send to Second Brain."
-* The app:
-  * Extracts structured data (restaurant names, locations).
-  * Tags the content.
-  * Deduplicates if already saved via another platform.
-  * Enriches metadata.
-  * Makes the data searchable and retrievable when planning a night out in London.
+* Taps **Share** → **AH App** (appears in native share sheet)
+* **Background processing** (no app switching required):
+  * Extracts structured data (restaurant names, locations)
+  * Tags the content with AI assistance
+  * Deduplicates if already saved via another platform
+  * Enriches metadata via OpenGraph + platform-specific intelligence
+* **Notification**: "Instagram reel saved with restaurant insights"
+* **Result**: Content is searchable and retrievable when planning a night out in London
+
+**Key UX Advantage**: No leaving Instagram, no manual sync, no third-party dependency.
 
 ---
 
 ## 🧑‍💻 User Problem
 
-• Scattered content across Instagram, Twitter, blogs, etc.  
-• Manual bookmarking/tagging is high-friction and low recall.  
-• Users rarely revisit saved content.
-• **Content is fragmented across multiple platforms** - users have bookmarks in Raindrop, Instapaper, Readwise, and other services with no unified view.
+• **App switching friction** - saving content requires leaving the discovery flow  
+• **Third-party dependencies** - relying on Raindrop/Pocket sync that can break  
+• **Manual bookmarking/tagging** is high-friction and low recall  
+• **Scattered content** across Instagram, Twitter, blogs, etc. with no unified capture  
+• **Content fragmentation** - bookmarks split across Raindrop, Instapaper, Readwise with no unified view  
+• **Low revisit rates** - users rarely return to saved content due to poor organization
 
 Our solution: a low-friction capture pipeline + automated enrichment so users can _find & act_ on what they save, **unified across all their bookmark sources**.
+
+---
+
+## 🚀 Strategic Advantage: Native Share Target
+
+**Why This Approach Beats Traditional Bookmark Managers:**
+
+| Traditional Flow (Raindrop, Pocket) | Native Share Target Flow |
+|-------------------------------------|--------------------------|
+| 1. Save to third-party service | 1. Share → Your App |
+| 2. Switch to bookmark app | 2. **Done!** ✨ |
+| 3. Sync/import data | |
+| 4. Wait for processing | |
+| 5. Hope sync doesn't break | |
+
+**Key Benefits:**
+- **Zero app switching** - stay in the content discovery flow
+- **No third-party dependency** - direct capture to your system
+- **Instant processing** - background enrichment with notifications
+- **Native UX** - appears in every app's share menu automatically
+- **Privacy-first** - content goes directly to your server, not through third parties
+
+**Technical Implementation:**
+- A0 handles the native share capture
+- Existing A3 enrichment pipeline processes content
+- Users get best-of-both-worlds: native UX + powerful processing
 
 ---
 
@@ -487,14 +521,29 @@ Create two separate Raindrop.io applications for environment separation:
 
 ### 🔄 MVP (In Progress / Planned)
 
+* **A0 – Native Share Target Implementation** ✅ **CORE DIFFERENTIATOR** - 2025-01-28
+  * **PWA Share Target**: ✅ Register as share destination in web browsers
+  * **Backend API**: ✅ POST /api/bookmarks/share endpoint with enrichment
+  * **Frontend Handler**: ✅ React component to process shared content 
+  * **Direct Processing**: ✅ Bypass staging, process directly to canonical store
+  * **OpenGraph Enrichment**: ✅ Automatic metadata enhancement during save
+  * **Status**: 🔄 **MVP Complete** - PWA sharing functional, mobile apps pending
+  * **Implemented Features**:
+    * ✅ PWA manifest.json share_target configuration
+    * ✅ Authenticated API endpoint with URL validation and deduplication
+    * ✅ React ShareHandler component with success/error states
+    * ✅ Integration with existing enrichment pipeline
+    * ✅ User feedback with "AI Enhanced" badges
+  * **Next Steps**: Android Intent handling (A0.4) and iOS Share Extension (A0.5)
 * A4 – Sync Scheduler (cron-ready background jobs)
   * Background job runner configured for routine syncs.
   * Foundation for cross-platform sync orchestration.
   * **Missing:** Actual cron job implementation.
   * **Missing:** Sync status tracking and reporting.
-* B1 – Manual URL Input (API & UI)
-  * Accept single or multiple links for ingestion.
-  * Basic UI or API endpoint for manual submissions.
+* B1 – Manual URL Input (Fallback UI)
+  * **Repositioned**: Now a *fallback* for users who can't use native sharing
+  * Accept single or multiple links for desktop/web users
+  * Quick paste interface and bulk URL import
   * **Missing:** API endpoints for manual bookmark creation.
   * **Missing:** Frontend UI for manual bookmark input.
 * B2 – Basic Metadata Enrichment Engine
@@ -700,8 +749,8 @@ Create two separate Raindrop.io applications for environment separation:
 * C2 – Tag Hierarchies & Auto-Taxonomy
 * C3 – Temporal Context Engine
 * C4 – Change Detection & Versioning
-* C5 – PWA Share-Target Implementation
-* C6 – Android Intent Handling
+* C5 – PWA Share-Target Implementation ➡️ **Moved to A0**
+* C6 – Android Intent Handling ➡️ **Moved to A0**
 * C7 – Instapaper API Integration (following same staging → canonical pattern as Raindrop)
 * C8 – Readwise API Integration (following same staging → canonical pattern as Raindrop)
 * C9 – Enhanced Batch Operations
@@ -911,6 +960,10 @@ CREATE TABLE bookmarks.bookmarks (
 
 | Method | Endpoint | Auth | Purpose |
 |--------|----------|------|---------|
+| **Core Bookmark Operations** | | | |
+| GET  | `/api/bookmarks`             | JWT | Get user's canonical bookmarks with auto-transfer |
+| POST | `/api/bookmarks/share`       | JWT | **Native Share Target** - Save shared URL directly |
+| **Raindrop Integration** | | | |
 | GET  | `/api/raindrop/verify`       | JWT | Check token presence |
 | GET  | `/api/raindrop/oauth/start`  | JWT | Begin OAuth flow |
 | GET  | `/api/raindrop/oauth/callback`
