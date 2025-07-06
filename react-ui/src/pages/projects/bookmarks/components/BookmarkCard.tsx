@@ -1,13 +1,23 @@
-// @ts-nocheck
 import React, { useState } from 'react';
 import { Card, Badge, Text, Group, Stack, Image, Box, Transition, Avatar, Tooltip } from '@mantine/core';
 import { IconExternalLink, IconClock, IconBookmark, IconBrain, IconTrendingUp } from '@tabler/icons-react';
+import { 
+  Bookmark, 
+  BookmarkCardProps, 
+  BookmarkSourceType 
+} from '../../../../types/common';
 
-const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
-  const [imageError, setImageError] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+const BookmarkCard: React.FC<BookmarkCardProps> = ({ 
+  bookmark, 
+  onInstagramAnalysisClick,
+  onEdit,
+  onDelete,
+  showActions = false
+}) => {
+  const [imageError, setImageError] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const getSourceBadgeProps = (sourceType) => {
+  const getSourceBadgeProps = (sourceType: BookmarkSourceType) => {
     switch (sourceType) {
       case 'raindrop':
         return { color: 'blue', label: 'Raindrop' };
@@ -22,10 +32,10 @@ const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
     }
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffTime = Math.abs(now - date);
+    const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
     if (diffDays <= 1) return 'yesterday';
@@ -39,18 +49,18 @@ const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
     setImageError(true);
   };
 
-  const isInstagramUrl = (url) => {
+  const isInstagramUrl = (url: string): boolean => {
     const instagramPattern = /^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/[a-zA-Z0-9_-]+\/?/;
     return instagramPattern.test(url);
   };
 
-  const hasInstagramAnalysis = () => {
-    return bookmark.source_metadata?.instagram_analysis || 
+  const hasInstagramAnalysis = (): boolean => {
+    return !!(bookmark.source_metadata?.instagram_analysis || 
            bookmark.source_metadata?.metadata_enriched ||
-           bookmark.intelligence_level > 1;
+           (bookmark.intelligence_level ?? 0) > 1);
   };
 
-  const getInstagramMediaType = (url) => {
+  const getInstagramMediaType = (url: string): string => {
     if (url.includes('/reel/')) return 'Reel';
     if (url.includes('/tv/')) return 'IGTV';
     if (url.includes('/p/')) return 'Post';
@@ -117,12 +127,12 @@ const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
             borderBottom: '1px solid var(--mantine-color-gray-2)'
           }}
         >
-          <Group position="apart">
-            <Group spacing="xs">
+          <Group justify="space-between">
+            <Group gap="xs">
               <Avatar src={bookmark.favicon_url || `https://www.google.com/s2/favicons?domain=${domain}&sz=32`} size="sm" radius="sm">
                 <IconBookmark size={16} /> 
               </Avatar>
-              <Text size="xs" weight={500}>{domain}</Text>
+              <Text size="xs" fw={500}>{domain}</Text>
             </Group>
             {readTime && (
               <Text size="xs" color="dimmed">{readTime} min read</Text>
@@ -132,11 +142,11 @@ const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
       )}
 
       {/* Content Section */}
-      <Stack spacing="sm" p="md" style={{ flex: 1, justifyContent: 'space-between' }}>
-        <Stack spacing="sm">
+      <Stack gap="sm" p="md" style={{ flex: 1, justifyContent: 'space-between' }}>
+        <Stack gap="sm">
           <Text
             size="sm"
-            weight={600}
+            fw={600}
             lineClamp={2}
             style={{ 
               transition: 'color 0.2s ease',
@@ -158,7 +168,7 @@ const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
           )}
           
           {bookmark.tags && bookmark.tags.length > 0 && (
-            <Group spacing={6} mt="xs">
+            <Group gap={6} mt="xs">
               {bookmark.tags.slice(0, 2).map((tag, index) => (
                 <Badge 
                   key={`${bookmark.id}-tag-${index}`} 
@@ -179,7 +189,7 @@ const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
 
           {/* Instagram Intelligence Indicators */}
           {isInstagramUrl(bookmark.url) && (
-            <Group spacing={6} mt="xs">
+            <Group gap={6} mt="xs">
               <Badge 
                 size="sm" 
                 variant="outline" 
@@ -202,7 +212,7 @@ const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
                       }
                     }}
                   >
-                    <Group spacing={4}>
+                    <Group gap={4}>
                       <IconTrendingUp size={12} />
                       <Text size="xs">AI Enhanced</Text>
                     </Group>
@@ -214,8 +224,8 @@ const BookmarkCard = ({ bookmark, onInstagramAnalysisClick }) => {
         </Stack>
         
         {/* Footer with Date and Source */}
-        <Group position="apart" mt="md">
-          <Group spacing={6}>
+        <Group justify="space-between" mt="md">
+          <Group gap={6}>
             <IconClock size={14} color="var(--mantine-color-gray-6)" />
             <Text size="xs" color="dimmed">
               {formatDate(bookmark.created_at)}
