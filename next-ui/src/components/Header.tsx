@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+
 import {
   Container,
   Group,
@@ -26,10 +26,9 @@ const links = [
 
 export default function Header() {
   const [opened, { toggle, close }] = useDisclosure(false);
-  const [active, setActive] = useState(0);
   const pathname = usePathname();
 
-  const items = links.map((link, index) => (
+  const items = links.map((link) => (
     <UnstyledButton
       component={Link}
       href={link.link}
@@ -37,7 +36,6 @@ export default function Header() {
       className={classes.link}
       data-active={pathname === link.link || undefined}
       onClick={() => {
-        setActive(index);
         close();
       }}
     >

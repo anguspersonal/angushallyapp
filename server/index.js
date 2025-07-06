@@ -66,7 +66,25 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 // Priority serve Next.js static files at /next route
-app.use('/next', express.static(path.resolve(__dirname, '../next-ui/out')));
+if (isDev) {
+  // In development, proxy to Next.js dev server
+  console.log('Setting up Next.js proxy to http://localhost:3001');
+  const { createProxyMiddleware } = require('http-proxy-middleware');
+  app.use('/next', createProxyMiddleware({
+    target: 'http://localhost:3001',
+    changeOrigin: true,
+    pathRewrite: {
+      '^/next': '', // Remove /next prefix when forwarding to Next.js dev server
+    },
+    onError: (err, req, res) => {
+      console.error('Proxy error:', err.message);
+      res.status(500).send('Proxy error: ' + err.message);
+    },
+  }));
+} else {
+  // In production, serve static files
+  app.use('/next', express.static(path.resolve(__dirname, '../next-ui/out')));
+}
 
 // Priority serve any static files.
 app.use(express.static(path.resolve(__dirname, '../react-ui/build')));

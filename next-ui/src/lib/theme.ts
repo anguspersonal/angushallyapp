@@ -125,19 +125,6 @@ export const theme = createTheme({
         color: 'secondary', // Use the secondary color palette
         variant: 'filled',    // Use the filled style
       },
-      // Custom styles for the Button component
-      styles: (theme) => ({
-        // Root applies to the main button element
-        root: {
-          // The defaultProps handle the base background and text color for variant='filled'
-          // We only need to explicitly define the hover state if we want it
-          // to be different from Mantine's default hover (which usually darkens)
-          '&:hover': {
-            // Custom hover: Use a lighter shade (secondary[4]) instead of default
-            backgroundColor: theme.colors.secondary[4],
-          },
-        },
-      }),
     },
   },
 });
