@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { Box, Container, Title, Text, Paper, Checkbox, Stack, Alert, Loader } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../utils/apiClient.js';
-import { useAuth } from '../contexts/AuthContext.jsx';
-import { storeAuthData } from '../utils/authUtils.js';
-import Header from '../components/Header.jsx';
+import { api } from '../utils/apiClient';
+import { useAuth } from '../contexts/AuthContext';
+import { storeAuthData } from '../utils/authUtils';
+import Header from '../components/Header';
 
 function Login() {
   const navigate = useNavigate();
