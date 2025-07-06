@@ -1,12 +1,25 @@
-// @ts-nocheck
 import React from "react";
 import { Card, Text, Progress, Group } from "@mantine/core";
 import { IconCircleDashedCheck } from "@tabler/icons-react";
+import { HabitType } from "../../../types/common";
 
-function HabitTile({ habit, onClick, onLog }) { // ✅ Accept `onLog` as a prop
+interface HabitDefinition {
+  id: number;
+  name: HabitType;
+  displayName: string;
+  icon: string;
+  progress: number;
+}
+
+interface HabitTileProps {
+  habit: HabitDefinition;
+  onClick: () => void;
+  onLog: (habit: HabitDefinition) => void;
+}
+
+const HabitTile: React.FC<HabitTileProps> = ({ habit, onClick, onLog }) => {
   return (
-    <Group
-      spacing="xs"
+    <Card
       shadow="sm"
       padding="md"
       radius="md"
@@ -14,24 +27,25 @@ function HabitTile({ habit, onClick, onLog }) { // ✅ Accept `onLog` as a prop
       style={{ width: "100%", background: "white", borderRadius: 10, cursor: "pointer" }}
       onClick={onClick} // ✅ Clicking the tile opens the modal
     >
-      <Card style={{ flex: 1, background: "transparent" }}>
-        <Text size="lg">
-          {habit.icon} {habit.name}
-        </Text>
-        <Progress value={habit.progress} size="sm" mt="sm" />
-      </Card>
+      <Group gap="xs">
+        <div style={{ flex: 1 }}>
+          <Text size="lg">
+            {habit.icon} {habit.displayName}
+          </Text>
+          <Progress value={habit.progress} size="sm" mt="sm" />
+        </div>
 
-      {/* ✅ Log Button calls `onLog`, stopping propagation to prevent modal opening */}
-      <IconCircleDashedCheck 
-        onClick={(event) => {
-          event.stopPropagation(); // ✅ Prevents modal from opening
-          // onLog(habit); // ✅ Calls `onLog` from `Habit.jsx`
-        }}
-        size={24} stroke={2} 
-        color={"var(--success-color)"} 
-        style={{ cursor: "pointer", marginRight: 10 }} />
-
-    </Group>
+        {/* ✅ Log Button calls `onLog`, stopping propagation to prevent modal opening */}
+        <IconCircleDashedCheck 
+          onClick={(event) => {
+            event.stopPropagation(); // ✅ Prevents modal from opening
+            onLog(habit); // ✅ Calls `onLog` from `Habit.jsx`
+          }}
+          size={24} stroke={2} 
+          color={"var(--success-color)"} 
+          style={{ cursor: "pointer", marginRight: 10 }} />
+      </Group>
+    </Card>
   );
 }
 
