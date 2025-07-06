@@ -53,7 +53,7 @@ describe('Footer Component', () => {
     expect(screen.getByText('Development Environment')).toBeInTheDocument();
   });
 
-  test('renders build number in production', () => {
+  test('renders build number in production when build number is provided', () => {
     process.env.NODE_ENV = 'production';
     process.env.REACT_APP_BUILD_NUMBER = 'v1.2.3';
     
@@ -66,7 +66,7 @@ describe('Footer Component', () => {
     expect(screen.getByText('Build: v1.2.3')).toBeInTheDocument();
   });
 
-  test('renders default build info in production when build number is not set', () => {
+  test('renders no build info in production when build number is not set', () => {
     process.env.NODE_ENV = 'production';
     delete process.env.REACT_APP_BUILD_NUMBER;
     
@@ -76,7 +76,9 @@ describe('Footer Component', () => {
       </TestWrapper>
     );
 
-    expect(screen.getByText('Build: dev')).toBeInTheDocument();
+    // Should not show any build information
+    expect(screen.queryByText(/Build:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Development Environment/)).not.toBeInTheDocument();
   });
 
   test('renders all social media links with correct attributes', () => {

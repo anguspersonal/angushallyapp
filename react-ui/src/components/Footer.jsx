@@ -7,7 +7,7 @@ import classes from './Footer.module.css';
 
 function Footer() {
   const currentYear = new Date().getFullYear();
-  const buildInfo = process.env.REACT_APP_BUILD_NUMBER || 'dev';
+  const buildInfo = process.env.REACT_APP_BUILD_NUMBER;
   
   return (
     <div className={classes.footer}>
@@ -16,15 +16,15 @@ function Footer() {
           <Text size="sm" c="dimmed">
             © {currentYear} Angus Hally. All rights reserved.
           </Text>
-          {process.env.NODE_ENV === 'production' ? (
-            <Text size="xs" c="dimmed">
-              Build: {buildInfo}
-            </Text>
-          ) : (
+          {process.env.NODE_ENV === 'development' ? (
             <Text size="xs" c="dimmed">
               Development Environment
             </Text>
-          )}
+          ) : buildInfo ? (
+            <Text size="xs" c="dimmed">
+              Build: {buildInfo}
+            </Text>
+          ) : null}
         </div>
         <Group gap={0} className={classes.links} justify="flex-end" wrap="nowrap">
           <ActionIcon 
