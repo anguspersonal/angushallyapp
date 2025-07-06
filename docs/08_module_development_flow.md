@@ -241,6 +241,7 @@ jest.mock('../middleware/auth', () => jest.fn(...));  // ← This fails
 - [ ] Create test file(s) using the pattern:
   - `[ComponentName].test.jsx` (alongside component)
   - Follow existing test patterns in `components/` directory
+  - Shared testing utilities & mocks live in `react-ui/src/__tests__/` (import via `@tests/...` alias)
 - [ ] Use React Testing Library for component testing
 - [ ] Test user interactions, props, and state changes
 - [ ] Run tests from `react-ui` directory:
