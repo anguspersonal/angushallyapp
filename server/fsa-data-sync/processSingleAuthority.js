@@ -34,10 +34,6 @@ const processSingleAuthority = async (props) => {
     // 3 Extract establishments from the parsed data
     const establishments = parsedData.FHRSEstablishment.EstablishmentCollection.EstablishmentDetail || [];
 
-    // Log random establishments for debugging
-    const randomIndex = Math.floor(Math.random() * establishments.length) + 1;
-    // console.log(establishments[randomIndex]);
-
     // 4 Deconstruct, Validate, Process and Insert the data for each establishment into database
 
     //Set counters of successfully processed, skipped and errored establishments

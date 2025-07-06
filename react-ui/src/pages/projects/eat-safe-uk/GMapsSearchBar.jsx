@@ -37,11 +37,6 @@ const GMapsSearchBar = ({setSearchResults, setUserSearched, isSearching, setIsSe
             return;
         }
 
-        if (!GOOGLE_MAPS_API_KEY) {
-            console.error("❌ Google Maps API key is missing. Check your .env file.");
-            return;
-        }
-
         try {
             const requestUrl = `https://places.googleapis.com/v1/places:searchText`;
 

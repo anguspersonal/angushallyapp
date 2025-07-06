@@ -78,10 +78,10 @@ Several React components import hooks or utilities that are not used:
 
 ## Recommendations
 
-1. **Immediate Actions**:
-   - Remove unused imports from `server/index.js`
-   - Remove unused `randomIndex` variable from `processSingleAuthority.js`
-   - Remove duplicate API key check in `GMapsSearchBar.jsx`
+1. **Immediate Actions** ✅ **COMPLETED**:
+   - ✅ Removed unused imports from `server/index.js`
+   - ✅ Removed unused `randomIndex` variable from `processSingleAuthority.js`
+   - ✅ Removed duplicate API key check in `GMapsSearchBar.jsx`
 
 2. **Tools to Consider**:
    - Set up ESLint with `no-unused-vars` rule
