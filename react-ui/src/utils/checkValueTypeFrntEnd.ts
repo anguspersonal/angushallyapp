@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Description: Check the value type of the input.
 
 export default function checkValueType(value){

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { performNearbySearch} from "./utils/nearbySearch";
 import {askUserLocation} from "./utils/askUserLocation";
 

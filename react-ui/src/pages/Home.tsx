@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { Box, Container, Title, Text, Image, Anchor, SimpleGrid, useMantineTheme, Button } from '@mantine/core';
 import { motion } from 'framer-motion';

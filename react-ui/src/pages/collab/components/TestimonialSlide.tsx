@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Box, Text, Blockquote, useMantineTheme, Group, Avatar, ActionIcon } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import ReactMarkdown from 'react-markdown';

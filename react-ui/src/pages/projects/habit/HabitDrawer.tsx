@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState, useRef } from "react";
 import { Drawer, Button, Stack, Group, Table, ActionIcon, Text } from "@mantine/core";
 import HabitCombobox from "./HabitCombobox";

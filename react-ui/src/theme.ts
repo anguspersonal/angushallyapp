@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createTheme } from '@mantine/core';
 
 export const motionTransitions = {

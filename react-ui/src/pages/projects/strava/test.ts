@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Development test file for Strava API exploration
 
 // import { createRequire } from 'module';

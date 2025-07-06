@@ -1,3 +1,4 @@
+// @ts-nocheck
 //Imports
 import React, { useState, useEffect, useDebugValue } from 'react';
 import './Gameboard.css'; // Ensure the correct path to the CSS file

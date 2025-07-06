@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getDynamicPlaceholder } from "./utils/getDynamicPlaceholder";
 

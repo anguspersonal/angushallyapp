@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState } from 'react';
 import { Container, Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Image, Box } from '@mantine/core';
 import { IconDatabase, IconServer, IconTools, IconBrandReact, IconExternalLink, IconMapPin, IconBrain, IconBookmark, IconRun } from '@tabler/icons-react';

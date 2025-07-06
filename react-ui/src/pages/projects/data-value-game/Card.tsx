@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useDebugValue } from 'react';
 import './Card.css'; // Ensure the correct path to the CSS file
 

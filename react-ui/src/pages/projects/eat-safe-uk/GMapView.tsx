@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect, useRef } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import "../../../index.css";

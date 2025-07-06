@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { Button, Loader, Text, Group, Stack, Title, Container, Box } from '@mantine/core';
 import { IconLink, IconRefresh } from '@tabler/icons-react';

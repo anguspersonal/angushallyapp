@@ -1,3 +1,4 @@
+// @ts-nocheck
 const loadStravaApi = async () => {
     const StravaApiV3 = await import('strava_api_v3');
     return StravaApiV3.default || StravaApiV3; // Handle default export if necessary

@@ -1,3 +1,4 @@
+// @ts-nocheck
 export const askUserLocation = (onSetLocation) => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(

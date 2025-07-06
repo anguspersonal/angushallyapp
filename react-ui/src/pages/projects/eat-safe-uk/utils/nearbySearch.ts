@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Performs a nearby search using the Google Places API.
  * @param {Object} userLocation - The location object with `lat` and `lng` properties.

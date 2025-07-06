@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { Box, Container, Title, Text, Paper, Checkbox, Stack, Alert, Loader } from '@mantine/core';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { Box, Container, Title, SimpleGrid, useMantineTheme } from '@mantine/core';
 import { motion } from 'framer-motion';

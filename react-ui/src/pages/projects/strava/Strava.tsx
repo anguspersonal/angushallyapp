@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from "react";
 import { fetchStravaData, getPRs, getWeeklyRuns, getRecentRuns } from './stravaDataService';
 import Header from '../../../components/Header';

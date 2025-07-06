@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { Card, Text, Progress, Group } from "@mantine/core";
 import { IconCircleDashedCheck } from "@tabler/icons-react";

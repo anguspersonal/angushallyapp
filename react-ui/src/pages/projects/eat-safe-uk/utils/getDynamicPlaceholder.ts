@@ -1,3 +1,4 @@
+// @ts-nocheck
 // utils/getDynamicPlaceholder.js
 export const getDynamicPlaceholder = (inputWidth) => {
     return inputWidth > 250

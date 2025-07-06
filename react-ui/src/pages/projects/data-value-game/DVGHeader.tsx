@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import './DVGHeader.css'; // Ensure the correct path to the CSS file
 

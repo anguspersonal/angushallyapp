@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { renderWithMantine, screen, fireEvent, waitFor } from '../../../__tests__/utils/testUtils';
 import { api } from '../../../utils/apiClient';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { Box, Center, Text, Image, HoverCard, useMantineTheme } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';

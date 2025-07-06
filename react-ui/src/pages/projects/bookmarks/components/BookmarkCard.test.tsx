@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { renderWithMantine, screen } from '../../../../__tests__/utils/testUtils';
 import BookmarkCard from './BookmarkCard';

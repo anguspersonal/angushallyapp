@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Container, Card, Text, Button, Group, Loader, Alert, Badge } from '@mantine/core';

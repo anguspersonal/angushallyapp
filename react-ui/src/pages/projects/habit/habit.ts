@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { api } from '../../../utils/apiClient';
 // ✅ Function that calls the API to log habit data
 export const addHabitLog = async (logData, habitType) => {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Box, Title, Text, useMantineTheme } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';

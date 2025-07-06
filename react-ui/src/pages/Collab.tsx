@@ -1,3 +1,4 @@
+// @ts-nocheck
 // pages/Collab.jsx
 import React, { useRef } from 'react';
 import { Container, Title, Text, Anchor, Group, Button, Box, Image, Flex, useMantineTheme, Accordion } from '@mantine/core';

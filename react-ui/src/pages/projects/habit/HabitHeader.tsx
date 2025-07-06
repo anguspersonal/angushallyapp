@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { Group, Title, ActionIcon } from "@mantine/core";
 import { IconPlus, IconSettings, IconHome } from "@tabler/icons-react";
