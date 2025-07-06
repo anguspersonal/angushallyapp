@@ -34,8 +34,14 @@ export const motionTransitions = {
   }
 };
 
-// Global assets
-export const assets = {
+// Global assets with proper typing
+export const assets: {
+  placeholderImage: {
+    landscape: string;
+    square: string;
+    portrait: string;
+  };
+} = {
   placeholderImage: {
     landscape: '/20250418_3BY2_Default_Image_Placeholder.png',  // 3:2 ratio
     square: '/20250419_1BY1_Default_Image_Placeholder.png',     // 1:1 ratio
@@ -64,7 +70,7 @@ export const theme = createTheme({
       '#1A1B1E',
       '#141517',
       '#101113',
-    ],
+    ] as const,
     primary: [
       '#E8EBE8', // lightest
       '#D1D7D1',
@@ -76,7 +82,7 @@ export const theme = createTheme({
       '#475F47',
       '#384C37', // base color
       '#2A3929', // darkest
-    ],
+    ] as const,
     secondary: [
       '#E8EDF2',
       '#D1DBE5',
@@ -88,7 +94,7 @@ export const theme = createTheme({
       '#5B7A9A',
       '#4A6A8A',
       '#395A7A',
-    ],
+    ] as const,
     accent: [
       '#F9F5F3',
       '#F3EBE7',
@@ -100,7 +106,7 @@ export const theme = createTheme({
       '#C9A89C',
       '#BD988C',
       '#B1887C',
-    ],
+    ] as const,
     success: [
       '#E8F0E9',
       '#D1E1D3',
@@ -112,7 +118,7 @@ export const theme = createTheme({
       '#5A8E5F',
       '#497D4E',
       '#386C3D',
-    ],
+    ] as const,
   },
   primaryColor: 'primary',
   primaryShade: 8, // This will use the base color (index 8)

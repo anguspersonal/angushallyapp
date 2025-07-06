@@ -15,7 +15,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import classes from './Header.module.css';
 
-const links = [
+// Navigation links with proper typing
+interface NavigationLink {
+  link: string;
+  label: string;
+}
+
+const links: NavigationLink[] = [
   { link: '/next/', label: 'Home' },
   { link: '/next/about', label: 'About' },
   { link: '/next/blog', label: 'Blog' },
