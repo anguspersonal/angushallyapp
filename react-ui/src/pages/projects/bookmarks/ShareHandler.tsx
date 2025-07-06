@@ -5,6 +5,21 @@ import { Container, Card, Text, Button, Group, Loader, Alert, Badge } from '@man
 import { IconCheck, IconX, IconBookmark, IconExternalLink } from '@tabler/icons-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../utils/apiClient';
+import { Bookmark } from '../../../types/common';
+
+type ShareStatus = 'processing' | 'success' | 'error' | 'auth_required';
+
+interface ShareData {
+  url: string;
+  text?: string | null;
+  title?: string | null;
+}
+
+interface ShareResponse {
+  success: boolean;
+  bookmark?: Bookmark;
+  error?: string;
+}
 
 /**
  * ShareHandler - Handles PWA Share Target requests
@@ -20,14 +35,14 @@ import { api } from '../../../utils/apiClient';
  * 5. Component extracts data and sends to backend API
  * 6. Shows success/error message and option to view bookmarks
  */
-const ShareHandler = () => {
+const ShareHandler: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
-  const [status, setStatus] = useState('processing'); // 'processing', 'success', 'error', 'auth_required'
-  const [bookmarkData, setBookmarkData] = useState(null);
-  const [error, setError] = useState('');
+  const [status, setStatus] = useState<ShareStatus>('processing');
+  const [bookmarkData, setBookmarkData] = useState<Bookmark | null>(null);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     // Check authentication first
@@ -55,7 +70,7 @@ const ShareHandler = () => {
     processSharedContent({ url, text, title });
   }, [isAuthenticated, searchParams]);
 
-  const processSharedContent = async (shareData) => {
+  const processSharedContent = async (shareData: ShareData): Promise<void> => {
     try {
       console.log('🔄 Sending shared content to backend...');
       
@@ -65,14 +80,15 @@ const ShareHandler = () => {
         title: shareData.title
       });
 
-      if (response.data.success) {
-        console.log('✅ Share target bookmark created:', response.data.bookmark);
-        setBookmarkData(response.data.bookmark);
+      const shareResponse = response.data as ShareResponse;
+      if (shareResponse.success) {
+        console.log('✅ Share target bookmark created:', shareResponse.bookmark);
+        setBookmarkData(shareResponse.bookmark || null);
         setStatus('success');
       } else {
-        throw new Error(response.data.error || 'Unknown error occurred');
+        throw new Error(shareResponse.error || 'Unknown error occurred');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Share target failed:', error);
       
       if (error.response?.status === 401) {
@@ -113,9 +129,9 @@ const ShareHandler = () => {
     return (
       <Container size="sm" style={{ paddingTop: '2rem' }}>
         <Card shadow="sm" padding="lg" radius="md" withBorder>
-          <Group spacing="sm" style={{ marginBottom: '1rem' }}>
+          <Group gap="sm" style={{ marginBottom: '1rem' }}>
             <IconBookmark size={24} color="#1976d2" />
-            <Text size="lg" weight={600}>Authentication Required</Text>
+            <Text size="lg" fw={600}>Authentication Required</Text>
           </Group>
           
           <Text color="dimmed" style={{ marginBottom: '1.5rem' }}>
