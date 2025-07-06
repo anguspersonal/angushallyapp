@@ -1,4 +1,5 @@
-import { api } from '../../../utils/apiClient';
+
+import { api } from '../../../utils/apiClient.ts';
 
 export async function analyzeText(input) {
   try {
