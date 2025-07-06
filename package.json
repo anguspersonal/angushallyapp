@@ -23,6 +23,7 @@
     "migrate:rollback": "cd server && npx knex migrate:rollback",
     "migrate:status": "cd server && npx knex migrate:status",
     "migrate:make": "cd server && npx knex migrate:make",
+    "heroku-prebuild": "npm install --prefix react-ui --legacy-peer-deps",
     "heroku-postbuild": "npm run sync-env:prod && npm run build-client"
   },
   "type": "commonjs",
