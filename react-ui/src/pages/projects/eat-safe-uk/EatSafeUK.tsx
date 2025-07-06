@@ -8,9 +8,7 @@ import NearbySearchButton from "./NearbySearchButton";
 
 function EatSafeUK() {
     const [searchResults, setSearchResults] = useState([]);
-    const [userSearched, setUserSearched] = useState(false); // Track if user performed a search
     const [userLocation, setUserLocation] = useState(null);
-    const [userLocationPermission, setUserLocationPermission] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const [selectedMarker, setSelectedMarker] = useState(null); //Set selected markers on map.
 
@@ -35,8 +33,6 @@ function EatSafeUK() {
                         <NearbySearchButton
                             setSearchResults={setSearchResults}
                             setUserLocation={setUserLocation}
-                            setUserLocationPermission={setUserLocationPermission}
-                            setUserSearched={setUserSearched}
                             isSearching={isSearching}
                             setIsSearching={setIsSearching}
                             selectedMarker={selectedMarker}
@@ -45,7 +41,6 @@ function EatSafeUK() {
                         <p>or</p>
                         <SearchBar
                             setSearchResults={setSearchResults}
-                            setUserSearched={setUserSearched}
                             isSearching={isSearching}
                             setIsSearching={setIsSearching}
                             selectedMarker={selectedMarker}

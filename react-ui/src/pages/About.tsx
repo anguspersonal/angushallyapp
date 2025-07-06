@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Title, Text, Image, Anchor, Group, ActionIcon, useMantineTheme } from '@mantine/core';
+import { Box, Container, Title, Text, Image, Anchor, Group, ActionIcon } from '@mantine/core';
 import { IconBrandLinkedin, IconBrandGithub, IconBrandX, IconBrandInstagram } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -21,8 +21,6 @@ const contentVariants = {
 };
 
 function About() {
-    const theme = useMantineTheme();
-
     return (
         <Box>
             <Header />

@@ -8,7 +8,6 @@ import {
     Button,
     Text,
     Group,
-    useMantineTheme,
     Stack
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -16,7 +15,6 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import "../general.css";
-import { motionTransitions } from '../theme';
 
 // Animation variants for staggered fade-in
 const formElementVariants = {
@@ -33,7 +31,6 @@ const formElementVariants = {
 };
 
 function Contact() {
-    const theme = useMantineTheme();
     const [captchaValue, setCaptchaValue] = useState(null);
     const [status, setStatus] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state for button

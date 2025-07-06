@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Container, Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Image, Overlay, Box } from '@mantine/core';
+import { Container, Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Image, Box } from '@mantine/core';
 import { IconDatabase, IconServer, IconTools, IconBrandReact, IconExternalLink, IconMapPin, IconBrain, IconBookmark, IconRun } from '@tabler/icons-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { motionTransitions } from '../theme';
 import { Link } from 'react-router-dom';
 
 const MotionPaper = motion(Paper);
