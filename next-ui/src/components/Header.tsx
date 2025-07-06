@@ -9,11 +9,14 @@ import {
   Transition,
   Text,
   UnstyledButton,
+  type MantineSize,
+  type MantineTransition,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import classes from './Header.module.css';
+import type { CSSProperties } from 'react';
 
 // Navigation links with proper typing
 interface NavigationLink {
@@ -34,6 +37,10 @@ export default function Header() {
   const [opened, { toggle, close }] = useDisclosure(false);
   const pathname = usePathname();
 
+  const containerSize: MantineSize = 'md';
+  const transitionType: MantineTransition = 'pop-top-right';
+  const headerStyles: CSSProperties = { textDecoration: 'none', color: 'inherit' };
+
   const items = links.map((link) => (
     <UnstyledButton
       component={Link}
@@ -51,13 +58,13 @@ export default function Header() {
 
   return (
     <header className={classes.header}>
-      <Container size="md" className={classes.inner}>
+      <Container size={containerSize} className={classes.inner}>
         <Text
           component={Link}
           href="/next/"
           size="lg"
           fw={700}
-          style={{ textDecoration: 'none', color: 'inherit' }}
+          style={headerStyles}
         >
           Angus Hally
         </Text>
@@ -67,7 +74,7 @@ export default function Header() {
 
         <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
 
-        <Transition transition="pop-top-right" duration={200} mounted={opened}>
+        <Transition transition={transitionType} duration={200} mounted={opened}>
           {(styles) => (
             <Paper className={classes.dropdown} withBorder style={styles}>
               {items}

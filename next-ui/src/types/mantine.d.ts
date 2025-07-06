@@ -2,9 +2,18 @@
 
 declare module '@mantine/core' {
   export interface MantineThemeColorsOverride {
-    colors: Record<string, readonly string[]>;
+    colors: {
+      primary: MantineColorsTuple;
+      secondary: MantineColorsTuple;
+      accent: MantineColorsTuple;
+      success: MantineColorsTuple;
+      dark: MantineColorsTuple;
+    };
   }
 }
+
+// Re-export important Mantine types for easier access
+export type { MantineColorsTuple, MantineThemeOverride, MantineTheme } from '@mantine/core';
 
 // Global type declarations for theme assets
 export interface ThemeAssets {
@@ -17,7 +26,7 @@ export interface ThemeAssets {
 
 // Framer Motion types for animations
 export interface MotionTransition {
-  type: string;
+  type: 'spring';
   stiffness: number;
   damping: number;
   duration: number;
