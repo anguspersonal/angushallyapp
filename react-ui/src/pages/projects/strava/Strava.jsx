@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchStravaData, getPRs, getWeeklyRuns, getRecentRuns } from './stravaDataService.js';
-import Header from '../../../components/Header.jsx';
+import Header from '../../../components/Header.tsx';
 import '@mantine/charts/styles.css';
 import { Table } from '@mantine/core';
 import { LineChart } from '@mantine/charts';

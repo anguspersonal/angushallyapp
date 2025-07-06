@@ -65,6 +65,9 @@ app.use((req, res, next) => {
 // Use body-parsing middleware
 app.use(express.json());
 
+// Priority serve Next.js static files at /next route
+app.use('/next', express.static(path.resolve(__dirname, '../next-ui/out')));
+
 // Priority serve any static files.
 app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 

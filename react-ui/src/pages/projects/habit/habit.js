@@ -1,4 +1,4 @@
-import { api } from '../../../utils/apiClient.js';
+import { api } from '../../../utils/apiClient.ts';
 
 // ✅ Function that calls the API to log habit data
 export const addHabitLog = async (logData, habitType) => {
