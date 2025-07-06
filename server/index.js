@@ -80,6 +80,7 @@ if (isDev) {
       console.error('Proxy error:', err.message);
       res.status(500).send('Proxy error: ' + err.message);
     },
+    logLevel: 'debug',
   }));
 } else {
   // In production, serve static files
@@ -179,6 +180,11 @@ const instagramIntelligenceRoute = require('./routes/instagramIntelligenceRoute'
 app.use('/api/instagram-intelligence', instagramIntelligenceRoute);
 
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
+
+// SEO redirects for migrated routes
+app.get('/about', function (req, res) {
+  res.redirect(301, '/next/about/');
+});
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {
