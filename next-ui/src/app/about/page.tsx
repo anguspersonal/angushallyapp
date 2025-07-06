@@ -7,6 +7,36 @@ import { motion } from 'framer-motion';
 import Header from '../../components/Header';
 import { assets } from '../../lib/theme';
 
+// Social media links with proper typing
+interface SocialLink {
+  readonly href: string;
+  readonly icon: React.ComponentType<{ size: number }>;
+  readonly label: string;
+}
+
+const socialLinks: readonly SocialLink[] = [
+  {
+    href: 'https://www.linkedin.com/in/angus-hally-9ab66a87',
+    icon: IconBrandLinkedin,
+    label: 'LinkedIn'
+  },
+  {
+    href: 'https://github.com/anguspersonal',
+    icon: IconBrandGithub,
+    label: 'GitHub'
+  },
+  {
+    href: 'https://x.com/HallyAngus',
+    icon: IconBrandX,
+    label: 'X (Twitter)'
+  },
+  {
+    href: 'https://www.instagram.com/hallyangus/',
+    icon: IconBrandInstagram,
+    label: 'Instagram'
+  }
+] as const;
+
 export default function About() {
     return (
         <Box>
@@ -73,18 +103,23 @@ export default function About() {
                     <Text fw={700} mb="lg">Thanks for stopping by—I appreciate it!</Text>
 
                     <Group justify="center" gap="lg">
-                        <ActionIcon component="a" href="https://www.linkedin.com/in/angus-hally-9ab66a87" target="_blank" rel="noopener noreferrer" variant="subtle" size="lg">
-                            <IconBrandLinkedin size={24} />
-                        </ActionIcon>
-                        <ActionIcon component="a" href="https://github.com/anguspersonal" target="_blank" rel="noopener noreferrer" variant="subtle" size="lg">
-                            <IconBrandGithub size={24} />
-                        </ActionIcon>
-                        <ActionIcon component="a" href="https://x.com/HallyAngus" target="_blank" rel="noopener noreferrer" variant="subtle" size="lg">
-                            <IconBrandX size={24} />
-                        </ActionIcon>
-                        <ActionIcon component="a" href="https://www.instagram.com/hallyangus/" target="_blank" rel="noopener noreferrer" variant="subtle" size="lg">
-                            <IconBrandInstagram size={24} />
-                        </ActionIcon>
+                        {socialLinks.map((social) => {
+                            const IconComponent = social.icon;
+                            return (
+                                <ActionIcon 
+                                    key={social.label}
+                                    component="a" 
+                                    href={social.href} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    variant="subtle" 
+                                    size="lg"
+                                    aria-label={social.label}
+                                >
+                                    <IconComponent size={24} />
+                                </ActionIcon>
+                            );
+                        })}
                     </Group>
                 </motion.div>
             </Container>
