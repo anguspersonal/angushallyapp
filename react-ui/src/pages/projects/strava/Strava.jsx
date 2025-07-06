@@ -1,10 +1,9 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchStravaData, getPRs, getWeeklyRuns, getRecentRuns } from './stravaDataService.js';
 import Header from '../../../components/Header.jsx';
 import '@mantine/charts/styles.css';
-import { Table, table } from '@mantine/core';
+import { Table } from '@mantine/core';
 import { LineChart } from '@mantine/charts';
-import { useMantineTheme } from '@mantine/core';
 import "./strava.css";
 
 

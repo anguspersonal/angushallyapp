@@ -1,10 +1,5 @@
 const express = require('express');
 const path = require('path');
-const { Client } = require('pg');
-const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
-const axios = require('axios'); // Add axios for API calls
-const Fuse = require('fuse.js'); // Import Fuse.js for fuzzy search
 const config = require('../config/env.js');
 const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");

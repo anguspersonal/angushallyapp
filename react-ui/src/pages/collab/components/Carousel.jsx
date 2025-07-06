@@ -9,7 +9,7 @@ import CaseStudySlide from './CaseStudySlide';
 import { testimonials } from '../data/testimonials';
 import { caseStudies } from '../data/caseStudies';
 
-function CustomCarousel({ title, description, slides, type }) {
+function CustomCarousel({ /* title, description, slides, type */ }) {
     const theme = useMantineTheme();
     const [expandedId, setExpandedId] = useState(null);
     const autoplay = useRef(Autoplay({ delay: 2000 }));
@@ -17,6 +17,7 @@ function CustomCarousel({ title, description, slides, type }) {
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
     // Combine and shuffle the slides only once on mount
+    // Note: Currently using hardcoded testimonials and caseStudies instead of props
     const allSlides = useMemo(() => {
         return [...testimonials, ...caseStudies]
             .map(item => ({
@@ -78,9 +79,9 @@ function CustomCarousel({ title, description, slides, type }) {
 
     return (
         <Box my="xl" ref={containerRef}>
-            <Title order={2} mb="md">{title}</Title>
+            <Title order={2} mb="md">Featured Content</Title>
             <Text size="sm" color="dimmed" mb="lg">
-                {description}
+                Testimonials and case studies from our collaborations
             </Text>
 
             <Carousel
