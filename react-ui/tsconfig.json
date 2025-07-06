@@ -19,17 +19,17 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["jest", "@types/jest", "@testing-library/jest-dom", "node"]
+    "types": ["node"]
   },
   "include": [
-    "src",
-    "src/**/*"
+    "src"
   ],
   "exclude": [
     "node_modules",
     "build",
-    "src/**/*.test.tsx",
-    "src/**/*.test.ts",
-    "src/**/__tests__"
+    "**/*.test.*",
+    "**/__tests__/**",
+    "**/tests/**",
+    "**/setupTests.ts"
   ]
 }

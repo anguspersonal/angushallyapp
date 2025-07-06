@@ -71,10 +71,10 @@
   "scripts": {
     "start": "react-scripts start --openssl-legacy-provider",
     "build": "NODE_OPTIONS=--max_old_space_size=4096 react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@testing-library)/\"",
     "eject": "react-scripts eject",
     "type-check": "tsc --noEmit",
-    "type-check:watch": "tsc --noEmit --watch"
+    "type-check:test": "tsc --noEmit --project tsconfig.test.json"
   },
   "eslintConfig": {
     "extends": [
