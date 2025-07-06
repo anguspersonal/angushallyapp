@@ -5,17 +5,17 @@ This document tracks the comprehensive TypeScript migration to remove all `@ts-n
 
 **Total Files to Migrate**: 53 files  
 **Estimated Effort**: 3-4 dev-days  
-**Current Status**: 🔄 Step 3 In Progress - Feature Migration (29% Complete)
+**Current Status**: 🔄 Step 3 In Progress - Feature Migration (36% Complete)
 
 ---
 
 ## Progress Tracking
 
-### Overall Progress: 4/53 files completed (8%)
+### Overall Progress: 5/53 files completed (9%)
 
 | Feature Area | Files | Status | Estimated Time |
 |-------------|-------|--------|---------------|
-| **Bookmarks** | 14 | 🔄 In Progress (4/14 = 29%) | ~0.5 day remaining |
+| **Bookmarks** | 14 | 🔄 In Progress (5/14 = 36%) | ~0.4 day remaining |
 | **Eat-Safe-UK** | 10 | 🔄 Pending | ~0.5 day |
 | **Habit Tracker** | 8 | 🔄 Pending | ~0.5 day |
 | **Data-Value-Game** | 8 | 🔄 Pending | ~0.5 day |
@@ -29,7 +29,7 @@ This document tracks the comprehensive TypeScript migration to remove all `@ts-n
 ## Detailed File Tracking
 
 ### 🔖 Bookmarks (14 files) - Priority: HIGH
-**Status**: 🔄 In Progress (4/14 = 29% complete)  
+**Status**: 🔄 In Progress (5/14 = 36% complete)  
 **Key Issues**: Main Bookmarks.tsx component very large (641 lines), complex state management  
 **Dependencies**: ✅ `BookmarkCardProps`, `BookmarkData` types complete
 
@@ -37,9 +37,9 @@ This document tracks the comprehensive TypeScript migration to remove all `@ts-n
 - [x] `src/pages/projects/bookmarks/components/BookmarkCard.tsx` ✅ **Complete**
 - [x] `src/pages/projects/bookmarks/components/sidebar.tsx` ✅ **Complete**
 - [x] `src/pages/projects/bookmarks/ShareHandler.tsx` ✅ **Complete**
-- [🔄] `src/pages/projects/bookmarks/Raindrops.tsx` **80% Complete**
-- [ ] `src/pages/projects/bookmarks/Bookmarks.integration.test.tsx`
-- [ ] `src/pages/projects/bookmarks/components/BookmarkCard.test.tsx`
+- [x] `src/pages/projects/bookmarks/Raindrops.tsx` ✅ **Complete**
+- [ ] `src/pages/projects/bookmarks/Bookmarks.integration.test.tsx` **Skip tests**
+- [ ] `src/pages/projects/bookmarks/components/BookmarkCard.test.tsx` **Skip tests**
 
 ### 🍽️ Eat-Safe-UK (10 files) - Priority: MEDIUM
 **Status**: 🔄 Pending  
