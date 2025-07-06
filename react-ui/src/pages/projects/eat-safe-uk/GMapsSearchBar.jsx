@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { askForLocationPermission } from "./utils/askUserLocation";
 import { getDynamicPlaceholder } from "./utils/getDynamicPlaceholder";
 
 

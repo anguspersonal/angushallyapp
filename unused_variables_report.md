@@ -57,14 +57,84 @@ Several React components import hooks or utilities that are not used:
 - Some components import `useState` but use it only for initialization without updates
 - Some components import utility functions but don't call them
 
+### 4. `react-ui/src/pages/projects/habit/Habit.jsx` - Unused import
+**Location**: Line 2
+```javascript
+import { Button } from "@mantine/core"; // UNUSED
+```
+
+**Impact**: Importing a component that is never used in the file.
+
+**Recommendation**: ✅ **FIXED** - Removed unused Button import.
+
+### 5. `react-ui/src/pages/projects/eat-safe-uk/EatSafeUK.jsx` - Unused import
+**Location**: Line 1
+```javascript
+import React, { useState, useEffect } from "react"; // useEffect is UNUSED
+```
+
+**Impact**: Importing useEffect hook but never using it.
+
+**Recommendation**: ✅ **FIXED** - Removed useEffect from import.
+
+### 6. `react-ui/src/pages/projects/strava/Strava.jsx` - Multiple unused imports
+**Location**: Line 1, 5
+```javascript
+import React, { useState, useEffect, use } from "react"; // 'use' is UNUSED
+import { Table, table } from '@mantine/core'; // 'table' is UNUSED
+```
+
+**Impact**: Importing unused React hook and Mantine component.
+
+**Recommendation**: ✅ **FIXED** - Removed 'use' and 'table' imports.
+
+### 7. `react-ui/src/pages/projects/eat-safe-uk/GMapsSearchBar.jsx` - Unused import
+**Location**: Line 2
+```javascript
+import { askForLocationPermission } from "./utils/askUserLocation"; // UNUSED
+```
+
+**Impact**: Importing a utility function that is never used.
+
+**Recommendation**: ✅ **FIXED** - Removed unused import.
+
+### 8. `react-ui/src/pages/collab/components/Carousel.jsx` - Unused function parameters
+**Location**: Line 13
+```javascript
+function CustomCarousel({ title, description, slides, type }) { // All parameters UNUSED
+```
+
+**Impact**: Function accepts parameters but uses hardcoded data instead.
+
+**Recommendation**: ✅ **FIXED** - Commented out unused parameters and updated implementation.
+
+### 9. `react-ui/src/index.js` - Commented out code
+**Location**: Lines 7-8, 11-12, 16-26
+```javascript
+// Remove theme import if not needed here
+// import { theme } from "./theme.js";
+// Remove MantineProvider import
+// import { MantineProvider } from "@mantine/core";
+// Multiple commented out sections...
+```
+
+**Impact**: Dead code that clutters the file and reduces readability.
+
+**Recommendation**: ✅ **FIXED** - Removed all commented out code.
+
 ## Summary
 
-**Total Issues Found**: 7 unused variables/imports
+**Total Issues Found**: 13 unused variables/imports
 
-**Files Affected**: 3 files
-- `server/index.js` (5 unused imports)
-- `server/fsa-data-sync/processSingleAuthority.js` (1 unused variable)
-- `react-ui/src/pages/projects/eat-safe-uk/GMapsSearchBar.jsx` (1 redundant code)
+**Files Affected**: 8 files
+- `server/index.js` (5 unused imports) ✅ **FIXED**
+- `server/fsa-data-sync/processSingleAuthority.js` (1 unused variable) ✅ **FIXED**
+- `react-ui/src/pages/projects/eat-safe-uk/GMapsSearchBar.jsx` (2 issues: redundant code + unused import) ✅ **FIXED**
+- `react-ui/src/pages/projects/habit/Habit.jsx` (1 unused import) ✅ **FIXED**
+- `react-ui/src/pages/projects/eat-safe-uk/EatSafeUK.jsx` (1 unused import) ✅ **FIXED**
+- `react-ui/src/pages/projects/strava/Strava.jsx` (2 unused imports) ✅ **FIXED**
+- `react-ui/src/pages/collab/components/Carousel.jsx` (4 unused parameters) ✅ **FIXED**
+- `react-ui/src/index.js` (multiple lines of commented code) ✅ **FIXED**
 
 ## Impact Assessment
 
