@@ -1,7 +1,18 @@
 // Component Props and UI Types
 
 import { ReactNode, ButtonHTMLAttributes, InputHTMLAttributes } from 'react';
-import { User } from './index';
+
+// Define User interface locally to avoid circular dependency
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  roles: string[];
+  token: string;
+  picture?: string;
+  given_name?: string;
+  family_name?: string;
+}
 
 // Common Component Props
 export interface BaseComponentProps {

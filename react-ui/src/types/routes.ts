@@ -1,8 +1,19 @@
 // Route and Page Types
 
 import { ReactNode } from 'react';
-import { User } from './index';
 import { BlogPost, BookmarkData } from './api';
+
+// Define User interface locally to avoid circular dependency
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  roles: string[];
+  token: string;
+  picture?: string;
+  given_name?: string;
+  family_name?: string;
+}
 
 // Route Configuration
 export interface RouteConfig {
