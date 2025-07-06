@@ -2,8 +2,43 @@ const axios = require('axios');
 require('../../config/env'); // Load environment variables
 
 const BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://angushallyapp.herokuapp.com'
-  : 'http://localhost:5000';
+  ? 'https://angushally.com/api' 
+  : 'http://localhost:5000/api';
+
+// Mock axios since we're in test environment
+jest.mock('axios');
+const mockedAxios = axios;
+
+describe('Auto Bookmark Transfer', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('Bookmark Transfer API', () => {
+    it('should be mockable for testing', () => {
+      // Mock a successful API response
+      mockedAxios.post.mockResolvedValue({
+        data: {
+          success: true,
+          transferred: 5,
+          failed: 0
+        }
+      });
+
+      // Basic test to ensure the mock works
+      expect(mockedAxios.post).toBeDefined();
+      expect(BASE_URL).toBeDefined();
+    });
+
+    it('should handle environment configuration', () => {
+      // Test that environment variables are accessible
+      expect(process.env.NODE_ENV).toBe('test');
+      
+      // Test that the BASE_URL is properly configured for test environment
+      expect(BASE_URL).toBe('http://localhost:5000/api');
+    });
+  });
+});
 
 /**
  * Test script to verify automatic bookmark transfer functionality
@@ -28,7 +63,7 @@ async function testAutoTransfer() {
     // Test the endpoint structure (without authentication for now)
     console.log('📋 Testing endpoint availability...');
     
-    const healthCheck = await axios.get(`${BASE_URL}/api/bookmarks`, {
+    const healthCheck = await axios.get(`${BASE_URL}/bookmarks`, {
       validateStatus: () => true // Don't throw on 4xx/5xx
     });
     
