@@ -77,8 +77,13 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "plugin:testing-library/react",
-      "plugin:jest-dom/recommended"
+      "plugin:testing-library/react"
+    ],
+    "overrides": [
+      {
+        "files": ["**/__tests__/**/*", "**/*.{test,spec}.*"],
+        "extends": ["plugin:jest-dom/recommended"]
+      }
     ]
   },
   "browserslist": [
