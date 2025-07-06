@@ -53,9 +53,23 @@ describe('Footer Component', () => {
     expect(screen.getByText('Development Environment')).toBeInTheDocument();
   });
 
-  test('renders build number in production when build number is provided', () => {
+  test('renders build info with version and git commit in production', () => {
     process.env.NODE_ENV = 'production';
-    process.env.REACT_APP_BUILD_NUMBER = 'v1.2.3';
+    process.env.REACT_APP_VERSION = '1.2.3';
+    process.env.REACT_APP_GIT_COMMIT = 'abc123def456789';
+    
+    render(
+      <TestWrapper>
+        <Footer />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Build: v1.2.3 (abc123d)')).toBeInTheDocument();
+  });
+
+  test('renders build info with version only in production', () => {
+    process.env.NODE_ENV = 'production';
+    process.env.REACT_APP_VERSION = '1.2.3';
     
     render(
       <TestWrapper>
@@ -66,9 +80,22 @@ describe('Footer Component', () => {
     expect(screen.getByText('Build: v1.2.3')).toBeInTheDocument();
   });
 
-  test('renders no build info in production when build number is not set', () => {
+  test('renders build info with timestamp in production', () => {
     process.env.NODE_ENV = 'production';
-    delete process.env.REACT_APP_BUILD_NUMBER;
+    process.env.REACT_APP_BUILD_TIMESTAMP = '2025-01-15T10:30:00.000Z';
+    
+    render(
+      <TestWrapper>
+        <Footer />
+      </TestWrapper>
+    );
+
+    // Note: Date formatting may vary by locale, so we check for the presence of build info
+    expect(screen.getByText(/Build: \d+\/\d+\/\d+/)).toBeInTheDocument();
+  });
+
+  test('renders no build info in production when no build data is available', () => {
+    process.env.NODE_ENV = 'production';
     
     render(
       <TestWrapper>

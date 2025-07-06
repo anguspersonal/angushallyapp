@@ -7,7 +7,21 @@ import classes from './Footer.module.css';
 
 function Footer() {
   const currentYear = new Date().getFullYear();
-  const buildInfo = process.env.REACT_APP_BUILD_NUMBER;
+  
+  // Use package version or build timestamp as build info
+  const packageVersion = process.env.REACT_APP_VERSION;
+  const buildTimestamp = process.env.REACT_APP_BUILD_TIMESTAMP;
+  const gitCommit = process.env.REACT_APP_GIT_COMMIT;
+  
+  // Create build info from available data
+  let buildInfo = null;
+  if (packageVersion && gitCommit) {
+    buildInfo = `v${packageVersion} (${gitCommit.substring(0, 7)})`;
+  } else if (packageVersion) {
+    buildInfo = `v${packageVersion}`;
+  } else if (buildTimestamp) {
+    buildInfo = new Date(buildTimestamp).toLocaleDateString();
+  }
   
   return (
     <div className={classes.footer}>
