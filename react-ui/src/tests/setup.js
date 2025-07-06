@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Set NODE_ENV to test before any modules are loaded
 process.env.NODE_ENV = 'test';
 
@@ -43,15 +44,7 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 
 // Mock Google Maps API if components use it
 global.google = {
-  maps: {
-    Map: jest.fn(),
-    Marker: jest.fn(),
-    InfoWindow: jest.fn(),
-    places: {
-      PlacesService: jest.fn(),
-      AutocompleteService: jest.fn(),
-    },
-  },
+  maps: {},
 };
 
 // Suppress console.log during tests unless debugging
