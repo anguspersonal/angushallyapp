@@ -35,13 +35,15 @@ interface ShareResponse {
  * 6. Shows success/error message and option to view bookmarks
  */
 const ShareHandler: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
   const [status, setStatus] = useState<ShareStatus>('processing');
   const [bookmarkData, setBookmarkData] = useState<Bookmark | null>(null);
   const [error, setError] = useState<string>('');
+
+  const isAuthenticated = !!user;
 
   useEffect(() => {
     // Check authentication first
@@ -155,9 +157,9 @@ const ShareHandler: React.FC = () => {
     return (
       <Container size="sm" style={{ paddingTop: '2rem' }}>
         <Card shadow="sm" padding="lg" radius="md" withBorder>
-          <Group spacing="sm" style={{ marginBottom: '1rem' }}>
+          <Group gap="sm" style={{ marginBottom: '1rem' }}>
             <Loader size="sm" />
-            <Text size="lg" weight={600}>Saving Bookmark...</Text>
+            <Text size="lg" fw={600}>Saving Bookmark...</Text>
           </Group>
           
           <Text color="dimmed">
@@ -182,9 +184,9 @@ const ShareHandler: React.FC = () => {
             Your content has been saved to your knowledge base.
           </Alert>
           
-          <Group spacing="sm" style={{ marginBottom: '1rem' }}>
+          <Group gap="sm" style={{ marginBottom: '1rem' }}>
             <IconBookmark size={20} />
-            <Text weight={600} style={{ flex: 1 }}>{bookmarkData.title}</Text>
+            <Text fw={600} style={{ flex: 1 }}>{bookmarkData.title}</Text>
             {bookmarkData.enriched && (
               <Badge color="blue" variant="light" size="sm">
                 AI Enhanced
@@ -197,13 +199,13 @@ const ShareHandler: React.FC = () => {
           </Text>
           
           <Group>
-            <Button onClick={handleViewBookmarks} variant="filled" leftIcon={<IconBookmark size="1rem" />}>
+            <Button onClick={handleViewBookmarks} variant="filled" leftSection={<IconBookmark size="1rem" />}>
               View All Bookmarks
             </Button>
             <Button 
               onClick={() => window.open(bookmarkData.url, '_blank')} 
               variant="light" 
-              leftIcon={<IconExternalLink size="1rem" />}
+              leftSection={<IconExternalLink size="1rem" />}
             >
               Open Link
             </Button>

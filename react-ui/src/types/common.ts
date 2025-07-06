@@ -74,6 +74,7 @@ export interface Bookmark extends BaseEntity {
   folder_id?: string;
   is_favorite?: boolean;
   reading_progress?: number;
+  enriched?: boolean;
 }
 
 export interface BookmarkCardProps {
