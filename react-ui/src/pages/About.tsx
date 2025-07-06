@@ -9,7 +9,7 @@ import { assets } from '../theme';
 
 const contentVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({
+    visible: (i: number) => ({
         opacity: 1,
         y: 0,
         transition: {
@@ -33,7 +33,7 @@ function About() {
                         <Title order={2} mb="lg">Hi, I'm Angus</Title>
                     </motion.div>
 
-                    <motion.div custom={1} variants={contentVariants} mb="lg" style={{ maxWidth: 250, margin: '0 auto' }}>
+                    <motion.div custom={1} variants={contentVariants} style={{ maxWidth: 250, margin: '0 auto 24px auto' }}>
                         <Image
                             src="/20230208_AH_Profile_Poser.jpg"
                             alt="Angus Hally"

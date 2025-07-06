@@ -12,7 +12,7 @@ export async function fetchBlogList() {
   }
 }
 
-export const fetchBlogPost = async (identifier) => {
+export const fetchBlogPost = async (identifier: string) => {
   try {
     const response = await fetch(`/api/content/posts/${identifier}`);
     if (!response.ok) {
@@ -43,7 +43,7 @@ export const fetchLatestBlog = async () => {
   }
 };
 
-export const fetchAuthorDetails = async (authorIdUuid) => {
+export const fetchAuthorDetails = async (authorIdUuid: string) => {
   if (!authorIdUuid) return null;
   try {
     const response = await fetch(`/api/content/authors/${authorIdUuid}`);

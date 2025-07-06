@@ -20,7 +20,7 @@ function Collab() {
   const theme = useMantineTheme();
   const isSmallScreen = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
-  const scrollToSection = (ref) => {
+  const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -60,12 +60,14 @@ function Collab() {
               radius="50%"
               fit="contain"
               loading="eager"
-              style={{ display: 'block', width: '100%', height: 'auto' }}
-              sx={(theme) => ({
+              style={{
+                display: 'block',
+                width: '100%',
+                height: 'auto',
                 flexShrink: 0,
                 border: `2px solid ${theme.colors.gray[3]}`,
                 boxShadow: theme.shadows.md,
-              })}
+              }}
             />
           </Box>
 
@@ -103,7 +105,7 @@ function Collab() {
               Now I work with early-stage founders to shape ideas, build traction, and move fast.
                   </Text>
             <Group
-              spacing="xl"
+              gap="xl"
               style={{
                 justifyContent: isSmallScreen ? 'center' : 'flex-start'
               }}
@@ -136,8 +138,8 @@ function Collab() {
               viewport={{ once: true }}
               transition={motionTransitions.spring}
             >
-              <Title align="left" order={2} size="h1" mb="md">⚡What I Bring</Title>
-              <Text size="lg" mb="xl" align="justify">
+              <Title ta="left" order={2} size="h1" mb="md">⚡What I Bring</Title>
+              <Text size="lg" mb="xl" ta="justify">
                 I bring a rare combination of strategy, execution,
                 and empathy — shaped by experience in consulting, startups, product, and code. I've delivered under pressure,
                 built from zero, and led with energy and care. These eight traits capture how I show up in early-stage teams.
@@ -161,12 +163,11 @@ function Collab() {
 
       {/* Where I Add The Most Value Section (3) */}
       <Container size="lg" p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg}>
-        <Title align="centre" order={2} mb="md">Where I Add The Most Value</Title>
+        <Title ta="center" order={2} mb="md">Where I Add The Most Value</Title>
         <Text size="sm" color="dimmed" mb="lg">
           I don't just advise — I embed, contribute, and help unlock traction. Here's where I create the most impact:
         </Text>
         <Box
-          align="left"
           component={motion.div}
           initial={{ opacity: 0, y: +100 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -307,8 +308,8 @@ function Collab() {
 
       {/* Let's Talk Section (7) */}
       <Container size="sm" p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg} ref={letsTalkRef}>
-        <Title order={2} align="left" color="accent.8">Let's Talk</Title>
-        <Text align="left" size="lg" mt="md" mb="xl">
+        <Title order={2} ta="left" c="accent.8">Let's Talk</Title>
+        <Text ta="left" size="lg" mt="md" mb="xl">
           Ready to explore how we can work together? Fill out the contact form below and I'll get back to you within 24 hours to schedule a discovery call.
         </Text>
         <Button

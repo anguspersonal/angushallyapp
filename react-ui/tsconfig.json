@@ -23,15 +23,10 @@
   },
   "include": [
     "src",
-    "src/**/*",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
-    "build",
-    "src/**/*.test.*",
-    "src/tests/**",
-    "src/__tests__/**"
+    "build"
   ]
 }

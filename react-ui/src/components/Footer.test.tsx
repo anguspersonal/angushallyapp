@@ -12,7 +12,7 @@ jest.mock('./Footer.module.css', () => ({
 }));
 
 // Wrapper component for Mantine provider
-const TestWrapper = ({ children }) => (
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <MantineProvider>{children}</MantineProvider>
 );
 

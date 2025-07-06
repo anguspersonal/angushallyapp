@@ -14,6 +14,9 @@ jest.mock('../../utils/apiClient', () => ({
   }
 }));
 
+// Get typed mocks for better TypeScript support
+const mockedApi = api as jest.Mocked<typeof api>;
+
 // Mock Instagram Intelligence icons
 jest.mock('@tabler/icons-react', () => ({
   ...jest.requireActual('@tabler/icons-react'),
@@ -83,11 +86,11 @@ describe('InstagramEnhancer', () => {
     jest.clearAllMocks();
     
     // Mock successful API responses by default
-    api.get.mockResolvedValue({
+    mockedApi.get.mockResolvedValue({
       bookmarks: mockInstagramBookmarks
     });
     
-    api.post.mockResolvedValue(mockAnalysisResponse);
+    mockedApi.post.mockResolvedValue(mockAnalysisResponse);
   });
 
   const renderComponent = (props = {}) => {
@@ -148,7 +151,7 @@ describe('InstagramEnhancer', () => {
     });
 
     it('handles empty bookmark list', async () => {
-      api.get.mockResolvedValue({ bookmarks: [] });
+      mockedApi.get.mockResolvedValue({ bookmarks: [] });
       renderComponent();
       
       await waitFor(() => {
@@ -158,7 +161,7 @@ describe('InstagramEnhancer', () => {
 
     it('handles API errors gracefully', async () => {
       const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-      api.get.mockRejectedValue(new Error('API Error'));
+      mockedApi.get.mockRejectedValue(new Error('API Error'));
       
       renderComponent();
       
@@ -238,7 +241,7 @@ describe('InstagramEnhancer', () => {
 
     it('shows loading state during analysis', async () => {
       // Make the API call take time
-      api.post.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+      mockedApi.post.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
       
       const enhanceButtons = screen.getAllByText('Enhance with AI');
       fireEvent.click(enhanceButtons[0]);
@@ -257,7 +260,7 @@ describe('InstagramEnhancer', () => {
 
     it('handles analysis errors gracefully', async () => {
       const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-      api.post.mockRejectedValue(new Error('Analysis failed'));
+      mockedApi.post.mockRejectedValue(new Error('Analysis failed'));
       
       const enhanceButtons = screen.getAllByText('Enhance with AI');
       fireEvent.click(enhanceButtons[0]);
@@ -271,7 +274,7 @@ describe('InstagramEnhancer', () => {
 
     it('validates Instagram URLs before analysis', async () => {
       // Mock a bookmark with invalid URL
-      api.get.mockResolvedValue({
+      mockedApi.get.mockResolvedValue({
         bookmarks: [{
           id: 'invalid-bookmark',
           title: 'Invalid URL',
@@ -312,9 +315,9 @@ describe('InstagramEnhancer', () => {
 
     it('opens Instagram URLs in new tab when external link is clicked', () => {
       const externalLinks = screen.getAllByTestId('external-link-icon');
-      const mockOpen = jest.spyOn(window, 'open').mockImplementation(() => {});
+      const mockOpen = jest.spyOn(window, 'open').mockImplementation(() => null);
       
-      fireEvent.click(externalLinks[0].parentElement);
+      fireEvent.click(externalLinks[0].parentElement!);
       
       expect(mockOpen).toHaveBeenCalledWith('https://www.instagram.com/reel/ABC123/', '_blank');
       
@@ -333,7 +336,7 @@ describe('InstagramEnhancer', () => {
 
     testCases.forEach(({ url, expected, type }) => {
       it(`correctly identifies ${url} as ${expected ? 'Instagram' : 'non-Instagram'}`, async () => {
-        api.get.mockResolvedValue({
+        mockedApi.get.mockResolvedValue({
           bookmarks: [{
             id: 'test-bookmark',
             title: 'Test Bookmark',
@@ -368,7 +371,7 @@ describe('InstagramEnhancer', () => {
     }));
 
     it('displays pagination when there are many bookmarks', async () => {
-      api.get.mockResolvedValue({ bookmarks: manyBookmarks });
+      mockedApi.get.mockResolvedValue({ bookmarks: manyBookmarks });
       renderComponent();
       
       await waitFor(() => {
@@ -378,7 +381,7 @@ describe('InstagramEnhancer', () => {
     });
 
     it('shows correct number of items per page', async () => {
-      api.get.mockResolvedValue({ bookmarks: manyBookmarks });
+      mockedApi.get.mockResolvedValue({ bookmarks: manyBookmarks });
       renderComponent();
       
       await waitFor(() => {

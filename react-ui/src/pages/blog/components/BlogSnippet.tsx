@@ -2,7 +2,22 @@ import React from 'react';
 import { Card, Image, Text, Title, Box, Anchor } from '@mantine/core';
 import '../../../index.css';
 
-function BlogSnippet(props) {
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  cover_image?: string;
+  alt_text?: string;
+  attribution?: string;
+  attribution_link?: string;
+}
+
+interface BlogSnippetProps {
+  post: BlogPost;
+}
+
+function BlogSnippet(props: BlogSnippetProps) {
     return (
         <Card shadow="sm" padding="lg" radius="md" withBorder>
             {props.post.cover_image && (

@@ -162,10 +162,10 @@ describe('InstagramAnalysisDisplay', () => {
     });
 
     it('has external link to Instagram', () => {
-      const mockOpen = jest.spyOn(window, 'open').mockImplementation(() => {});
+      const mockOpen = jest.spyOn(window, 'open').mockImplementation(() => null);
       const externalLink = screen.getByTestId('external-link-icon');
       
-      fireEvent.click(externalLink.parentElement);
+      fireEvent.click(externalLink.parentElement!);
       
       expect(mockOpen).toHaveBeenCalledWith('https://www.instagram.com/reel/ABC123/', '_blank');
       mockOpen.mockRestore();
@@ -184,7 +184,7 @@ describe('InstagramAnalysisDisplay', () => {
     it('copies analysis to clipboard when copy button is clicked', async () => {
       const copyButton = screen.getByTestId('copy-icon');
       
-      fireEvent.click(copyButton.parentElement);
+      fireEvent.click(copyButton.parentElement!);
       
       await waitFor(() => {
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith(mockAnalysisData.analysis.rawResponse);
@@ -194,7 +194,7 @@ describe('InstagramAnalysisDisplay', () => {
     it('shows copied state briefly after copying', async () => {
       const copyButton = screen.getByTestId('copy-icon');
       
-      fireEvent.click(copyButton.parentElement);
+      fireEvent.click(copyButton.parentElement!);
       
       // The component should show some indication of successful copy
       // This would depend on the exact implementation
@@ -247,14 +247,14 @@ describe('InstagramAnalysisDisplay', () => {
     });
 
     it('has link to author profile', () => {
-      const mockOpen = jest.spyOn(window, 'open').mockImplementation(() => {});
+      const mockOpen = jest.spyOn(window, 'open').mockImplementation(() => null);
       
       // Find the external link in the author section
       const authorSection = screen.getByText('@testcreator').closest('div');
-      const profileLink = authorSection.querySelector('[data-testid="external-link-icon"]');
+      const profileLink = authorSection?.querySelector('[data-testid="external-link-icon"]');
       
       if (profileLink) {
-        fireEvent.click(profileLink.parentElement);
+        fireEvent.click(profileLink.parentElement!);
         expect(mockOpen).toHaveBeenCalledWith('https://instagram.com/testcreator', '_blank');
       }
       

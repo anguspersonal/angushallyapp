@@ -1,2 +1,2 @@
 // Import our centralized test setup
-import './tests/setup.js'; 
+import './__tests__/setup.js'; 

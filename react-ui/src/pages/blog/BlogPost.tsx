@@ -7,6 +7,18 @@ import Header from "../../components/Header";
 import { Image, Text, Box, Anchor } from '@mantine/core';
 import "./blog.css";
 
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  content_md: string;
+  cover_image?: string;
+  alt_text?: string;
+  attribution?: string;
+  attribution_link?: string;
+  created_at: string;
+}
+
 /**
  * BlogPost Component
  * 
@@ -19,11 +31,15 @@ import "./blog.css";
  */
 function BlogPost() {
   const { slug } = useParams();
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
+      if (!slug) {
+        setLoading(false);
+        return;
+      }
       const postData = await fetchBlogPost(slug);
       setPost(postData);
       setLoading(false);
@@ -38,32 +54,32 @@ function BlogPost() {
     <div className="Page">
       <Header />
       <div className="blog-post">
-        <h1>{post.title}</h1>
-        {post.cover_image && (
+        <h1>{post!.title}</h1>
+        {post!.cover_image && (
           <Box mb="xl">
             <Image
-              src={post.cover_image}
-              alt={post.alt_text || `Cover image for ${post.title}`}
+              src={post!.cover_image}
+              alt={post!.alt_text || `Cover image for ${post!.title}`}
               fit="cover"
               style={{ maxHeight: '400px', width: '100%', objectFit: 'cover' }}
             />
-            {post.attribution && (
+            {post!.attribution && (
               <Text size="sm" c="dimmed" ta="right" mt="xs">
-                {post.attribution_link ? (
-                  <Anchor href={post.attribution_link} target="_blank" rel="noopener noreferrer" c="dimmed">
-                    {post.attribution}
+                {post!.attribution_link ? (
+                  <Anchor href={post!.attribution_link} target="_blank" rel="noopener noreferrer" c="dimmed">
+                    {post!.attribution}
                   </Anchor>
                 ) : (
-                  post.attribution
+                  post!.attribution
                 )}
               </Text>
             )}
           </Box>
         )}
         <div className="markdown-content">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content_md}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{post!.content_md}</ReactMarkdown>
         </div>
-        <p><strong>Published:</strong> {new Date(post.created_at).toLocaleDateString()}</p>
+        <p><strong>Published:</strong> {new Date(post!.created_at).toLocaleDateString()}</p>
         <Link to="/blog" className="back-button">← Back to Blog</Link>
       </div>
     </div>

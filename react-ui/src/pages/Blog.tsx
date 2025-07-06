@@ -9,6 +9,17 @@ import Header from "../components/Header";
 import "../general.css";
 import './blog/blog.css';
 
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  cover_image?: string;
+  alt_text?: string;
+  attribution?: string;
+  attribution_link?: string;
+}
+
 // Animation variants (can reuse from Projects)
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -31,7 +42,7 @@ const itemVariants = {
 };
 
 function Blog() {
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState<BlogPost[]>([]);
 
     useEffect(() => {
         async function fetchData() {

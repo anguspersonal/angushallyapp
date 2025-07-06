@@ -3,7 +3,15 @@ import '../index.css';
 import "../general.css";
 import { Link } from 'react-router-dom';
 
-function Snippet(props) {
+interface SnippetProps {
+  excerpt: string;
+  id: string;
+  slug: string;
+  title: string;
+  link?: string;
+}
+
+function Snippet(props: SnippetProps) {
     const { excerpt, id, slug, title, link = `/blog/${slug}` } = props; // Default link if not provided
     
     return (

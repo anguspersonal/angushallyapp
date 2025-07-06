@@ -3,7 +3,18 @@ import { Link } from 'react-router-dom';
 import '../index.css';
 import "../general.css";
 
-function ProjectSnippet({ project }) {
+interface Project {
+  name: string;
+  desc: string;
+  route: string;
+  tags?: string[];
+}
+
+interface ProjectSnippetProps {
+  project: Project;
+}
+
+function ProjectSnippet({ project }: ProjectSnippetProps) {
     const { name, desc, route, tags = [] } = project;
     return (
         <Link to={route}>

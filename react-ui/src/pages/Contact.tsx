@@ -11,6 +11,8 @@ import {
     Stack
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+
+// @ts-ignore - react-google-recaptcha doesn't have TypeScript types
 import ReCAPTCHA from "react-google-recaptcha";
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
@@ -19,7 +21,7 @@ import "../general.css";
 // Animation variants for staggered fade-in
 const formElementVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({
+    visible: (i: number) => ({
         opacity: 1,
         y: 0,
         transition: {
@@ -31,7 +33,7 @@ const formElementVariants = {
 };
 
 function Contact() {
-    const [captchaValue, setCaptchaValue] = useState(null);
+    const [captchaValue, setCaptchaValue] = useState<string | null>(null);
     const [status, setStatus] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state for button
 
@@ -51,7 +53,7 @@ function Contact() {
         },
     });
 
-    const handleSubmit = async (values) => {
+    const handleSubmit = async (values: typeof form.values) => {
         if (!captchaValue) {
             setStatus("Please complete the CAPTCHA.");
             form.setFieldError('captcha', 'Please complete the CAPTCHA.'); // Optional: set form error
@@ -93,7 +95,7 @@ function Contact() {
                         <Title order={2} mb="xl" ta="center">Get In Touch</Title>
                     </motion.div>
 
-                    <Box component="form" onSubmit={form.onSubmit(handleSubmit)} align="left">
+                    <Box component="form" onSubmit={form.onSubmit(handleSubmit)}>
                         <Stack gap="md">
                             <motion.div custom={1} variants={formElementVariants}>
                                 <TextInput
@@ -140,7 +142,7 @@ function Contact() {
                                 <Group justify="center" mt="md">
                                     <ReCAPTCHA
                                         sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY || "YOUR_RECAPTCHA_SITE_KEY_HERE"} // Add fallback for safety
-                                        onChange={(value) => setCaptchaValue(value)}
+                                        onChange={(value: string | null) => setCaptchaValue(value)}
                                         // Add theme='dark' prop if needed based on your theme
                                     />
                                 </Group>
