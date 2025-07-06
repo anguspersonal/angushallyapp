@@ -122,17 +122,84 @@ function CustomCarousel({ title, description, slides, type }) { // All parameter
 
 **Recommendation**: ✅ **FIXED** - Removed all commented out code.
 
+### 10. `server/habit-api/alcoholService.js` - Unused import
+**Location**: Line 1
+```javascript
+const config = require('../../config/env'); // UNUSED
+```
+
+**Impact**: Importing config but never using it in the service.
+
+**Recommendation**: ✅ **FIXED** - Removed unused config import.
+
+### 11. `server/habit-api/habitService.js` - Unused import
+**Location**: Line 3
+```javascript
+const config = require('../../config/env'); // UNUSED
+```
+
+**Impact**: Importing config but never using it in the service.
+
+**Recommendation**: ✅ **FIXED** - Removed unused config import.
+
+### 12. `server/habit-api/exerciseService.js` - Suspicious import
+**Location**: Line 2
+```javascript
+require("../routes/habitRoute"); // SUSPICIOUS - service importing route
+```
+
+**Impact**: Service importing a route file (should be the other way around).
+
+**Recommendation**: ✅ **FIXED** - Removed incorrect route import from service.
+
+### 13. `server/routes/habitRoute.js` - Unused import
+**Location**: Line 34
+```javascript
+const config = require('../../config/env'); // UNUSED
+```
+
+**Impact**: Importing config but never using it in the route.
+
+**Recommendation**: ✅ **FIXED** - Removed unused config import.
+
+### 14. `react-ui/src/pages/projects/strava/test.js` - Unused imports
+**Location**: Lines 1-3
+```javascript
+import { createRequire } from 'module'; // UNUSED
+const require = createRequire(import.meta.url); // UNUSED
+const StravaApiV3 = require('strava-api-v3'); // UNUSED
+```
+
+**Impact**: Development test file with imports that are only used in commented code.
+
+**Recommendation**: ✅ **FIXED** - Commented out unused imports while preserving them for development use.
+
+### 15. `react-ui/src/pages/projects/strava/Strava.jsx` - Additional unused import
+**Location**: Line 6
+```javascript
+import { useMantineTheme } from '@mantine/core'; // UNUSED
+```
+
+**Impact**: Importing Mantine hook but never using it.
+
+**Recommendation**: ✅ **FIXED** - Removed unused useMantineTheme import.
+
 ## Summary
 
-**Total Issues Found**: 13 unused variables/imports
+**Total Issues Found**: 19 unused variables/imports
 
-**Files Affected**: 8 files
+**Files Affected**: 14 files
 - `server/index.js` (5 unused imports) ✅ **FIXED**
 - `server/fsa-data-sync/processSingleAuthority.js` (1 unused variable) ✅ **FIXED**
+- `server/habit-api/alcoholService.js` (1 unused import) ✅ **FIXED**
+- `server/habit-api/habitService.js` (1 unused import) ✅ **FIXED**
+- `server/habit-api/exerciseService.js` (1 suspicious import) ✅ **FIXED**
+- `server/routes/habitRoute.js` (1 unused import) ✅ **FIXED**
 - `react-ui/src/pages/projects/eat-safe-uk/GMapsSearchBar.jsx` (2 issues: redundant code + unused import) ✅ **FIXED**
 - `react-ui/src/pages/projects/habit/Habit.jsx` (1 unused import) ✅ **FIXED**
 - `react-ui/src/pages/projects/eat-safe-uk/EatSafeUK.jsx` (1 unused import) ✅ **FIXED**
-- `react-ui/src/pages/projects/strava/Strava.jsx` (2 unused imports) ✅ **FIXED**
+- `react-ui/src/pages/projects/strava/Strava.jsx` (3 unused imports total) ✅ **FIXED**
+- `react-ui/src/pages/projects/strava/test.js` (3 unused imports) ✅ **FIXED**
 - `react-ui/src/pages/collab/components/Carousel.jsx` (4 unused parameters) ✅ **FIXED**
 - `react-ui/src/index.js` (multiple lines of commented code) ✅ **FIXED**
 

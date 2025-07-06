@@ -4,7 +4,6 @@ import Header from '../../../components/Header.jsx';
 import '@mantine/charts/styles.css';
 import { Table } from '@mantine/core';
 import { LineChart } from '@mantine/charts';
-import { useMantineTheme } from '@mantine/core';
 import "./strava.css";
 
 
