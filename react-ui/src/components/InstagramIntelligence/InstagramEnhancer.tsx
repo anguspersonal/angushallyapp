@@ -30,13 +30,50 @@ import {
 import { notifications } from '@mantine/notifications';
 import { api } from '../../utils/apiClient';
 
-const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
-  const [bookmarks, setBookmarks] = useState([]);
-  const [filteredBookmarks, setFilteredBookmarks] = useState([]);
+// Type definitions
+interface SourceMetadata {
+  ai_enhanced?: boolean;
+  ai_title_improved?: boolean;
+  ai_description_improved?: boolean;
+  ai_tags_added?: boolean;
+}
+
+interface InstagramBookmark {
+  id: string;
+  title: string;
+  url: string;
+  description?: string;
+  tags?: string[];
+  has_instagram_analysis?: boolean;
+  source_metadata?: SourceMetadata;
+}
+
+interface AnalysisData {
+  isUpdate: boolean;
+  isEnhanced: boolean;
+  message: string;
+}
+
+interface InstagramEnhancerProps {
+  opened: boolean;
+  onClose: () => void;
+  onEnhancementComplete?: (bookmarkId: string, analysisData: AnalysisData) => void;
+}
+
+type FilterType = 'all' | 'reels' | 'posts' | 'tv' | 'unanalyzed' | 'analyzed' | 'ai-enhanced';
+type AnalysisStatus = 'analyzed' | 'unanalyzed';
+
+const InstagramEnhancer: React.FC<InstagramEnhancerProps> = ({ 
+  opened, 
+  onClose, 
+  onEnhancementComplete 
+}) => {
+  const [bookmarks, setBookmarks] = useState<InstagramBookmark[]>([]);
+  const [filteredBookmarks, setFilteredBookmarks] = useState<InstagramBookmark[]>([]);
   const [loading, setLoading] = useState(false);
-  const [analyzing, setAnalyzing] = useState({});
+  const [analyzing, setAnalyzing] = useState<Record<string, boolean>>({});
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState('all');
+  const [filterType, setFilterType] = useState<FilterType>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 8;
@@ -51,14 +88,14 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
     filterAndPaginateBookmarks();
   }, [bookmarks, searchQuery, filterType, currentPage]);
 
-  const fetchBookmarks = async () => {
+  const fetchBookmarks = async (): Promise<void> => {
     try {
       setLoading(true);
       const response = await api.get('/bookmarks');
       
       if (response && response.bookmarks) {
         // Filter bookmarks that contain Instagram URLs
-        const instagramBookmarks = response.bookmarks.filter(bookmark => 
+        const instagramBookmarks = response.bookmarks.filter((bookmark: InstagramBookmark) => 
           bookmark.url && isInstagramUrl(bookmark.url)
         );
         setBookmarks(instagramBookmarks);
@@ -75,21 +112,21 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
     }
   };
 
-  const filterAndPaginateBookmarks = () => {
+  const filterAndPaginateBookmarks = (): void => {
     let filtered = bookmarks;
 
     // Apply search filter
     if (searchQuery) {
-      filtered = filtered.filter(bookmark =>
+      filtered = filtered.filter((bookmark: InstagramBookmark) =>
         bookmark.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         bookmark.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        bookmark.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+        bookmark.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
     // Apply type filter
     if (filterType !== 'all') {
-      filtered = filtered.filter(bookmark => {
+      filtered = filtered.filter((bookmark: InstagramBookmark) => {
         switch (filterType) {
           case 'reels':
             return bookmark.url.includes('/reel/');
@@ -119,12 +156,12 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
     setFilteredBookmarks(filtered.slice(startIndex, endIndex));
   };
 
-  const isInstagramUrl = (url) => {
+  const isInstagramUrl = (url: string): boolean => {
     const instagramPattern = /^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/[a-zA-Z0-9_-]+\/?/;
     return instagramPattern.test(url);
   };
 
-  const analyzeBookmark = async (bookmark) => {
+  const analyzeBookmark = async (bookmark: InstagramBookmark): Promise<void> => {
     if (!isInstagramUrl(bookmark.url)) {
       notifications.show({
         title: 'Invalid URL',
@@ -159,7 +196,7 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
           onEnhancementComplete(bookmark.id, response.data);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error analyzing bookmark:', error);
       notifications.show({
         title: 'Analysis Failed',
@@ -171,35 +208,35 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
     }
   };
 
-  const getMediaTypeFromUrl = (url) => {
+  const getMediaTypeFromUrl = (url: string): string => {
     if (url.includes('/reel/')) return 'Reel';
     if (url.includes('/tv/')) return 'IGTV';
     if (url.includes('/p/')) return 'Post';
     return 'Unknown';
   };
 
-  const getAnalysisStatus = (bookmark) => {
+  const getAnalysisStatus = (bookmark: InstagramBookmark): AnalysisStatus => {
     if (bookmark.has_instagram_analysis) {
       return 'analyzed';
     }
     return 'unanalyzed';
   };
 
-  const renderBookmarkCard = (bookmark) => {
+  const renderBookmarkCard = (bookmark: InstagramBookmark) => {
     const mediaType = getMediaTypeFromUrl(bookmark.url);
     const status = getAnalysisStatus(bookmark);
     const isAnalyzing = analyzing[bookmark.id];
 
     return (
       <Card key={bookmark.id} shadow="sm" p="md" radius="lg" withBorder>
-        <Stack spacing="sm">
+        <Stack gap="sm">
           {/* Header */}
-          <Group position="apart" align="flex-start">
-            <Stack spacing={4} style={{ flex: 1 }}>
-              <Text size="sm" weight={600} lineClamp={2}>
+          <Group justify="space-between" align="flex-start">
+            <Stack gap={4} style={{ flex: 1 }}>
+              <Text size="sm" fw={600} lineClamp={2}>
                 {bookmark.title}
               </Text>
-              <Group spacing="xs">
+              <Group gap="xs">
                 <Badge size="xs" variant="outline" color="blue">
                   {mediaType}
                 </Badge>
@@ -230,15 +267,15 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
 
           {/* Description */}
           {bookmark.description && (
-            <Text size="xs" color="dimmed" lineClamp={2}>
+            <Text size="xs" c="dimmed" lineClamp={2}>
               {bookmark.description}
             </Text>
           )}
 
           {/* Tags */}
           {bookmark.tags && bookmark.tags.length > 0 && (
-            <Group spacing={4}>
-              {bookmark.tags.slice(0, 3).map((tag, index) => (
+            <Group gap={4}>
+              {bookmark.tags.slice(0, 3).map((tag: string, index: number) => (
                 <Badge key={index} size="xs" variant="dot" color="gray">
                   {tag}
                 </Badge>
@@ -254,10 +291,10 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
           {/* Analysis Status */}
           {status === 'analyzed' && (
             <Alert icon={<IconCheck size={16} />} color="green" variant="light">
-              <Stack spacing={4}>
+              <Stack gap={4}>
                 <Text size="xs">Enhanced with Instagram Intelligence</Text>
                 {bookmark.source_metadata?.ai_enhanced && (
-                  <Text size="xs" color="dimmed">
+                  <Text size="xs" c="dimmed">
                     AI improved: {[
                       bookmark.source_metadata.ai_title_improved && 'title',
                       bookmark.source_metadata.ai_description_improved && 'description', 
@@ -272,7 +309,7 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
           {/* Action Button */}
           <Button
             size="xs"
-            leftIcon={isAnalyzing ? <Loader size={14} /> : <IconBrain size={14} />}
+            leftSection={isAnalyzing ? <Loader size={14} /> : <IconBrain size={14} />}
             onClick={() => analyzeBookmark(bookmark)}
             loading={isAnalyzing}
             disabled={isAnalyzing}
@@ -294,7 +331,7 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
       size="xl"
       centered
     >
-      <Stack spacing="lg">
+      <Stack gap="lg">
         {/* Header */}
         <Alert icon={<IconBrain size={16} />} color="blue" variant="light">
           <Text size="sm">
@@ -316,7 +353,7 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
             placeholder="Filter by type"
             leftSection={<IconFilter size={16} />}
             value={filterType}
-            onChange={setFilterType}
+            onChange={(value: string | null) => setFilterType((value as FilterType) || 'all')}
             data={[
               { value: 'all', label: 'All Instagram' },
               { value: 'reels', label: 'Reels' },
@@ -331,25 +368,25 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
         </Group>
 
         {/* Stats */}
-        <Group position="apart">
-          <Text size="sm" color="dimmed">
+        <Group justify="space-between">
+          <Text size="sm" c="dimmed">
             {bookmarks.length} Instagram bookmarks found
           </Text>
-          <Text size="sm" color="dimmed">
+          <Text size="sm" c="dimmed">
             {filteredBookmarks.length} showing
           </Text>
         </Group>
 
         {/* Loading State */}
         {loading && (
-          <Group position="center" py="xl">
+          <Group justify="center" py="xl">
             <Loader size="lg" />
           </Group>
         )}
 
         {/* Empty State */}
         {!loading && bookmarks.length === 0 && (
-          <Text align="center" color="dimmed" py="xl">
+          <Text ta="center" c="dimmed" py="xl">
             No Instagram bookmarks found. Add some Instagram posts, reels, or IGTV videos to your bookmarks first.
           </Text>
         )}
@@ -371,7 +408,7 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <Group position="center">
+              <Group justify="center">
                 <Pagination
                   value={currentPage}
                   onChange={setCurrentPage}
@@ -384,7 +421,7 @@ const InstagramEnhancer = ({ opened, onClose, onEnhancementComplete }) => {
         )}
 
         {/* Footer Actions */}
-        <Group position="right">
+        <Group justify="flex-end">
           <Button variant="light" onClick={onClose}>
             Done
           </Button>

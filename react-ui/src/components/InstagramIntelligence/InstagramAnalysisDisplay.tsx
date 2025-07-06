@@ -34,7 +34,61 @@ import {
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 
-const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData }) => {
+// Type definitions
+interface Engagement {
+  likes?: number;
+  comments?: number;
+  views?: number;
+  shares?: number;
+}
+
+interface Author {
+  username: string;
+  fullName?: string;
+  followers: number;
+  postsCount: number;
+  isVerified?: boolean;
+  profileUrl?: string;
+}
+
+interface Metadata {
+  url: string;
+  mediaType?: string;
+  timestamp?: string;
+  hashtags?: string[];
+  mentions?: string[];
+  engagement?: Engagement;
+  author?: Author;
+}
+
+interface Analysis {
+  rawResponse: string;
+}
+
+interface AnalysisData {
+  analysis: Analysis;
+  metadata: Metadata;
+}
+
+interface BookmarkData {
+  title: string;
+  url: string;
+  description?: string;
+}
+
+interface InstagramAnalysisDisplayProps {
+  opened: boolean;
+  onClose: () => void;
+  analysisData: AnalysisData | null;
+  bookmarkData: BookmarkData;
+}
+
+const InstagramAnalysisDisplay: React.FC<InstagramAnalysisDisplayProps> = ({ 
+  opened, 
+  onClose, 
+  analysisData, 
+  bookmarkData 
+}) => {
   const [copied, setCopied] = useState(false);
 
   if (!analysisData || !bookmarkData) {
@@ -43,7 +97,7 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
 
   const { analysis, metadata } = analysisData;
 
-  const copyToClipboard = (text) => {
+  const copyToClipboard = (text: string): void => {
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       notifications.show({
@@ -55,20 +109,20 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
     });
   };
 
-  const formatNumber = (num) => {
+  const formatNumber = (num: number): string => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num?.toString() || '0';
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string): string => {
     if (!dateString) return 'Unknown';
     return new Date(dateString).toLocaleDateString();
   };
 
-  const getEngagementRate = () => {
+  const getEngagementRate = (): string => {
     const { engagement, author } = metadata;
-    if (!engagement || !author?.followers) return 0;
+    if (!engagement || !author?.followers) return '0';
     
     const totalEngagement = (engagement.likes || 0) + (engagement.comments || 0);
     return ((totalEngagement / author.followers) * 100).toFixed(2);
@@ -92,13 +146,13 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
           return (
             <Grid.Col key={metric.label} span={6}>
               <Card shadow="sm" p="md" radius="md" withBorder>
-                <Group spacing="sm">
+                <Group gap="sm">
                   <ThemeIcon color={metric.color} variant="light" size="lg">
                     <Icon size={20} />
                   </ThemeIcon>
-                  <Stack spacing={0}>
-                    <Text size="xs" color="dimmed">{metric.label}</Text>
-                    <Text size="lg" weight={600}>{formatNumber(metric.value)}</Text>
+                  <Stack gap={0}>
+                    <Text size="xs" c="dimmed">{metric.label}</Text>
+                    <Text size="lg" fw={600}>{formatNumber(metric.value!)}</Text>
                   </Stack>
                 </Group>
               </Card>
@@ -115,28 +169,28 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
 
     return (
       <Card shadow="sm" p="md" radius="md" withBorder>
-        <Group spacing="md">
+        <Group gap="md">
           <ThemeIcon color="blue" variant="light" size="xl">
             <IconUser size={24} />
           </ThemeIcon>
-          <Stack spacing={4} style={{ flex: 1 }}>
-            <Group spacing="xs">
-              <Text size="md" weight={600}>@{author.username}</Text>
+          <Stack gap={4} style={{ flex: 1 }}>
+            <Group gap="xs">
+              <Text size="md" fw={600}>@{author.username}</Text>
               {author.isVerified && (
                 <Badge size="xs" color="blue" variant="filled">Verified</Badge>
               )}
             </Group>
             {author.fullName && (
-              <Text size="sm" color="dimmed">{author.fullName}</Text>
+              <Text size="sm" c="dimmed">{author.fullName}</Text>
             )}
-            <Group spacing="md">
-              <Group spacing={4}>
+            <Group gap="md">
+              <Group gap={4}>
                 <IconUsers size={14} />
-                <Text size="xs" color="dimmed">{formatNumber(author.followers)} followers</Text>
+                <Text size="xs" c="dimmed">{formatNumber(author.followers)} followers</Text>
               </Group>
-              <Group spacing={4}>
+              <Group gap={4}>
                 <IconStar size={14} />
-                <Text size="xs" color="dimmed">{formatNumber(author.postsCount)} posts</Text>
+                <Text size="xs" c="dimmed">{formatNumber(author.postsCount)} posts</Text>
               </Group>
             </Group>
           </Stack>
@@ -160,9 +214,9 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
 
     return (
       <Card shadow="sm" p="md" radius="md" withBorder>
-        <Stack spacing="md">
-          <Group position="apart">
-            <Text size="md" weight={600}>AI Content Analysis</Text>
+        <Stack gap="md">
+          <Group justify="space-between">
+            <Text size="md" fw={600}>AI Content Analysis</Text>
             <Tooltip label={copied ? 'Copied!' : 'Copy Analysis'}>
               <ActionIcon 
                 variant="light" 
@@ -189,12 +243,12 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
         {hashtags && hashtags.length > 0 && (
           <Grid.Col span={6}>
             <Card shadow="sm" p="md" radius="md" withBorder>
-              <Stack spacing="sm">
-                <Group spacing="xs">
+              <Stack gap="sm">
+                <Group gap="xs">
                   <IconTag size={16} />
-                  <Text size="sm" weight={600}>Hashtags ({hashtags.length})</Text>
+                  <Text size="sm" fw={600}>Hashtags ({hashtags.length})</Text>
                 </Group>
-                <Group spacing={4}>
+                <Group gap={4}>
                   {hashtags.slice(0, 10).map((tag, index) => (
                     <Badge key={index} size="sm" variant="light" color="blue">
                       {tag}
@@ -214,12 +268,12 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
         {mentions && mentions.length > 0 && (
           <Grid.Col span={6}>
             <Card shadow="sm" p="md" radius="md" withBorder>
-              <Stack spacing="sm">
-                <Group spacing="xs">
+              <Stack gap="sm">
+                <Group gap="xs">
                   <IconUsers size={16} />
-                  <Text size="sm" weight={600}>Mentions ({mentions.length})</Text>
+                  <Text size="sm" fw={600}>Mentions ({mentions.length})</Text>
                 </Group>
-                <Group spacing={4}>
+                <Group gap={4}>
                   {mentions.slice(0, 8).map((mention, index) => (
                     <Badge key={index} size="sm" variant="light" color="grape">
                       {mention}
@@ -247,24 +301,24 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
       <Card shadow="sm" p="md" radius="md" withBorder>
         <Grid>
           <Grid.Col span={4}>
-            <Stack spacing={4} align="center">
-              <Text size="xs" color="dimmed">Media Type</Text>
+            <Stack gap={4} align="center">
+              <Text size="xs" c="dimmed">Media Type</Text>
               <Badge size="lg" variant="outline" color="blue">
                 {mediaType || 'Unknown'}
               </Badge>
             </Stack>
           </Grid.Col>
           <Grid.Col span={4}>
-            <Stack spacing={4} align="center">
-              <Text size="xs" color="dimmed">Posted</Text>
-              <Text size="sm" weight={500}>{formatDate(timestamp)}</Text>
+            <Stack gap={4} align="center">
+              <Text size="xs" c="dimmed">Posted</Text>
+              <Text size="sm" fw={500}>{formatDate(timestamp || '')}</Text>
             </Stack>
           </Grid.Col>
           <Grid.Col span={4}>
-            <Stack spacing={4} align="center">
-              <Text size="xs" color="dimmed">Engagement Rate</Text>
-              <Group spacing={4}>
-                <Text size="sm" weight={500}>{engagementRate}%</Text>
+            <Stack gap={4} align="center">
+              <Text size="xs" c="dimmed">Engagement Rate</Text>
+              <Group gap={4}>
+                <Text size="sm" fw={500}>{engagementRate}%</Text>
                 <IconTrendingUp size={14} color="green" />
               </Group>
             </Stack>
@@ -279,7 +333,7 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
       opened={opened}
       onClose={onClose}
       title={
-        <Group spacing="sm">
+        <Group gap="sm">
           <ThemeIcon color="blue" variant="light">
             <IconBrain size={20} />
           </ThemeIcon>
@@ -289,13 +343,13 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
       size="xl"
       centered
     >
-      <Stack spacing="lg">
+      <Stack gap="lg">
         {/* Bookmark Info */}
         <Card shadow="sm" p="md" radius="md" withBorder>
-          <Group position="apart">
-            <Stack spacing={4}>
-              <Text size="lg" weight={600}>{bookmarkData.title}</Text>
-              <Text size="sm" color="dimmed">{metadata.url}</Text>
+          <Group justify="space-between">
+            <Stack gap={4}>
+              <Text size="lg" fw={600}>{bookmarkData.title}</Text>
+              <Text size="sm" c="dimmed">{metadata.url}</Text>
             </Stack>
             <ActionIcon
               variant="light"
@@ -310,7 +364,7 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
         <Accordion defaultValue="analysis">
           <Accordion.Item value="analysis">
             <Accordion.Control>
-              <Group spacing="sm">
+              <Group gap="sm">
                 <IconBrain size={16} />
                 <Text>AI Content Analysis</Text>
               </Group>
@@ -322,13 +376,13 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
 
           <Accordion.Item value="engagement">
             <Accordion.Control>
-              <Group spacing="sm">
+              <Group gap="sm">
                 <IconTrendingUp size={16} />
                 <Text>Engagement Metrics</Text>
               </Group>
             </Accordion.Control>
             <Accordion.Panel>
-              <Stack spacing="md">
+              <Stack gap="md">
                 {renderEngagementMetrics()}
                 {renderMetadata()}
               </Stack>
@@ -337,7 +391,7 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
 
           <Accordion.Item value="author">
             <Accordion.Control>
-              <Group spacing="sm">
+              <Group gap="sm">
                 <IconUser size={16} />
                 <Text>Author Information</Text>
               </Group>
@@ -349,7 +403,7 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
 
           <Accordion.Item value="tags">
             <Accordion.Control>
-              <Group spacing="sm">
+              <Group gap="sm">
                 <IconTag size={16} />
                 <Text>Hashtags & Mentions</Text>
               </Group>
@@ -361,7 +415,7 @@ const InstagramAnalysisDisplay = ({ opened, onClose, analysisData, bookmarkData 
         </Accordion>
 
         {/* Footer */}
-        <Group position="right">
+        <Group justify="flex-end">
           <Button variant="light" onClick={onClose}>
             Close
           </Button>
