@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom"; // ✅ Enables routing in the app
 import "./index.css";
 import "./general.css";
-import App from "./App.js";
+import App from "./App";
 // Remove theme import if not needed here
 // import { theme } from "./theme.js";
 
@@ -12,7 +12,13 @@ import "@mantine/core/styles.css";
 // Remove MantineProvider import
 // import { MantineProvider } from "@mantine/core";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error("Root element not found");
+}
+
+const root = ReactDOM.createRoot(rootElement);
 
 // // ✅ Dynamically Load Tabler Icons CSS
 // const tablerCSS = document.createElement("link");

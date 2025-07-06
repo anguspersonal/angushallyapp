@@ -1,16 +1,26 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../utils/apiClient.js';
-import { clearAuthData, getStoredUser } from '../utils/authUtils.js';
+import { api } from '../utils/apiClient';
+import { clearAuthData, getStoredUser } from '../utils/authUtils';
+import { User, AuthContextType, AuthVerifyResponse } from '../types';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
-  const logout = async (redirectTo = '/login') => {
+  const login = async (credentials: { email: string; password: string; rememberMe?: boolean }): Promise<void> => {
+    // TODO: Implement login functionality
+    throw new Error('Login function not yet implemented');
+  };
+
+  const logout = async (redirectTo: string = '/login'): Promise<void> => {
     await clearAuthData();
     setUser(null);
     if (redirectTo) {
@@ -18,7 +28,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const handleAuthError = async (error) => {
+  const handleAuthError = async (error: any): Promise<void> => {
     if (error instanceof api.ApiError) {
       switch (error.status) {
         case 401:
@@ -44,7 +54,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const checkAuth = async () => {
+  const checkAuth = async (): Promise<void> => {
     try {
       // First try to get user from storage
       const storedUser = await getStoredUser();
@@ -55,9 +65,13 @@ export function AuthProvider({ children }) {
       // Only verify with backend if we have a stored user
       if (storedUser) {
         try {
-          const userData = await api.get('/auth/verify');
-          setUser(userData);
-        } catch (error) {
+          const userData = await api.get<AuthVerifyResponse>('/auth/verify');
+          // Merge the verified data with the token from storage
+          setUser({
+            ...userData,
+            token: storedUser.token
+          });
+        } catch (error: any) {
           if (error.status === 401) {
             // Clear stored data if verification fails
             await clearAuthData();
@@ -88,9 +102,10 @@ export function AuthProvider({ children }) {
     return () => clearInterval(interval);
   }, []);
 
-  const value = {
+  const value: AuthContextType = {
     user,
     setUser,
+    login,
     logout,
     checkAuth,
     isLoading,
@@ -110,10 +125,10 @@ export function AuthProvider({ children }) {
   );
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (context === null) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-} 
+}

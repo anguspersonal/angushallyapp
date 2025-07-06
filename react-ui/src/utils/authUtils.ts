@@ -1,14 +1,16 @@
+import { User } from '../types';
+
 /**
  * Check if a token is expired based on its expiration date
  */
-export function isTokenExpired(expiration) {
-  return expiration && new Date(expiration) <= new Date();
+export function isTokenExpired(expiration: string | null): boolean {
+  return expiration !== null && new Date(expiration) <= new Date();
 }
 
 /**
  * Store authentication data with optional "remember me" functionality
  */
-export async function storeAuthData(token, user, rememberMe = false) {
+export async function storeAuthData(token: string, user: User, rememberMe: boolean = false): Promise<void> {
   const storage = rememberMe ? localStorage : sessionStorage;
   
   if (rememberMe) {
@@ -25,7 +27,7 @@ export async function storeAuthData(token, user, rememberMe = false) {
 /**
  * Clear all authentication data from both storage types and cookies
  */
-export async function clearAuthData() {
+export async function clearAuthData(): Promise<void> {
   // Clear localStorage
   localStorage.removeItem('jwt');
   localStorage.removeItem('user');
@@ -44,7 +46,7 @@ export async function clearAuthData() {
  * Get stored authentication token, checking expiration if applicable
  * Returns null if no valid token is found or if token is expired
  */
-export async function getStoredToken() {
+export async function getStoredToken(): Promise<string | null> {
   try {
     // First check for cookie-based token
     const cookies = document.cookie.split(';');
@@ -81,19 +83,19 @@ export async function getStoredToken() {
  * Get stored user data
  * Returns null if no valid user data is found
  */
-export async function getStoredUser() {
+export async function getStoredUser(): Promise<User | null> {
   try {
     const localUser = localStorage.getItem('user');
     const sessionUser = sessionStorage.getItem('user');
     const token = await getStoredToken();
     
     if (localUser) {
-      const user = JSON.parse(localUser);
-      return { ...user, token };
+      const user: User = JSON.parse(localUser);
+      return { ...user, token: token || user.token };
     }
     if (sessionUser) {
-      const user = JSON.parse(sessionUser);
-      return { ...user, token };
+      const user: User = JSON.parse(sessionUser);
+      return { ...user, token: token || user.token };
     }
     return null;
   } catch (error) {
@@ -107,7 +109,7 @@ export async function getStoredUser() {
  * Placeholder for future token refresh logic
  * This could be implemented when needed
  */
-// async function refreshToken(oldToken) {
+// async function refreshToken(oldToken: string): Promise<string | null> {
 //   try {
 //     const response = await fetch('/api/auth/refresh', {
 //       method: 'POST',
@@ -119,7 +121,7 @@ export async function getStoredUser() {
 //     
 //     if (!response.ok) throw new Error('Token refresh failed');
 //     
-//     const { token } = await response.json();
+//     const { token }: { token: string } = await response.json();
 //     return token;
 //   } catch (error) {
 //     console.error('Error refreshing token:', error);
@@ -132,7 +134,7 @@ export async function getStoredUser() {
  * Check if token should be refreshed
  * This is a placeholder for future implementation
  */
-// function shouldRefreshToken(token) {
+// function shouldRefreshToken(token: string): boolean {
 //   try {
 //     const payload = JSON.parse(atob(token.split('.')[1]));
 //     const expiresIn = payload.exp * 1000 - Date.now();
@@ -141,4 +143,4 @@ export async function getStoredUser() {
 //   } catch (error) {
 //     return false;
 //   }
-// } 
+// }
