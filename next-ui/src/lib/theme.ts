@@ -1,6 +1,25 @@
-import { createTheme } from '@mantine/core';
+import { createTheme, MantineColorsTuple, MantineThemeOverride } from '@mantine/core';
 
-export const motionTransitions = {
+// Define proper types for motion transitions
+interface MotionTransition {
+  type: 'spring';
+  stiffness: number;
+  damping: number;
+  duration: number;
+}
+
+interface ViewportTransition {
+  once?: boolean;
+  amount: number;
+}
+
+export const motionTransitions: {
+  spring: MotionTransition;
+  springFast: MotionTransition;
+  springSlow: MotionTransition;
+  viewportRepeat: ViewportTransition;
+  viewportOnce: ViewportTransition;
+} = {
   // Standard spring animation
   spring: {
     type: "spring",
@@ -34,14 +53,69 @@ export const motionTransitions = {
   }
 };
 
+// Define custom color tuples with proper Mantine types
+const primaryColors: MantineColorsTuple = [
+  '#E8EBE8', // lightest
+  '#D1D7D1',
+  '#BAC3BA',
+  '#A3AFA3',
+  '#8C9B8C',
+  '#758775',
+  '#5E735E',
+  '#475F47',
+  '#384C37', // base color
+  '#2A3929', // darkest
+];
+
+const secondaryColors: MantineColorsTuple = [
+  '#E8EDF2',
+  '#D1DBE5',
+  '#BAC9D8',
+  '#A3B7CB',
+  '#8CA5BE',
+  '#7593B1',
+  '#88A5BC', // base color
+  '#5B7A9A',
+  '#4A6A8A',
+  '#395A7A',
+];
+
+const accentColors: MantineColorsTuple = [
+  '#F9F5F3',
+  '#F3EBE7',
+  '#EDE1DB',
+  '#E7D7CF',
+  '#E1CDC3',
+  '#E1C8BC', // base color
+  '#D5B8AC',
+  '#C9A89C',
+  '#BD988C',
+  '#B1887C',
+];
+
+const successColors: MantineColorsTuple = [
+  '#E8F0E9',
+  '#D1E1D3',
+  '#BAD2BD',
+  '#A3C3A7',
+  '#8CB491',
+  '#75A57B',
+  '#6B9F70', // base color
+  '#5A8E5F',
+  '#497D4E',
+  '#386C3D',
+];
+
 // Global assets with proper typing
-export const assets: {
+export interface ThemeAssets {
   placeholderImage: {
     landscape: string;
     square: string;
     portrait: string;
   };
-} = {
+}
+
+export const assets: ThemeAssets = {
   placeholderImage: {
     landscape: '/20250418_3BY2_Default_Image_Placeholder.png',  // 3:2 ratio
     square: '/20250419_1BY1_Default_Image_Placeholder.png',     // 1:1 ratio
@@ -49,7 +123,8 @@ export const assets: {
   }
 };
 
-export const theme = createTheme({
+// Define the theme configuration with proper typing
+const themeConfig: MantineThemeOverride = {
   // Define standard breakpoints for clarity and customization
   breakpoints: {
     xs: '36em',  // 576px
@@ -70,55 +145,11 @@ export const theme = createTheme({
       '#1A1B1E',
       '#141517',
       '#101113',
-    ] as const,
-    primary: [
-      '#E8EBE8', // lightest
-      '#D1D7D1',
-      '#BAC3BA',
-      '#A3AFA3',
-      '#8C9B8C',
-      '#758775',
-      '#5E735E',
-      '#475F47',
-      '#384C37', // base color
-      '#2A3929', // darkest
-    ] as const,
-    secondary: [
-      '#E8EDF2',
-      '#D1DBE5',
-      '#BAC9D8',
-      '#A3B7CB',
-      '#8CA5BE',
-      '#7593B1',
-      '#88A5BC', // base color
-      '#5B7A9A',
-      '#4A6A8A',
-      '#395A7A',
-    ] as const,
-    accent: [
-      '#F9F5F3',
-      '#F3EBE7',
-      '#EDE1DB',
-      '#E7D7CF',
-      '#E1CDC3',
-      '#E1C8BC', // base color
-      '#D5B8AC',
-      '#C9A89C',
-      '#BD988C',
-      '#B1887C',
-    ] as const,
-    success: [
-      '#E8F0E9',
-      '#D1E1D3',
-      '#BAD2BD',
-      '#A3C3A7',
-      '#8CB491',
-      '#75A57B',
-      '#6B9F70', // base color
-      '#5A8E5F',
-      '#497D4E',
-      '#386C3D',
-    ] as const,
+    ],
+    primary: primaryColors,
+    secondary: secondaryColors,
+    accent: accentColors,
+    success: successColors,
   },
   primaryColor: 'primary',
   primaryShade: 8, // This will use the base color (index 8)
@@ -133,4 +164,6 @@ export const theme = createTheme({
       },
     },
   },
-});
+};
+
+export const theme = createTheme(themeConfig);
