@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../../../components/Header";
 import HabitHeader from "./HabitHeader";
@@ -6,15 +5,24 @@ import HabitTile from "./HabitTile";
 import HabitDrawer from "./HabitDrawer";
 import { useDisclosure } from "@mantine/hooks";
 import { getHabitLogs, getLogsByHabit } from "./habit";
+import { HabitLog } from "../../../types/common";
 import "../../../index.css";
 
-function Habit() {
-  const [habitLogs, setHabitLogs] = useState([]);
-  const [selectedHabit, setSelectedHabit] = useState(null);
-  const [selectedLogs, setSelectedLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+interface HabitDefinition {
+  id: number;
+  name: string;
+  displayName: string;
+  icon: string;
+  progress: number;
+}
+
+const Habit: React.FC = () => {
+  const [habitLogs, setHabitLogs] = useState<HabitLog[]>([]);
+  const [selectedHabit, setSelectedHabit] = useState<HabitDefinition | null>(null);
+  const [selectedLogs, setSelectedLogs] = useState<HabitLog[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [opened, handlers] = useDisclosure(false);
-  const isInitialMount = useRef(true);
+  const isInitialMount = useRef<boolean>(true);
 
   // Load all habit logs once on mount
   useEffect(() => {
@@ -40,7 +48,7 @@ function Habit() {
   }, []);
 
   // Define habits for tiles
-  const habits = [
+  const habits: HabitDefinition[] = [
     { id: 1, name: "alcohol", displayName: "Alcohol", icon: "🍷", progress: 60 },
     { id: 2, name: "exercise", displayName: "Exercise", icon: "🏋️", progress: 80 },
     { id: 3, name: "coding", displayName: "Coding", icon: "💻", progress: 90 },
@@ -57,7 +65,7 @@ function Habit() {
 
 
   // ✅ Function to open a habit and filter its logs
-  const handleOpenHabit = async (habit) => {
+  const handleOpenHabit = async (habit: HabitDefinition): Promise<void> => {
     console.log(`Opening Habit: ${habit.displayName}`);
   
     // ✅ Fetch specific logs for the selected habit
@@ -84,7 +92,7 @@ function Habit() {
 
 
   // ✅ Function to refresh logs after submission
-  const refreshHabitLogs = async () => {
+  const refreshHabitLogs = async (): Promise<void> => {
     try {
       const fetchedData = selectedHabit
         ? await getLogsByHabit(selectedHabit.name) // ✅ Fetch only selected habit logs
@@ -101,9 +109,22 @@ function Habit() {
     }
   };
 
+  // Handler for header button clicks
+  const handleHeaderButtonClick = (action: string): void => {
+    console.log(`Header button clicked: ${action}`);
+    // Add specific logic for add-habit, settings, etc.
+  };
+
+  // Handler for habit tile log button
+  const handleHabitLog = (habit: HabitDefinition): void => {
+    console.log(`Log button clicked for habit: ${habit.displayName}`);
+    // Quick log functionality can be added here
+  };
 
   // ✅ Modify updateLogsCallback to handle alcohol-specific logs
-  const updateLogsCallback = async () => {
+  const updateLogsCallback = async (): Promise<void> => {
+    if (!selectedHabit) return;
+    
     console.log("Refreshing logs after new habit entry...");
     await new Promise(resolve => setTimeout(resolve, 500)); // ✅ Small delay before fetching logs
     
@@ -133,14 +154,19 @@ function Habit() {
   return (
     <div className="Page" style={{ minHeight: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column' }}>
       <Header />
-      <HabitHeader />
+      <HabitHeader onButtonClick={handleHeaderButtonClick} />
       <h1 className="dashboard-header">Habit Tracker</h1>
 
       {loading ? <p>Loading habits...</p> : null}
 
       <div className="grid-container" style={{ flex: 1 }}>
         {habits.map((habit) => (
-          <HabitTile key={habit.id} habit={habit} onClick={() => handleOpenHabit(habit)} />
+          <HabitTile 
+            key={habit.id} 
+            habit={habit} 
+            onClick={() => handleOpenHabit(habit)}
+            onLog={handleHabitLog}
+          />
         ))}
       </div>
 
