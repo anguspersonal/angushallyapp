@@ -22,15 +22,15 @@
   color: var(--mantine-color-gray-7);
   font-size: var(--mantine-font-size-sm);
   font-weight: 500;
+}
 
-  &:hover {
-    background-color: var(--mantine-color-gray-0);
-  }
+.link:hover {
+  background-color: var(--mantine-color-gray-0);
+}
 
-  &[data-active] {
-    background-color: var(--mantine-color-blue-light);
-    color: var(--mantine-color-blue-7);
-  }
+.link[data-active] {
+  background-color: var(--mantine-color-blue-light);
+  color: var(--mantine-color-blue-7);
 }
 
 .dropdown {
@@ -42,7 +42,7 @@
   padding: var(--mantine-spacing-xs);
   background-color: var(--mantine-color-white);
 
-  @media (min-width: $mantine-breakpoint-sm) {
+  @media (min-width: 48em) {
     display: none;
   }
 }
@@ -55,8 +55,8 @@
   color: var(--mantine-color-gray-7);
   font-size: var(--mantine-font-size-sm);
   font-weight: 500;
+}
 
-  &:hover {
-    background-color: var(--mantine-color-gray-0);
-  }
+.dropdown .link:hover {
+  background-color: var(--mantine-color-gray-0);
 }
