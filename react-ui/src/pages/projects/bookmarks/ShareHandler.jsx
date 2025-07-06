@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Container, Card, Text, Button, Group, Loader, Alert, Badge } from '@mantine/core';
 import { IconCheck, IconX, IconBookmark, IconExternalLink } from '@tabler/icons-react';
 import { useAuth } from '../../../contexts/AuthContext';
-import api from '../../../api';
+import { api } from '../../../utils/apiClient';
 
 /**
  * ShareHandler - Handles PWA Share Target requests
