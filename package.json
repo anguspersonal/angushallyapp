@@ -22,7 +22,8 @@
     "migrate": "cd server && npx knex migrate:latest",
     "migrate:rollback": "cd server && npx knex migrate:rollback",
     "migrate:status": "cd server && npx knex migrate:status",
-    "migrate:make": "cd server && npx knex migrate:make"
+    "migrate:make": "cd server && npx knex migrate:make",
+    "heroku-postbuild": "npm run sync-env:prod && npm run build-client"
   },
   "type": "commonjs",
   "cacheDirectories": [
