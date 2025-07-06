@@ -1,8 +1,55 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { MantineProvider } from '@mantine/core';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthContext } from '../../contexts/AuthContext';
 
-// Simplified render function with only Mantine provider (most common use case)
+// Mock the AuthContext for tests
+const MockAuthProvider = ({ children, authValue = {} }) => {
+  const defaultAuthValue = {
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    login: jest.fn(),
+    logout: jest.fn(),
+    loading: false,
+    ...authValue
+  };
+
+  return (
+    <AuthContext.Provider value={defaultAuthValue}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+// Render component with router, Mantine, and (optionally) mocked auth context
+export const renderWithProviders = (
+  ui,
+  {
+    route = '/',
+    authValue = {},
+    mantineProps = {},
+    ...renderOptions
+  } = {}
+) => {
+  // Set up initial route
+  window.history.pushState({}, 'Test page', route);
+
+  const Wrapper = ({ children }) => (
+    <BrowserRouter>
+      <MantineProvider {...mantineProps}>
+        <MockAuthProvider authValue={authValue}>
+          {children}
+        </MockAuthProvider>
+      </MantineProvider>
+    </BrowserRouter>
+  );
+
+  return render(ui, { wrapper: Wrapper, ...renderOptions });
+};
+
+// Render component with only Mantine provider (for simple UI components)
 export const renderWithMantine = (ui, mantineProps = {}) => {
   const Wrapper = ({ children }) => (
     <MantineProvider {...mantineProps}>

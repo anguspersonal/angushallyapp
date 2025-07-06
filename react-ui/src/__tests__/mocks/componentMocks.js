@@ -1,4 +1,17 @@
-// Mock common third-party components and libraries
+import React from 'react';
+
+// Mock React Router
+export const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+  useLocation: () => ({
+    pathname: '/',
+    search: '',
+    hash: '',
+    state: null
+  })
+}));
 
 // Mock Mantine notifications
 jest.mock('@mantine/notifications', () => ({
@@ -87,5 +100,6 @@ jest.mock('../../theme', () => ({
 
 // Reset all component mocks
 export const resetComponentMocks = () => {
+  mockNavigate.mockReset();
   jest.clearAllMocks();
 }; 
