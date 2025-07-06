@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Title, SimpleGrid, useMantineTheme } from '@mantine/core';
+import { Box, Container, Title, SimpleGrid } from '@mantine/core';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import projectList from '../data/projectList';
@@ -28,7 +28,6 @@ const itemVariants = {
 };
 
 function Projects() {
-    const theme = useMantineTheme();
     const projects = projectList;
     // console.log('Projects.js: projects:', projects);
 

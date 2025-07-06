@@ -7,12 +7,9 @@ import {
   Group,
   Card,
   Badge,
-  Progress,
-  Divider,
   Accordion,
   Grid,
   ThemeIcon,
-  Box,
   ActionIcon,
   Tooltip
 } from '@mantine/core';
@@ -24,10 +21,8 @@ import {
   IconShare,
   IconUser,
   IconUsers,
-  IconClock,
   IconTag,
   IconTrendingUp,
-  IconTarget,
   IconStar,
   IconExternalLink,
   IconCopy

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Text, Progress, Button, Group } from "@mantine/core";
+import { Card, Text, Progress, Group } from "@mantine/core";
 import { IconCircleDashedCheck } from "@tabler/icons-react";
 
 function HabitTile({ habit, onClick, onLog }) { // ✅ Accept `onLog` as a prop

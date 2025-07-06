@@ -45,7 +45,6 @@ const GameBoard = (props) => {
   const [startingIndustry, setStartingIndustry] = useLabeledState(null, 'Starting Industry'); // Set the starting industry
   const [previousIndustry, setPreviousIndustry] = useLabeledState(null, 'Previous Industry'); // Set the previous industry
   const [gameStatus, setGameStatus] = useLabeledState(props.gameStatus, 'Game Status'); // 'true' or 'false'
-  const [guess, setGuess] = useLabeledState(null, 'Guess'); // 'higher' or 'lower'
   const [score, setScore] = useLabeledState(0, 'Score'); // Track the score
   const [cards, setCards] = useLabeledState([], 'Cards'); // Combine industry data and card state
   const [selectedCard, setSelectedCard] = useLabeledState(null, 'Selected Industry'); // Track the selected card by index
@@ -58,7 +57,6 @@ const GameBoard = (props) => {
     setStartingIndustry(startingIndustry);
     setPreviousIndustry(startingIndustry);
     setGameStatus('playing');
-    setGuess(null);
     setScore(0);
     setCards(deck);
     setSelectedCard(null);
@@ -69,7 +67,7 @@ const GameBoard = (props) => {
   // UseEffect hook to restart the game when the component mounts
   useEffect(() => {
     restartGame();
-  }, []); // Empty dependency array ensures this runs only once
+  }, [restartGame]); // Add restartGame dependency
 
   // Function to update the card state
   const updateCardState = (index, newState) => {
@@ -92,20 +90,17 @@ const GameBoard = (props) => {
 
   // Function to handle the user's guess
   const handleGuess = (selectedGuess) => {
-    {
-      if (gameStatus !== 'playing' || selectedCard === null) return;
-      setGuess(selectedGuess);
+    if (gameStatus !== 'playing' || selectedCard === null) return;
 
-      if (roundCounter === 0) {
-        isCorrect = (selectedGuess === 'higher')
-          ? (selectedIndustry.dataValue >= startingIndustry.dataValue)
-          : (selectedIndustry.dataValue <= startingIndustry.dataValue)
-      } else {
-        isCorrect = (selectedGuess === 'higher')
-          ? (selectedIndustry.dataValue >= previousIndustry.dataValue)
-          : (selectedIndustry.dataValue <= previousIndustry.dataValue)
-      }
-    };
+    if (roundCounter === 0) {
+      isCorrect = (selectedGuess === 'higher')
+        ? (selectedIndustry.dataValue >= startingIndustry.dataValue)
+        : (selectedIndustry.dataValue <= startingIndustry.dataValue)
+    } else {
+      isCorrect = (selectedGuess === 'higher')
+        ? (selectedIndustry.dataValue >= previousIndustry.dataValue)
+        : (selectedIndustry.dataValue <= previousIndustry.dataValue)
+    }
 
     updateCardState(selectedCard, 'Flipping');
 
@@ -129,7 +124,6 @@ const GameBoard = (props) => {
       });
     }
 
-    setGuess(null); // Reset guess
     setPreviousIndustry(selectedIndustry); // Set selected industry as previous industry
     setSelectedCard(null); // Reset selected card
     setRoundCounter(prevRoundCounter => prevRoundCounter + 1); // Increment round counter correctly
@@ -143,7 +137,7 @@ const GameBoard = (props) => {
         // console.log('Congratulations! You have won the game!');
       }, 2000); // 3-second delay before winning
     }
-  }, [roundCounter]); // Add dependency array to run effect only when roundCounter changes
+  }, [roundCounter, setGameStatus]); // Add setGameStatus dependency
 
   // Card component
   const Card = ({ industry, onClick }) => (

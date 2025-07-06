@@ -10,7 +10,6 @@ import {
   LoadingOverlay,
 } from '@mantine/core';
 import { analyzeText } from './ai';
-import { useAuth } from '../../../contexts/AuthContext';
 import Header from '../../../components/Header';
 import '../../../general.css';
 
@@ -18,7 +17,6 @@ export default function TextAnalysisAI() {
   const [input, setInput] = useState('');
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
 
   const handleSubmit = async () => {
     if (!input.trim()) return;

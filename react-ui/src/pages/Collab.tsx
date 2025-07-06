@@ -1,6 +1,6 @@
 // pages/Collab.jsx
 import React, { useRef } from 'react';
-import { Container, Title, Text, Anchor, Group, Button, Stack, Box, Image, Flex, useMantineTheme, Accordion } from '@mantine/core';
+import { Container, Title, Text, Anchor, Group, Button, Box, Image, Flex, useMantineTheme, Accordion } from '@mantine/core';
 import { motion } from 'framer-motion';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconSettings, IconTargetArrow, IconTrendingUp, IconMicrophone, IconCoin, IconChartBar } from '@tabler/icons-react';
@@ -13,12 +13,6 @@ import { testimonials } from './collab/data/testimonials';
 import { caseStudies } from './collab/data/caseStudies';
 import { motionTransitions, assets } from '../theme';
 import '../general.css';
-
-// Styles that don't need to be recreated on each render
-const sectionStyles = {
-  transparent: { width: '100%' },
-  colored: { background: 'var(--mantine-color-primary-0)', width: '100%' },
-};
 
 function Collab() {
   const letsTalkRef = useRef(null);

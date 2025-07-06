@@ -8,7 +8,6 @@ import "./strava.css";
 
 
 export default function Strava() {
-    const [data, setData] = useState([]);
     const [prs, setPRs] = useState([]);
     const [weeklyRuns, setWeeklyRuns] = useState({});
     const [recentRuns, setRecentRuns] = useState([]);
@@ -17,7 +16,6 @@ export default function Strava() {
         const loadData = async () => {
             try {
                 const fetchedData = await fetchStravaData();
-                setData(fetchedData);
                 setPRs(getPRs(fetchedData));
                 setWeeklyRuns(getWeeklyRuns(fetchedData));
                 setRecentRuns(getRecentRuns(fetchedData));

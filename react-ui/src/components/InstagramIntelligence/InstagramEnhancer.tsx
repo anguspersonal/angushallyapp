@@ -8,7 +8,6 @@ import {
   TextInput,
   Card,
   Badge,
-  Progress,
   Alert,
   Loader,
   ActionIcon,
@@ -19,10 +18,7 @@ import {
 } from '@mantine/core';
 import {
   IconBrain,
-  IconX,
-  IconAnalyze,
   IconCheck,
-  IconExclamationMark,
   IconExternalLink,
   IconFilter,
   IconSearch

@@ -129,13 +129,3 @@ export const getRecentRuns = (data, count = 10) => {
   runs.sort((a, b) => new Date(b.activity_date) - new Date(a.activity_date));
   return runs.slice(0, count);
 };
-
-// Helper to get ISO week number (simple implementation)
-function getWeekNumber(date) {
-  const tempDate = new Date(date.getTime());
-  tempDate.setHours(0, 0, 0, 0);
-  // Thursday in current week decides the year.
-  tempDate.setDate(tempDate.getDate() + 3 - (tempDate.getDay() + 6) % 7);
-  const week1 = new Date(tempDate.getFullYear(), 0, 4);
-  return 1 + Math.round(((tempDate.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
-}

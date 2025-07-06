@@ -31,7 +31,7 @@ async function apiClient<T = any>(endpoint: string, options: ApiClientOptions = 
         // Handle HTML responses (usually error pages)
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('text/html')) {
-            const text = await response.text();
+            await response.text(); // Consume the response but don't use it
             throw new ApiError('Received HTML response instead of JSON', response.status, null);
         }
 

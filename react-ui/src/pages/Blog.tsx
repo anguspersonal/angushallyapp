@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Box, Container, Title, SimpleGrid, Anchor, useMantineTheme } from '@mantine/core';
+import { Box, Container, Title, SimpleGrid, Anchor } from '@mantine/core';
 import { motion } from 'framer-motion';
 import { fetchBlogList } from "./blog/fetchBlogData";
 import "../index.css";
@@ -31,7 +31,6 @@ const itemVariants = {
 };
 
 function Blog() {
-    const theme = useMantineTheme();
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
