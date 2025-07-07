@@ -1,4 +1,3 @@
-// @ts-nocheck
 //Imports
 import React, { useState, useEffect, useDebugValue } from 'react';
 import './Gameboard.css'; // Ensure the correct path to the CSS file
@@ -6,14 +5,25 @@ import industries from './Industries.json'; // Import industries from the JSON f
 import Win from './Win'; // Import the Win component
 import Lose from './Lose'; // Import the Lose component
 import CTAGuessAutomotive from './CTA-GuessAutomotive'; // Import the CTAGuessAutomotive component
+import { Industry, CardState } from '../../../types/common';
 
+interface GameBoardProps {
+  gameStatus: boolean;
+}
+
+type GameStatus = 'playing' | 'won' | 'lost';
+type CardStates = 'Unselected' | 'Selected' | 'Flipping' | 'Flipped';
+
+interface IndustryWithState extends Industry {
+  state: CardStates;
+}
 
 //UseLabelState hook to add labels to state values
-const useLabeledState = (initialState, label) => {
-  const [state, setState] = useState(initialState);
+function useLabeledState<T>(initialState: T, label: string): [T, React.Dispatch<React.SetStateAction<T>>] {
+  const [state, setState] = useState<T>(initialState);
   useDebugValue(`${label}: ${state}`);
   return [state, setState];
-};
+}
 
 // Shuffle the deck and set the initial industry card
 const shuffleDeck = () => {
@@ -39,17 +49,17 @@ const shuffleDeck = () => {
   };
 };
 
-const GameBoard = (props) => {
+const GameBoard: React.FC<GameBoardProps> = ({ gameStatus: initialGameStatus }) => {
 
   // State variables
-  const [lives, setLives] = useLabeledState(3, 'Lives'); // Set initial lives to 3
-  const [startingIndustry, setStartingIndustry] = useLabeledState(null, 'Starting Industry'); // Set the starting industry
-  const [previousIndustry, setPreviousIndustry] = useLabeledState(null, 'Previous Industry'); // Set the previous industry
-  const [gameStatus, setGameStatus] = useLabeledState(props.gameStatus, 'Game Status'); // 'true' or 'false'
-  const [score, setScore] = useLabeledState(0, 'Score'); // Track the score
-  const [cards, setCards] = useLabeledState([], 'Cards'); // Combine industry data and card state
-  const [selectedCard, setSelectedCard] = useLabeledState(null, 'Selected Industry'); // Track the selected card by index
-  const [roundCounter, setRoundCounter] = useLabeledState(0, 'Round'); // Track the number of rounds played
+  const [lives, setLives] = useLabeledState<number>(3, 'Lives'); // Set initial lives to 3
+  const [startingIndustry, setStartingIndustry] = useLabeledState<IndustryWithState | null>(null, 'Starting Industry'); // Set the starting industry
+  const [previousIndustry, setPreviousIndustry] = useLabeledState<IndustryWithState | null>(null, 'Previous Industry'); // Set the previous industry
+  const [gameStatus, setGameStatus] = useLabeledState<GameStatus>('playing', 'Game Status'); // 'playing', 'won', or 'lost'
+  const [score, setScore] = useLabeledState<number>(0, 'Score'); // Track the score
+  const [cards, setCards] = useLabeledState<IndustryWithState[]>([], 'Cards'); // Combine industry data and card state
+  const [selectedCard, setSelectedCard] = useLabeledState<number | null>(null, 'Selected Industry'); // Track the selected card by index
+  const [roundCounter, setRoundCounter] = useLabeledState<number>(0, 'Round'); // Track the number of rounds played
 
   // Function to restart the game
   const restartGame = () => {
