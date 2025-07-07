@@ -1,9 +1,13 @@
-// @ts-nocheck
 import React, {useEffect} from 'react';
 import './Gameboard.css';
 
-const Lose = (props) => {
-    const { score, livesRemaining, round } = props;
+interface LoseProps {
+    score: number;
+    livesRemaining: number;
+    round: number;
+}
+
+const Lose: React.FC<LoseProps> = ({ score, livesRemaining, round }) => {
 
     useEffect(() => {
         // Scroll to top when the component renders

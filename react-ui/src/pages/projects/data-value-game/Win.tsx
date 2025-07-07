@@ -1,8 +1,13 @@
-// @ts-nocheck
 import React, {useEffect} from 'react';
 import './DataValueGame.css';
 
-const Win = ({ score, livesRemaining, round }) => {
+interface WinProps {
+    score: number;
+    livesRemaining: number;
+    round: number;
+}
+
+const Win: React.FC<WinProps> = ({ score, livesRemaining, round }) => {
 
     useEffect(() => {
         // Scroll to top when the component renders
