@@ -21,10 +21,13 @@ async function apiClient<T = unknown>(endpoint: string, options: ApiClientOption
     ...options.headers,
   };
 
+  const { body, ...rest } = options;
+
   const config: RequestInit = {
-    ...options,
+    ...rest,
     headers,
-    credentials: 'include', // send cookies if present
+    credentials: 'include',
+    ...(body !== undefined ? { body: body as BodyInit } : {}),
   };
 
   const fullUrl = `${API_BASE}${endpoint}`;
@@ -50,7 +53,9 @@ async function apiClient<T = unknown>(endpoint: string, options: ApiClientOption
       }
       throw new ApiError(
         // Attempt to extract error field from payload
-        (data as any)?.error || getErrorMessage(response.status),
+        (typeof data === 'object' && data !== null && 'error' in data
+          ? (data as { error?: string }).error
+          : undefined) || getErrorMessage(response.status),
         response.status,
         data,
       );
