@@ -2,20 +2,19 @@ import React from 'react';
 import { Box, Container, Title, Text, Image, Anchor, Group, ActionIcon } from '@mantine/core';
 import { IconBrandLinkedin, IconBrandGithub, IconBrandX, IconBrandInstagram } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import Header from '../components/Header';
 import "../general.css";
 import { assets } from '../theme';
 
-const contentVariants = {
+const contentVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
         opacity: 1,
         y: 0,
         transition: {
             delay: i * 0.1,
-            duration: 0.5,
-            ease: "easeOut"
+            duration: 0.5
         }
     })
 };

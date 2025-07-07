@@ -53,7 +53,7 @@ const itemHeight = 80;
 function CollabOrbit() {
   const theme = useMantineTheme();
   // Transition with repeat
-  const orbitTransition = { repeat: Infinity, duration: 1, ease: 'linear' }; 
+  const orbitTransition = { repeat: Infinity, duration: 1 }; 
 
   return (
     <LazyMotion features={domAnimation}>

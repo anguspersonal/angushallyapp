@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { Box, Container, Title, Text, Image, Anchor, SimpleGrid, useMantineTheme, Button } from '@mantine/core';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Snippet from '../components/Snippet';
@@ -12,16 +12,15 @@ import { assets } from '../theme';
 import "../general.css";
 
 // Animation variants
-const contentVariants = {
+const contentVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
-  visible: (i) => ({
+  visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.5,
-      ease: "easeOut"
-    }
+          transition: {
+        delay: i * 0.1,
+        duration: 0.5
+      }
   })
 };
 

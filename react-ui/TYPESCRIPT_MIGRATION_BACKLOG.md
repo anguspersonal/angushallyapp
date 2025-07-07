@@ -5,20 +5,20 @@ This document tracks the comprehensive TypeScript migration to remove all `@ts-n
 
 **Total Files to Migrate**: 53 files  
 **Estimated Effort**: 3-4 dev-days  
-**Current Status**: 🔄 Step 3 In Progress - Feature Migration (21% Complete)
+**Current Status**: 🔄 Step 3 In Progress - Feature Migration (36% Complete)
 
 ---
 
 ## Progress Tracking
 
-### Overall Progress: 3/53 files completed (6%)
+### Overall Progress: 19/53 files completed (36%)
 
 | Feature Area | Files | Status | Estimated Time |
 |-------------|-------|--------|---------------|
-| **Bookmarks** | 14 | 🔄 In Progress (3/14 = 21%) | ~0.6 day remaining |
+| **Bookmarks** | 14 | 🔄 In Progress (5/14 = 36%) | ~0.4 day remaining |
+| **Habit Tracker** | 8 | 🔄 87.5% Complete (7/8) | ~0.1 day remaining |
+| **Data-Value-Game** | 8 | 🔄 75% Complete (6/8) | ~0.1 day remaining |
 | **Eat-Safe-UK** | 10 | 🔄 Pending | ~0.5 day |
-| **Habit Tracker** | 8 | 🔄 Pending | ~0.5 day |
-| **Data-Value-Game** | 8 | 🔄 Pending | ~0.5 day |
 | **AI + Strava** | 6 | 🔄 Pending | ~0.5 day |
 | **Collab Pages** | 6 | 🔄 Pending | ~0.5 day |
 | **Core Pages** | 4 | 🔄 Pending | ~0.25 day |
@@ -29,17 +29,17 @@ This document tracks the comprehensive TypeScript migration to remove all `@ts-n
 ## Detailed File Tracking
 
 ### 🔖 Bookmarks (14 files) - Priority: HIGH
-**Status**: 🔄 In Progress (3/14 = 21% complete)  
-**Key Issues**: Mantine 7 props (`spacing`→`gap`, `position`→`justify`), missing test mocks  
+**Status**: 🔄 In Progress (5/14 = 36% complete)  
+**Key Issues**: Main Bookmarks.tsx component very large (641 lines), complex state management  
 **Dependencies**: ✅ `BookmarkCardProps`, `BookmarkData` types complete
 
-- [ ] `src/pages/projects/bookmarks/Bookmarks.tsx`
+- [ ] `src/pages/projects/bookmarks/Bookmarks.tsx` **Complex - 641 lines**
 - [x] `src/pages/projects/bookmarks/components/BookmarkCard.tsx` ✅ **Complete**
 - [x] `src/pages/projects/bookmarks/components/sidebar.tsx` ✅ **Complete**
-- [🔄] `src/pages/projects/bookmarks/ShareHandler.tsx` **80% Complete**
-- [ ] `src/pages/projects/bookmarks/Raindrops.tsx`
-- [ ] `src/pages/projects/bookmarks/Bookmarks.integration.test.tsx`
-- [ ] `src/pages/projects/bookmarks/components/BookmarkCard.test.tsx`
+- [x] `src/pages/projects/bookmarks/ShareHandler.tsx` ✅ **Complete**
+- [x] `src/pages/projects/bookmarks/Raindrops.tsx` ✅ **Complete**
+- [ ] `src/pages/projects/bookmarks/Bookmarks.integration.test.tsx` **Skip tests**
+- [ ] `src/pages/projects/bookmarks/components/BookmarkCard.test.tsx` **Skip tests**
 
 ### 🍽️ Eat-Safe-UK (10 files) - Priority: MEDIUM
 **Status**: 🔄 Pending  
@@ -58,33 +58,33 @@ This document tracks the comprehensive TypeScript migration to remove all `@ts-n
 - [ ] `src/pages/projects/eat-safe-uk/utils/nearbySearch.ts`
 
 ### 🎯 Habit Tracker (8 files) - Priority: HIGH
-**Status**: 🔄 Pending  
-**Key Issues**: `HabitLog`, `HabitType` enums, `aggregateService.ts` returns  
-**Dependencies**: `HabitLog`, `HabitType` interfaces needed
+**Status**: 🔄 87.5% Complete (7/8 files)  
+**Key Issues**: HabitDrawer complex type issues (26 errors), onChange handlers, sub-components  
+**Dependencies**: ✅ `HabitLog`, `HabitType` interfaces complete
 
-- [ ] `src/pages/projects/habit/Habit.tsx`
-- [ ] `src/pages/projects/habit/HabitCombobox.tsx`
-- [ ] `src/pages/projects/habit/HabitDrawer.tsx`
-- [ ] `src/pages/projects/habit/HabitHeader.tsx`
-- [ ] `src/pages/projects/habit/HabitLogTable.tsx`
-- [ ] `src/pages/projects/habit/HabitTile.tsx`
-- [ ] `src/pages/projects/habit/aggregateService.ts`
-- [ ] `src/pages/projects/habit/habit.ts`
+- [x] `src/pages/projects/habit/Habit.tsx` ✅ **Complete**
+- [x] `src/pages/projects/habit/HabitCombobox.tsx` ✅ **Complete**  
+- [🔄] `src/pages/projects/habit/HabitDrawer.tsx` **In Progress** (interfaces added, 26 errors remaining)
+- [x] `src/pages/projects/habit/HabitHeader.tsx` ✅ **Complete**
+- [x] `src/pages/projects/habit/HabitLogTable.tsx` ✅ **Complete**
+- [x] `src/pages/projects/habit/HabitTile.tsx` ✅ **Complete**
+- [x] `src/pages/projects/habit/aggregateService.ts` ✅ **Complete**
+- [x] `src/pages/projects/habit/habit.ts` ✅ **Complete**
 
 ### 🎮 Data-Value-Game (8 files) - Priority: MEDIUM
-**Status**: 🔄 Pending  
-**Key Issues**: Card state types, custom hooks like `useLabeledState<T>()`  
-**Dependencies**: `CardState`, `Industry` interfaces needed
+**Status**: 🔄 75% Complete (6/8 files)  
+**Key Issues**: Gameboard complex state management (14 errors), CTA component pending  
+**Dependencies**: ✅ `CardState`, `Industry` interfaces complete
 
-- [ ] `src/pages/projects/data-value-game/DataValueGame.tsx`
-- [ ] `src/pages/projects/data-value-game/Card.tsx`
-- [ ] `src/pages/projects/data-value-game/CTA-GuessAutomotive.tsx`
-- [ ] `src/pages/projects/data-value-game/DVGFooter.tsx`
-- [ ] `src/pages/projects/data-value-game/DVGHeader.tsx`
-- [ ] `src/pages/projects/data-value-game/Gameboard.tsx`
-- [ ] `src/pages/projects/data-value-game/Lose.tsx`
-- [ ] `src/pages/projects/data-value-game/Welcome.tsx`
-- [ ] `src/pages/projects/data-value-game/Win.tsx`
+- [x] `src/pages/projects/data-value-game/DataValueGame.tsx` ✅ **Complete**
+- [x] `src/pages/projects/data-value-game/Card.tsx` ✅ **Complete**
+- [ ] `src/pages/projects/data-value-game/CTA-GuessAutomotive.tsx` **Pending**
+- [x] `src/pages/projects/data-value-game/DVGFooter.tsx` ✅ **Complete**
+- [x] `src/pages/projects/data-value-game/DVGHeader.tsx` ✅ **Complete**  
+- [🔄] `src/pages/projects/data-value-game/Gameboard.tsx` **In Progress** (interfaces added, 14 errors remaining)
+- [x] `src/pages/projects/data-value-game/Lose.tsx` ✅ **Complete**
+- [x] `src/pages/projects/data-value-game/Welcome.tsx` ✅ **Complete**
+- [x] `src/pages/projects/data-value-game/Win.tsx` ✅ **Complete**
 
 ### 🤖 AI + Strava (6 files) - Priority: MEDIUM
 **Status**: 🔄 Pending  

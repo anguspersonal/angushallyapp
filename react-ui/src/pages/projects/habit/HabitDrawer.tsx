@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState, useRef } from "react";
 import { Drawer, Button, Stack, Group, Table, ActionIcon, Text } from "@mantine/core";
 import HabitCombobox from "./HabitCombobox";
@@ -6,16 +5,53 @@ import { useForm } from "@mantine/form";
 import { addHabitLog, getHabitSpecificData } from "./habit";
 import { calculateUnits } from "../../../utils/calculateUnits"; // Utility function to calculate units
 import { getAggregateStats } from "./aggregateService";
+import { HabitLog, DrinkCatalogItem, HabitType } from "../../../types/common";
+
+type ValidPeriod = 'week' | 'month' | 'year';
 
 // Constants
 const TARGET_UNITS = 14; // UK recommended weekly limit
 
-function HabitDrawer({ habit, selectedLogs, opened, onClose, updateLogsCallback }) {
-  const [options, setOptions] = useState([]); // Initialize as an empty array
-  const [logs, setLogs] = useState([]);
-  const [tempDrinkLogs, setTempDrinkLogs] = useState([]);
-  const comboboxRef = useRef(null);
-  const [stats, setStats] = useState({
+interface HabitDefinition {
+  id: number;
+  name: HabitType;
+  displayName: string;
+  icon: string;
+  progress: number;
+}
+
+interface HabitStats {
+  sum: number;
+  avg: number;
+  min: number;
+  max: number;
+  stddev: number;
+}
+
+interface TempDrinkLog {
+  id: string;
+  name: string;
+  icon: string;
+  group: string;
+  volumeML: number;
+  abvPerc: number;
+  count: number;
+}
+
+interface HabitDrawerProps {
+  habit: HabitDefinition | null;
+  selectedLogs: HabitLog[];
+  opened: boolean;
+  onClose: () => void;
+  updateLogsCallback: () => Promise<void>;
+}
+
+const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, onClose, updateLogsCallback }) => {
+  const [options, setOptions] = useState<DrinkCatalogItem[]>([]); // Initialize as an empty array
+  const [logs, setLogs] = useState<HabitLog[]>([]);
+  const [tempDrinkLogs, setTempDrinkLogs] = useState<TempDrinkLog[]>([]);
+  const comboboxRef = useRef<(() => void) | null>(null);
+  const [stats, setStats] = useState<Record<string, HabitStats>>({
     week: { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 },
     month: { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 },
     year: { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 }
@@ -64,8 +100,8 @@ function HabitDrawer({ habit, selectedLogs, opened, onClose, updateLogsCallback 
   useEffect(() => {
     if (habit) {
       const fetchStats = async () => {
-        const periods = ['week', 'month', 'year'];
-        const newStats = {};
+        const periods: ValidPeriod[] = ['week', 'month', 'year'];
+        const newStats: Record<string, HabitStats> = {};
         
         console.log('Fetching stats for habit:', habit);
         
@@ -74,7 +110,7 @@ function HabitDrawer({ habit, selectedLogs, opened, onClose, updateLogsCallback 
             // Make sure we're using 'alcohol' as the habit type for alcohol habits
             const habitType = habit.name.toLowerCase() === 'alcohol' ? 'alcohol' : habit.name;
             console.log(`Fetching ${period} stats for ${habitType}`);
-            const data = await getAggregateStats(habitType, period);
+            const data = await getAggregateStats(habitType, period as ValidPeriod);
             console.log(`${period} stats result:`, data);
             newStats[period] = data;
           } catch (error) {
@@ -102,7 +138,7 @@ function HabitDrawer({ habit, selectedLogs, opened, onClose, updateLogsCallback 
   });
 
   // Handle submission
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values: any) => {
     if (tempDrinkLogs.length === 0) {
       console.error("No drinks selected.");
       return;

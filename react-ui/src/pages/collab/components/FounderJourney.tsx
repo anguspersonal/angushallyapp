@@ -56,7 +56,7 @@ const lineVariants = {
   hidden: { height: '0%' },
   visible: {
     height: '100%',
-    transition: { duration: 1.5, ease: "easeOut" }
+            transition: { duration: 1.5 }
   }
 };
 

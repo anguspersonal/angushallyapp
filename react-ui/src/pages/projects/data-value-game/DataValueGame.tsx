@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Data Value Game
  * 
@@ -10,22 +9,16 @@ import Welcome from './Welcome';
 import DVGHeader from './DVGHeader';
 import DVGFooter from './DVGFooter';
 
-
 //UseLabelState hook to add labels to state values
-const useLabeledState = (initialState, label) => {
-    const [state, setState] = useState(initialState);
+function useLabeledState<T>(initialState: T, label: string): [T, React.Dispatch<React.SetStateAction<T>>] {
+    const [state, setState] = useState<T>(initialState);
     useDebugValue(`${label}: ${state}`);
     return [state, setState];
-};
-
-
+}
 
 //DataValueGame component
-function DataValueGame() {
-
-    const [gameStatus, setGameStatus] = useLabeledState(false, 'Game Status'); //State to control whether the game is playing or not
-
-
+const DataValueGame: React.FC = () => {
+    const [gameStatus, setGameStatus] = useLabeledState<boolean>(false, 'Game Status'); //State to control whether the game is playing or not
 
     return (
         <div className='dvg'>

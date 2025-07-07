@@ -14,20 +14,19 @@ import { useForm } from '@mantine/form';
 
 // @ts-ignore - react-google-recaptcha doesn't have TypeScript types
 import ReCAPTCHA from "react-google-recaptcha";
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import Header from '../components/Header';
 import "../general.css";
 
 // Animation variants for staggered fade-in
-const formElementVariants = {
+const formElementVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
         opacity: 1,
         y: 0,
         transition: {
             delay: i * 0.1, // Stagger delay
-            duration: 0.5,
-            ease: "easeOut"
+            duration: 0.5
         }
     })
 };
@@ -46,10 +45,10 @@ function Contact() {
         },
         // Optional: Add validation
         validate: {
-            name: (value) => (value.trim().length < 2 ? 'Name must have at least 2 letters' : null),
-            email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-            subject: (value) => (value.trim().length === 0 ? 'Subject cannot be empty' : null),
-            message: (value) => (value.trim().length < 10 ? 'Message must be at least 10 characters long' : null),
+            name: (value: string) => (value.trim().length < 2 ? 'Name must have at least 2 letters' : null),
+            email: (value: string) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+            subject: (value: string) => (value.trim().length === 0 ? 'Subject cannot be empty' : null),
+            message: (value: string) => (value.trim().length < 10 ? 'Message must be at least 10 characters long' : null),
         },
     });
 

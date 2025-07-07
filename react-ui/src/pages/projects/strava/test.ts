@@ -7,3 +7,5 @@
 
 // console.log('StravaApiV3.Strava Keys:', Object.keys(StravaApiV3.Strava || {}));
 // console.log('StravaApiV3.types Keys:', Object.keys(StravaApiV3.types || {}));
+
+export {};

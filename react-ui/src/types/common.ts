@@ -74,6 +74,7 @@ export interface Bookmark extends BaseEntity {
   folder_id?: string;
   is_favorite?: boolean;
   reading_progress?: number;
+  enriched?: boolean;
 }
 
 export interface BookmarkCardProps {
@@ -154,6 +155,10 @@ export interface DrinkCatalogItem {
   category: string;
   brand?: string;
   description?: string;
+  icon?: string;
+  drink_type?: string;
+  archived?: boolean;
+  catalog_type?: string;
 }
 
 export interface HabitStats {

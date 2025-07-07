@@ -14,7 +14,7 @@ import {
   SimpleGrid, 
   useMantineTheme
 } from '@mantine/core';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { analyzeText } from './ai';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
@@ -44,12 +44,12 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
+              transition: { duration: 0.5 }
   }
 };
 

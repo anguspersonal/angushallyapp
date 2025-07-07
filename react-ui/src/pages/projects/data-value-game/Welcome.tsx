@@ -1,7 +1,10 @@
-// @ts-nocheck
 import React from "react";
 
-function Welcome({ startGame }) {
+interface WelcomeProps {
+    startGame: () => void;
+}
+
+const Welcome: React.FC<WelcomeProps> = ({ startGame }) => {
     return (
         <div>
             <h1>Welcome to the Data Value Game</h1>
@@ -9,6 +12,6 @@ function Welcome({ startGame }) {
             <button onClick={startGame}>Start Game</button>
         </div>
     );
-}
+};
 
 export default Welcome; 

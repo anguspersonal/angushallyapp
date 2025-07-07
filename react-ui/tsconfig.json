@@ -26,10 +26,6 @@
   ],
   "exclude": [
     "node_modules",
-    "build",
-    "**/*.test.*",
-    "**/__tests__/**",
-    "**/tests/**",
-    "**/setupTests.ts"
+    "build"
   ]
 }

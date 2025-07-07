@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { Button, Loader, Text, Group, Stack, Title, Container, Box } from '@mantine/core';
 import { IconLink, IconRefresh } from '@tabler/icons-react';
@@ -8,15 +7,28 @@ import { api } from '../../../utils/apiClient';
 import { useLocation } from 'react-router-dom';
 import Header from '../../../components/Header';
 import BookmarkCard from './components/BookmarkCard';
+import { Bookmark } from '../../../types/common';
 import "../../../general.css";
 
-const Raindrops = () => {
+interface RaindropVerifyResponse {
+  isConnected: boolean;
+}
+
+interface RaindropBookmarksResponse {
+  bookmarks: Bookmark[];
+}
+
+interface RaindropOAuthResponse {
+  authUrl: string;
+}
+
+const Raindrops: React.FC = () => {
   const { user } = useAuth();
-  const [bookmarks, setBookmarks] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [syncing, setSyncing] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
-  const [initializing, setInitializing] = useState(true);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [syncing, setSyncing] = useState<boolean>(false);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [initializing, setInitializing] = useState<boolean>(true);
   const location = useLocation();
 
   // Debug state changes
@@ -79,13 +91,13 @@ const Raindrops = () => {
       
       try {
         setInitializing(true);
-        const response = await api.get('/raindrop/verify');
+        const response = await api.get('/raindrop/verify') as RaindropVerifyResponse;
         setIsConnected(response.isConnected);
         
         if (response.isConnected) {
           await fetchBookmarks();
         }
-      } catch (error) {
+      } catch (error: any) {
         setIsConnected(false);
         console.error('Error initializing Raindrop:', error);
       } finally {
@@ -96,17 +108,17 @@ const Raindrops = () => {
     initialize();
   }, [user]);
 
-  const fetchBookmarks = async () => {
+  const fetchBookmarks = async (): Promise<void> => {
     try {
       setLoading(true);
-      const response = await api.get('/raindrop/bookmarks');
+      const response = await api.get('/raindrop/bookmarks') as RaindropBookmarksResponse;
       
       if (response && response.bookmarks && Array.isArray(response.bookmarks)) {
         setBookmarks(response.bookmarks);
       } else {
         setBookmarks([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error.status === 401) {
         notifications.show({
           title: 'Error',
@@ -151,7 +163,7 @@ const Raindrops = () => {
         color: 'green'
       });
       fetchBookmarks();
-    } catch (error) {
+    } catch (error: any) {
       if (error.status === 401) {
         notifications.show({
           title: 'Error',
@@ -177,7 +189,7 @@ const Raindrops = () => {
       <Box>
         <Header />
         <Container size="sm" py="xl">
-          <Stack align="center" spacing="md">
+          <Stack align="center" gap="md">
             <Title order={2}>Please log in to access your Raindrop bookmarks</Title>
             <Button component="a" href="/login" variant="filled">
               Log In
@@ -193,7 +205,7 @@ const Raindrops = () => {
       <Box>
         <Header />
         <Container size="xl" py="xl">
-          <Group position="center" h={400}>
+          <Group justify="center" h={400}>
             <Loader size="xl" />
           </Group>
         </Container>
@@ -205,20 +217,20 @@ const Raindrops = () => {
     <Box>
       <Header />
       <Container size="xl" py="xl">
-        <Group position="apart" mb="xl">
+        <Group justify="space-between" mb="xl">
           <Title order={1}>Raindrop Bookmarks</Title>
           <Group>
             {!isConnected ? (
               <Button
                 onClick={handleConnect}
-                leftIcon={<IconLink size={16} />}
+                leftSection={<IconLink size={16} />}
                 variant="filled"
               >
                 Connect Raindrop
               </Button>
             ) : (
               <Button
-                leftIcon={<IconRefresh size={16} />}
+                leftSection={<IconRefresh size={16} />}
                 onClick={handleSync}
                 loading={syncing}
                 variant="light"
@@ -230,11 +242,11 @@ const Raindrops = () => {
         </Group>
 
         {loading ? (
-          <Group position="center" h={400}>
+          <Group justify="center" h={400}>
             <Loader size="xl" />
           </Group>
         ) : (
-          <Stack spacing="md">
+          <Stack gap="md">
             {/* console.log('Rendering bookmarks:', bookmarks, 'Length:', bookmarks.length) */}
             {/* console.log('Is array?', Array.isArray(bookmarks)) */}
             {/* console.log('First bookmark:', bookmarks[0]) */}
@@ -253,14 +265,13 @@ const Raindrops = () => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
                 {bookmarks.map((bookmark) => (
                   <BookmarkCard 
-                    key={bookmark.id || bookmark.raindrop_id} 
+                    key={bookmark.id} 
                     bookmark={bookmark}
-                    onRefresh={fetchBookmarks}
                   />
                 ))}
               </div>
             ) : (
-              <Text align="center" color="dimmed" size="lg" py="xl">
+              <Text ta="center" color="dimmed" size="lg" py="xl">
                 {isConnected
                   ? 'No bookmarks found. Try syncing your Raindrop account.'
                   : 'Connect your Raindrop account to view your bookmarks.'}

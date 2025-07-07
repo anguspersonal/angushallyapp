@@ -1,7 +1,19 @@
-// @ts-nocheck
 import { api } from '../../../utils/apiClient';
+import { HabitLog, HabitType, DrinkCatalogItem, HabitStats } from '../../../types/common';
+
+interface HabitLogResponse {
+    data: HabitLog;
+    habit_type: HabitType;
+}
+
+interface HabitLogsResponse {
+    data: HabitLog[];
+}
+
+type StatsPeriod = 'day' | 'week' | 'month' | 'year';
+
 // ✅ Function that calls the API to log habit data
-export const addHabitLog = async (logData, habitType) => {
+export const addHabitLog = async (logData: Partial<HabitLog>, habitType: HabitType): Promise<HabitLogResponse> => {
     console.log('Habit Log:', logData);
     try {
         const response = await api.post(`/habit/${habitType}`, logData);
@@ -18,10 +30,11 @@ export const addHabitLog = async (logData, habitType) => {
 };
 
 // ✅ Get All Habit Logs
-export const getHabitLogs = async () => {
+export const getHabitLogs = async (): Promise<HabitLog[]> => {
     console.log('Fetching habit logs...');
     try {
-        return await api.get('/habit');
+        const response = await api.get('/habit');
+        return response.data || response;
     } catch (error) {
         console.error('Error fetching habit logs:', error);
         throw error;
@@ -29,7 +42,7 @@ export const getHabitLogs = async () => {
 };
 
 // ✅ Get Logs for a Specific Habit
-export const getLogsByHabit = async (habitType) => {
+export const getLogsByHabit = async (habitType: HabitType): Promise<HabitLog[]> => {
     console.log(`Fetching logs for habit: ${habitType}`);
     try {
         const response = await api.get(`/habit/${habitType}/logs`);
@@ -41,7 +54,7 @@ export const getLogsByHabit = async (habitType) => {
 };
 
 // ✅ Fetch Habit-Specific Data (e.g., Drink Catalog for Alcohol)
-export const getHabitSpecificData = async (habitName) => {
+export const getHabitSpecificData = async (habitName: string): Promise<any> => {
     try { 
         let data = null;
         switch (habitName) {
@@ -60,7 +73,7 @@ export const getHabitSpecificData = async (habitName) => {
 };
 
 // ✅ Get Drinks Catalog (for alcohol tracking)
-export const getDrinkCatalog = async () => {
+export const getDrinkCatalog = async (): Promise<DrinkCatalogItem[]> => {
     console.log('Fetching drink catalog...');
     try {
         const response = await api.get("/habit/alcohol/drinkCatalog");
@@ -71,9 +84,10 @@ export const getDrinkCatalog = async () => {
     }
 };
 
-export const getAggregateStats = async (period) => {
+export const getAggregateStats = async (period: StatsPeriod): Promise<HabitStats> => {
     try {
-        return await api.get(`/habit/stats/${period}`);
+        const response = await api.get(`/habit/stats/${period}`);
+        return response.data;
     } catch (error) {
         console.error('Error fetching aggregate stats:', error);
         throw error;
