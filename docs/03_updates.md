@@ -876,3 +876,33 @@ This file tracks chronological changes to the project, with the most recent upda
 - Created service for Apify scraping and OpenAI Assistant integration
 - Added unit and integration tests for service and API
 - Updated sub-project README and schema documentation
+
+## [Unreleased] – 2025-01-27
+### 🚧 Current Focus
+- **Next.js Migration**: Phase 2 (Shared Infrastructure) - porting AuthContext and API client
+- **Documentation Cleanup**: Consolidated 6 migration documents into single comprehensive plan
+
+### Added
+- **docs/09_nextjs_migration_plan.md**: Comprehensive solo-developer migration plan with AI strategy
+- **Shared Types**: Created `next-ui/src/shared/types/` with User and API types
+- **API Client**: Migrated to TypeScript with proper error handling
+
+### Changed
+- **Documentation Structure**: Consolidated migration analysis documents following docs/01_guidance.md
+- **TypeScript Coverage**: Core infrastructure now 100% TypeScript
+- **Build Performance**: Next.js builds consistently in ~17 seconds
+
+### Removed
+- **CRA_DEPRECATION_ANALYSIS.md**: Analysis complete, integrated into migration plan
+- **CURRENT_SETUP_ANALYSIS.md**: Application analysis consolidated
+- **migration-status.md**: Progress tracking moved to main plan
+- **PHASE_2_PROGRESS.md**: Phase details integrated
+- **typescript-improvements.md**: Work complete
+- **docs/typescript-migration-analysis.md**: TypeScript migration finished
+
+### Technical Debt Resolved
+- ✅ **Mixed .jsx/.tsx files**: Core infrastructure now fully TypeScript
+- ✅ **Build performance**: 3-4x improvement with Next.js
+- ✅ **Type safety**: Strict TypeScript mode with 0 errors
+
+---
