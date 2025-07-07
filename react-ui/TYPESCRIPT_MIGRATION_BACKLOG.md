@@ -5,20 +5,20 @@ This document tracks the comprehensive TypeScript migration to remove all `@ts-n
 
 **Total Files to Migrate**: 53 files  
 **Estimated Effort**: 3-4 dev-days  
-**Current Status**: 🔄 Step 3 In Progress - Feature Migration (23% Complete)
+**Current Status**: 🔄 Step 3 In Progress - Feature Migration (36% Complete)
 
 ---
 
 ## Progress Tracking
 
-### Overall Progress: 12/53 files completed (23%)
+### Overall Progress: 19/53 files completed (36%)
 
 | Feature Area | Files | Status | Estimated Time |
 |-------------|-------|--------|---------------|
 | **Bookmarks** | 14 | 🔄 In Progress (5/14 = 36%) | ~0.4 day remaining |
 | **Habit Tracker** | 8 | 🔄 87.5% Complete (7/8) | ~0.1 day remaining |
+| **Data-Value-Game** | 8 | 🔄 75% Complete (6/8) | ~0.1 day remaining |
 | **Eat-Safe-UK** | 10 | 🔄 Pending | ~0.5 day |
-| **Data-Value-Game** | 8 | 🔄 Pending | ~0.5 day |
 | **AI + Strava** | 6 | 🔄 Pending | ~0.5 day |
 | **Collab Pages** | 6 | 🔄 Pending | ~0.5 day |
 | **Core Pages** | 4 | 🔄 Pending | ~0.25 day |
@@ -72,19 +72,19 @@ This document tracks the comprehensive TypeScript migration to remove all `@ts-n
 - [x] `src/pages/projects/habit/habit.ts` ✅ **Complete**
 
 ### 🎮 Data-Value-Game (8 files) - Priority: MEDIUM
-**Status**: 🔄 Pending  
-**Key Issues**: Card state types, custom hooks like `useLabeledState<T>()`  
-**Dependencies**: `CardState`, `Industry` interfaces needed
+**Status**: 🔄 75% Complete (6/8 files)  
+**Key Issues**: Gameboard complex state management (14 errors), CTA component pending  
+**Dependencies**: ✅ `CardState`, `Industry` interfaces complete
 
-- [ ] `src/pages/projects/data-value-game/DataValueGame.tsx`
-- [ ] `src/pages/projects/data-value-game/Card.tsx`
-- [ ] `src/pages/projects/data-value-game/CTA-GuessAutomotive.tsx`
-- [ ] `src/pages/projects/data-value-game/DVGFooter.tsx`
-- [ ] `src/pages/projects/data-value-game/DVGHeader.tsx`
-- [ ] `src/pages/projects/data-value-game/Gameboard.tsx`
-- [ ] `src/pages/projects/data-value-game/Lose.tsx`
-- [ ] `src/pages/projects/data-value-game/Welcome.tsx`
-- [ ] `src/pages/projects/data-value-game/Win.tsx`
+- [x] `src/pages/projects/data-value-game/DataValueGame.tsx` ✅ **Complete**
+- [x] `src/pages/projects/data-value-game/Card.tsx` ✅ **Complete**
+- [ ] `src/pages/projects/data-value-game/CTA-GuessAutomotive.tsx` **Pending**
+- [x] `src/pages/projects/data-value-game/DVGFooter.tsx` ✅ **Complete**
+- [x] `src/pages/projects/data-value-game/DVGHeader.tsx` ✅ **Complete**  
+- [🔄] `src/pages/projects/data-value-game/Gameboard.tsx` **In Progress** (interfaces added, 14 errors remaining)
+- [x] `src/pages/projects/data-value-game/Lose.tsx` ✅ **Complete**
+- [x] `src/pages/projects/data-value-game/Welcome.tsx` ✅ **Complete**
+- [x] `src/pages/projects/data-value-game/Win.tsx` ✅ **Complete**
 
 ### 🤖 AI + Strava (6 files) - Priority: MEDIUM
 **Status**: 🔄 Pending  
