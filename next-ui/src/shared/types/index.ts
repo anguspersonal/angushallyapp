@@ -19,3 +19,10 @@ export type {
 } from './api';
 
 export { ApiError } from './api';
+
+// Navigation types
+export interface NavigationLink {
+  link: string;
+  label: string;
+  icon: React.ComponentType<{ size?: number }>;
+}
