@@ -3,7 +3,7 @@
 export interface ApiClientOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
-  body?: any;
+  body?: unknown;
   credentials?: RequestCredentials;
 }
 
