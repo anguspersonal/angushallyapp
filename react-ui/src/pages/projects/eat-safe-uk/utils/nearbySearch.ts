@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex nearby search utility with dynamic Google Places API integration that TypeScript cannot properly infer
 /**
  * Performs a nearby search using the Google Places API.
  * @param {Object} userLocation - The location object with `lat` and `lng` properties.

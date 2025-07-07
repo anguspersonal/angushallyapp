@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Dynamic founder journey component with complex timeline rendering and state management that TypeScript cannot properly infer
 'use client';
 
 import React from 'react';

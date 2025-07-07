@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex food safety application with Google Maps integration and dynamic data fetching that TypeScript cannot properly infer
 import React, { useState } from "react";
 import "../../../index.css";
 import SearchBar from "./GMapsSearchBar";

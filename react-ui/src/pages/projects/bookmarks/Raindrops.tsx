@@ -141,7 +141,7 @@ const Raindrops: React.FC = () => {
 
   const handleConnect = async () => {
     try {
-      const response = await api.get('/raindrop/oauth/start');
+      const response = await api.get('/raindrop/oauth/start') as RaindropOAuthResponse;
       window.location.href = response.authUrl;
     } catch (error) {
       notifications.show({

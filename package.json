@@ -10,13 +10,13 @@
     "start": "node server/index.js",
     "sync-env:dev": "cross-env NODE_ENV=development node scripts/sync-env.js",
     "sync-env:prod": "cross-env NODE_ENV=production node scripts/sync-env.js",
-    "server": "cross-env NODE_ENV=development nodemon server/index.js",
-    "client": "cd react-ui && npm start",
-    "client-next": "cd next-ui && npm run dev",
+    "server": "node scripts/check-port.js 5000 && cross-env NODE_ENV=development nodemon server/index.js",
+    "client": "node scripts/check-port.js 3000 && cd react-ui && npm start",
+    "client-next": "node scripts/check-port.js 3001 && cd next-ui && npm run dev",
     "build-client": "npm run build --prefix react-ui",
     "build-next": "npm run build --prefix next-ui",
-    "dev": "npm run sync-env:dev && concurrently \"npm run server\" \"npm run client\"",
-    "dev-next": "npm run sync-env:dev && concurrently \"npm run server\" \"npm run client-next\"",
+    "dev": "npm run sync-env:dev && node scripts/check-port.js 5000 3000 && concurrently \"npm run server\" \"npm run client\"",
+    "dev-next": "npm run sync-env:dev && node scripts/check-port.js 5000 3001 && concurrently \"npm run server\" \"npm run client-next\"",
     "build": "npm run sync-env:prod && npm run build-client",
     "build-with-next": "npm run sync-env:prod && npm run build-client && npm run build-next",
     "kill-ports": "npx kill-port 5000 3000",
@@ -68,8 +68,7 @@
     "kill-port": "^2.0.1",
     "nodemon": "^2.0.15",
     "puppeteer": "^24.1.1",
-    "supertest": "^7.1.1",
-    "typescript": "^4.9.5"
+    "supertest": "^7.1.1"
   },
   "repository": {
     "type": "git",

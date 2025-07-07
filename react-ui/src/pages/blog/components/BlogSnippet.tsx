@@ -1,20 +1,10 @@
 import React from 'react';
 import { Card, Image, Text, Title, Box, Anchor } from '@mantine/core';
+import { BlogPostSummary } from '../../../types/blog';
 import '../../../index.css';
 
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  cover_image?: string;
-  alt_text?: string;
-  attribution?: string;
-  attribution_link?: string;
-}
-
 interface BlogSnippetProps {
-  post: BlogPost;
+  post: BlogPostSummary;
 }
 
 function BlogSnippet(props: BlogSnippetProps) {

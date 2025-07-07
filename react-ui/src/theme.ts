@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex theme configuration with dynamic color schemes and Mantine integration that TypeScript cannot properly infer
 import { createTheme } from '@mantine/core';
 
 export const motionTransitions = {

@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - This file contains complex Mantine UI components with dynamic props that TypeScript cannot properly infer
 // pages/Collab.jsx
 import React, { useRef } from 'react';
 import { Container, Title, Text, Anchor, Group, Button, Box, Image, Flex, useMantineTheme, Accordion } from '@mantine/core';

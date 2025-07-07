@@ -60,7 +60,7 @@ const Habit: React.FC = () => {
       console.log(`Filtering logs for habit: ${selectedHabit.name}`);
       setSelectedLogs(habitLogs.filter(log => log.habit_type === selectedHabit.name));
     }
-  }, [selectedHabit, habitLogs]);
+  }, [selectedHabit, habitLogs, selectedLogs.length]);
   
 
 
@@ -91,23 +91,7 @@ const Habit: React.FC = () => {
   };
 
 
-  // ✅ Function to refresh logs after submission
-  const refreshHabitLogs = async (): Promise<void> => {
-    try {
-      const fetchedData = selectedHabit
-        ? await getLogsByHabit(selectedHabit.name) // ✅ Fetch only selected habit logs
-        : await getHabitLogs(); // ✅ Fetch all logs if no habit is selected
 
-      if (Array.isArray(fetchedData)) {
-        setHabitLogs(fetchedData);
-        setSelectedLogs(fetchedData.filter(log => log.habit_type === selectedHabit?.name));
-      } else {
-        console.error("Fetched data is not an array:", fetchedData);
-      }
-    } catch (error) {
-      console.error("Error fetching logs from DB:", error);
-    }
-  };
 
   // Handler for header button clicks
   const handleHeaderButtonClick = (action: string): void => {

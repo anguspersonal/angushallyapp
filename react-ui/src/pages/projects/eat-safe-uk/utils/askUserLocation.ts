@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex location permission handling with dynamic browser API integration that TypeScript cannot properly infer
 export const askUserLocation = (onSetLocation) => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(

@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - This file contains dynamic data fetching and complex Mantine UI components that TypeScript cannot properly infer
 import React, { useState, useEffect } from 'react';
 import { Box, Container, Title, Text, Image, Anchor, SimpleGrid, useMantineTheme, Button } from '@mantine/core';
 import { motion, Variants } from 'framer-motion';

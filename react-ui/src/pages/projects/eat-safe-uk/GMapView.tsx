@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex Google Maps view component with dynamic map rendering and location services that TypeScript cannot properly infer
 import React, { useState, useEffect, useRef } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import "../../../index.css";

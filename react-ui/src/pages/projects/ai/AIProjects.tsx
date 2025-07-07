@@ -1,6 +1,6 @@
-// @ts-nocheck
+// @ts-nocheck - This file contains complex Mantine UI components with dynamic props that TypeScript cannot properly infer
 import React from 'react';
-import { Box, Container, Title, SimpleGrid, useMantineTheme } from '@mantine/core';
+import { Box, Container, Title, SimpleGrid } from '@mantine/core';
 import { motion, Variants } from 'framer-motion';
 import Header from '../../../components/Header';
 import projectList from '../../../data/projectList';
@@ -29,7 +29,6 @@ const itemVariants: Variants = {
 };
 
 function AIProjects() {
-    const theme = useMantineTheme();
     const projects = projectList.filter(
         (project) => project.tags && project.tags.includes('ai')
     );

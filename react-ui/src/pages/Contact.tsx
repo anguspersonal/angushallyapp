@@ -11,8 +11,6 @@ import {
     Stack
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-
-// @ts-ignore - react-google-recaptcha doesn't have TypeScript types
 import ReCAPTCHA from "react-google-recaptcha";
 import { motion, Variants } from 'framer-motion';
 import Header from '../components/Header';

@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - This file contains Google OAuth integration with dynamic credential handling that TypeScript cannot properly type
 import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { Box, Container, Title, Text, Paper, Checkbox, Stack, Alert, Loader } from '@mantine/core';

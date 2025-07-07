@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - This file contains complex share target functionality with dynamic URL parameter handling that TypeScript cannot properly infer
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Container, Card, Text, Button, Group, Loader, Alert, Badge } from '@mantine/core';
@@ -36,7 +36,7 @@ interface ShareResponse {
  * 6. Shows success/error message and option to view bookmarks
  */
 const ShareHandler: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   

@@ -22,6 +22,10 @@ Welcome to the documentation hub for **angushallyapp**. This guide explains how 
     ├── 06_tech_debt.md     ← Known architectural & code-quality debt
     ├── 07_backlog.md       ← Feature wishlist & prioritization
     ├── 08_module_development_flow.md  ← Module development workflow guide
+    ├── 09_nextjs_migration_plan.md    ← Next.js migration plan & progress
+    ├── 10_unused_variables_cleanup.md ← Code cleanup tracking and history
+    ├── 11_startup_commands_guide.md   ← Application startup commands & workflows
+    ├── 12_mime_type_issue_resolution.md ← MIME type error resolution and prevention
     ├── adr/                ← Architecture Decision Records
     │   └── *.md           ← Individual ADR documents
     └── assets/             ← Diagrams, exports, and other visuals
@@ -105,7 +109,11 @@ react-ui/src/pages/projects/
 6. **06\_tech\_debt.md**: List of known technical debt items, rationale, and references.
 7. **07\_backlog.md**: Prioritized feature backlog, grouped by area.
 8. **08\_module\_development\_flow.md**: Step-by-step workflow guide for developing modules with server and frontend contexts.
-9. **adr/**: Architecture Decision Records documenting significant technical decisions.
+9. **09\_nextjs\_migration\_plan.md**: Comprehensive Next.js migration plan with progress tracking and implementation details.
+10. **10\_unused\_variables\_cleanup.md**: Tracking document for code cleanup efforts, unused variable removal, and technical debt reduction.
+11. **11\_startup\_commands\_guide.md**: Comprehensive reference for all application startup commands, development workflows, and deployment procedures.
+12. **12\_mime\_type\_issue\_resolution.md**: Documentation of MIME type error resolution, root cause analysis, and prevention strategies.
+13. **adr/**: Architecture Decision Records documenting significant technical decisions.
 
 ### Project-Level Documentation
 

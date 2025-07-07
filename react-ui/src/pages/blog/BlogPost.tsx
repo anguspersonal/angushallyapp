@@ -5,19 +5,8 @@ import remarkGfm from "remark-gfm"; // ✅ Enables better Markdown parsing
 import { fetchBlogPost } from "./fetchBlogData";
 import Header from "../../components/Header";
 import { Image, Text, Box, Anchor } from '@mantine/core';
+import { BlogPostFull } from "../../types/blog";
 import "./blog.css";
-
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  content_md: string;
-  cover_image?: string;
-  alt_text?: string;
-  attribution?: string;
-  attribution_link?: string;
-  created_at: string;
-}
 
 /**
  * BlogPost Component
@@ -31,7 +20,7 @@ interface BlogPost {
  */
 function BlogPost() {
   const { slug } = useParams();
-  const [post, setPost] = useState<BlogPost | null>(null);
+  const [post, setPost] = useState<BlogPostFull | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

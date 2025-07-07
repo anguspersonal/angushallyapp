@@ -1,11 +1,11 @@
 //Imports
-import React, { useState, useEffect, useDebugValue } from 'react';
+import React, { useState, useEffect, useDebugValue} from 'react';
 import './Gameboard.css'; // Ensure the correct path to the CSS file
 import industries from './Industries.json'; // Import industries from the JSON file
 import Win from './Win'; // Import the Win component
 import Lose from './Lose'; // Import the Lose component
 import CTAGuessAutomotive from './CTA-GuessAutomotive'; // Import the CTAGuessAutomotive component
-import { Industry, CardState } from '../../../types/common';
+
 
 interface GameBoardProps {
   gameStatus: boolean;
@@ -13,6 +13,18 @@ interface GameBoardProps {
 
 type GameStatus = 'playing' | 'won' | 'lost';
 type CardStates = 'Unselected' | 'Selected' | 'Flipping' | 'Flipped';
+
+// Local interface matching the actual JSON structure
+interface Industry {
+  id: number;
+  name: string;
+  dataValue: number;
+  description?: string;
+  category?: string;
+  year?: number;
+  source?: string;
+  examples?: string[];
+}
 
 interface IndustryWithState extends Industry {
   state: CardStates;
@@ -29,7 +41,7 @@ function useLabeledState<T>(initialState: T, label: string): [T, React.Dispatch<
 const shuffleDeck = () => {
   const shuffledDeck = industries.sort(() => 0.5 - Math.random()).map((industry) => ({
     ...industry,
-    state: 'Unselected'
+    state: 'Unselected' as CardStates
   }));
 
   // Log length of deck
@@ -78,10 +90,10 @@ const GameBoard: React.FC<GameBoardProps> = ({ gameStatus: initialGameStatus }) 
   // UseEffect hook to restart the game when the component mounts
   useEffect(() => {
     restartGame();
-  }, [restartGame]); // Add restartGame dependency
+  }, [restartGame]); // Only run once on mount
 
   // Function to update the card state
-  const updateCardState = (index, newState) => {
+  const updateCardState = (index: number, newState: CardStates) => {
     setCards(prevCards => prevCards.map((card, i) => ({
       ...card,
       state: i === index ? newState : ((card.state !== 'Flipped' && card.state !== 'Flipping') ? 'Unselected' : card.state)
@@ -89,7 +101,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ gameStatus: initialGameStatus }) 
   };
 
   // Function to handle card selection
-  const handleCardSelection = (index) => {
+  const handleCardSelection = (index: number) => {
     if (gameStatus !== 'playing' || cards[index].state === 'Flipped' || cards[index].state === 'Flipping') return; // Only apply if card is not flipped or flipping
 
     setSelectedCard(index);
@@ -97,20 +109,20 @@ const GameBoard: React.FC<GameBoardProps> = ({ gameStatus: initialGameStatus }) 
   };
 
   let isCorrect = false; // Boolean to track if the guess is correct
-  const selectedIndustry = cards[selectedCard]; // Get the selected industry
+  const selectedIndustry = selectedCard !== null ? cards[selectedCard] : null; // Get the selected industry
 
   // Function to handle the user's guess
-  const handleGuess = (selectedGuess) => {
-    if (gameStatus !== 'playing' || selectedCard === null) return;
+  const handleGuess = (selectedGuess: string) => {
+    if (gameStatus !== 'playing' || selectedCard === null || selectedIndustry === null) return;
 
     if (roundCounter === 0) {
       isCorrect = (selectedGuess === 'higher')
-        ? (selectedIndustry.dataValue >= startingIndustry.dataValue)
-        : (selectedIndustry.dataValue <= startingIndustry.dataValue)
+        ? (selectedIndustry.dataValue >= (startingIndustry?.dataValue ?? 0))
+        : (selectedIndustry.dataValue <= (startingIndustry?.dataValue ?? 0))
     } else {
       isCorrect = (selectedGuess === 'higher')
-        ? (selectedIndustry.dataValue >= previousIndustry.dataValue)
-        : (selectedIndustry.dataValue <= previousIndustry.dataValue)
+        ? (selectedIndustry.dataValue >= (previousIndustry?.dataValue ?? 0))
+        : (selectedIndustry.dataValue <= (previousIndustry?.dataValue ?? 0))
     }
 
     updateCardState(selectedCard, 'Flipping');
@@ -151,7 +163,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ gameStatus: initialGameStatus }) 
   }, [roundCounter, setGameStatus]); // Add setGameStatus dependency
 
   // Card component
-  const Card = ({ industry, onClick }) => (
+  const Card: React.FC<{ industry: IndustryWithState; onClick: () => void }> = ({ industry, onClick }) => (
     <div className='card' onClick={onClick}>
       <div className={`card-inner ${industry.state === 'Selected' ? 'selected' : ''} ${industry.state === 'Flipping' ? 'flipping' : ''} ${industry.state === 'Flipped' ? 'flipped' : ''}`}>
         <div className={`card-front ${industry.state === 'Selected' ? 'selected' : ''}`}>

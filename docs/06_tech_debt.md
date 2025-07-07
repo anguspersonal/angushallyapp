@@ -470,7 +470,7 @@ This document tracks known technical debt, architectural issues, and improvement
 - **Created**: 2025-05-17
 - **Updated**: 2025-01-27
 - **Status**: � Analysis Complete - Ready for Implementation
-- **Analysis**: Comprehensive migration analysis completed. Project is exceptionally well-positioned for TypeScript adoption with TypeScript already installed, modern React patterns in use, and Create React App supporting seamless migration. See `docs/typescript-migration-analysis.md` for detailed implementation plan.
+- **Analysis**: Comprehensive migration analysis completed. Project is exceptionally well-positioned for TypeScript adoption with TypeScript already installed, modern React patterns in use, and Create React App supporting seamless migration. See `docs/adr/0012-typescript-migration.md` for detailed implementation plan.
 
 ### Code Splitting
 - **Description**: Large bundle size impacts initial load time

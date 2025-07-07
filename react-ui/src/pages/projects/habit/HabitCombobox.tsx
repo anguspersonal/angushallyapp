@@ -31,7 +31,6 @@ const HabitCombobox: React.FC<HabitComboboxProps> = ({
   });
 
   const [search, setSearch] = useState<string>("");
-  const [selectedDrinks, setSelectedDrinks] = useState<DrinkCatalogItem[]>(value);
 
   // ✅ Ensure options is always an array
   const filteredOptions = Array.isArray(options)
@@ -60,7 +59,6 @@ const HabitCombobox: React.FC<HabitComboboxProps> = ({
   useEffect(() => {
     if (resetCombobox) {
       resetCombobox(() => {
-        setSelectedDrinks([]);
         setSearch("");
         combobox.resetSelectedOption();
       });

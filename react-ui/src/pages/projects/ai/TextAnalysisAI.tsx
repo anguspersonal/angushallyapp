@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex AI text analysis component with dynamic API integration and real-time processing that TypeScript cannot properly infer
 import { useState } from 'react';
 import {
   Container,

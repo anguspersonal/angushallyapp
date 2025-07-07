@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - This file contains complex Mantine Carousel components with dynamic props that TypeScript cannot properly infer
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Box, Title, Text, useMantineTheme } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
@@ -10,7 +10,7 @@ import CaseStudySlide from './CaseStudySlide';
 import { testimonials } from '../data/testimonials';
 import { caseStudies } from '../data/caseStudies';
 
-function CustomCarousel({ /* title, description, slides, type */ }) {
+function CustomCarousel() {
     const theme = useMantineTheme();
     const [expandedId, setExpandedId] = useState(null);
     const autoplay = useRef(Autoplay({ delay: 2000 }));

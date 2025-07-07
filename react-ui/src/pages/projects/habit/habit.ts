@@ -6,10 +6,6 @@ interface HabitLogResponse {
     habit_type: HabitType;
 }
 
-interface HabitLogsResponse {
-    data: HabitLog[];
-}
-
 type StatsPeriod = 'day' | 'week' | 'month' | 'year';
 
 // ✅ Function that calls the API to log habit data

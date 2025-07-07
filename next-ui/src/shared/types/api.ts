@@ -1,5 +1,6 @@
-// API client types and interfaces for shared use
-
+/**
+ * API client types and interfaces for shared use
+ */
 export interface ApiClientOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;

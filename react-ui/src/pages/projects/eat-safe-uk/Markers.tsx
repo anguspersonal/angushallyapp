@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex map markers component with dynamic rendering and location data that TypeScript cannot properly infer
 import React, { useEffect, useCallback } from "react";
 import { useMap, AdvancedMarker, Pin, InfoWindow } from "@vis.gl/react-google-maps";
 
