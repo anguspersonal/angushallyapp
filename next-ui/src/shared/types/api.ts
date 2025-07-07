@@ -1,4 +1,4 @@
-// Shared API client types for Next.js + CRA dual-app
+// API client types and interfaces for shared use
 
 export interface ApiClientOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -47,17 +47,4 @@ export interface PaginationInfo {
 
 export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   pagination?: PaginationInfo;
-}
-
-// Environment Configuration Types
-export interface EnvironmentConfig {
-  NODE_ENV: string;
-  NEXT_PUBLIC_API_BASE_URL?: string;
-  REACT_APP_API_BASE_URL?: string;
-  NEXT_PUBLIC_GOOGLE_CLIENT_ID?: string;
-  REACT_APP_GOOGLE_CLIENT_ID?: string;
-  NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?: string;
-  REACT_APP_GOOGLE_MAPS_API_KEY?: string;
-  NEXT_PUBLIC_RECAPTCHA_SITE_KEY?: string;
-  REACT_APP_RECAPTCHA_SITE_KEY?: string;
 }

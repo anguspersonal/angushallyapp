@@ -16,7 +16,6 @@ export type {
   ApiResponse,
   PaginationInfo,
   PaginatedResponse,
-  EnvironmentConfig,
 } from './api';
 
 export { ApiError } from './api';
