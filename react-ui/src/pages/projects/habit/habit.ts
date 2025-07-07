@@ -1,4 +1,3 @@
-
 import { api } from '../../../utils/apiClient';
 import { HabitLog, HabitType, DrinkCatalogItem, HabitStats } from '../../../types/common';
 

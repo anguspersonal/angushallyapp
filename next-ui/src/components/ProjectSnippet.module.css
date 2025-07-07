@@ -1,0 +1,61 @@
+.projectLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.gridItem {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.gridItem:hover {
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.8);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.truncateTwoLines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  max-height: 2.8em;
+}
+
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tag {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  background-color: #6b7280;
+}
+
+.tagai { background-color: #384C37; }
+.tagdata { background-color: #88A5BC; }
+.tagmap { background-color: #5B7A9A; }
+.tagfood { background-color: #E1C8BC; color: #000; }
+.taggame { background-color: #6B9F70; }
+.tageducation { background-color: #2A3929; }
+.tagnlp { background-color: #4A6A8A; }
+.tagfitness { background-color: #497D4E; }
+.tagvisualization { background-color: #75A57B; }
+.tagproductivity { background-color: #758775; }
+.taghabit { background-color: #5E735E; }
+.tagwriting { background-color: #8CA5BE; }
+.tagtech { background-color: #475F47; }
+.taglearning { background-color: #BAC3BA; }
+.tagbookmarks { background-color: #88A5BC; }
+.tagapi { background-color: #5B7A9A; }

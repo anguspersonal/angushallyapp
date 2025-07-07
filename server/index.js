@@ -68,10 +68,17 @@ app.use(express.json());
 // Priority serve Next.js static files at /next route
 if (isDev) {
   // In development, proxy to Next.js dev server
+<<<<<<< HEAD
   console.log('Setting up Next.js proxy to http://localhost:3001');
   const { createProxyMiddleware } = require('http-proxy-middleware');
   app.use('/next', createProxyMiddleware({
     target: 'http://localhost:3001',
+=======
+  console.log('Setting up Next.js proxy to http://localhost:3000');
+  const { createProxyMiddleware } = require('http-proxy-middleware');
+  app.use('/next', createProxyMiddleware({
+    target: 'http://localhost:3000',
+>>>>>>> 698ebc2e18cf88a6868ae5b9916112421594cb99
     changeOrigin: true,
     pathRewrite: {
       '^/next': '', // Remove /next prefix when forwarding to Next.js dev server

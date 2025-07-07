@@ -1,87 +1,202 @@
 'use client';
 
-
-import {
-  Container,
-  Group,
-  Burger,
-  Paper,
-  Transition,
-  Text,
-  UnstyledButton,
-  type MantineSize,
-  type MantineTransition,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import classes from './Header.module.css';
-import type { CSSProperties } from 'react';
+import { useRouter } from 'next/navigation';
+import { Menu, Button, Container, Group, Burger } from '@mantine/core';
+import {
+  IconUser,
+  IconArticle,
+  IconRocket,
+  IconFolder,
+  IconLogout,
+} from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import { useAuth } from '../providers/AuthProvider';
+import { NavigationLink } from '../shared/types';
 
-// Navigation links with proper typing
-interface NavigationLink {
-  readonly link: string;
-  readonly label: string;
-}
+const links: NavigationLink[] = [
+  { link: '/projects', label: 'Projects', icon: IconFolder },
+  { link: '/blog', label: 'Blog', icon: IconArticle },
+  { link: '/about', label: 'About', icon: IconUser },
+  { link: '/collab', label: 'Collab', icon: IconRocket },
+];
 
-const links: readonly NavigationLink[] = [
-  { link: '/next/', label: 'Home' },
-  { link: '/next/about', label: 'About' },
-  { link: '/next/blog', label: 'Blog' },
-  { link: '/next/projects', label: 'Projects' },
-  { link: '/next/contact', label: 'Contact' },
-  { link: '/next/cv', label: 'CV' },
-] as const;
+function Header() {
+  const [opened, { toggle }] = useDisclosure(false);
+  const router = useRouter();
+  const { user, logout } = useAuth();
+  
+  const handleLogout = (): void => {
+    logout();
+    router.push('/login');
+  };
 
-export default function Header() {
-  const [opened, { toggle, close }] = useDisclosure(false);
-  const pathname = usePathname();
+  const renderAuthButton = () => {
+    if (user) {
+      return (
+        <Button
+          variant="subtle"
+          leftSection={<IconLogout size={18} />}
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+      );
+    }
+    return (
+      <Link href="/login" style={{ textDecoration: 'none' }}>
+        <Button variant="subtle">
+          Login
+        </Button>
+      </Link>
+    );
+  };
 
-  const containerSize: MantineSize = 'md';
-  const transitionType: MantineTransition = 'pop-top-right';
-  const headerStyles: CSSProperties = { textDecoration: 'none', color: 'inherit' };
-
-  const items = links.map((link) => (
-    <UnstyledButton
-      component={Link}
-      href={link.link}
-      key={link.label}
-      className={classes.link}
-      data-active={pathname === link.link || undefined}
-      onClick={() => {
-        close();
-      }}
-    >
-      {link.label}
-    </UnstyledButton>
-  ));
+  const items = links.map((link) => {
+    const Icon = link.icon;
+    
+    return (
+      <Link
+        key={link.label}
+        href={link.link}
+        style={{
+          textDecoration: 'none',
+          color: 'var(--text-color)',
+          fontWeight: 500,
+          fontSize: '1.1em',
+          transition: 'color 0.3s ease',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          padding: '0.5rem 1rem',
+          borderRadius: '8px',
+        }}
+        onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
+          const target = e.target as HTMLAnchorElement;
+          target.style.color = 'var(--primary-color)';
+          target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+        }}
+        onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
+          const target = e.target as HTMLAnchorElement;
+          target.style.color = 'var(--text-color)';
+          target.style.backgroundColor = 'transparent';
+        }}
+      >
+        <Icon size={18} />
+        {link.label}
+      </Link>
+    );
+  });
 
   return (
-    <header className={classes.header}>
-      <Container size={containerSize} className={classes.inner}>
-        <Text
-          component={Link}
-          href="/next/"
-          size="lg"
-          fw={700}
-          style={headerStyles}
+    <header
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        backgroundColor: 'var(--background-color)',
+        borderBottom: '1px solid rgba(233, 236, 239, 0.5)',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        minHeight: '80px',
+      }}
+    >
+      <Container size="xl">
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '1rem 0',
+            height: '80px',
+          }}
         >
-          Angus Hally
-        </Text>
-        <Group gap={5} visibleFrom="xs">
-          {items}
-        </Group>
+          {/* Logo */}
+          <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+            <img 
+              src="/AH-logo-no-background.ico" 
+              alt="AH Logo" 
+              style={{
+                height: 'clamp(40px, 5vw, 60px)',
+                width: 'auto',
+                transition: 'height 0.3s ease'
+              }}
+            />
+          </Link>
 
-        <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+          {/* Desktop Navigation */}
+          <Group gap={5} visibleFrom="sm">
+            {items}
+            {renderAuthButton()}
+          </Group>
 
-        <Transition transition={transitionType} duration={200} mounted={opened}>
-          {(styles) => (
-            <Paper className={classes.dropdown} withBorder style={styles}>
-              {items}
-            </Paper>
-          )}
-        </Transition>
+          {/* Mobile Burger Menu */}
+          <Menu
+            width={220}
+            shadow="md"
+            position="bottom-end"
+            withArrow
+            withinPortal
+            opened={opened}
+            onClose={() => toggle()}
+          >
+            <Menu.Target>
+              <Burger 
+                opened={opened} 
+                onClick={toggle} 
+                size="sm" 
+                hiddenFrom="sm"
+                style={{ cursor: 'pointer' }}
+              />
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              {links.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <Menu.Item
+                    key={link.label}
+                    leftSection={<Icon size={18} />}
+                    onClick={() => toggle()}
+                  >
+                    <Link href={link.link} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      {link.label}
+                    </Link>
+                  </Menu.Item>
+                );
+              })}
+              
+              <Menu.Divider />
+              
+              {user ? (
+                <Menu.Item
+                  leftSection={<IconLogout size={18} />}
+                  onClick={() => {
+                    handleLogout();
+                    toggle();
+                  }}
+                >
+                  Logout
+                </Menu.Item>
+              ) : (
+                <Menu.Item
+                  leftSection={<IconUser size={18} />}
+                  onClick={() => toggle()}
+                >
+                  <Link href="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    Login
+                  </Link>
+                </Menu.Item>
+              )}
+            </Menu.Dropdown>
+          </Menu>
+        </div>
       </Container>
     </header>
   );
 }
+
+export default Header;

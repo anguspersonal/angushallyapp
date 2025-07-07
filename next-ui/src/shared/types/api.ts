@@ -1,4 +1,4 @@
-// Shared API client types for Next.js + CRA dual-app
+// API client types and interfaces for shared use
 
 export interface ApiClientOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -27,4 +27,24 @@ export interface ApiClientInterface {
   delete: <T = unknown>(endpoint: string, options?: Omit<ApiClientOptions, 'method'>) => Promise<T>;
   isAuthenticated: () => Promise<boolean>;
   ApiError: typeof ApiError;
+}
+
+// API Response types
+export interface ApiResponse<T = unknown> {
+  data?: T;
+  error?: string;
+  success: boolean;
+  message?: string;
+}
+
+export interface PaginationInfo {
+  total_items: number;
+  limit: number;
+  offset: number;
+  total_pages: number;
+  current_page: number;
+}
+
+export interface PaginatedResponse<T> extends ApiResponse<T[]> {
+  pagination?: PaginationInfo;
 }
