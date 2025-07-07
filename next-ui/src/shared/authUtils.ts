@@ -4,12 +4,16 @@
 
 import type { User } from './types/user';
 
-// ---- Token helpers -----------------------------------------------------
-
+/**
+ * Check if a token is expired based on its expiration date
+ */
 export function isTokenExpired(expiration: string | null): boolean {
   return expiration !== null && new Date(expiration) <= new Date();
 }
 
+/**
+ * Store authentication data with optional "remember me" functionality
+ */
 export async function storeAuthData(
   token: string,
   user: User,
@@ -27,6 +31,9 @@ export async function storeAuthData(
   storage.setItem('user', JSON.stringify(user));
 }
 
+/**
+ * Clear all authentication data from both storage types and cookies
+ */
 export async function clearAuthData(): Promise<void> {
   localStorage.removeItem('jwt');
   localStorage.removeItem('user');
@@ -40,6 +47,10 @@ export async function clearAuthData(): Promise<void> {
   document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
 
+/**
+ * Get stored authentication token, checking expiration if applicable
+ * Returns null if no valid token is found or if token is expired
+ */
 export async function getStoredToken(): Promise<string | null> {
   try {
     // Prefer cookie token
@@ -64,6 +75,10 @@ export async function getStoredToken(): Promise<string | null> {
   }
 }
 
+/**
+ * Get stored user data
+ * Returns null if no valid user data is found
+ */
 export async function getStoredUser(): Promise<User | null> {
   try {
     const localUser = localStorage.getItem('user');
