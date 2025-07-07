@@ -65,6 +65,35 @@ app.use((req, res, next) => {
 // Use body-parsing middleware
 app.use(express.json());
 
+// Priority serve Next.js static files at /next route
+if (isDev) {
+  // In development, proxy to Next.js dev server
+<<<<<<< HEAD
+  console.log('Setting up Next.js proxy to http://localhost:3001');
+  const { createProxyMiddleware } = require('http-proxy-middleware');
+  app.use('/next', createProxyMiddleware({
+    target: 'http://localhost:3001',
+=======
+  console.log('Setting up Next.js proxy to http://localhost:3000');
+  const { createProxyMiddleware } = require('http-proxy-middleware');
+  app.use('/next', createProxyMiddleware({
+    target: 'http://localhost:3000',
+>>>>>>> 698ebc2e18cf88a6868ae5b9916112421594cb99
+    changeOrigin: true,
+    pathRewrite: {
+      '^/next': '', // Remove /next prefix when forwarding to Next.js dev server
+    },
+    onError: (err, req, res) => {
+      console.error('Proxy error:', err.message);
+      res.status(500).send('Proxy error: ' + err.message);
+    },
+    logLevel: 'debug',
+  }));
+} else {
+  // In production, serve static files
+  app.use('/next', express.static(path.resolve(__dirname, '../next-ui/out')));
+}
+
 // Priority serve any static files.
 app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
@@ -158,6 +187,11 @@ const instagramIntelligenceRoute = require('./routes/instagramIntelligenceRoute'
 app.use('/api/instagram-intelligence', instagramIntelligenceRoute);
 
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
+
+// SEO redirects for migrated routes
+app.get('/about', function (req, res) {
+  res.redirect(301, '/next/about/');
+});
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {
