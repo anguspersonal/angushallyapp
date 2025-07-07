@@ -22,10 +22,7 @@
   color: var(--mantine-color-gray-7);
   font-size: var(--mantine-font-size-sm);
   font-weight: 500;
-<<<<<<< HEAD
 
-=======
->>>>>>> 698ebc2e18cf88a6868ae5b9916112421594cb99
 }
 
 .link:hover {
@@ -45,27 +42,19 @@
   min-width: 180px;
   padding: var(--mantine-spacing-xs);
   background-color: var(--mantine-color-white);
-<<<<<<< HEAD
   border-radius: var(--mantine-radius-sm);
   border: 1px solid var(--mantine-color-gray-3);
   box-shadow: var(--mantine-shadow-sm);
 
   @media (min-width: var(--mantine-breakpoint-sm)) {
-=======
 
-  @media (min-width: 48em) {
->>>>>>> 698ebc2e18cf88a6868ae5b9916112421594cb99
     display: none;
   }
 }
 
 .dropdown .link {
   display: block;
-<<<<<<< HEAD
-  padding: 8px 12px;    
-=======
-  padding: 8px 12px;
->>>>>>> 698ebc2e18cf88a6868ae5b9916112421594cb99
+  padding: 8px 12px;  
   border-radius: var(--mantine-radius-sm);
   text-decoration: none;
   color: var(--mantine-color-gray-7);

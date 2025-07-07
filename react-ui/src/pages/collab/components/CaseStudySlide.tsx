@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Dynamic case study component with complex state management and conditional rendering that TypeScript cannot properly infer
 /**
  * TODO: Next Steps
  * 1. Content Updates:

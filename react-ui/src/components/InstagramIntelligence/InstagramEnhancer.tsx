@@ -74,16 +74,6 @@ const InstagramEnhancer: React.FC<InstagramEnhancerProps> = ({
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 8;
 
-  useEffect(() => {
-    if (opened) {
-      fetchBookmarks();
-    }
-  }, [opened]);
-
-  useEffect(() => {
-    filterAndPaginateBookmarks();
-  }, [bookmarks, searchQuery, filterType, currentPage]);
-
   const fetchBookmarks = async (): Promise<void> => {
     try {
       setLoading(true);
@@ -152,6 +142,16 @@ const InstagramEnhancer: React.FC<InstagramEnhancerProps> = ({
     setFilteredBookmarks(filtered.slice(startIndex, endIndex));
   };
 
+  useEffect(() => {
+    if (opened) {
+      fetchBookmarks();
+    }
+  }, [opened, fetchBookmarks]);
+
+  useEffect(() => {
+    filterAndPaginateBookmarks();
+  }, [bookmarks, searchQuery, filterType, currentPage, filterAndPaginateBookmarks]);
+
   const isInstagramUrl = (url: string): boolean => {
     const instagramPattern = /^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/[a-zA-Z0-9_-]+\/?/;
     return instagramPattern.test(url);
@@ -176,7 +176,7 @@ const InstagramEnhancer: React.FC<InstagramEnhancerProps> = ({
       });
 
       if (response.success) {
-        const { isUpdate, isEnhanced, message } = response.data;
+        const { isUpdate, message } = response.data;
         
         notifications.show({
           title: isUpdate ? 'Analysis Updated' : 'Analysis Complete',

@@ -69,7 +69,7 @@ A personal website combining a blog, portfolio, and a playground for custom tool
 
 ### Prerequisites
 
-* **Node.js** v14+ and **npm** or **Yarn**
+* **Node.js** v18+ and **npm**
 * **PostgreSQL** (local or remote)
 * A Google Cloud project for OAuth credentials
 
@@ -78,32 +78,58 @@ A personal website combining a blog, portfolio, and a playground for custom tool
 1. **Install dependencies**
 
    ```bash
-   # In root
    npm install
    ```
 
 2. **Database migrations**
 
    ```bash
-   cd server
-   npx knex migrate:latest --env development
+   npm run migrate
    ```
 
-3. **Start backend**
+3. **Start development environment**
 
    ```bash
-   cd server
-   npm start        # or NODE_ENV=development npm run dev
+   # For current production app (React + Server)
+   npm run dev
+   
+   # For Next.js migration testing
+   npm run dev-next
    ```
 
-4. **Start frontend**
+4. **Access the application**
 
    ```bash
-   cd react-ui
-   npm start
+   # Production app
+   http://localhost:5000
+   
+   # Next.js migrated routes
+   http://localhost:5000/next/
    ```
 
-Visit [http://localhost:3000](http://localhost:3000) to view the app.
+### 🎯 Quick Start Recommendations
+
+**For most development work:**
+```bash
+npm run dev
+```
+
+**For Next.js migration testing:**
+```bash
+npm run dev-next
+```
+
+**For backend-only work:**
+```bash
+npm run server
+```
+
+**For frontend component development:**
+```bash
+npm run client
+```
+
+📚 **For detailed command reference, see [Startup Commands Guide](docs/11_startup_commands_guide.md)**
 
 ---
 

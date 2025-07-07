@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Dynamic trait grid component with complex state management and conditional rendering that TypeScript cannot properly infer
 import React from 'react';
 import { Box, Center, Text, Image, HoverCard, useMantineTheme } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';

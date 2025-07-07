@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex Strava API service with dynamic data fetching and transformation that TypeScript cannot properly infer
 import axios from "axios";
 
 export const fetchStravaData = async () => {

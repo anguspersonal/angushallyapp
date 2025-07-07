@@ -8,17 +8,7 @@ import BlogSnippet from "./blog/components/BlogSnippet";
 import Header from "../components/Header";
 import "../general.css";
 import './blog/blog.css';
-
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  cover_image?: string;
-  alt_text?: string;
-  attribution?: string;
-  attribution_link?: string;
-}
+import { BlogPostSummary } from "../types/blog";
 
 // Animation variants (can reuse from Projects)
 const containerVariants = {
@@ -42,7 +32,7 @@ const itemVariants: Variants = {
 };
 
 function Blog() {
-    const [posts, setPosts] = useState<BlogPost[]>([]);
+    const [posts, setPosts] = useState<BlogPostSummary[]>([]);
 
     useEffect(() => {
         async function fetchData() {

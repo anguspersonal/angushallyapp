@@ -94,13 +94,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Check auth status on mount
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
   // Set up periodic token check (every 5 minutes)
   useEffect(() => {
     const interval = setInterval(checkAuth, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [checkAuth]);
 
   const value: AuthContextType = {
     user,

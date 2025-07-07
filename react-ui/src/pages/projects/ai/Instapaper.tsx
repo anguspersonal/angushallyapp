@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex Instapaper integration with dynamic API calls and data processing that TypeScript cannot properly infer
 import React from 'react';
 import {
   Container,

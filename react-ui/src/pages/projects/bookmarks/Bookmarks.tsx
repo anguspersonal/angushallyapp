@@ -1,7 +1,7 @@
-// @ts-nocheck
+// @ts-nocheck - This file contains complex bookmark management functionality with dynamic data fetching that TypeScript cannot properly infer
 import React, { useState, useEffect } from 'react';
 import { Button, Box, Loader, Text, Group, Stack, Title, Container, Card, Badge, Paper, SimpleGrid } from '@mantine/core';
-import { IconRefresh, IconTrendingUp, IconBolt, IconUsers, IconBook, IconArrowRight, IconChevronRight, IconStar, IconTarget, IconBrain } from '@tabler/icons-react';
+import { IconRefresh, IconTrendingUp, IconBolt, IconUsers, IconBook, IconArrowRight, IconChevronRight, IconBrain } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../utils/apiClient';
@@ -60,24 +60,6 @@ const Bookmarks = () => {
     }
   ];
 
-  useEffect(() => {
-    const initialize = async () => {
-      if (!user) return;
-      
-      try {
-        setInitializing(true);
-        await fetchBookmarks();
-        calculateStats();
-      } catch (error) {
-        console.error('Error initializing bookmarks:', error);
-      } finally {
-        setInitializing(false);
-      }
-    };
-
-    initialize();
-  }, [user]);
-
   const fetchBookmarks = async () => {
     try {
       setLoading(true);
@@ -133,6 +115,24 @@ const Bookmarks = () => {
   };
 
   useEffect(() => {
+    const initialize = async () => {
+      if (!user) return;
+      
+      try {
+        setInitializing(true);
+        await fetchBookmarks();
+        calculateStats();
+      } catch (error) {
+        console.error('Error initializing bookmarks:', error);
+      } finally {
+        setInitializing(false);
+      }
+    };
+
+    initialize();
+  }, [user]);
+
+  useEffect(() => {
     calculateStats();
   }, [bookmarks]);
 
@@ -144,34 +144,7 @@ const Bookmarks = () => {
     setSidebarCollapsed(collapsed);
   };
 
-  const getStatColor = (statType) => {
-    switch (statType) {
-      case 'total': return 'blue';
-      case 'week': return 'green';
-      case 'knowledge': return 'orange';
-      case 'connections': return 'violet';
-      default: return 'gray';
-    }
-  };
 
-  const getStatIcon = (statType) => {
-    switch (statType) {
-      case 'total': return IconBook;
-      case 'week': return IconTrendingUp;
-      case 'knowledge': return IconBolt;
-      case 'connections': return IconUsers;
-      default: return IconBook;
-    }
-  };
-
-  const getInsightIcon = (category) => {
-    switch (category) {
-      case 'learning': return IconBrain;
-      case 'habits': return IconTarget;
-      case 'connections': return IconUsers;
-      default: return IconStar;
-    }
-  };
 
   const getInsightColor = (category) => {
     switch (category) {

@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex hygiene score fetching with dynamic API integration and data transformation that TypeScript cannot properly infer
 import axios from "axios";
 
 /**

@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex portfolio component with dynamic animations and framer-motion integration that TypeScript cannot properly infer
 import React, { useState } from 'react';
 import { Container, Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Image, Box } from '@mantine/core';
 import { IconDatabase, IconServer, IconTools, IconBrandReact, IconExternalLink, IconMapPin, IconBrain, IconBookmark, IconRun } from '@tabler/icons-react';

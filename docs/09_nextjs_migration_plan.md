@@ -1,6 +1,5 @@
 # Next.js Migration Plan - Solo Developer with AI
 
-**Status**: Phase 1 Complete ✅ | **Timeline**: 6-8 weeks | **Risk**: Low
 
 ## Executive Summary
 
@@ -8,14 +7,195 @@
 
 Based on comprehensive analysis, the optimal approach is to **continue the incremental Next.js migration** already in progress. The foundation is excellent, and the dual-app architecture allows zero-downtime migration.
 
-### Current Progress
+### Current Progress (Updated 2025-07-07)
 - ✅ **Infrastructure**: Dual-app setup working perfectly  
 - ✅ **Build Process**: Next.js builds in ~17 seconds vs CRA's slower builds  
 - ✅ **TypeScript**: Comprehensive type safety configured  
 - ✅ **Mantine Integration**: Full UI library compatibility  
-- ✅ **First Route**: About page migrated with full functionality  
+- ✅ **Phase 1 Complete**: Foundation setup (Next.js 15.3.5, TypeScript, Mantine UI v7)
+- ✅ **Phase 2 Complete**: Shared infrastructure (AuthProvider, API client, shared types)
+- ✅ **Routes Migrated**: 2/18 (About page, Home page)
 
-**Routes Migrated: 1/18** (About page complete)
+**Migration Pattern Established and Validated**:
+1. Copy component structure from CRA to Next.js
+2. Update imports (React Router → Next.js Link)
+3. Create supporting components with CSS modules
+4. Migrate data utilities with TypeScript
+5. Test functionality at `/next/[route]`
+6. Verify proxy routing through Express
+
+---
+
+## Technical Implementation Details
+
+> **2025-07-07 Note:**
+> - TypeScript in `react-ui` (CRA) was downgraded to 5.1.6 to resolve ESLint compatibility warnings (see `docs/03_updates.md`).
+> - `next-ui` remains on TypeScript 5.8.x+ (fully supported by Next.js 15).
+> - See `docs/01_guidance.md` for documentation update workflow.
+
+### TypeScript Migration Status
+
+**Status**: 🔄 **In Progress** - React UI TypeScript migration with comprehensive progress tracking
+
+#### Migration Progress Overview
+- ✅ **Phase 1 Complete**: TypeScript configuration and build system setup
+- ✅ **Phase 2 Complete**: Core type definitions (50+ types covering all major domains)
+- ✅ **Phase 3 Complete**: Core application files converted (6 files)
+- ✅ **Phase 4 Complete**: All 67 files converted to TypeScript (51 JSX → TSX, 16 JS → TS)
+- 🔄 **Phase 5 In Progress**: Type error resolution (531 errors remaining, 45% reduction achieved)
+
+#### File Migration Status by Feature Area
+
+**🔖 Bookmarks (14 files) - Priority: HIGH**
+- **Status**: 🔄 In Progress - Type error resolution
+- **Key Issues**: Main Bookmarks.tsx component (641 lines), complex state management
+- **Dependencies**: ✅ `BookmarkCardProps`, `BookmarkData` types complete
+- **Files**: All converted, type errors being resolved
+
+**🎯 Habit Tracker (8 files) - Priority: HIGH**
+- **Status**: 🔄 87.5% Complete (7/8 files error-free)
+- **Key Issues**: HabitDrawer complex type issues (26 errors), onChange handlers
+- **Dependencies**: ✅ `HabitLog`, `HabitType` interfaces complete
+- **Files**: All converted, HabitDrawer.tsx type errors in progress
+
+**🎮 Data-Value-Game (8 files) - Priority: MEDIUM**
+- **Status**: 🔄 75% Complete (6/8 files error-free)
+- **Key Issues**: Gameboard complex state management (14 errors), CTA component
+- **Dependencies**: ✅ `CardState`, `Industry` interfaces complete
+- **Files**: All converted, Gameboard.tsx type errors in progress
+
+**🍽️ Eat-Safe-UK (10 files) - Priority: MEDIUM**
+- **Status**: 🔄 Pending type error resolution
+- **Key Issues**: Google Maps typing, need `@types/google.maps` or `@vis.gl/react-google-maps`
+- **Dependencies**: `GooglePlace`, `HygieneScore` types needed
+- **Files**: All converted, type errors pending resolution
+
+**🤖 AI + Strava (6 files) - Priority: MEDIUM**
+- **Status**: 🔄 Pending type error resolution
+- **Key Issues**: API response interfaces, optional fields
+- **Dependencies**: Strava API types, AI service interfaces
+- **Files**: All converted, type errors pending resolution
+
+**🤝 Collab Pages (6 files) - Priority: LOW**
+- **Status**: 🔄 Pending type error resolution
+- **Key Issues**: Mantine 7 props, slideshow item types
+- **Dependencies**: `Testimonial`, `CaseStudy` interfaces
+- **Files**: All converted, type errors pending resolution
+
+**🏠 Core Pages (4 files) - Priority: HIGH**
+- **Status**: 🔄 Pending type error resolution
+- **Key Issues**: Main app pages, critical for user experience
+- **Files**: All converted, type errors pending resolution
+
+**🔧 Utils & Services (4 files) - Priority: MEDIUM**
+- **Status**: 🔄 Pending type error resolution
+- **Key Issues**: Core utility functions, service worker
+- **Files**: All converted, type errors pending resolution
+
+#### Type Error Resolution Strategy
+
+**Current Status**: 531 TypeScript errors remaining (45% reduction achieved)
+**Approach**: Feature-by-feature resolution with priority-based ordering
+
+**Implementation Strategy**:
+1. **High Priority**: Bookmarks, Habit Tracker, Core Pages
+2. **Medium Priority**: Eat-Safe-UK, Data-Value-Game, AI + Strava, Utils & Services
+3. **Low Priority**: Collab Pages
+
+**ESLint Protection**: ✅ Added `@typescript-eslint/ban-ts-comment` rule to prevent new `@ts-nocheck` additions
+
+**Git Branch Strategy**:
+- **Feature branch**: `feature/typescript-migration-step-N`
+- **Commit pattern**: `refactor(ts): type-safe [feature] - [description]`
+- **PR strategy**: One PR per feature area for easier review
+
+#### Component Migration Execution Progress
+
+**Status**: 🔄 **In Progress** - Systematic component-by-component migration
+
+**Current Progress (Updated 2025-01-27)**:
+- **Components Migrated**: 3/14 (21% complete)
+- **Files Fully Complete**: 2/14 (14% complete)
+- **Files in Progress**: 1/14 (7% in progress)
+- **TypeScript Errors Fixed**: ~50+ errors resolved
+- **Mantine 7 Props Updated**: ~20+ prop migrations
+
+**Completed Migrations**:
+- ✅ **BookmarkCard.tsx** - Core component with complex props (100% complete)
+- ✅ **Sidebar.tsx** - Navigation component (100% complete)
+- 🔄 **ShareHandler.tsx** - Share functionality (80% complete, auth context issues remaining)
+
+**Migration Pattern Established**:
+1. Remove `@ts-nocheck` comment
+2. Import types from shared type definitions
+3. Fix Mantine 7 props (`spacing`→`gap`, `position`→`justify`, `weight`→`fw`)
+4. Add proper component prop types
+5. Type state variables and function parameters
+6. Test TypeScript compilation and functionality
+
+**Quality Assurance**:
+- **Type Check**: `npm run type-check` after each component
+- **Manual Testing**: Verify functionality in browser
+- **Integration**: Ensure component interactions work
+- **Performance**: No degradation in render performance
+
+**Troubleshooting Common Issues**:
+- **Auth Context Issues**: Verify `AuthContextType` interface for `isAuthenticated` property
+- **Mantine Props**: Complete `leftIcon`→`leftSection`, remaining `spacing`→`gap`, `weight`→`fw`
+- **Bookmark Type Extensions**: Add `enriched` property to `Bookmark` interface or handle optionally
+- **Implicit Any Parameters**: Add explicit type annotations using shared types
+
+**Next Priority Components**:
+1. **Raindrops.tsx** - Animation component (simple, 30 minutes estimated)
+2. **Bookmarks.tsx** - Main bookmarks page (complex, 2-3 hours estimated)
+3. **Bookmarks.integration.test.tsx** - Integration tests (1 hour estimated)
+4. **BookmarkCard.test.tsx** - Unit tests (30 minutes estimated)
+
+**Projected Completion**:
+- **Remaining 11 components**: ~7-8 hours
+- **Testing & refinement**: ~2 hours
+- **Total remaining**: **~10 hours** (1.5 days)
+
+### TypeScript Configuration & Type Safety
+
+**Status**: ✅ **Complete** - Comprehensive type safety configured for Next.js
+
+#### Mantine Core Type Declarations
+- **Location**: `next-ui/src/types/mantine.d.ts`
+- **Key Features**:
+  - Module augmentation for `@mantine/core` theme colors
+  - Comprehensive type re-exports for application-wide access
+  - Custom color palette with `MantineColorsTuple` typing
+  - Navigation and component type interfaces
+
+#### CSS Module Type Declarations
+- **Location**: `next-ui/src/types/css-modules.d.ts`
+- **Features**:
+  - Comprehensive declarations for `.module.css`, `.module.scss`, `.module.sass`
+  - Specific interfaces for component styles
+  - Inline style object type definitions with readonly properties
+  - Type safety for all CSS module imports
+
+#### Build Configuration
+- **TypeScript Compiler**: Strict mode enabled with zero errors
+- **Path Aliases**: Configured for `@/*` imports
+- **Type Roots**: Includes custom type declarations
+- **Module Resolution**: Optimized for Next.js bundler
+- **ESLint Integration**: All linting errors resolved
+
+#### Verification Results
+- **Build Performance**: ~17 seconds compilation time (consistent)
+- **TypeScript Errors**: 0 errors in strict mode
+- **ESLint Warnings**: 0 warnings
+- **Bundle Size**: Optimized (About page: 43.2 kB)
+- **Type Safety**: Full coverage for Mantine, CSS modules, component props
+
+#### Best Practices Implemented
+- **Type Organization**: Centralized declarations in `src/types/`
+- **Module Augmentation**: Proper third-party library extensions
+- **Readonly Properties**: Immutable data structures
+- **Import Strategy**: Type-only imports, proper re-exports
+- **Code Quality**: Comprehensive type coverage with documentation
 
 ---
 
@@ -90,27 +270,45 @@ Based on comprehensive analysis, the optimal approach is to **continue the incre
 - [x] Custom theme porting
 - [x] About page migration (proof of concept)
 
-### Phase 2: Shared Infrastructure (3-4 days)
+### Phase 2: Shared Infrastructure ✅ COMPLETE
 **AI Assist: Standard → Sonnet for complex types**
 
-| Task | Duration | AI Model | Notes |
-|------|----------|----------|-------|
-| Shared types barrel file | 0.5d | Standard | Export consolidation |
-| AuthContext → AuthProvider | 1.5d | GPT-4o | Critical auth logic |
-| API client updates | 1d | Sonnet | Generic typing |
-| Environment config sync | 1d | Standard | Next.js env handling |
+| Task | Duration | AI Model | Status |
+|------|----------|----------|--------|
+| Shared types barrel file | 0.5d | Standard | ✅ Complete |
+| AuthContext → AuthProvider | 1.5d | GPT-4o | ✅ Complete |
+| API client updates | 1d | Sonnet | ✅ Complete |
+| Environment config sync | 1d | Standard | ✅ Complete |
 
-### Phase 3: Core Pages (1.5 weeks)
+**Technical Achievements:**
+- **API Client**: Successfully ported from CRA to Next.js (`next-ui/src/shared/apiClient.ts`)
+- **Auth Utils**: Migrated authentication utilities (`next-ui/src/shared/authUtils.ts`)
+- **Type Definitions**: Created comprehensive shared types (`next-ui/src/shared/types/`)
+- **AuthProvider**: Successfully converted from React Router to Next.js with SSR safety checks
+- **Header Component**: Successfully migrated with full functionality and navigation handling
+
+### Phase 3: Core Pages (1.5 weeks) 🔄 **IN PROGRESS**
 **AI Assist: Standard for static, Sonnet for dynamic**
 
-| Route | Complexity | Duration | AI Model | Priority |
-|-------|------------|----------|----------|----------|
-| `/` (Home) | Medium | 2d | Sonnet | High traffic |
-| `/contact` | Low | 1d | Standard | Form handling |
-| `/cv` | Low | 1d | Standard | Static content |
-| `/blog` | Medium | 2d | Sonnet | Dynamic routing |
-| `/blog/:slug` | Medium | 1.5d | Sonnet | SSG setup |
-| `/projects` | Low | 1d | Standard | Overview page |
+| Route | Complexity | Duration | AI Model | Status | Priority |
+|-------|------------|----------|----------|--------|----------|
+| `/` (Home) | Medium | 2d | Sonnet | ✅ Complete | High traffic |
+| `/contact` | Low | 1d | Standard | 🔄 Next | Form handling |
+| `/cv` | Low | 1d | Standard | ⏳ Pending | Static content |
+| `/blog` | Medium | 2d | Sonnet | ⏳ Pending | Dynamic routing |
+| `/blog/:slug` | Medium | 1.5d | Sonnet | ⏳ Pending | SSG setup |
+| `/projects` | Low | 1d | Standard | ⏳ Pending | Overview page |
+
+**Phase 3 Achievements:**
+- **Home Page Migration**: Successfully migrated with full functionality preserved
+  - Profile image, welcome text, latest blog/project snippets
+  - Framer Motion animations working smoothly
+  - Mantine UI components rendering correctly
+  - TypeScript conversion with proper typing
+  - Responsive design maintained
+- **Supporting Components**: Created Snippet and ProjectSnippet components with CSS modules
+- **Data Layer**: Migrated blog data utilities and project list data with TypeScript
+- **Proxy Configuration**: Fixed Express proxy routing for seamless integration
 
 ### Phase 4: Authentication & Layout (1 week)
 **AI Assist: Premium models for critical flows**
@@ -198,107 +396,75 @@ Based on comprehensive analysis, the optimal approach is to **continue the incre
 |------|------------|
 | Model hallucination | Always test generated code |
 | Cost overrun | Monitor usage, stick to tier strategy |
-| Dependency conflicts | Verify package versions |
-| Over-engineering | Keep changes minimal, preserve patterns |
-
----
-
-## Success Metrics
-
-### Performance
-- ✅ Build time: 3-4x improvement (17s vs CRA's slower builds)
-- ✅ No legacy OpenSSL flags required
-- ✅ Hot reload performance improved
-
-### Quality
-- ✅ TypeScript: 0 errors in strict mode
-- ✅ ESLint: 0 warnings
-- ✅ Feature parity: 100% preserved (About page proof)
-
-### Business
-- ✅ Zero downtime migration
-- ✅ SEO readiness for 12-month requirement
-- ✅ Modern development experience
 
 ---
 
 ## Migration Progress Tracker
 
-### ✅ Completed Routes
-- `/about` → `/next/about` (proof of concept)
+### Completed Routes (2/18)
+- ✅ `/about` - About page with full functionality
+- ✅ `/` - Home page with latest content fetching
 
-### 🚧 In Progress
-- Shared infrastructure setup
+### Infrastructure Ready
+- ✅ Shared types and utilities
+- ✅ Authentication system
+- ✅ Build pipeline optimized
+- ✅ Express proxy working
+- ✅ Component patterns established
 
-### 📋 Remaining Routes (17)
-- `/` (home)
-- `/blog` & `/blog/:slug`
-- `/projects` & project-specific routes
-- `/contact`, `/cv`, `/collab`
-- `/login`, `/share`
-- Authentication flows
+### Next Priority Routes
+1. **`/projects`** - Projects showcase page
+2. **`/blog`** - Blog listing page  
+3. **`/contact`** - Contact form page
 
-### 🎯 Current Focus
-**Phase 2: Shared Infrastructure**
-- Creating shared types barrel
-- Porting AuthContext to AuthProvider
-- Setting up Next.js environment configuration
+### Success Metrics
+- **Migration Speed**: Home page completed in ~2 hours
+- **Functionality**: 100% feature parity with CRA version
+- **Performance**: Maintained fast build times (3-4x improvement)
+- **Type Safety**: Full TypeScript coverage
+- **User Experience**: Zero disruption during migration
 
----
-
-## Environment & Testing
-
-### Development
-```bash
-# Start dual-app development
-npm run dev-next
-
-# Next.js only (port 3001)
-npm run client-next
-
-# Test migrated routes
-http://localhost:5000/next/about
-```
-
-### Production
-```bash
-# Build both apps
-npm run build-with-next
-
-# Start production server
-npm start
-```
-
-### Testing Strategy
-1. **Manual Testing**: Each route at `/next/[route]`
-2. **Lighthouse Audits**: Performance & PWA scores
-3. **Cross-browser**: Chrome, Firefox, Safari
-4. **Mobile**: Responsive design validation
+### Development Workflow Improvements
+- **Cache Management**: Added development cache-busting headers to prevent stale asset issues
+- **Build Process**: Integrated rebuild workflow to handle asset filename changes
+- **Error Prevention**: Proactive handling of browser cache conflicts during development
 
 ---
 
-## Documentation Updates
+## Documentation Consolidation
 
-This document replaces and consolidates:
-- ❌ `CRA_DEPRECATION_ANALYSIS.md` (analysis complete)
-- ❌ `CURRENT_SETUP_ANALYSIS.md` (integrated above)
+**Status**: ✅ **Consolidated** - This document now serves as the single source of truth for migration progress
+
+**Archived Documents** (following docs/01_guidance.md):
+- ❌ `MIGRATION_PROGRESS.md` (progress tracker above)
+- ❌ `PHASE_3_HOME_PAGE_MIGRATION.md` (details integrated above)
 - ❌ `migration-status.md` (progress tracker above)
-- ❌ `PHASE_2_PROGRESS.md` (phase details above)
-- ❌ `typescript-improvements.md` (completed work)
-- ❌ `typescript-migration-analysis.md` (TypeScript work done)
+- ❌ `typescript-migration-analysis.md` (moved to ADR 0012)
+- ❌ `react-ui/STEP_3_EXECUTION_SUMMARY.md` (execution progress integrated above)
+- ❌ `react-ui/STEP_3_INSTRUCTIONS.md` (implementation guide integrated above)
+- ✅ `ADR 0012` (reconciled to decision record format)
 
-### Change History
+**Integration with Global Docs**:
+- ✅ `docs/02_roadmap.md` - Strategic positioning and timeline
+- ✅ `docs/03_updates.md` - High-level decision and impact tracking
+- ✅ `docs/06_tech_debt.md` - Technical debt resolution tracking
+
+**Change History**:
 - 2025-01-27: Created consolidated migration plan
-- 2025-01-27: Phase 1 foundation complete
 - 2025-01-27: About page migration successful
+- 2025-07-07: Home page migration complete
+- 2025-07-07: Documentation consolidation complete
+- 2025-01-27: Reconciled ADR 0012 to decision record format, integrated TypeScript progress tracking
+- 2025-01-27: Integrated STEP_3 execution progress and implementation guide into migration plan
 
 ---
 
-## Next Steps
+## References
 
-1. **Continue Phase 2**: Complete shared infrastructure
-2. **Begin Core Pages**: Start with high-traffic routes
-3. **Monitor Performance**: Track build times and user experience
-4. **Update Progress**: Keep this document current with daily progress
+- [TypeScript Migration ADR](../adr/0012-typescript-migration.md) - Decision to migrate to TypeScript
+- [React UI TypeScript Backlog](../../react-ui/BACKLOG.md) - Detailed TypeScript migration tracking
+- [Documentation Guidance](../01_guidance.md) - Project documentation standards
+
+---
 
 The foundation is excellent, the pattern is proven, and the path forward is clear. Continue the incremental migration with confidence! 🚀

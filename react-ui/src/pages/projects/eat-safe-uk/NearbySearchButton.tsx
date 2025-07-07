@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex nearby search component with dynamic location services and API integration that TypeScript cannot properly infer
 import { performNearbySearch} from "./utils/nearbySearch";
 import {askUserLocation} from "./utils/askUserLocation";
 

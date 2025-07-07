@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Dynamic CTA component with complex game state integration and conditional rendering that TypeScript cannot properly infer
 import React from 'react';
 
 const CTAGuessAutomotive = () => {

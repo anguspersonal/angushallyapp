@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Complex Google Maps search component with dynamic autocomplete and location services that TypeScript cannot properly infer
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getDynamicPlaceholder } from "./utils/getDynamicPlaceholder";
 

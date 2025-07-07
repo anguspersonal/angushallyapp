@@ -68,17 +68,10 @@ app.use(express.json());
 // Priority serve Next.js static files at /next route
 if (isDev) {
   // In development, proxy to Next.js dev server
-<<<<<<< HEAD
   console.log('Setting up Next.js proxy to http://localhost:3001');
   const { createProxyMiddleware } = require('http-proxy-middleware');
   app.use('/next', createProxyMiddleware({
     target: 'http://localhost:3001',
-=======
-  console.log('Setting up Next.js proxy to http://localhost:3000');
-  const { createProxyMiddleware } = require('http-proxy-middleware');
-  app.use('/next', createProxyMiddleware({
-    target: 'http://localhost:3000',
->>>>>>> 698ebc2e18cf88a6868ae5b9916112421594cb99
     changeOrigin: true,
     pathRewrite: {
       '^/next': '', // Remove /next prefix when forwarding to Next.js dev server
@@ -94,8 +87,21 @@ if (isDev) {
   app.use('/next', express.static(path.resolve(__dirname, '../next-ui/out')));
 }
 
-// Priority serve any static files.
-app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
+// Priority serve any static files with cache-busting headers for development
+if (isDev) {
+  app.use(express.static(path.resolve(__dirname, '../react-ui/build'), {
+    setHeaders: (res, path) => {
+      // Disable caching for static assets in development
+      if (path.endsWith('.css') || path.endsWith('.js')) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
+    }
+  }));
+} else {
+  app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
+}
 
 // Trust proxy for express rate limit to work correctly
 app.set("trust proxy", 1);

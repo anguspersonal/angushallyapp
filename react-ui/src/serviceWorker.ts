@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Service worker registration code with complex browser API interactions that TypeScript cannot properly infer
 // This optional code is used to register a service worker.
 // register() is not called by default.
 

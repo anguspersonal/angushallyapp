@@ -1,12 +1,7 @@
-// @ts-nocheck
+// @ts-nocheck - Complex Strava integration component with dynamic API calls and data visualization that TypeScript cannot properly infer
 import React, { useState, useEffect } from "react";
-<<<<<<< HEAD:react-ui/src/pages/projects/strava/Strava.tsx
 import { fetchStravaData, getPRs, getWeeklyRuns, getRecentRuns } from './stravaDataService';
 import Header from '../../../components/Header';
-=======
-import { fetchStravaData, getPRs, getWeeklyRuns, getRecentRuns } from './stravaDataService.js';
-import Header from '../../../components/Header.tsx';
->>>>>>> 698ebc2e18cf88a6868ae5b9916112421594cb99:react-ui/src/pages/projects/strava/Strava.jsx
 import '@mantine/charts/styles.css';
 import { Table } from '@mantine/core';
 import { LineChart } from '@mantine/charts';

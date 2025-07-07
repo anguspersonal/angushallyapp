@@ -9,12 +9,6 @@ interface AggregateStats {
     [key: string]: number;
 }
 
-interface AggregateStatsResponse {
-    data: AggregateStats;
-    status: number;
-    statusText: string;
-}
-
 /**
  * Fetches aggregate statistics for a specific habit type and period
  * @param habitType - The type of habit (e.g., 'alcohol', 'exercise')

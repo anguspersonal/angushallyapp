@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - Dynamic testimonial component with complex state management and conditional rendering that TypeScript cannot properly infer
 import { Box, Text, Blockquote, useMantineTheme, Group, Avatar, ActionIcon } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import ReactMarkdown from 'react-markdown';

@@ -20,7 +20,8 @@ interface HabitDefinition {
   progress: number;
 }
 
-interface HabitStats {
+// Local interface matching the aggregateService response
+interface AggregateStats {
   sum: number;
   avg: number;
   min: number;
@@ -51,7 +52,7 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
   const [logs, setLogs] = useState<HabitLog[]>([]);
   const [tempDrinkLogs, setTempDrinkLogs] = useState<TempDrinkLog[]>([]);
   const comboboxRef = useRef<(() => void) | null>(null);
-  const [stats, setStats] = useState<Record<string, HabitStats>>({
+  const [stats, setStats] = useState<Record<string, AggregateStats>>({
     week: { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 },
     month: { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 },
     year: { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 }
@@ -101,7 +102,7 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
     if (habit) {
       const fetchStats = async () => {
         const periods: ValidPeriod[] = ['week', 'month', 'year'];
-        const newStats: Record<string, HabitStats> = {};
+        const newStats: Record<string, AggregateStats> = {};
         
         console.log('Fetching stats for habit:', habit);
         
@@ -112,7 +113,14 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
             console.log(`Fetching ${period} stats for ${habitType}`);
             const data = await getAggregateStats(habitType, period as ValidPeriod);
             console.log(`${period} stats result:`, data);
-            newStats[period] = data;
+            // Ensure the data has all required properties
+            newStats[period] = {
+              sum: data.sum || 0,
+              avg: data.avg || 0,
+              min: data.min || 0,
+              max: data.max || 0,
+              stddev: data.stddev || 0
+            };
           } catch (error) {
             console.error(`Error fetching ${period} stats:`, error);
             newStats[period] = { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 };
@@ -162,7 +170,7 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
 
       const newLog = {
         userId: values.userId,
-        habit_type: habit?.name,
+        habit_type: habit?.name as HabitType,
         value: individualDrinks.reduce((sum, drink) => sum + drink.units, 0), // Sum of all drink units
         metric: "units",
         extraData: { drinks: individualDrinks }, // Store drinks array in extraData
@@ -170,7 +178,7 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
 
       // console.log("Submitting habit log:", newLog);
 
-      await addHabitLog(newLog, habit?.name);
+      await addHabitLog(newLog as any, habit?.name as HabitType);
       await updateLogsCallback();
 
       // Reset the form and clear temporary drink logs
@@ -185,22 +193,22 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
   };
 
   // Function to reset the HabitCombobox
-  const resetCombobox = (resetFunction) => {
+  const resetCombobox = (resetFunction: () => void) => {
     comboboxRef.current = resetFunction;
   };
 
   return (
     <Drawer opened={opened} onClose={onClose} title={`Habit: ${habit?.name || "Select Habit"}`} size="md">
       <Group justify="flex-start">
-        <h4>{habit?.name.charAt(0).toUpperCase() + habit?.name.slice(1)}</h4>
+        <h4>{habit?.name ? habit.name.charAt(0).toUpperCase() + habit.name.slice(1) : "Select Habit"}</h4>
       </Group>
       <form onSubmit={form.onSubmit(handleSubmit)} style={{ backgroundColor: "", borderRadius: "15px" }}>
         <Stack gap="md">
           <HabitCombobox
             options={options}
-            value={null}
-            onChange={(option) => {
-              if (option) {
+            value={[]}
+            onChange={(option: DrinkCatalogItem | string) => {
+              if (typeof option === 'object' && option) {
                 setTempDrinkLogs((prev) => {
                   const existingDrink = prev.find((drink) => drink.id === option.id);
                   if (existingDrink) {
@@ -215,10 +223,10 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
                     {
                       id: option.id,
                       name: option.name,
-                      icon: option.icon,
+                      icon: option.icon || "🍺",
                       group: option.drink_type || "Other",
-                      volumeML: option.default_volume_ml || 250,
-                      abvPerc: option.default_abv || 12,
+                      volumeML: option.typical_volume_ml || 250,
+                      abvPerc: option.abv || 12,
                       count: 1, // Initialize count
                     },
                   ];
@@ -249,7 +257,7 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
 }
 
 // Logs Table Component
-function LogsTable({ logs, habitType }) {
+function LogsTable({ logs, habitType }: { logs: HabitLog[]; habitType: string }) {
   if (!Array.isArray(logs)) {
     console.warn("No logs available.");
     return <p>No logs found for this habit.</p>;
@@ -261,18 +269,18 @@ function LogsTable({ logs, habitType }) {
       // For alcohol logs, we already have the structure we need
       return {
         id: log.id,
-        name: log.drink_name,
-        units: log.units,
+        name: (log as any).drink_name || "N/A",
+        units: (log as any).units || 0,
         date: log.created_at,
-        volume: log.volume_ml,
-        abv: log.abv_percent,
-        count: log.count
+        volume: (log as any).volume_ml || 0,
+        abv: (log as any).abv_percent || 0,
+        count: (log as any).count || 1
       };
     } else {
       // For other habits, use the existing structure
       return {
         ...log,
-        extraData: log.extraData || log.extra_data || { optionName: "N/A", volumeML: 0, abvPerc: 0 }
+        extraData: (log as any).extraData || (log as any).extra_data || { optionName: "N/A", volumeML: 0, abvPerc: 0 }
       };
     }
   });
@@ -294,11 +302,11 @@ function LogsTable({ logs, habitType }) {
           {processedLogs.map((log) => (
             <Table.Tr key={log.id}>
               <Table.Td>{log.name || "N/A"}</Table.Td>
-              {habitType === 'alcohol' && <Table.Td>{log.count}</Table.Td>}
-              <Table.Td>{log.units}</Table.Td>
-              {habitType === 'alcohol' && <Table.Td>{log.volume}</Table.Td>}
-              {habitType === 'alcohol' && <Table.Td>{log.abv}</Table.Td>}
-              <Table.Td>{new Date(log.date).toLocaleDateString()}</Table.Td>
+              {habitType === 'alcohol' && <Table.Td>{(log as any).count || 1}</Table.Td>}
+              <Table.Td>{(log as any).units || 0}</Table.Td>
+              {habitType === 'alcohol' && <Table.Td>{(log as any).volume || 0}</Table.Td>}
+              {habitType === 'alcohol' && <Table.Td>{(log as any).abv || 0}</Table.Td>}
+              <Table.Td>{log.date ? new Date(log.date).toLocaleDateString() : "N/A"}</Table.Td>
             </Table.Tr>
           ))}
         </Table.Tbody>
@@ -308,8 +316,8 @@ function LogsTable({ logs, habitType }) {
 }
 
 // Temporary Drinks Table Component
-function TemporaryDrinkTable({ tempDrinkLogs, setTempDrinkLogs }) {
-  const incrementCount = (id) => {
+function TemporaryDrinkTable({ tempDrinkLogs, setTempDrinkLogs }: { tempDrinkLogs: TempDrinkLog[]; setTempDrinkLogs: React.Dispatch<React.SetStateAction<TempDrinkLog[]>> }) {
+  const incrementCount = (id: string) => {
     setTempDrinkLogs((prevLogs) =>
       prevLogs.map((drink) =>
         drink.id === id ? { ...drink, count: drink.count + 1 } : drink
@@ -317,7 +325,7 @@ function TemporaryDrinkTable({ tempDrinkLogs, setTempDrinkLogs }) {
     );
   };
 
-  const decrementCount = (id) => {
+  const decrementCount = (id: string) => {
     setTempDrinkLogs((prevLogs) =>
       prevLogs
         .map((drink) =>
@@ -347,7 +355,7 @@ function TemporaryDrinkTable({ tempDrinkLogs, setTempDrinkLogs }) {
             return (
               <Table.Tr key={drink.id}>
                 <Table.Td>
-                  <Group spacing="xs" wrap="wrap">
+                  <Group gap="xs" wrap="wrap">
                     <ActionIcon
                       variant="subtle"
                       color="red"
