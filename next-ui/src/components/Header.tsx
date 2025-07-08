@@ -90,30 +90,17 @@ function Header() {
   });
 
   return (
-    <header
+    <div
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
+        height: '100%',
         backgroundColor: 'var(--background-color)',
         borderBottom: '1px solid rgba(233, 236, 239, 0.5)',
         backdropFilter: 'blur(10px)',
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        minHeight: '80px',
       }}
     >
-      <Container size="xl">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '1rem 0',
-            height: '80px',
-          }}
-        >
+      <Container size="xl" h="100%">
+        <Group justify="space-between" h="100%">
           {/* Logo */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
             <img 
@@ -193,9 +180,9 @@ function Header() {
               )}
             </Menu.Dropdown>
           </Menu>
-        </div>
+        </Group>
       </Container>
-    </header>
+    </div>
   );
 }
 

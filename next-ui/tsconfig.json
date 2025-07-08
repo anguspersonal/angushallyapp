@@ -1,48 +1,55 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "ES2022",
     "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
     ],
-    "allowJs": true,
+    "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "module": "esnext",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "noEmit": true,
     "jsx": "preserve",
     "incremental": true,
-    "forceConsistentCasingInFileNames": true,
     "exactOptionalPropertyTypes": false,
-    "noUncheckedIndexedAccess": false,
     "plugins": [
       {
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./src/*"
+        "src/*"
       ],
       "@/components/*": [
-        "./src/components/*"
+        "src/components/*"
       ],
       "@/lib/*": [
-        "./src/lib/*"
+        "src/lib/*"
       ],
       "@/app/*": [
-        "./src/app/*"
+        "src/app/*"
       ],
       "@/types/*": [
-        "./src/types/*"
+        "src/types/*"
       ]
     },
+    "types": [
+      "node",
+      "react",
+      "react-dom"
+    ],
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
@@ -60,6 +67,7 @@
   "exclude": [
     "node_modules",
     ".next",
+    "dist",
     "out"
   ]
 }

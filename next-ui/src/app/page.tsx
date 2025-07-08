@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Box, Container, Title, Text, Image, Anchor, SimpleGrid, Button } from '@mantine/core';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import Header from '../components/Header';
 import Snippet from '../components/Snippet';
 import ProjectSnippet from '../components/ProjectSnippet';
 import { fetchLatestBlog } from '../utils/fetchBlogData';
@@ -63,7 +62,6 @@ export default function Home() {
 
   return (
     <Box>
-      <Header />
       <Container size="md" py="xl">
         <motion.div initial="hidden" animate="visible">
           <motion.div 
@@ -93,7 +91,7 @@ export default function Home() {
 
           <motion.div variants={contentVariants}>
             <Text ta="center" mb="md">
-              👋 Hi, I&apos;m Angus. I&apos;m a strategy consultant, amateur developer, and constant learner.
+              👋 Hi, I&apos;m Angus. I&apos;m a  consultant, amateur developer, and constant learner.
               This site is a mix of personal projects, career experiments and things
               I&apos;ve learned by building, shipping, and sometimes failing.
             </Text>
