@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2018",
     "lib": [
       "dom",
       "dom.iterable",
@@ -19,13 +19,25 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["node"]
+    "types": [
+      "node",
+      "react",
+      "react-dom"
+    ],
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
   "include": [
     "src"
   ],
   "exclude": [
     "node_modules",
-    "build"
+    "build",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx"
   ]
 }

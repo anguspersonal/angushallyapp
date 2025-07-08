@@ -1,9 +1,9 @@
 // @ts-nocheck - This file contains dynamic data fetching and complex Mantine UI components that TypeScript cannot properly infer
-import React, { useState, useEffect } from 'react';
-import { Box, Container, Title, Text, Image, Anchor, SimpleGrid, useMantineTheme, Button } from '@mantine/core';
+import React from 'react';
+import { Container, Title, Text, Image, Anchor, useMantineTheme } from '@mantine/core';
 import { motion, Variants } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header';
+import Layout from '../components/Layout';
 import Snippet from '../components/Snippet';
 import ProjectSnippet from '../components/ProjectSnippet';
 import { fetchLatestBlog } from '../pages/blog/fetchBlogData';
@@ -17,46 +17,19 @@ const contentVariants: Variants = {
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-          transition: {
-        delay: i * 0.1,
-        duration: 0.5
-      }
+    transition: {
+      delay: i * 0.1,
+      duration: 0.5
+    }
   })
 };
 
 function Home() {
   const theme = useMantineTheme();
-  const [latestBlog, setBlog] = useState(null);
-  const [latestProject, setProject] = useState(null);
-
-  // Fetch latest blog
-  useEffect(() => {
-    async function getLatestblog() {
-      const latestBlogData = await fetchLatestBlog();
-      setBlog(latestBlogData);
-    }
-    getLatestblog();
-  }, []);
-
-  // Fetch latest project
-  useEffect(() => {
-    async function getLatestProject() {
-      try {
-        const latestProjectData = projectList
-          .filter(p => p.created_at)
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
-        setProject(latestProjectData);
-      } catch (error) {
-        console.error("❌ Error fetching latest project:", error);
-      }
-    }
-    getLatestProject();
-  }, []);
-
+  
   return (
-    <Box>
-      <Header />
-      <Container size="md" py="xl">
+    <Layout>
+      <Container size="md" pt={0}>
         <motion.div initial="hidden" animate="visible">
           <motion.div custom={0} variants={contentVariants} style={{ textAlign: 'center', marginBottom: theme.spacing.lg }}>
             <Image
@@ -97,26 +70,10 @@ function Home() {
             </Text>
           </motion.div>
 
-          <motion.div custom={4} variants={contentVariants}>
-            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
-              {latestBlog && <Snippet {...latestBlog} />}
-              {latestProject && <ProjectSnippet project={latestProject} />}
-            </SimpleGrid>
-          </motion.div>
+          {/* Project snippets will be added here */}
         </motion.div>
       </Container>
-      <Box ta="center" mb="xl">
-        <Button
-          component={Link}
-          to="/contact"
-          size="lg"
-          variant="gradient"
-          gradient={{ from: 'teal', to: 'blue' }}
-        >
-          Contact Me
-        </Button>
-      </Box>
-    </Box>
+    </Layout>
   );
 }
 
