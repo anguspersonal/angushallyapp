@@ -4,7 +4,7 @@
   "description": "How to use create-react-app with a custom Node API on Heroku",
   "engines": {
     "node": "18.x",
-    "npm": "8.x"
+    "npm": ">=8.x"
   },
   "scripts": {
     "start": "node server/index.js",
@@ -53,14 +53,14 @@
     "nodemailer": "^6.10.0",
     "open-graph-scraper": "^6.10.0",
     "openai": "^4.100.0",
-    "pg": "^8.15.6"
+    "pg": "^8.15.6",
+    "cross-env": "^7.0.3"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.17.0",
     "@googlemaps/js-api-loader": "^1.16.8",
     "@googlemaps/markerclusterer": "^2.5.3",
     "concurrently": "^9.1.2",
-    "cross-env": "^7.0.3",
     "imagemin": "^9.0.1",
     "imagemin-mozjpeg": "^10.0.0",
     "imagemin-pngquant": "^10.0.0",

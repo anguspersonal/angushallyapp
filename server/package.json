@@ -4,6 +4,8 @@
   "private": true,
   "description": "Server component for angushallyapp",
   "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
     "test": "jest",
     "test:watch": "jest --watch"
   },
