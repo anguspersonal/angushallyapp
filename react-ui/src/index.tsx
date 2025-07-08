@@ -26,12 +26,17 @@ root.render(
 );
 
 // ✅ Register service worker for PWA functionality
-// This enables the app to appear in mobile share menus
-serviceWorker.register({
-  onSuccess: () => {
-    console.log('PWA: Service worker registered successfully');
-  },
-  onUpdate: () => {
-    console.log('PWA: New content available, please refresh');
-  }
-});
+// Only register in production to avoid cache issues in development
+if (process.env.NODE_ENV === 'production') {
+  serviceWorker.register({
+    onSuccess: () => {
+      console.log('PWA: Service worker registered successfully');
+    },
+    onUpdate: () => {
+      console.log('PWA: New content available, please refresh');
+    }
+  });
+} else {
+  // Always unregister in development to avoid stale cache issues
+  serviceWorker.unregister();
+}
