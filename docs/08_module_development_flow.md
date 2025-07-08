@@ -126,6 +126,19 @@ jest.mock('../middleware/auth', () => jest.fn(...));  // ← This fails
 **🛑 STOP: Confirm current date with user before making documentation changes**
 📅 What is today's date for documentation updates? (Please provide date in YYYY-MM-DD format)
 
+**📝 Updates Documentation Format (`docs/03_updates.md`):**
+- [ ] **Chronological Order**: Add new updates at the TOP of the file (most recent first)
+- [ ] **Section Header Format**: Use `## Update[number] - [short name] - [YYYY-MM-DD] - [Uncommitted/Committed/Current]`
+  - **[number]**: Incrementing update number, starting from 001 for the earliest update
+  - **[short name]**: A concise summary of the update (e.g. 'Bookmark Transfer', 'Next.js Migration', 'Footer Modernization')
+  - **[YYYY-MM-DD]**: Date of the update
+  - **[status]**: Uncommitted, Committed, or Current
+- [ ] **Example**: `## Update005 - MIME Type Fix - 2025-07-07 - Committed`
+- [ ] **Numbering**: Increment the update number for each new section (Update001, Update002, etc.)
+- [ ] **Short Name**: Use a concise, descriptive short name summarizing the update
+- [ ] **Content**: Include detailed description of changes, technical implementation, and impact
+- [ ] **Status Update**: After committing changes, update the section header status from `Uncommitted` to `Current` or `Committed` as appropriate
+
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
 ✅ Documentation updated? (type `y` to proceed)
 
@@ -282,6 +295,19 @@ const mockAuthContext = {
 
 **🛑 STOP: Confirm current date with user before making documentation changes**
 📅 What is today's date for documentation updates? (Please provide date in YYYY-MM-DD format)
+
+**📝 Updates Documentation Format (`docs/03_updates.md`):**
+- [ ] **Chronological Order**: Add new updates at the TOP of the file (most recent first)
+- [ ] **Section Header Format**: Use `## Update[number] - [short name] - [YYYY-MM-DD] - [Uncommitted/Committed/Current]`
+  - **[number]**: Incrementing update number, starting from 001 for the earliest update
+  - **[short name]**: A concise summary of the update (e.g. 'Bookmark Transfer', 'Next.js Migration', 'Footer Modernization')
+  - **[YYYY-MM-DD]**: Date of the update
+  - **[status]**: Uncommitted, Committed, or Current
+- [ ] **Example**: `## Update005 - MIME Type Fix - 2025-07-07 - Committed`
+- [ ] **Numbering**: Increment the update number for each new section (Update001, Update002, etc.)
+- [ ] **Short Name**: Use a concise, descriptive short name summarizing the update
+- [ ] **Content**: Include detailed description of changes, technical implementation, and impact
+- [ ] **Status Update**: After committing changes, update the section header status from `Uncommitted` to `Current` or `Committed` as appropriate
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
 ✅ Documentation updated? (type `y` to proceed)

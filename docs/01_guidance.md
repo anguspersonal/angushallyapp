@@ -161,6 +161,22 @@ Documentation updates follow the hierarchy:
 - **Within Sub-project**: Update module documentation within the parent sub-project's README.md
 - **Dedicated Files**: Update dedicated module documentation files as needed
 
+## 7.2 📁 Migration Documentation Rules
+
+To maintain consistency during the Next.js migration:
+
+1. ✅ Use `09_migration_plan.md` for high-level strategy
+2. ✅ Log all completed work in `09_migration_log.md`
+3. ✅ Use `09_migration_tracker.md` as your daily working doc
+4. ✅ Update tracker when tasks move:
+   - Backlog → Next → In Progress → Log
+5. ❌ Do NOT clutter `09_migration_plan.md` with implementation detail
+
+Optional:
+- Use `docs/migration/YYYY-MM-DD.md` for long-form notes if needed
+- Sync Tracker weekly with GitHub Project board (if applicable)
+
+
 ## 8. Sub-Project README Guidelines
 
 Each sub-project should include its own `README.md` within its directory:
