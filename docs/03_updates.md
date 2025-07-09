@@ -59,6 +59,62 @@ Where:
 
 **Note**: This format replaces all previous patterns. Updates MUST be renumbered whenever chronological order is affected.
 
+## Update034 - Next.js Route Swapping Implementation - 2025-01-27 - Uncommitted
+
+### 🚀 Next.js Migration - Route Swapping Logic Implementation
+
+**Express Server Enhancement:**
+- **Status**: ✅ **Complete** - Implemented environment-driven route swapping for Next.js migration
+- **Core Achievement**: Added configurable route redirection system that allows seamless switching between CRA and Next.js frontends
+- **Scope**: Server-side routing logic to support dual-app architecture during Next.js migration
+
+**Route Swapping Implementation:**
+- **Environment Variable**: `ENABLE_NEXT_LOGIN` controls redirection of `/login` to `/next/login`
+- **Config Integration**: Added `enableNextLogin` property to `config/env.js` with proper environment variable loading
+- **Express Middleware**: Implemented conditional route redirection in `server/index.js`
+- **Extensible Design**: Pattern established for easy addition of more routes (e.g., `/contact`, `/projects`)
+
+**Technical Implementation:**
+- **Server Changes**: Added route swapping logic in `server/index.js` after API routes but before fallback handler
+- **Config Changes**: Extended `config/env.js` to include `enableNextLogin` property with default value `'false'`
+- **Environment Loading**: Proper integration with existing environment variable loading system
+- **Logging**: Added console logging when Next.js login route is enabled
+
+**Route Behavior:**
+- **When `ENABLE_NEXT_LOGIN=true`**: `/login` redirects to `/next/login` with 301 status
+- **When `ENABLE_NEXT_LOGIN=false` or unset**: `/login` falls through to CRA as before
+- **Other Routes**: Unaffected, continue to serve CRA as fallback
+- **API Routes**: Completely unaffected by route swapping logic
+
+**Migration Strategy Support:**
+- **Zero Downtime**: Routes can be switched on/off without server restart
+- **Environment Control**: Different environments can have different route configurations
+- **Gradual Migration**: Supports the iterative migration approach outlined in migration plan
+- **Testing Support**: Allows testing Next.js routes in production without affecting main routes
+
+**Code Quality:**
+- **Clear Logic**: Simple conditional check with explicit environment variable comparison
+- **Extensible Pattern**: Easy to add more routes following the same pattern
+- **Proper Placement**: Route swapping logic placed after API routes but before CRA fallback
+- **Error Handling**: Graceful fallback when environment variable is not set
+
+**Testing Validation:**
+- **Config Loading**: Verified `enableNextLogin` loads correctly from environment variables
+- **Syntax Validation**: Confirmed both server and config files have valid syntax
+- **Default Behavior**: Validated default value of `'false'` when environment variable is not set
+- **Environment Override**: Confirmed environment variable properly overrides default value
+
+**Future Extensibility:**
+- **Additional Routes**: Pattern ready for `/contact`, `/projects`, `/about`, etc.
+- **Environment-Specific**: Can have different route configurations per environment
+- **Feature Flags**: Foundation for more sophisticated feature flag system
+- **Monitoring**: Console logging provides visibility into route switching
+
+**Related Documentation:**
+- **Migration Plan**: Supports the route-by-route migration strategy in `docs/09_nextjs_migration_plan.md`
+- **Module Development Flow**: Followed the server development workflow from `docs/08_module_development_flow.md`
+- **Environment Configuration**: Integrates with existing environment management system
+
 ## Update033 - ADR 0014 TypeScript/CRA/Mantine Compatibility Implementation - 2025-07-08 - Uncommitted
 
 ### 🔧 ADR 0014 Implementation - TypeScript/CRA/Mantine Compatibility Resolution

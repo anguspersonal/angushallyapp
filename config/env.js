@@ -157,6 +157,9 @@ function loadEnv() {
         nodeEnv: NODE_ENV,
         ports: servicePorts, // New structured ports configuration
         
+        // Next.js Migration
+        enableNextLogin: process.env.ENABLE_NEXT_LOGIN || 'false',
+        
         // Database
         database: {
             // Main production URL (e.g., from Heroku)

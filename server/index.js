@@ -201,6 +201,15 @@ app.use('/api/instagram-intelligence', instagramIntelligenceRoute);
 
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
+// Route swapping logic for Next.js migration
+// Check if Next.js login is enabled via environment variable
+if (config.enableNextLogin === 'true') {
+  console.log('Next.js login route enabled - redirecting /login to /next/login');
+  app.get('/login', function (req, res) {
+    res.redirect(301, '/next/login');
+  });
+}
+
 // SEO redirects for migrated routes
 app.get('/about', function (req, res) {
   res.redirect(301, '/next/about/');
