@@ -1,0 +1,15 @@
+docs/01_guidance.md
+docs/03_updates.md
+docs/08_module_development_flow.md
+docs/09_nextjs_migration_plan.md
+next-ui/src/app/about/page.tsx
+next-ui/src/app/globals.css
+next-ui/src/app/layout.tsx
+next-ui/src/app/page.tsx
+next-ui/src/components/Header.tsx
+next-ui/tsconfig.json
+react-ui/src/App.jsx
+react-ui/src/components/Header.jsx
+react-ui/src/pages/Home.tsx
+react-ui/tsconfig.json
+server/package.json
