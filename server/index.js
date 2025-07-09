@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const config = require('../config/env.js');
 const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
@@ -83,8 +84,14 @@ if (isDev) {
     logLevel: 'debug',
   }));
 } else {
-  // In production, serve static files
-  app.use('/next', express.static(path.resolve(__dirname, '../next-ui/out')));
+  // In production, serve static files (only if Next.js build exists)
+  const nextUiPath = path.resolve(__dirname, '../next-ui/out');
+  if (fs.existsSync(nextUiPath)) {
+    app.use('/next', express.static(nextUiPath));
+  } else {
+    // Next.js not built for production, skip the route
+    console.log('Next.js build not found, skipping /next routes');
+  }
 }
 
 // Priority serve any static files with cache-busting headers for development

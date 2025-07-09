@@ -6,6 +6,16 @@ This file logs all **completed migration work** for the transition from Create R
 
 ---
 
+## ✅ 2025-07-09 – Build Issues Fixed
+
+- Fixed Next.js build compilation errors:
+  - Replaced `<img>` with Next.js `<Image>` component in Header.tsx
+  - Removed unused `Anchor` import in BlogSnippet.tsx
+- Verified successful production build with no warnings/errors
+- All pages compile successfully: Home, About, Blog, 404
+
+---
+
 ## ✅ 2025-07-07 – Home Page Migration
 
 - Migrated `/` route to Next.js App Router

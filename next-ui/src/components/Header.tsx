@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Menu, Button, Container, Group, Burger } from '@mantine/core';
 import {
@@ -103,9 +104,11 @@ function Header() {
         <Group justify="space-between" h="100%">
           {/* Logo */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
-            <img 
+            <Image 
               src="/AH-logo-no-background.ico" 
               alt="AH Logo" 
+              width={60}
+              height={60}
               style={{
                 height: 'clamp(40px, 5vw, 60px)',
                 width: 'auto',

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, Image, Text, Title, Box, Anchor } from '@mantine/core';
+import { Card, Image, Text, Title, Box } from '@mantine/core';
 import type { BlogPostSummary } from '../../types/blog';
 
 interface BlogSnippetProps {
