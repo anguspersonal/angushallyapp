@@ -3,6 +3,7 @@ import '@mantine/core/styles.css';
 import './globals.css';
 import type { Metadata } from 'next';
 import ClientLayout from '@/components/ClientLayout';
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 
 export const metadata: Metadata = {
   title: 'Angus Hally - Strategy Consultant & Developer',
@@ -16,8 +17,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body>
         <ClientLayout>{children}</ClientLayout>
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );

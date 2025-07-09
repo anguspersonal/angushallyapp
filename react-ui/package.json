@@ -61,7 +61,6 @@
   "scripts": {
     "start": "node ../scripts/check-port.js 3000 && react-scripts start --openssl-legacy-provider",
     "build": "NODE_OPTIONS=--max_old_space_size=4096 react-scripts build",
-    "postbuild": "cp ./public/sw/service-worker.js ./public/service-worker.js",
     "eject": "react-scripts eject",
     "type-check": "tsc --noEmit"
   },

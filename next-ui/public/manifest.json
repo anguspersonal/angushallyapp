@@ -1,21 +1,21 @@
 {
   "short_name": "AH App",
-  "name": "Angus Hally App",
+  "name": "Angus Hally App (Next.js)",
   "icons": [
     {
-      "src": "./AH-logo-no-background.ico",
+      "src": "/AH-logo-no-background.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "./AH-logo-no-background-4.jpg",
+      "src": "/AH-logo-no-background-4.jpg",
       "sizes": "192x192",
       "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "./AH-logo-no-background-9.jpg",
-      "sizes": "512x512", 
+      "src": "/AH-logo-no-background-9.jpg",
+      "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
     }

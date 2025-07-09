@@ -41,6 +41,7 @@
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
@@ -53,8 +54,7 @@
     "nodemailer": "^6.10.0",
     "open-graph-scraper": "^6.10.0",
     "openai": "^4.100.0",
-    "pg": "^8.15.6",
-    "cross-env": "^7.0.3"
+    "pg": "^8.15.6"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.17.0",
