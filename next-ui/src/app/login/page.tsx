@@ -41,8 +41,8 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      // Use Next.js API route for login
-      const response = await api.post<{ user: User }>('/auth/login', {
+      // Use Next.js API route for Google login
+      const response = await api.post<{ user: User }>('/auth/google', {
         credential: credential
       });
       const { user } = response;

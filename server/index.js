@@ -205,13 +205,20 @@ app.use('/api/instagram-intelligence', instagramIntelligenceRoute);
 
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
-// Route swapping logic for Next.js migration
-// Login route now handled directly by Next.js at /login
-
 // SEO redirects for migrated routes
 app.get('/about', function (req, res) {
   res.redirect(301, '/next/about/');
 });
+
+// Proxy /login to Next.js server in all environments
+// NOTE: Next.js server must be running in production (e.g., 'next start' in next-ui)
+const { createProxyMiddleware } = require('http-proxy-middleware');
+app.use('/login', createProxyMiddleware({
+  target: 'http://localhost:3001',
+  changeOrigin: true,
+  pathRewrite: { '^/login': '/login' },
+  logLevel: 'debug',
+}));
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {

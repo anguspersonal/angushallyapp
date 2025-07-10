@@ -10,22 +10,25 @@ import Projects from './pages/Projects';
 import Contact from './pages/Contact';
 import Collab from './pages/Collab';
 import { AuthProvider } from './contexts/AuthContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import '@mantine/core/styles.css';
 
 function App() {
   return (
     <MantineProvider theme={theme}>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/collab" element={<Collab />} />
-        </Routes>
-      </AuthProvider>
+      <ErrorBoundary>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/collab" element={<Collab />} />
+          </Routes>
+        </AuthProvider>
+      </ErrorBoundary>
     </MantineProvider>
   );
 }

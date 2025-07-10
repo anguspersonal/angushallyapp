@@ -72,20 +72,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
             token: storedUser.token
           });
         } catch (error: any) {
+          console.error('Auth verification error:', error.message || error);
           if (error.status === 401) {
             // Clear stored data if verification fails
             await clearAuthData();
             setUser(null);
           } else {
-            throw error;
+            // For other errors (network, parsing, etc.), clear auth and set user to null
+            console.error('Unexpected auth verification error:', error);
+            await clearAuthData();
+            setUser(null);
           }
         }
       } else {
         setUser(null);
       }
-    } catch (error) {
-      console.log('Auth check failed:', error);
-      await handleAuthError(error);
+    } catch (error: any) {
+      console.error('checkAuth error:', error.message || error);
+      await clearAuthData();
+      setUser(null);
     } finally {
       setIsLoading(false);
     }

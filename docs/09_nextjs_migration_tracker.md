@@ -8,8 +8,8 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 
 ## 🔄 In Progress
 
-- [ ] `/contact` – Form page migration, reCAPTCHA integration
-- [ ] Footer Conditional Logic – Replace `hideFooterRoutes` check with layout prop
+- [x] `/contact` – Form page migration, reCAPTCHA integration ✅
+- [x] Footer Conditional Logic – Replace `hideFooterRoutes` check with layout prop ✅
 
 - [x] Copy CRA component to `next-ui/src/app/login/page.tsx`
 - [x] Convert to TSX + use App Router
@@ -50,6 +50,22 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 ---
 
 ## ✅ Completed
+
+### `/contact` Migration ✅
+- [x] Copy CRA component to `next-ui/src/app/contact/page.tsx`
+- [x] Convert to TSX + use App Router
+- [x] Test locally at `/next/contact`
+- [x] Install required dependencies (@mantine/form, react-google-recaptcha)
+- [x] Fix TypeScript color issues for Mantine v7
+- [x] Update form validation and reCAPTCHA integration
+- [x] Verify page loads correctly via Express proxy
+
+### Footer Layout Integration ✅
+- [x] Create Footer component for Next.js app
+- [x] Migrate from CRA Footer with TypeScript and Mantine v7 colors
+- [x] Add Footer to ClientLayout using AppShell.Footer
+- [x] Fix color compatibility issues (dimmed → secondary, gray → secondary)
+- [x] Verify footer appears on all pages via Express proxy
 
 ### `/login` Migration ✅
 - [x] Copy CRA component to `next-ui/src/app/login/page.tsx`
