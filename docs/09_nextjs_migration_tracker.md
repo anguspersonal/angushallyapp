@@ -15,6 +15,18 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 
 ---
 
+### `/login` Migration
+
+- [x] Copy CRA component to `next-ui/src/app/login/page.tsx`
+- [x] Convert to TSX + use App Router
+- [x] Test locally at `/next/login`
+- [ ] (Optional) Test in production at `/next/login`
+- [ ] Redirect `/login` to Next.js version in Express
+- [ ] Remove CRA login page
+- [ ] Move page from `/next/login` → `/login`
+
+---
+
 ## ⏭️ Next Priority
 
 - [ ] `/projects` – Static overview page of all projects

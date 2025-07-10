@@ -59,7 +59,7 @@ Where:
 
 **Note**: This format replaces all previous patterns. Updates MUST be renumbered whenever chronological order is affected.
 
-## Update034 - Next.js Route Swapping Implementation - 2025-01-27 - Uncommitted
+## Update034 - Next.js Route Swapping Implementation - 2025-07-09 - Committed
 
 ### 🚀 Next.js Migration - Route Swapping Logic Implementation
 
@@ -115,7 +115,7 @@ Where:
 - **Module Development Flow**: Followed the server development workflow from `docs/08_module_development_flow.md`
 - **Environment Configuration**: Integrates with existing environment management system
 
-## Update033 - ADR 0014 TypeScript/CRA/Mantine Compatibility Implementation - 2025-07-08 - Uncommitted
+## Update033 - ADR 0014 TypeScript/CRA/Mantine Compatibility Implementation - 2025-07-08 - Committed
 
 ### 🔧 ADR 0014 Implementation - TypeScript/CRA/Mantine Compatibility Resolution
 

@@ -6,6 +6,19 @@ This file logs all **completed migration work** for the transition from Create R
 
 ---
 
+## ✅ 2025-07-09 – Route Swapping Logic Implemented
+
+- Added environment-driven route swapping logic to Express server
+- `/login` now redirects to `/next/login` if `ENABLE_NEXT_LOGIN` is set to `'true'`
+- `/about` is redirected to `/next/about/` (Next.js)
+- All other routes continue to fall back to CRA unless explicitly redirected
+- Pattern is extensible for future routes (e.g., `/contact`, `/projects`)
+- Updated `config/env.js` to expose `enableNextLogin` property
+- Supports zero-downtime, environment-controlled migration of individual routes
+- Documented in `docs/03_updates.md` and migration plan
+
+---
+
 ## ✅ 2025-07-09 – Build Issues Fixed
 
 - Fixed Next.js build compilation errors:
