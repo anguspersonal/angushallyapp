@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { api } from '../shared/apiClient';
 import { clearAuthData, getStoredUser } from '../shared/authUtils';
 import type { User, AuthContextType, LoginCredentials } from '../shared/types';
@@ -25,9 +26,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter();
 
   const login = async (credentials: LoginCredentials): Promise<void> => {
-    // TODO: Implement login functionality
-    console.log('Login called with:', credentials);
-    throw new Error('Login function not yet implemented');
+    // This function is for traditional email/password login
+    // Google OAuth is handled directly in the Login component
+    console.log('Traditional login called with:', credentials);
+    throw new Error('Traditional login not implemented - use Google OAuth');
   };
 
   const logout = async (redirectTo: string = '/login'): Promise<void> => {
@@ -131,9 +133,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}>
+      <AuthContext.Provider value={value}>
+        {children}
+      </AuthContext.Provider>
+    </GoogleOAuthProvider>
   );
 }
 
