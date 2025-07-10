@@ -72,13 +72,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
         ...userData,
         name: `${userData.firstName} ${userData.lastName}`.trim()
       });
-    } catch (error: unknown) {
-      if (error instanceof api.ApiError && error.status === 401) {
-        // User is not authenticated, clear state
-        setUser(null);
+    } catch (err: unknown) {
+      console.error('checkAuth error:', err instanceof Error ? err.message : String(err));
+      
+      // Handle different types of errors
+      if (err instanceof api.ApiError) {
+        if (err.status === 401) {
+          // User is not authenticated, clear state
+          setUser(null);
+        } else {
+          // For other API errors, log and clear state
+          console.error('Auth API error:', err);
+          setUser(null);
+        }
       } else {
-        console.log('Auth check failed:', error);
-        await handleAuthError(error);
+        // For network errors, parsing errors, or other unexpected errors
+        console.error('Unexpected auth error:', err);
+        setUser(null);
       }
     } finally {
       setIsLoading(false);
@@ -88,14 +98,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Check auth status on mount
   useEffect(() => {
     checkAuth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Set up periodic token check (every 5 minutes)
   useEffect(() => {
     const interval = setInterval(checkAuth, 5 * 60 * 1000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const value: AuthContextType = {

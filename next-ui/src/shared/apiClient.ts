@@ -1,4 +1,3 @@
-import { getStoredToken, clearAuthData } from './authUtils';
 import {
   ApiClientOptions,
   ApiClientInterface,
