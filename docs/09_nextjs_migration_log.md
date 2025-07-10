@@ -1,3 +1,45 @@
+## ✅ 2025-01-27 – Auth Flow Migration Complete
+
+- **Backend Updates:**
+  - Updated `server/routes/authRoute.js` to set JWT as secure HttpOnly cookie
+  - Added `cookie-parser` middleware to Express server
+  - Updated `server/middleware/auth.js` to read from cookies and headers
+  - Added `/auth/logout` route to clear cookies
+  - Maintained backward compatibility with Authorization headers
+
+- **Next.js API Routes:**
+  - Created `next-ui/src/app/api/auth/login/route.ts` for Google OAuth
+  - Created `next-ui/src/app/api/auth/logout/route.ts` for logout
+  - Routes forward requests to backend and handle cookie management
+
+- **Frontend Updates:**
+  - Updated `next-ui/src/providers/AuthProvider.tsx` to use cookie-based auth
+  - Removed token storage from localStorage/sessionStorage
+  - Updated `next-ui/src/shared/apiClient.ts` to use credentials
+  - Updated `next-ui/src/app/login/page.tsx` to use new API routes
+  - Created `next-ui/middleware.ts` for route protection
+
+- **Type Safety:**
+  - Updated `User` interface to make token optional
+  - Added `AuthVerifyResponse` interface to shared types
+  - Fixed TypeScript errors throughout the auth flow
+
+- **Security:**
+  - JWT tokens now stored in HttpOnly cookies (XSS protection)
+  - Secure flag enabled in production
+  - SameSite=Strict for CSRF protection
+  - 7-day token expiration
+
+## ✅ 2025-07-09 – Shared Layout Migration Complete
+
+- Created `next-ui/src/app/layout.tsx` with Mantine and global styles
+- Ported `Header` and `Footer` components to Next.js
+- Wrapped all pages in `ClientLayout` for consistent layout
+- Registered service worker in layout
+- Confirmed layout applies to all routes
+
+---
+
 # 09_migration_log.md
 
 # 📜 Next.js Migration Log

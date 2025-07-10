@@ -46,14 +46,24 @@ async function verifyGoogleToken(token) {
 function authMiddleware(options = {}) {
     return async (req, res, next) => {
         try {
+            let token = null;
+            
+            // First try to get token from Authorization header (for backward compatibility)
             const authHeader = req.headers.authorization;
-            if (!authHeader) {
-                return res.status(401).json({ error: 'No token provided' });
+            if (authHeader) {
+                const [bearer, headerToken] = authHeader.split(' ');
+                if (bearer === 'Bearer' && headerToken) {
+                    token = headerToken;
+                }
             }
-
-            const [bearer, token] = authHeader.split(' ');
-            if (bearer !== 'Bearer' || !token) {
-                return res.status(401).json({ error: 'Invalid token format' });
+            
+            // If no token in header, try to get from cookie
+            if (!token) {
+                token = req.cookies?.jwt_token;
+            }
+            
+            if (!token) {
+                return res.status(401).json({ error: 'No token provided' });
             }
 
             // Special handling for test mode

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useAuth } from '@/providers/AuthProvider';
 import { api } from '@/shared/apiClient';
-import { storeAuthData } from '@/shared/authUtils';
 import { CredentialResponse } from '@react-oauth/google';
 import type { User } from '@/shared/types';
 import {
@@ -42,14 +41,20 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api.post<{ token: string; user: User }>('/auth/google', {
-        token: credential
+      // Use Next.js API route for login
+      const response = await api.post<{ user: User }>('/auth/login', {
+        credential: credential
       });
-      const { token, user } = response;
-      if (!token || !user) throw new Error('Invalid response from server');
-      await storeAuthData(token, user, rememberMe);
+      const { user } = response;
+      if (!user) throw new Error('Invalid response from server');
+      
+      // Set user in context (JWT is handled by cookies)
       setUser(user);
-      router.push('/');
+      
+      // Redirect to home or the intended destination
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirectTo = searchParams.get('redirect') || '/';
+      router.push(redirectTo);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to authenticate. Please try again.';
       setError(message);
@@ -69,8 +74,9 @@ export default function LoginPage() {
   return (
     <Container size="sm" py="xl">
       <Paper shadow="md" p="xl" radius="md" withBorder>
-        <Title order={1} ta="center" mb="xl">Login</Title>
-        <Text ta="center" mb="xl">Sign in with your Google account to access member features</Text>
+        <Title order={1} ta="center" mb="xl">Welcome Back!</Title>
+        <Text ta="center" mb="md" size="lg">Please login to access your account</Text>
+        <Text ta="center" mb="xl" c="secondary">Sign in with your Google account to access member features</Text>
         <Stack align="center" gap="md">
           {error && (
             <Alert color="dark" title="Error" onClose={() => setError(null)} withCloseButton>

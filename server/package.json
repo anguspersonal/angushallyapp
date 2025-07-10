@@ -10,6 +10,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "openai": "^4.100.0"
   },
   "devDependencies": {
@@ -18,10 +19,17 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.js"],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
     "collectCoverage": true,
     "coverageDirectory": "coverage",
-    "coverageReporters": ["text", "lcov"],
-    "setupFiles": ["<rootDir>/tests/setup.js"]
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
+    "setupFiles": [
+      "<rootDir>/tests/setup.js"
+    ]
   }
 }

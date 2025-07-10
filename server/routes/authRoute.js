@@ -137,8 +137,16 @@ router.post('/login', validateLogin, async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    // Set JWT as secure HttpOnly cookie
+    res.cookie('jwt_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/'
+    });
+
     res.json({
-      token,
       user: {
         id: user.id,
         email: user.email,
@@ -306,9 +314,17 @@ router.post('/google', async (req, res) => {
         { expiresIn: '7d' }
       );
 
+      // Set JWT as secure HttpOnly cookie
+      res.cookie('jwt_token', jwtToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        path: '/'
+      });
+
       // Prepare response
       const response = {
-        token: jwtToken,
         user: {
           id: user.id,
           email: user.email,
@@ -350,6 +366,26 @@ router.post('/google', async (req, res) => {
         details: error.message
       });
     }
+  }
+});
+
+/**
+ * Logout - clear authentication cookie
+ */
+router.post('/logout', async (req, res) => {
+  try {
+    // Clear the JWT cookie
+    res.clearCookie('jwt_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      path: '/'
+    });
+    
+    res.json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

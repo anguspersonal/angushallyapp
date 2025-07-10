@@ -9,21 +9,15 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 ## 🔄 In Progress
 
 - [ ] `/contact` – Form page migration, reCAPTCHA integration
-- [ ] Shared Layout (`layout.tsx`) – Port `Header`, `Footer`, and wrappers
-- [ ] Auth Flow – Login page, Google OAuth redirect, SSR token sync
 - [ ] Footer Conditional Logic – Replace `hideFooterRoutes` check with layout prop
-
----
-
-### `/login` Migration
 
 - [x] Copy CRA component to `next-ui/src/app/login/page.tsx`
 - [x] Convert to TSX + use App Router
 - [x] Test locally at `/next/login`
-- [ ] (Optional) Test in production at `/next/login`
-- [ ] Redirect `/login` to Next.js version in Express
-- [ ] Remove CRA login page
-- [ ] Move page from `/next/login` → `/login`
+- [x] (Optional) Test in production at `/next/login`
+- [x] Redirect `/login` to Next.js version in Express
+- [x] Remove CRA login page
+- [x] Move page from `/next/login` → `/login`
 
 ---
 
@@ -56,6 +50,32 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 ---
 
 ## ✅ Completed
+
+### `/login` Migration ✅
+- [x] Copy CRA component to `next-ui/src/app/login/page.tsx`
+- [x] Convert to TSX + use App Router
+- [x] Test locally at `/next/login`
+- [x] (Optional) Test in production at `/next/login`
+- [x] Redirect `/login` to Next.js version in Express
+- [x] Remove CRA login page
+- [x] Move page from `/next/login` → `/login`
+
+### `layout.tsx` Shared Layout Migration ✅
+- [x] Create `next-ui/src/app/layout.tsx` with Mantine and global styles
+- [x] Port `Header` and `Footer` components to Next.js
+- [x] Wrap all pages in `ClientLayout`
+- [x] Register service worker in layout
+- [x] Confirm layout applies to all routes
+
+### Auth Flow Migration ✅
+- [x] Update backend auth routes to use secure HttpOnly cookies
+- [x] Add cookie-parser middleware to Express server
+- [x] Update auth middleware to read from cookies and headers
+- [x] Create Next.js API routes for login/logout
+- [x] Update Next.js AuthProvider to use cookie-based auth
+- [x] Create Next.js middleware for route protection
+- [x] Update API client to use credentials and remove token handling
+- [x] Update login page to use new cookie-based flow
 
 See [`09_migration_log.md`](09_migration_log.md) for full changelog.
 

@@ -49,3 +49,12 @@ export interface PaginationInfo {
 export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   pagination?: PaginationInfo;
 }
+
+// Auth Response Types
+export interface AuthVerifyResponse {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  roles: string[];
+}

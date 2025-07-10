@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const cookieParser = require('cookie-parser');
 const config = require('../config/env.js');
 const db = require('./db'); // Import the database module
 const rateLimit = require("express-rate-limit");
@@ -65,6 +66,9 @@ app.use((req, res, next) => {
 
 // Use body-parsing middleware
 app.use(express.json());
+
+// Use cookie-parser middleware
+app.use(cookieParser());
 
 // Priority serve Next.js static files at /next route
 if (isDev) {
@@ -202,13 +206,7 @@ app.use('/api/instagram-intelligence', instagramIntelligenceRoute);
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
 // Route swapping logic for Next.js migration
-// Check if Next.js login is enabled via environment variable
-if (config.enableNextLogin === 'true') {
-  console.log('Next.js login route enabled - redirecting /login to /next/login');
-  app.get('/login', function (req, res) {
-    res.redirect(301, '/next/login');
-  });
-}
+// Login route now handled directly by Next.js at /login
 
 // SEO redirects for migrated routes
 app.get('/about', function (req, res) {

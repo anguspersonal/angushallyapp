@@ -4,20 +4,13 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { api } from '../shared/apiClient';
-import { clearAuthData, getStoredUser } from '../shared/authUtils';
 import type { User, AuthContextType, LoginCredentials } from '../shared/types';
+import type { AuthVerifyResponse } from '../shared/types/api';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
   children: React.ReactNode;
-}
-
-interface AuthVerifyResponse {
-  id: string;
-  email: string;
-  name: string;
-  roles: string[];
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -33,7 +26,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = async (redirectTo: string = '/login'): Promise<void> => {
-    await clearAuthData();
+    try {
+      // Call Next.js API route for logout
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
     setUser(null);
     if (redirectTo) {
       router.push(redirectTo);
@@ -48,8 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
             await logout('/login');
           } else {
-            // If we're already on the login page, just clear the auth data
-            await clearAuthData();
+            // If we're already on the login page, just clear the user state
             setUser(null);
           }
           break;
@@ -68,36 +65,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const checkAuth = async (): Promise<void> => {
     try {
-      // First try to get user from storage
-      const storedUser = await getStoredUser();
-      if (storedUser) {
-        setUser(storedUser);
-      }
-
-      // Only verify with backend if we have a stored user
-      if (storedUser) {
-        try {
-          const userData = await api.get<AuthVerifyResponse>('/auth/verify');
-          // Merge the verified data with the token from storage
-          setUser({
-            ...userData,
-            token: storedUser.token
-          });
-        } catch (error: unknown) {
-          if (error instanceof api.ApiError && error.status === 401) {
-            // Clear stored data if verification fails
-            await clearAuthData();
-            setUser(null);
-          } else {
-            throw error;
-          }
-        }
-      } else {
+      // With cookie-based auth, we always verify with the backend
+      const userData = await api.get<AuthVerifyResponse>('/auth/verify');
+      // Transform backend response to match User interface
+      setUser({
+        ...userData,
+        name: `${userData.firstName} ${userData.lastName}`.trim()
+      });
+    } catch (error: unknown) {
+      if (error instanceof api.ApiError && error.status === 401) {
+        // User is not authenticated, clear state
         setUser(null);
+      } else {
+        console.log('Auth check failed:', error);
+        await handleAuthError(error);
       }
-    } catch (error) {
-      console.log('Auth check failed:', error);
-      await handleAuthError(error);
     } finally {
       setIsLoading(false);
     }

@@ -7,17 +7,18 @@ import {
 
 // Determine API base URL (works in both CRA & Next environments)
 const isDevelopment = process.env.NODE_ENV === 'development';
+const isNextJs = typeof window !== 'undefined' && window.location.pathname.includes('/next');
+
+// In Next.js, use relative URLs for API routes
+// In CRA, use the backend URL
 const rawEnvUrl =
   (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.REACT_APP_API_BASE_URL)?.replace(/\/$/, '');
 
-export const API_BASE = rawEnvUrl || (isDevelopment ? 'http://localhost:5000/api' : '/api');
+export const API_BASE = isNextJs ? '/api' : (rawEnvUrl || (isDevelopment ? 'http://localhost:5000/api' : '/api'));
 
 async function apiClient<T = unknown>(endpoint: string, options: ApiClientOptions = {}): Promise<T> {
-  const token = await getStoredToken();
-
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
@@ -26,7 +27,7 @@ async function apiClient<T = unknown>(endpoint: string, options: ApiClientOption
   const config: RequestInit = {
     ...rest,
     headers,
-    credentials: 'include',
+    credentials: 'include', // Always include credentials for cookie-based auth
     ...(body !== undefined ? { body: body as BodyInit } : {}),
   };
 
@@ -48,9 +49,8 @@ async function apiClient<T = unknown>(endpoint: string, options: ApiClientOption
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
-        await clearAuthData();
-      }
+      // Don't clear auth data on 401 since we're using cookies now
+      // The backend will handle cookie clearing
       throw new ApiError(
         // Attempt to extract error field from payload
         (typeof data === 'object' && data !== null && 'error' in data
@@ -102,8 +102,9 @@ export const api: ApiClientInterface = {
   delete: <T = unknown>(endpoint: string, options = {}) => apiClient<T>(endpoint, { ...options, method: 'DELETE' }),
 
   isAuthenticated: async (): Promise<boolean> => {
-    const token = await getStoredToken();
-    return Boolean(token);
+    // With cookie-based auth, we can't check authentication status client-side
+    // The backend will handle this via the /auth/verify endpoint
+    return false; // This will be determined by the backend
   },
 
   ApiError,

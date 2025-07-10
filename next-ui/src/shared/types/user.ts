@@ -5,7 +5,7 @@ export interface User {
   email: string;
   name: string;
   roles: string[];
-  token: string;
+  token?: string; // Optional since we're using cookies now
   picture?: string;
   given_name?: string;
   family_name?: string;
