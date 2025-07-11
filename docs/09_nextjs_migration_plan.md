@@ -45,6 +45,7 @@ Each route follows a consistent, zero-downtime migration path:
 5. **Swap Routes**:
    - If stable, redirect canonical path (e.g. `/login`) to Next.js version
    - Remove CRA route once Next.js is confirmed
+   - Delete CRA files
 6. **Finalize** by moving route to `/[route]` in Next.js
 7. **Repeat** for next component or route
 
@@ -63,6 +64,7 @@ This process ensures full SSR, styling, and functionality validation without ris
 - [ ] (Optional) Test in production at `/next/[route]`
 - [ ] Redirect `/[route]` to Next.js version
 - [ ] Remove CRA route
+- [ ] Delete CRA file
 - [ ] Move page from `/next/[route]` → `/[route]`
 ````
 
@@ -76,11 +78,13 @@ Use this checklist format in `09_migration_tracker.md` to track individual route
 | ------------------------ | -------------- | --------------------------------------------- |
 | 1. Foundation            | ✅ Complete     | Next.js setup, Mantine v7, TS config          |
 | 2. Shared Infrastructure | ✅ Complete     | AuthProvider, API client, shared types        |
-| 3. Core Pages            | 🔄 In Progress | Home, About, Blog, Contact                    |
-| 4. Layout + Auth         | ⏳ Pending      | Shared layout, login/logout, route protection |
-| 5. Interactive Projects  | ⏳ Pending      | Habit, Strava, Eat Safe UK                    |
+| 3. Core Pages            | ✅ Complete     | Home, About, Blog, Contact, CV, Collab        |
+| 4. Layout + Auth         | ✅ Complete     | Shared layout, login/logout, route protection |
+| 5. Interactive Projects  | ✅ Complete     | Habit, Strava, Eat Safe UK, Bookmarks, AI tools |
 | 6. PWA Migration         | ⏳ Pending      | Service worker, offline caching (`next-pwa`)  |
 | 7. Cleanup & Removal     | ⏳ Pending      | Remove CRA, optimize build and deploy flow    |
+
+**Current Status**: ~90% of major routes migrated to Next.js with stable development environment
 
 ---
 

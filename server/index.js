@@ -203,6 +203,11 @@ app.use('/api/f5', f5CertaintyRoute);
 const instagramIntelligenceRoute = require('./routes/instagramIntelligenceRoute');
 app.use('/api/instagram-intelligence', instagramIntelligenceRoute);
 
+// ✅ Temporary health check route for Next.js hydration
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'backend-ok', time: new Date().toISOString() });
+});
+
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
 // SEO redirects for migrated routes
