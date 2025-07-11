@@ -1,6 +1,7 @@
 import * as React from 'react';
 import '@mantine/core/styles.css';
-import './globals.css';
+import '../index.css';
+import '../general.css';
 import type { Metadata } from 'next';
 import ClientLayout from '@/components/ClientLayout';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';

@@ -44,7 +44,7 @@ export default function About() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <Title order={2} mb="lg">Hi, I&apos;m Angus</Title>
+                <Title order={2} mb="lg">Hi, I'm Angus</Title>
 
                 <Box mb="lg" style={{ maxWidth: 250, margin: '0 auto' }}>
                     <Image
@@ -58,7 +58,7 @@ export default function About() {
                 <br />
 
                 <Text mb="md">
-                    I&apos;m a strategy consultant and amateur developer with a passion for the intersection of
+                    I'm a strategy consultant and amateur developer with a passion for the intersection of
                     <Text span fw={700}> business strategy,</Text> software, and data.
                 </Text>
 
@@ -69,13 +69,13 @@ export default function About() {
                     <Anchor href="https://www.royalnavy.mod.uk/" target="_blank" rel="noopener noreferrer"> Royal Navy</Anchor>,
                     <Anchor href="https://www.sussex-pcc.gov.uk/pcc-priorities/partnership-working/video-enabled-justice-vej/" target="_blank" rel="noopener noreferrer"> Police</Anchor>, and
                     <Anchor href="https://www.judiciary.uk/" target="_blank" rel="noopener noreferrer"> Courts and Tribunals Judiciary (CTJ)</Anchor>.
-                    Later, I moved into Accenture&apos;s <Text span fw={700}>strategy division</Text>, working on
+                    Later, I moved into Accenture's <Text span fw={700}>strategy division</Text>, working on
                     <Text span fw={700}> pricing, GDPR, and data-driven insights</Text> in large telecom and insurance companies.
                 </Text>
 
                 <Text mb="md">
                     Before all that, I was a <Text span fw={700}>mathematics teacher</Text> through the
-                    <Anchor href="https://www.teachfirst.org.uk/" target="_blank" rel="noopener noreferrer"> TeachFirst program</Anchor>—to this day, the hardest thing I&apos;ve done.
+                    <Anchor href="https://www.teachfirst.org.uk/" target="_blank" rel="noopener noreferrer"> TeachFirst program</Anchor>—to this day, the hardest thing I've done.
                 </Text>
 
                 <Text mb="md">

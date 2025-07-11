@@ -43,7 +43,7 @@ export async function clearAuthData(): Promise<void> {
   sessionStorage.removeItem('user');
 
   // Clear cookies
-  document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  document.cookie = 'jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
   document.cookie = 'Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
 
@@ -55,7 +55,7 @@ export async function getStoredToken(): Promise<string | null> {
   try {
     // Prefer cookie token
     const cookies = document.cookie.split(';');
-    const authCookie = cookies.find((c) => c.trim().startsWith('auth_token='));
+    const authCookie = cookies.find((c) => c.trim().startsWith('jwt_token='));
     if (authCookie) return authCookie.split('=')[1].trim();
 
     // Check localStorage token (Remember Me)

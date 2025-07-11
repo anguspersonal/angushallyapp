@@ -73,12 +73,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         name: `${userData.firstName} ${userData.lastName}`.trim()
       });
     } catch (err: unknown) {
-      console.error('checkAuth error:', err instanceof Error ? err.message : String(err));
-      
       // Handle different types of errors
       if (err instanceof api.ApiError) {
         if (err.status === 401) {
-          // User is not authenticated, clear state
+          // User is not authenticated - this is normal for unauthenticated users
+          // Don't log this as an error since it's expected behavior
           setUser(null);
         } else {
           // For other API errors, log and clear state

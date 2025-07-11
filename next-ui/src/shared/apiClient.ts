@@ -21,6 +21,11 @@ async function apiClient<T = unknown>(endpoint: string, options: ApiClientOption
     ...options.headers,
   };
 
+  // Add development bypass token for testing
+  if (process.env.NODE_ENV === 'development') {
+    headers['Authorization'] = 'Bearer dev-bypass';
+  }
+
   const { body, ...rest } = options;
 
   const config: RequestInit = {

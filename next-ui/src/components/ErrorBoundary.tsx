@@ -40,7 +40,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
           fontFamily: 'system-ui, -apple-system, sans-serif'
         }}>
           <h2>Something went wrong</h2>
-          <p>We&apos;re sorry, but something unexpected happened. Please try refreshing the page.</p>
+          <p>We're sorry, but something unexpected happened. Please try refreshing the page.</p>
           <button 
             onClick={() => window.location.reload()}
             style={{

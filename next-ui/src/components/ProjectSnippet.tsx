@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import styles from './ProjectSnippet.module.css';
+import { Paper, Text, Title, Badge, Group, Box } from '@mantine/core';
 
 interface Project {
   name: string;
@@ -18,19 +18,91 @@ interface ProjectSnippetProps {
 function ProjectSnippet({ project }: ProjectSnippetProps) {
   const { name, desc, route, tags = [] } = project;
   
+  const getTagColor = (tag: string) => {
+    const tagColors: Record<string, string> = {
+      'AI': 'green',
+      'Data': 'blue',
+      'Map': 'indigo',
+      'Food': 'orange',
+      'Game': 'teal',
+      'Education': 'dark',
+      'NLP': 'cyan',
+      'Fitness': 'lime',
+      'Visualization': 'emerald',
+      'Productivity': 'gray',
+      'Habit': 'green',
+      'Writing': 'blue',
+      'Tech': 'dark',
+      'Learning': 'gray',
+      'Bookmarks': 'blue',
+      'API': 'indigo'
+    };
+    return tagColors[tag] || 'gray';
+  };
+  
   return (
-    <Link href={route} className={styles.projectLink}>
-      <div className={styles.gridItem}>
-        <h3 className={styles.truncateTwoLines}>{name}</h3>
-        <p className={styles.truncateTwoLines}>{desc}</p>
-        <div className={styles.tagContainer}>
-          {tags.map((tag) => (
-            <span key={tag} className={`${styles.tag} ${styles[`tag${tag.toLowerCase().replace(/\s+/g, '')}`]}`}>
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
+    <Link href={route} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <Paper
+        p="md"
+        withBorder
+        shadow="sm"
+        style={{
+          cursor: 'pointer',
+          transition: 'box-shadow 0.3s ease-in-out',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 123, 255, 0.8)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = '';
+        }}
+      >
+        <Box>
+          <Title 
+            order={3} 
+            size="h4" 
+            mb="xs"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              lineHeight: 1.4,
+              maxHeight: '2.8em'
+            }}
+          >
+            {name}
+          </Title>
+          <Text 
+            size="sm" 
+            mb="md"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              lineHeight: 1.4,
+              maxHeight: '2.8em'
+            }}
+          >
+            {desc}
+          </Text>
+          <Group gap="xs" wrap="wrap">
+            {tags.map((tag) => (
+              <Badge 
+                key={tag} 
+                color={getTagColor(tag)}
+                size="sm"
+                variant="filled"
+              >
+                {tag}
+              </Badge>
+            ))}
+          </Group>
+        </Box>
+      </Paper>
     </Link>
   );
 }

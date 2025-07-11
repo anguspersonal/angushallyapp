@@ -30,7 +30,7 @@ function Header() {
   
   const handleLogout = (): void => {
     logout();
-    router.push('/login');
+            router.push('/login');
   };
 
   const renderAuthButton = () => {

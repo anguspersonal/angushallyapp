@@ -1,22 +1,12 @@
-interface BlogPost {
-  id: string;
-  title: string;
-  excerpt: string;
-  slug: string;
-  created_at: string;
-}
+import type { BlogPostSummary, BlogPostFull } from '@/types/blog';
 
-interface BlogListResponse {
-  data: BlogPost[];
-}
-
-export async function fetchBlogList(): Promise<BlogPost[]> {
+export async function fetchBlogList(): Promise<BlogPostSummary[]> {
   try {
     const response = await fetch('/api/content/posts');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const result: BlogListResponse = await response.json();
+    const result = await response.json();
     return result.data; // Return just the posts array from the response
   } catch (error) {
     console.error('Error fetching blog list:', error);
@@ -24,14 +14,14 @@ export async function fetchBlogList(): Promise<BlogPost[]> {
   }
 }
 
-export const fetchBlogPost = async (identifier: string): Promise<BlogPost | null> => {
+export const fetchBlogPost = async (identifier: string): Promise<BlogPostFull | null> => {
   try {
     const response = await fetch(`/api/content/posts/${identifier}`);
     if (!response.ok) {
       if (response.status === 404) return null;
       throw new Error("Post not found or failed to fetch");
     }
-    const data: BlogPost = await response.json();
+    const data: BlogPostFull = await response.json();
     return data;
   } catch (error) {
     console.error("Error fetching blog post:", error);
@@ -39,13 +29,13 @@ export const fetchBlogPost = async (identifier: string): Promise<BlogPost | null
   }
 };
 
-export const fetchLatestBlog = async (): Promise<BlogPost | null> => {
+export const fetchLatestBlog = async (): Promise<BlogPostSummary | null> => {
   try {
     const response = await fetch("/api/content/posts?limit=1&sort_by=created_at&order=desc");
     
     if (!response.ok) throw new Error("Failed to fetch latest blog post");
 
-    const result: BlogListResponse = await response.json();
+    const result = await response.json();
     const latestBlog = result.data && result.data.length > 0 ? result.data[0] : null;
     
     return latestBlog;

@@ -91,12 +91,12 @@ export default function Home() {
 
           <motion.div variants={contentVariants}>
             <Text ta="center" mb="md">
-              👋 Hi, I&apos;m Angus. I&apos;m a  consultant, amateur developer, and constant learner.
+              👋 Hi, I'm Angus. I'm a  consultant, amateur developer, and constant learner.
               This site is a mix of personal projects, career experiments and things
-              I&apos;ve learned by building, shipping, and sometimes failing.
+              I've learned by building, shipping, and sometimes failing.
             </Text>
             <Text ta="center" mb="lg">
-              I&apos;m also open to collaborating with early-stage founders; helping take raw ideas toward traction, funding, and real-world impact.
+              I'm also open to collaborating with early-stage founders; helping take raw ideas toward traction, funding, and real-world impact.
               Feel free to explore, poke around, and say hello via the{' '}
               <Anchor component={Link} href="/contact">contact me</Anchor> page!
             </Text>
@@ -104,7 +104,7 @@ export default function Home() {
 
           <motion.div variants={contentVariants}>
             <Text ta="center" size="sm" c="dark" mb="lg">
-              Here&apos;s what I&apos;m working on right now:
+              Here's what I'm working on right now:
             </Text>
           </motion.div>
 

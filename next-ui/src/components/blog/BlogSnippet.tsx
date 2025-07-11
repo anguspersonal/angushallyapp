@@ -49,10 +49,30 @@ export default function BlogSnippet({ post }: BlogSnippetProps) {
                 </Card.Section>
             )}
             <Box mt="md">
-                <Title order={3} className="truncate-two-lines" mb="xs">
+                <Title 
+                    order={3} 
+                    mb="xs"
+                    style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                    }}
+                >
                     {post.title}
                 </Title>
-                <Text size="sm" className="truncate-two-lines" opacity={0.7}>
+                <Text 
+                    size="sm" 
+                    opacity={0.7}
+                    style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                    }}
+                >
                     {post.excerpt}
                 </Text>
             </Box>

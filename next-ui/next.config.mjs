@@ -17,6 +17,17 @@ const nextConfig = {
             },
         ];
     },
+    // Webpack configuration for better stability
+    webpack: (config, { dev, isServer }) => {
+        if (dev) {
+            // Improve development build stability
+            config.watchOptions = {
+                poll: 1000,
+                aggregateTimeout: 300,
+            };
+        }
+        return config;
+    },
 };
 
 export default nextConfig; 
