@@ -39,6 +39,29 @@ Each update should include:
 
 ---
 
+## Update046 - Route Swapping Logic Fully Removed, Next.js Now Handles All Routes Directly - 2025-07-13 - Complete
+
+### Overview
+Removed all legacy route swapping logic from the Express server and environment configuration. The application now relies solely on Next.js to handle all frontend routes directly at the root level (e.g., `/about`, `/blog`, `/projects`), eliminating the need for `/next/`-prefixed routes and related environment variables.
+
+### Technical Details
+- Deleted all `ENABLE_NEXT_*` environment variable checks and related redirect logic from `server/index.js`
+- Removed `enableNextLogin` and similar config entries from `config/env.js`
+- Cleaned up all `/next/`-prefixed links in the frontend codebase
+- Verified that all major routes (`/about`, `/blog`, `/projects`, `/collab`, `/contact`, `/cv`, `/`) are now handled directly by Next.js
+- Updated documentation to reflect the new routing structure
+
+### Impact
+- **Simplified Routing**: All frontend routes are now handled by Next.js at the root level
+- **No More `/next/` Prefix**: Users and developers no longer need to use or reference `/next/` in URLs
+- **Cleaner Codebase**: Removed obsolete migration logic and environment variables
+- **Future-Proof**: Ready for further Next.js enhancements and direct route management
+
+### Next Steps
+- Monitor for any missed references to `/next/` or route swapping logic
+- Ensure all routes are correctly handled in production and staging environments
+- Update onboarding and documentation to reflect the new routing approach
+
 ## Update045 - TypeScript Configuration Fix & Heroku Build Resolution - 2025-07-13 - Complete
 
 ### Overview

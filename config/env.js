@@ -158,7 +158,7 @@ function loadEnv() {
         ports: servicePorts, // New structured ports configuration
         
         // Next.js Migration
-        enableNextLogin: process.env.ENABLE_NEXT_LOGIN || 'false',
+        // Route swapping removed - Next.js handles all routes directly
         
         // Database
         database: {

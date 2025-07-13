@@ -166,28 +166,8 @@ app.get('/api/health', (req, res) => {
 
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
-// Route swapping to Next.js pages (enable via environment variables)
-if (process.env.ENABLE_NEXT_LOGIN === 'true') {
-  app.get('/login', (req, res) => res.redirect('/next/login'));
-}
-if (process.env.ENABLE_NEXT_ABOUT === 'true') {
-  app.get('/about', (req, res) => res.redirect('/next/about'));
-}
-if (process.env.ENABLE_NEXT_PROJECTS === 'true') {
-  app.get('/projects', (req, res) => res.redirect('/next/projects'));
-}
-if (process.env.ENABLE_NEXT_BLOG === 'true') {
-  app.get('/blog', (req, res) => res.redirect('/next/blog'));
-}
-if (process.env.ENABLE_NEXT_CONTACT === 'true') {
-  app.get('/contact', (req, res) => res.redirect('/next/contact'));
-}
-if (process.env.ENABLE_NEXT_CV === 'true') {
-  app.get('/cv', (req, res) => res.redirect('/next/cv'));
-}
-if (process.env.ENABLE_NEXT_COLLAB === 'true') {
-  app.get('/collab', (req, res) => res.redirect('/next/collab'));
-}
+// Route swapping disabled - Next.js handles all routes directly
+// (Removed route swapping logic since app.all('*') handles everything)
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {

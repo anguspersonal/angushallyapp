@@ -69,7 +69,7 @@ export default function TextAnalysisAIPage() {
             </Paper>
           )}
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '2em' }}>
-            <a href="/next/projects/ai" style={{ color: 'var(--primary-color)', textDecoration: 'underline', fontWeight: 500 }}>
+            <a href="/projects/ai" style={{ color: 'var(--primary-color)', textDecoration: 'underline', fontWeight: 500 }}>
               ← Back to AI Projects
             </a>
           </div>

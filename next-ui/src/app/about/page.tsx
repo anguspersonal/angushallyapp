@@ -94,7 +94,7 @@ export default function About() {
 
                 <Text mb="md">
                     If you have any thoughts, feedback, or just want to chat, feel free to reach out via the
-                    <Anchor component={Link} href="/next/contact">Contact Me</Anchor> page.
+                    <Anchor component={Link} href="/contact">Contact Me</Anchor> page.
                 </Text>
 
                 <Text fw={700} mb="lg">Thanks for stopping by—I appreciate it!</Text>
