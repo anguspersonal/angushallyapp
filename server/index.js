@@ -211,49 +211,25 @@ console.log('  NEXT_UI_DIR    :', NEXT_UI_DIR);
 console.log('  nextBuildDir   :', nextBuildDir);
 console.log('  exists?        :', fs.existsSync(nextBuildDir));
 
-(async () => {
-  if (isDev) {
-    // In development, don't try to load Next.js production build
-    console.log('Development mode: Next.js will be handled by dev server');
-  } else if (fs.existsSync(nextBuildDir)) {
-    // In production, load the Next.js build
-    const next = require('next');
-    const nextApp = next({ dev: false, dir: NEXT_UI_DIR });
-    await nextApp.prepare();
-    app.use((req, res) => nextApp.getRequestHandler()(req, res));
-  } else {
-    console.warn('Next.js build not found, skipping /next routes');
-  }
-})();
+/* ─── Next.js integration ───────────────────────────────── */
+let nextReady = false;
 
-// All remaining requests should be handled by Next.js
-// This fallback ensures any unmatched routes are handled gracefully
-app.get('*', function (request, response) {
-  if (isDev) {
-    // In development, proxy to Next.js dev server
-    const { createProxyMiddleware } = require('http-proxy-middleware');
-    const proxy = createProxyMiddleware({
-      target: 'http://localhost:3000',
-      changeOrigin: true,
-      logLevel: 'debug',
+if (fs.existsSync(nextBuildDir)) {
+  const next = require('next');
+  const nextApp = next({ dev: false, dir: NEXT_UI_DIR });
+
+  nextApp.prepare()
+    .then(() => {
+      app.all('*', (req, res) => nextApp.getRequestHandler()(req, res));
+      nextReady = true;
+      console.log('✅ Next.js prepared – all routes now handled by Next');
+    })
+    .catch((err) => {
+      console.error('❌ Next.js prepare() failed:', err);
     });
-    return proxy(request, response, () => {
-      response.status(404).json({ error: 'Route not found' });
-    });
-  } else {
-    // In production, serve Next.js static index.html for all unmatched routes
-    const nextUiPath = path.resolve(__dirname, '../next-ui/out');
-    if (fs.existsSync(nextUiPath)) {
-      response.sendFile(path.resolve(nextUiPath, 'index.html'), (err) => {
-        if (err) {
-          response.status(404).json({ error: 'Route not found' });
-        }
-      });
-    } else {
-      response.status(404).json({ error: 'Application not built' });
-    }
-  }
-});
+} else {
+  console.warn('⚠️  .next folder missing – SSR routes disabled');
+}
 
 // Override addEventListener to enforce passive listeners
 (function() {
