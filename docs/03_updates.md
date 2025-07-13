@@ -2,6 +2,116 @@
 
 This file tracks chronological changes to the project, with the most recent updates at the top.
 
+## Update048 - Priority Production Issues & Performance Fixes - 2025-07-14 - In Progress
+
+### Overview
+Critical production issues identified that require immediate attention. This update serves as a comprehensive todo list for resolving performance, rendering, and static asset problems.
+
+### Priority Issues to Resolve
+
+#### 🔴 Critical Issues (Blocking Production)
+
+**1. Static Asset Loading - About Page Image**
+- **Issue**: `20230208_AH_Profile_Poser.jpg` not loading in production (404 error)
+- **Status**: ❌ **BLOCKING** - Image exists in `next-ui/public/` but not served in production
+- **Investigation Needed**: 
+  - Verify Next.js static file serving in production build
+  - Check Express server configuration for static file handling
+  - Test production build locally to reproduce issue
+- **Files to Check**: `server/index.js`, `next-ui/next.config.mjs`, production build output
+
+**2. Collaboration Page Performance Issues**
+- **Issue**: `/collab` page re-rendering every second with horizontal scroll bar flickering
+- **Status**: ❌ **BLOCKING** - Carousel completely broken, needs complete rework
+- **Investigation Needed**:
+  - Review `next-ui/src/app/collab/page.tsx` for infinite re-render loops
+  - Check Mantine Carousel component implementation
+  - Identify timer/interval issues causing constant re-renders
+- **Files to Check**: `next-ui/src/app/collab/page.tsx`, carousel component dependencies
+
+#### 🟡 Performance Issues (Affecting User Experience)
+
+**3. CSS Preload Warning**
+- **Issue**: `"The resource https://angushally.com/_next/static/css/ed883c55958b5723.css was preloaded using link preload but not used within a few seconds"`
+- **Status**: ⚠️ **PERFORMANCE** - CSS optimization issue
+- **Investigation Needed**:
+  - Review Next.js CSS optimization configuration
+  - Check `next.config.mjs` optimizeCss settings
+  - Verify CSS module imports and bundling
+- **Files to Check**: `next-ui/next.config.mjs`, CSS import structure
+
+**4. Timer Warning - RenderCollab**
+- **Issue**: `"Timer 'RenderCollab' already exists"` console warning
+- **Status**: ⚠️ **PERFORMANCE** - Timer cleanup issue
+- **Investigation Needed**:
+  - Find RenderCollab timer implementation in collab page
+  - Check for proper timer cleanup in useEffect hooks
+  - Verify component unmounting behavior
+- **Files to Check**: `next-ui/src/app/collab/page.tsx`, timer management
+
+**5. Document.write Violation**
+- **Issue**: `"[Violation] Avoid using document.write()"` console warning
+- **Status**: ⚠️ **PERFORMANCE** - Legacy JavaScript usage
+- **Investigation Needed**:
+  - Identify source of document.write() calls
+  - Check third-party scripts and dependencies
+  - Replace with modern DOM manipulation methods
+- **Files to Check**: All JavaScript files, third-party dependencies
+
+### Technical Investigation Plan
+
+#### Phase 1: Static Asset Issue (Priority 1)
+1. **Local Production Build Test**
+   ```bash
+   cd next-ui && npm run build
+   npm run start  # Test production build locally
+   ```
+2. **Express Server Static File Debugging**
+   - Add logging to `server/index.js` for static file requests
+   - Verify Next.js build output includes public files
+   - Test direct image URL access
+
+#### Phase 2: Collaboration Page Issues (Priority 2)
+1. **Component Analysis**
+   - Review `next-ui/src/app/collab/page.tsx` for:
+     - useEffect dependencies causing re-renders
+     - Timer/interval management
+     - Carousel component implementation
+2. **Performance Profiling**
+   - Use React DevTools to identify re-render sources
+   - Check for memory leaks and timer cleanup
+   - Analyze carousel component behavior
+
+#### Phase 3: Performance Optimizations (Priority 3)
+1. **CSS Optimization**
+   - Review `next.config.mjs` optimizeCss configuration
+   - Check CSS module imports and bundling
+   - Verify preload strategy
+2. **Timer and Warning Resolution**
+   - Fix RenderCollab timer cleanup
+   - Identify and replace document.write() usage
+   - Implement proper cleanup patterns
+
+### Success Criteria
+- [ ] About page image loads correctly in production
+- [ ] Collaboration page renders without constant re-renders
+- [ ] Carousel functions properly without horizontal scroll issues
+- [ ] No CSS preload warnings in console
+- [ ] No timer warnings in console
+- [ ] No document.write violations in console
+- [ ] All pages load and function correctly in production
+
+### Next Steps
+1. Start with static asset investigation (highest impact, easiest to debug)
+2. Move to collaboration page performance issues
+3. Address console warnings and performance optimizations
+4. Test all fixes in production environment
+
+### Related Documentation
+- **Migration Plan**: `docs/09_nextjs_migration_plan.md` - Next.js configuration context
+- **Startup Commands**: `docs/11_startup_commands_guide.md` - Development workflow
+- **Technical Debt**: `docs/06_tech_debt.md` - Performance issues tracking
+
 ## Instructions for Managing Updates
 
 ### 1. Processing Hierarchy

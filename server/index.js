@@ -179,12 +179,15 @@ app.get('/api', function (req, res) {
 // Look for the build inside the workspace folder `next-ui`
 const NEXT_UI_DIR = path.join(__dirname, '..', 'next-ui');   // <root>/next-ui
 const nextBuildDir = path.join(NEXT_UI_DIR, '.next');
+const nextPublicDir = path.join(NEXT_UI_DIR, 'public');
 
 console.log('🔎 Server start diagnostics ⬇');
 console.log('  __dirname      :', __dirname);
 console.log('  NEXT_UI_DIR    :', NEXT_UI_DIR);
 console.log('  nextBuildDir   :', nextBuildDir);
-console.log('  exists?        :', fs.existsSync(nextBuildDir));
+console.log('  nextPublicDir  :', nextPublicDir);
+console.log('  build exists?  :', fs.existsSync(nextBuildDir));
+console.log('  public exists? :', fs.existsSync(nextPublicDir));
 
 /* ─── Next.js integration ───────────────────────────────── */
 let nextReady = false;
@@ -195,6 +198,7 @@ if (fs.existsSync(nextBuildDir)) {
 
   nextApp.prepare()
     .then(() => {
+      // Handle all routes with Next.js (including static files)
       app.all('*', (req, res) => nextApp.getRequestHandler()(req, res));
       nextReady = true;
       console.log('✅ Next.js prepared – all routes now handled by Next');
