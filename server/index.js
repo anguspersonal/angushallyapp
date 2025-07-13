@@ -171,7 +171,7 @@ if (process.env.ENABLE_NEXT_LOGIN === 'true') {
   app.get('/login', (req, res) => res.redirect('/next/login'));
 }
 if (process.env.ENABLE_NEXT_ABOUT === 'true') {
-  app.get('/about', (req, res) => res.redirect('/next/about'));
+  app.get('/about', (req, res) => res.redirect('/next/about/'));
 }
 if (process.env.ENABLE_NEXT_PROJECTS === 'true') {
   app.get('/projects', (req, res) => res.redirect('/next/projects'));
@@ -188,11 +188,6 @@ if (process.env.ENABLE_NEXT_CV === 'true') {
 if (process.env.ENABLE_NEXT_COLLAB === 'true') {
   app.get('/collab', (req, res) => res.redirect('/next/collab'));
 }
-
-// SEO redirects for migrated routes (fallback)
-app.get('/about', function (req, res) {
-  res.redirect(301, '/next/about/');
-});
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {
