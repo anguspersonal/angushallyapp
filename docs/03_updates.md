@@ -39,6 +39,29 @@ Each update should include:
 
 ---
 
+## Update047 - CSS Optimization Script & CSS Import Improvements in Next.js Frontend - 2024-07-13 - Complete
+
+### Overview
+Added a CSS optimization script to the Next.js frontend and improved CSS import structure to reduce preload warnings and improve performance.
+
+### Technical Details
+- Added `next-ui/scripts/optimize-css.js` to help audit and optimize CSS usage in the Next.js frontend.
+- Consolidated and optimized CSS imports in `next-ui/src/app/layout.tsx`.
+- Updated `next.config.mjs` to enable CSS optimization features and removed invalid config options.
+- Installed missing `critters` dependency for production CSS inlining.
+- Updated `next-ui/README.md` with usage instructions for the new script.
+
+### Impact
+- Reduced browser warnings about unused preloaded CSS.
+- Improved clarity and maintainability of CSS imports in the frontend.
+- Provided a tool for ongoing CSS optimization and audit.
+- Ensured production builds inline critical CSS for better performance.
+
+### Next Steps
+- Monitor for any further CSS preload warnings in production.
+- Use the optimization script periodically to audit CSS usage.
+- Continue to use CSS modules and route-based code splitting for best performance.
+
 ## Update046 - Route Swapping Logic Fully Removed, Next.js Now Handles All Routes Directly - 2025-07-13 - Complete
 
 ### Overview
