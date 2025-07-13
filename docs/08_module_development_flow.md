@@ -290,7 +290,7 @@ const mockAuthContext = {
 ### 6. Documentation (Post-Testing)
 
 - [ ] Review what documentation changes need to be made to local and global documentation
-- [ ] For guidance on documentation requirements, see `docs/01_guidance.md`
+- [ ] For guidance on documentation requirements, see `docs/01_guidance.md`. If changes are react-nextjs migration specific then refer to `09_nextjs_migration_tracker`.
 - [ ] **📅 DATE CHECK**: Confirm the current date for documentation timestamps and changelog entries
 
 **🛑 STOP: Confirm current date with user before making documentation changes**

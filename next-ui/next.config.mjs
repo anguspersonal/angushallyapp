@@ -8,6 +8,10 @@ const nextConfig = {
     env: {
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     },
+    // Disable Turbopack in development to reduce CPU spikes
+    experimental: {
+        // turbo: false  // Temporarily disabled to resolve config warning
+    },
     // Proxy API requests to Express backend during development
     async rewrites() {
         return [

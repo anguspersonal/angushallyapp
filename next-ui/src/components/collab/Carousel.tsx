@@ -10,6 +10,7 @@ import TestimonialSlide from './TestimonialSlide';
 import CaseStudySlide from './CaseStudySlide';
 import { testimonials, type Testimonial } from '@/data/collab/testimonials';
 import { caseStudies, type CaseStudy } from '@/data/collab/caseStudies';
+import styles from './Carousel.module.css';
 
 interface SlideItem {
     type: 'testimonial' | 'caseStudy';
@@ -32,10 +33,10 @@ export default function CustomCarousel({
     type = 'mixed'
 }: CustomCarouselProps) {
     const theme = useMantineTheme();
+    const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const autoplay = useRef(Autoplay({ delay: 2000 }));
     const containerRef = useRef<HTMLDivElement>(null);
-    const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
     // Combine and shuffle the slides
     const allSlides = useMemo(() => {
@@ -128,43 +129,13 @@ export default function CustomCarousel({
                 controlSize={isMobile ? 24 : 30}
                 onMouseEnter={() => autoplay.current.stop()}
                 onMouseLeave={() => autoplay.current.play()}
-                styles={{
-                    root: {
-                        width: '100%'
-                    },
-                    container: {
-                        gap: 'md'
-                    },
-                    slide: {
-                        display: 'block',
-                        padding: isMobile ? theme.spacing.xs : 0
-                    },
-                    control: {
-                        '&&[data-inactive]': {
-                            opacity: 0,
-                            cursor: 'default'
-                        },
-                        border: `1px solid ${theme.colors.dark[3]}`,
-                        backgroundColor: theme.white,
-                        boxShadow: theme.shadows.sm,
-                        '&&:hover': {
-                            backgroundColor: theme.white
-                        }
-                    },
-                    indicators: {
-                        bottom: isMobile ? -30 : -20,
-                        gap: isMobile ? theme.spacing.xs : theme.spacing.md
-                    },
-                    indicator: {
-                        width: 12,
-                        height: 4,
-                        transition: 'width 250ms ease',
-                        backgroundColor: theme.colors.secondary[6],
-                        '&&[data-active]': {
-                            width: isMobile ? 24 : 40,
-                            backgroundColor: theme.colors.secondary[8],
-                        },
-                    },
+                classNames={{
+                    root: styles.carouselRoot,
+                    container: styles.carouselContainer,
+                    slide: styles.carouselSlide,
+                    control: styles.carouselControl,
+                    indicators: styles.carouselIndicators,
+                    indicator: styles.carouselIndicator
                 }}
             >
                 {allSlides.map((item) => (
@@ -176,14 +147,14 @@ export default function CustomCarousel({
                         }}>
                             {item.type === 'testimonial' ? (
                                 <TestimonialSlide
-                                    data={item as Testimonial}
+                                    data={item as Testimonial & { uniqueId: string }}
                                     isExpanded={item.uniqueId === expandedId}
                                     onExpand={() => handleExpand(item.uniqueId)}
                                     onClose={collapseItem}
                                 />
                             ) : (
                                 <CaseStudySlide
-                                    data={item as CaseStudy}
+                                    data={item as CaseStudy & { uniqueId: string }}
                                     isExpanded={item.uniqueId === expandedId}
                                     onExpand={() => handleExpand(item.uniqueId)}
                                     onClose={collapseItem}

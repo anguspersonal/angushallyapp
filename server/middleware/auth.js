@@ -66,8 +66,9 @@ function authMiddleware(options = {}) {
                 return res.status(401).json({ error: 'No token provided' });
             }
 
-            // Special handling for test mode
-            if (process.env.NODE_ENV === 'test' && token === 'test-token') {
+            // Special handling for test mode and development bypass
+            if ((process.env.NODE_ENV === 'test' && token === 'test-token') ||
+                (process.env.NODE_ENV === 'development' && token === 'dev-bypass')) {
                 req.user = TEST_USER;
                 return next();
             }

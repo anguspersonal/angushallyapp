@@ -73,10 +73,10 @@ app.use(cookieParser());
 // Priority serve Next.js static files at /next route
 if (isDev) {
   // In development, proxy to Next.js dev server
-  console.log('Setting up Next.js proxy to http://localhost:3001');
+  console.log('Setting up Next.js proxy to http://localhost:3000');
   const { createProxyMiddleware } = require('http-proxy-middleware');
   app.use('/next', createProxyMiddleware({
-    target: 'http://localhost:3001',
+    target: 'http://localhost:3000',
     changeOrigin: true,
     pathRewrite: {
       '^/next': '', // Remove /next prefix when forwarding to Next.js dev server
@@ -98,20 +98,14 @@ if (isDev) {
   }
 }
 
-// Priority serve any static files with cache-busting headers for development
-if (isDev) {
-  app.use(express.static(path.resolve(__dirname, '../react-ui/build'), {
-    setHeaders: (res, path) => {
-      // Disable caching for static assets in development
-      if (path.endsWith('.css') || path.endsWith('.js')) {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
-      }
-    }
-  }));
-} else {
-  app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
+// Priority serve Next.js static files in production
+if (!isDev) {
+  const nextUiPath = path.resolve(__dirname, '../next-ui/out');
+  if (fs.existsSync(nextUiPath)) {
+    app.use(express.static(nextUiPath));
+  } else {
+    console.log('Next.js build not found, skipping static file serving');
+  }
 }
 
 // Trust proxy for express rate limit to work correctly
@@ -219,7 +213,7 @@ app.get('/about', function (req, res) {
 // NOTE: Next.js server must be running in production (e.g., 'next start' in next-ui)
 const { createProxyMiddleware } = require('http-proxy-middleware');
 app.use('/login', createProxyMiddleware({
-  target: 'http://localhost:3001',
+  target: 'http://localhost:3000',
   changeOrigin: true,
   pathRewrite: { '^/login': '/login' },
   logLevel: 'debug',
@@ -231,9 +225,33 @@ app.get('/api', function (req, res) {
   res.send('{"message":"Hello from the custom server!"}');
 });
 
-// All remaining requests return the React app, so it can handle routing.
+// All remaining requests should be handled by Next.js
+// This fallback ensures any unmatched routes are handled gracefully
 app.get('*', function (request, response) {
-  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+  // In development, proxy to Next.js dev server
+  if (isDev) {
+    const { createProxyMiddleware } = require('http-proxy-middleware');
+    const proxy = createProxyMiddleware({
+      target: 'http://localhost:3000',
+      changeOrigin: true,
+      logLevel: 'debug',
+    });
+    return proxy(request, response, () => {
+      response.status(404).json({ error: 'Route not found' });
+    });
+  } else {
+    // In production, serve Next.js static files
+    const nextUiPath = path.resolve(__dirname, '../next-ui/out');
+    if (fs.existsSync(nextUiPath)) {
+      response.sendFile(path.resolve(nextUiPath, '404.html'), (err) => {
+        if (err) {
+          response.status(404).json({ error: 'Route not found' });
+        }
+      });
+    } else {
+      response.status(404).json({ error: 'Application not built' });
+    }
+  }
 });
 
 // Override addEventListener to enforce passive listeners

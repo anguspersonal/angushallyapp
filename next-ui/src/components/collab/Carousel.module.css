@@ -1,0 +1,54 @@
+.carouselRoot {
+  width: 100%;
+}
+
+.carouselContainer {
+  gap: var(--mantine-spacing-md);
+}
+
+.carouselSlide {
+  display: block;
+  padding: 0;
+}
+
+@media (max-width: 36em) {
+  .carouselSlide {
+    padding: var(--mantine-spacing-xs);
+  }
+  .carouselIndicators {
+    bottom: -30px;
+    gap: var(--mantine-spacing-xs);
+  }
+  .carouselIndicator[data-active] {
+    width: 24px;
+  }
+}
+
+.carouselControl {
+  border: 1px solid var(--mantine-color-dark-3);
+  background-color: var(--mantine-color-white);
+  box-shadow: var(--mantine-shadow-sm);
+}
+.carouselControl:hover {
+  background-color: var(--mantine-color-white);
+}
+.carouselControl[data-inactive] {
+  opacity: 0;
+  cursor: default;
+}
+
+.carouselIndicators {
+  bottom: -20px;
+  gap: var(--mantine-spacing-md);
+}
+
+.carouselIndicator {
+  width: 12px;
+  height: 4px;
+  transition: width 250ms ease;
+  background-color: var(--mantine-color-secondary-6);
+}
+.carouselIndicator[data-active] {
+  width: 40px;
+  background-color: var(--mantine-color-secondary-8);
+} 

@@ -28,8 +28,8 @@ const out = {
   REACT_APP_RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY || ''
 };
 
-// Write to react-ui/.env
-const dest = path.resolve(__dirname, '../react-ui/.env');
+// Write to next-ui/.env
+const dest = path.resolve(__dirname, '../next-ui/.env');
 fs.writeFileSync(dest,
   Object.entries(out).map(([k,v]) => `${k}=${v}`).join('\n') + '\n'
 );

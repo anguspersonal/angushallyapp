@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node ../scripts/check-port.js 3001 && next dev",
+    "dev": "node ../scripts/check-port.js 3000 && next dev",
     "dev:next": "next dev",
-    "dev:turbopack": "node ../scripts/check-port.js 3001 && next dev --turbopack",
+    "dev:turbopack": "node ../scripts/check-port.js 3000 && next dev --turbopack",
     "dev:next:turbopack": "next dev --turbopack",
     "build": "next build",
     "start": "next start",

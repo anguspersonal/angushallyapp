@@ -84,6 +84,28 @@ router.post('/:habitType', async (req, res) => {
     }
 });
 
+// Get logs for a specific habit type
+router.get('/:habitType/logs', async (req, res) => {
+    const { habitType } = req.params;
+    try {
+        let logs;
+        switch (habitType) {
+            case "alcohol":
+                logs = await getAlcoholLogs(req.user.id);
+                break;
+            case "exercise":
+                logs = await getExerciseLogs(req.user.id);
+                break;
+            default:
+                return res.status(400).json({ error: "Invalid habit type" });
+        }
+        res.json(logs);
+    } catch (error) {
+        console.error("Error fetching habit logs:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 // Get habit-specific data (e.g., drink catalog)
 router.get('/:habitType/data', async (req, res) => {
     const { habitType } = req.params;

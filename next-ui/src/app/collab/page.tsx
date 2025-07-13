@@ -1,22 +1,42 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Container, Title, Text, Anchor, Group, Button, Box, Image, Flex, useMantineTheme, Accordion, rem } from '@mantine/core';
 import { motion } from 'framer-motion';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconSettings, IconTargetArrow, IconTrendingUp, IconMicrophone, IconCoin, IconChartBar } from '@tabler/icons-react';
 import Link from 'next/link';
-import TraitGrid from '@/components/collab/TraitGrid';
-import CustomCarousel from '@/components/collab/Carousel';
-import FounderJourney from '@/components/collab/FounderJourney';
+import dynamic from 'next/dynamic';
 import { testimonials } from '@/data/collab/testimonials';
 import { caseStudies } from '@/data/collab/caseStudies';
+
+// Dynamic imports for heavy components to reduce initial bundle size
+const TraitGrid = dynamic(() => import('@/components/collab/TraitGrid'), { 
+  ssr: false,
+  loading: () => <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading traits...</div>
+});
+
+const CustomCarousel = dynamic(() => import('@/components/collab/Carousel'), { 
+  ssr: false,
+  loading: () => <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading carousel...</div>
+});
+
+const FounderJourney = dynamic(() => import('@/components/collab/FounderJourney'), { 
+  ssr: false,
+  loading: () => <div style={{ minHeight: '30vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading journey...</div>
+});
 
 export default function CollabPage() {
   const letsTalkRef = useRef<HTMLDivElement>(null);
   const whatIBringRef = useRef<HTMLDivElement>(null);
   const theme = useMantineTheme();
   const isSmallScreen = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+
+  // Performance profiling
+  console.time('RenderCollab');
+  useEffect(() => {
+    console.timeEnd('RenderCollab');
+  }, []);
 
   const scrollToSection = (ref: React.RefObject<HTMLElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
@@ -124,7 +144,7 @@ export default function CollabPage() {
             gap="xl"
             align="center"
             justify="space-between"
-            pl={isSmallScreen ? 0 : theme.spacing.xl * 3}
+            pl={isSmallScreen ? 0 : theme.spacing.xl}
           >
             <Box
               style={{ flex: 1 }}
@@ -296,7 +316,7 @@ export default function CollabPage() {
 
       {/* Let's Talk Section (7) */}
       <Container size="sm" p={isSmallScreen ? theme.spacing.sm : theme.spacing.lg} ref={letsTalkRef}>
-        <Title order={2} ta="left" c="accent.8">Let's Talk</Title>
+        <Title order={2} ta="left" c="accent">Let's Talk</Title>
         <Text ta="left" size="lg" mt="md" mb="xl">
           Ready to explore how we can work together? Fill out the contact form below and I'll get back to you within 24 hours to schedule a discovery call.
         </Text>

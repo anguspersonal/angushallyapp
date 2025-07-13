@@ -176,6 +176,49 @@ npm run kill-ports
 npm start
 ```
 
+### **Troubleshooting Commands**
+```bash
+# Kill existing processes on development ports
+npm run kill-ports
+
+# Check what's running on ports
+lsof -i :5000
+lsof -i :3000
+lsof -i :3001
+
+# Force environment sync
+npm run sync-env:dev
+
+# Clear React build cache
+cd react-ui && rm -rf build && npm run build
+
+# Fix Next.js build errors (NEW)
+npm run fix-nextjs
+
+# Fix Next.js errors with dependency reinstall
+node scripts/fix-nextjs-build-errors.js --clean-deps
+```
+
+### **Next.js Build Error Resolution**
+
+**Common Issues:**
+- **Build Manifest Errors**: ENOENT errors for `_buildManifest.js.tmp` files
+- **Turbopack Instability**: Compilation failures and race conditions
+- **Port Conflicts**: Multiple development servers running simultaneously
+- **Cache Corruption**: Stale build cache causing compilation issues
+
+**Resolution Steps:**
+1. **Quick Fix**: `npm run fix-nextjs` - Cleans cache and kills conflicting processes
+2. **Deep Clean**: `node scripts/fix-nextjs-build-errors.js --clean-deps` - Full dependency reinstall
+3. **Manual Clean**: `cd next-ui && rm -rf .next && npm run dev` - Manual cache clearing
+4. **Port Cleanup**: `npm run kill-ports` - Kill all development processes
+
+**Prevention:**
+- Use stable webpack compilation: `npm run client-next` (default)
+- Avoid Turbopack in production development: Use `npm run dev:turbopack` only for testing
+- Regular cache cleaning: Run `npm run fix-nextjs` weekly
+- Monitor port conflicts: Check for multiple dev servers before starting
+
 ---
 
 ## 🚨 Important Notes

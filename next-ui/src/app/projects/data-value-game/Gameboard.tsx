@@ -4,7 +4,7 @@ import './Gameboard.css';
 import industries from './Industries.json';
 import Win from './Win';
 import Lose from './Lose';
-import CTAGuessAutomotive from './CTA-GuessAutomotive';
+import CTAGuessAutomotive from './calltoaction';
 
 interface GameBoardProps {
   gameStatus: boolean;

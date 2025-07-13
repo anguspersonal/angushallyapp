@@ -1,7 +1,7 @@
 {
   "name": "heroku-cra-node",
   "version": "3.0.0",
-  "description": "How to use create-react-app with a custom Node API on Heroku",
+  "description": "How to use Next.js with a custom Node API on Heroku",
   "engines": {
     "node": "18.x",
     "npm": ">=8.x"
@@ -11,15 +11,11 @@
     "sync-env:dev": "cross-env NODE_ENV=development node scripts/sync-env.js",
     "sync-env:prod": "cross-env NODE_ENV=production node scripts/sync-env.js",
     "server": "node scripts/check-port.js 5000 && cross-env NODE_ENV=development nodemon server/index.js",
-    "client": "node scripts/check-port.js 3000 && cd react-ui && npm start",
-    "client-next": "node scripts/check-port.js 3001 && cd next-ui && npm run dev",
-    "build-client": "npm run build --prefix react-ui",
-    "build-next": "npm run build --prefix next-ui",
+    "client": "node scripts/check-port.js 3000 && cd next-ui && npm run dev",
+    "build": "npm run sync-env:prod && npm run build --prefix next-ui",
     "dev": "npm run sync-env:dev && node scripts/check-port.js 5000 3000 && concurrently \"npm run server\" \"npm run client\"",
-    "dev-next": "npm run sync-env:dev && node scripts/check-port.js 5000 3001 && concurrently \"npm run server\" \"npm run client-next\"",
-    "build": "npm run sync-env:prod && npm run build-client",
-    "build-with-next": "npm run sync-env:prod && npm run build-client && npm run build-next",
     "kill-ports": "npx kill-port 5000 3000",
+    "fix-nextjs": "node scripts/fix-nextjs-build-errors.js",
     "test": "cd server && npx jest tests",
     "test--verbose": "cd server && npx jest tests --verbose",
     "predevelop": "npm run sync-env:dev",
@@ -27,13 +23,13 @@
     "migrate:rollback": "cd server && npx knex migrate:rollback",
     "migrate:status": "cd server && npx knex migrate:status",
     "migrate:make": "cd server && npx knex migrate:make",
-    "heroku-prebuild": "npm install --prefix react-ui --legacy-peer-deps --production=false",
-    "heroku-postbuild": "npm run sync-env:prod && npm run build-client"
+    "heroku-prebuild": "npm install --prefix next-ui --legacy-peer-deps --production=false",
+    "heroku-postbuild": "npm run sync-env:prod && npm run build --prefix next-ui"
   },
   "type": "commonjs",
   "cacheDirectories": [
     "node_modules",
-    "react-ui/node_modules"
+    "next-ui/node_modules"
   ],
   "dependencies": {
     "@mantine/core": "^8.1.2",
@@ -77,7 +73,7 @@
   "keywords": [
     "node",
     "heroku",
-    "create-react-app",
+    "nextjs",
     "react"
   ],
   "license": "MIT",

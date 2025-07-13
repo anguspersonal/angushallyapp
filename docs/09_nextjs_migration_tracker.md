@@ -11,12 +11,13 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 ### 🚨 Current Issues to Resolve
 - [ ] **Build Manifest Errors** – Multiple ENOENT errors for `_buildManifest.js.tmp` files in Next.js dev server
 - [x] **Missing CSS Module** – `./strava.module.css` not found in `/projects/strava` page ✅ **RESOLVED**
-- [ ] **Port Conflicts** – Multiple Next.js dev servers running on port 3001 causing conflicts
-- [x] **Authentication Token Field Mismatch** – Backend expects `token` field, frontend sends `credential` ✅ **RESOLVED** (2025-07-11)
+- [x] **Port Conflicts** – Multiple Next.js dev servers running on port 3001 causing conflicts ✅ **RESOLVED** (2025-07-12)
+- [x] **Authentication Token Field Mismatch** – Backend expects `token` field, frontend sends `credential` ✅ **RESOLVED** (2025-07-10)
+- [ ] **/collab Performance Tuning** – Optimize load speed and reduce CPU spikes in Next.js dev mode 🔄 **IN PROGRESS**
 
 ### 🔧 Infrastructure Issues
 - [ ] **Next.js Build Stability** – Resolve Turbopack compilation errors and manifest issues
-- [ ] **Development Environment** – Clean up multiple running processes and port conflicts
+- [x] **Development Environment** – Clean up multiple running processes and port conflicts ✅ **RESOLVED** (2025-07-11)
 - [x] **CSS Module Migration** – Ensure all CSS modules are properly copied and imported ✅ **RESOLVED**
 - [x] **Static Asset Loading** – Fixed CSS import issues in layout.tsx ✅ **RESOLVED**
 
@@ -55,6 +56,8 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 
 ### 🔁 PWA & Offline
 - [ ] Migrate Service Worker – Switch to `next-pwa`, match CRA logic
+  - **Status**: Ready to revisit after SSR routes are stable and hydration issues are eliminated
+  - **Note**: Service worker and manifest now conditionally disabled in development
 - [ ] Offline Route Handling – Ensure fallback behavior and cache versioning
 
 ### 🧼 Cleanup

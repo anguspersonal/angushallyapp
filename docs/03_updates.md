@@ -20,44 +20,345 @@ Each update MUST follow this exact format:
 
 Where:
 - `[XXX]`: Three-digit number starting from 001 (e.g., 001, 002, ..., 999)
-- `[Title]`: Brief, descriptive title of the update
-- `[YYYY-MM-DD]`: Date in ISO format (e.g., 2025-01-27)
-- `[Status]`: One of: "Uncommitted", "Committed", or "Current"
+- `[Title]`: Brief descriptive title of the update
+- `[YYYY-MM-DD]`: Date in ISO format
+- `[Status]`: Current status (In Progress, Complete, Blocked, etc.)
 
-### 3. Chronological Rules
-1. **Date Ordering**:
-   - Most recent dates appear at the TOP of the file
-   - Oldest dates appear at the BOTTOM of the file
+### 3. Content Structure
+Each update should include:
+- **Overview**: Brief description of what was accomplished
+- **Technical Details**: Specific implementation details, files changed, etc.
+- **Impact**: How this affects the project or users
+- **Next Steps**: What comes next or what remains to be done
 
-2. **Update Numbering**:
-   - Start with Update001 for the OLDEST date
-   - Numbers increase sequentially as dates get newer
-   - Example: Update001 (2025-01-10) → Update002 (2025-01-15) → Update003 (2025-01-20)
+### 4. File Management
+- Keep most recent updates at the top
+- Use consistent formatting and structure
+- Link to relevant documentation or issues
+- Include file paths and technical specifics
 
-3. **Same-Day Updates**:
-   - When multiple updates share the same date, maintain their relative order
-   - Assign sequential numbers while maintaining date order
-   - Example: If three updates on 2025-01-27, they get sequential numbers while staying together
+---
 
-### 4. Status Definitions
-- **Uncommitted**: Changes documented but not yet in version control
-- **Committed**: Changes are in version control
-- **Current**: Active development or most recent commit
+## Update040 - Website Title Standardization & Legacy File Cleanup - 2025-07-13 - Uncommitted
 
-### 5. Renumbering Requirement
-- If updates are added out of chronological order, ALL update numbers MUST be adjusted
-- Example: If adding an update from 2025-01-12 between Update001 (2025-01-10) and Update002 (2025-01-15):
-  1. The new update becomes Update002
-  2. The old Update002 becomes Update003
-  3. All subsequent update numbers increase by 1
+### Overview
+Standardized website title across the application and removed legacy React app HTML template to eliminate redundancy and improve maintainability.
 
-### 6. Content Guidelines
-- Each update should include clear sections (Added, Changed, Removed, etc.)
-- Use consistent formatting within update content
-- Include relevant file paths and technical details
-- Cross-reference related updates when applicable
+### Technical Details
+- **Title Standardization**: Updated `next-ui/public/index.html` title from "Welcome to my website" to "Angus Hally App"
+  - Ensures consistency with the Next.js app layout title "Angus Hally - Strategy Consultant & Developer"
+  - Aligns with the application branding and identity
+- **Legacy File Removal**: Deleted `public/index.html` (legacy React app template)
+  - Eliminates redundant HTML templates that could cause confusion
+  - Reduces maintenance overhead and potential conflicts
+  - Streamlines the codebase by removing unused legacy files
 
-**Note**: This format replaces all previous patterns. Updates MUST be renumbered whenever chronological order is affected.
+### Impact
+- **Consistent Branding**: All website titles now reflect the proper application identity
+- **Reduced Complexity**: Eliminated duplicate HTML templates that served the same purpose
+- **Improved Maintainability**: Single source of truth for HTML template structure
+- **Cleaner Codebase**: Removed legacy files that were no longer needed
+
+### Next Steps
+- Monitor for any build or deployment issues related to the file removal
+- Consider additional cleanup of other legacy files if identified
+- Ensure all routes continue to function correctly with the updated title
+
+---
+
+## Update039 - Critical Next.js Static Asset Loading Fix & Major Route Migrations - 2025-07-11 - Complete
+
+### 🚀 Next.js Migration - Critical Infrastructure Fix & Major Progress
+
+**Critical Static Asset Loading Issue Resolved:**
+- **Date**: 2025-01-27
+- **Problem**: Next.js app compiling successfully but all static assets (CSS/JS chunks) returning 404s
+- **Root Cause**: `layout.tsx` importing `./globals.css` that didn't exist in `next-ui/src/app/` directory
+- **Solution**: Copied `index.css` and `general.css` from CRA to `next-ui/src/` and updated layout imports
+- **Result**: ✅ First successful render of Next.js app at http://localhost:3000 with no 404s
+
+**Major Route Migrations Completed:**
+- **Blog System**: Complete blog migration with dynamic routing
+  - `next-ui/src/app/blog/page.tsx` - Blog index with listing and tags
+  - `next-ui/src/app/blog/[slug]/page.tsx` - Individual blog post pages with SSG
+  - Migrated `fetchBlogData.ts` utility with TypeScript support
+  - Updated blog types and components for Next.js compatibility
+- **Collaboration Page**: Complex multi-component migration
+  - `next-ui/src/app/collab/page.tsx` - Complete collaboration page with all sections
+  - Migrated supporting components (TraitGrid, Carousel, TestimonialSlide, etc.)
+  - Preserved all animations, interactions, and TypeScript functionality
+- **CV/Resume Page**: Static resume page migration
+  - `next-ui/src/app/cv/page.tsx` - Complete CV page with all sections
+  - Maintained responsive design and styling
+- **Project Pages**: Multiple project migrations completed
+  - `/projects/ai/text-analysis` - AI text analysis tool
+  - `/projects/ai/instapaper` - Instapaper AI analysis placeholder
+  - `/projects/data-value-game` - Complete game with all components
+  - `/projects/eat-safe-uk` - Google Maps integration
+  - `/projects/habit` - Habit tracking with complex state
+  - `/projects/strava` - Strava integration with graphs
+  - `/projects/bookmarks` - Complete bookmark management system
+
+**Infrastructure Improvements:**
+- **Configuration Updates**: Updated Next.js config, ESLint, and PostCSS for optimal setup
+- **Type System**: Enhanced TypeScript types with `next-ui/src/types/common.ts`
+- **Component Library**: Migrated all components with Mantine v7 compatibility
+- **Authentication**: Maintained cookie-based auth flow throughout migration
+- **Error Handling**: Implemented ErrorBoundary components for both apps
+
+**Development Environment:**
+- **Build Stability**: Resolved CSS module and static asset loading issues
+- **TypeScript Compliance**: All new components use proper TypeScript with strict mode
+- **Performance**: Next.js builds consistently with improved compilation times
+- **Testing**: All migrated routes verified to load correctly via Express proxy
+
+**Migration Status**: 
+- **Routes Migrated**: ~90% of major routes now in Next.js
+- **Components**: All core components migrated with TypeScript support
+- **Infrastructure**: Stable development environment with proper asset loading
+- **Next Steps**: Focus on remaining infrastructure issues and PWA migration
+
+**Technical Debt Resolved:**
+- ✅ **Static Asset Loading**: Fixed CSS import issues preventing Next.js app from rendering
+- ✅ **Route Generation**: App Router now properly generates all static routes
+- ✅ **Build Process**: Stable compilation with no 404s for static assets
+- ✅ **Development Workflow**: Reliable development environment for continued migration
+
+**Related Documentation:**
+- **Migration Plan**: Updated `docs/09_nextjs_migration_plan.md` with current progress
+- **Migration Tracker**: Updated `docs/09_nextjs_migration_tracker.md` with completed items
+- **Migration Log**: Added comprehensive entry in `docs/09_nextjs_migration_log.md`
+- **Startup Commands**: Updated `docs/11_startup_commands_guide.md` with new scripts
+
+This represents a major milestone in the Next.js migration, with the critical infrastructure issue resolved and the vast majority of routes successfully migrated.
+
+---
+
+## Update038 - Complete All Sub-Projects Migration - 2025-07-10 - Committed
+
+### Overview
+Successfully completed migration of all remaining sub-projects from CRA to Next.js, achieving 100% sub-project migration completion.
+
+### Technical Details
+- **Instapaper Sub-Project**: Created new Next.js page at `/projects/ai/instapaper/`
+  - Implemented placeholder AI analysis interface with TypeScript and Mantine v7
+  - Added future features roadmap for Instapaper API integration
+  - Fixed Mantine v7 color compatibility issues (dimmed → secondary, etc.)
+  - Resolved LoadingOverlay prop compatibility
+  - Tested build compilation and TypeScript compliance
+
+### Impact
+- **All 8 sub-projects now migrated**: Data Value Game, Eat Safe UK, Blog, Strava, Habit Tracker, AI Text Analysis, Instapaper, Bookmarks
+- **100% sub-project completion**: No remaining sub-projects in CRA app
+- **Consistent architecture**: All sub-projects follow Next.js App Router patterns
+- **TypeScript compliance**: All new components use proper TypeScript with Mantine v7
+
+### Next Steps
+- Focus on remaining infrastructure issues (Build Manifest Errors, Port Conflicts)
+- Complete `/cv` page migration (last remaining simple page)
+- Address authentication token field mismatch
+- Clean up development environment and resolve port conflicts
+
+---
+
+## Update037 - CSS Module Import Issue Resolution - 2025-07-10 - Committed
+
+### 🔧 CSS Module Import Issue - RESOLVED
+
+**Critical Development Issue Resolved:**
+- **Date**: 2025-07-10
+- **Issue**: `./strava.module.css` import failing in `/projects/strava` page
+- **Root Cause**: CSS module syntax and development environment cache issues
+- **Status**: ✅ **RESOLVED** with comprehensive CSS module fixes and error resolution tools
+
+**Technical Implementation:**
+- **CSS Module Syntax**: Fixed CSS module class structure to use proper Next.js CSS module syntax
+- **Class Naming**: Removed nested selectors (`.strava-dashboard .dashboard`) in favor of flat class structure
+- **Import Resolution**: Ensured proper ES6 import syntax with TypeScript declarations
+- **Cache Management**: Created comprehensive cache cleaning and error resolution script
+
+**CSS Module Fixes:**
+- **Class Structure**: Converted from nested selectors to flat CSS module classes
+- **Scoping**: Proper CSS module scoping for all Strava dashboard components
+- **Compatibility**: Ensured compatibility with Next.js 15.3.5 CSS module system
+- **TypeScript Support**: Verified CSS module type declarations are properly configured
+
+**Error Resolution Script Enhancement:**
+- **Script**: `scripts/fix-nextjs-build-errors.js` - Enhanced with CSS module verification
+- **Features**: 
+  - CSS module file existence verification
+  - CSS class content validation
+  - TypeScript declaration checking
+  - Development environment cleanup
+  - Port conflict resolution
+- **Usage**: `npm run fix-nextjs` or `npm run fix-nextjs:clean` for dependency reinstallation
+
+**Development Workflow Improvements:**
+- **Cache Management**: Automatic Next.js cache cleaning for CSS module issues
+- **Process Management**: Cleanup of conflicting development processes
+- **File Verification**: Comprehensive verification of CSS module files and structure
+- **Error Prevention**: Proactive detection and resolution of common CSS module issues
+
+**Impact Assessment:**
+- **Before Fix**: Strava project page returning 500 error due to CSS module import failure
+- **After Fix**: Strava project page loads correctly with proper styling
+- **Performance**: Improved development workflow with reliable error resolution
+- **Developer Experience**: Enhanced with comprehensive error resolution tools
+
+**Migration Strategy Support:**
+- **Zero Downtime**: CSS module fixes don't affect existing migration progress
+- **Backward Compatible**: All existing routes and functionality preserved
+- **Future Ready**: Foundation for stable CSS module development in Next.js
+- **Error Prevention**: Comprehensive tools to prevent similar issues
+
+**Related Documentation:**
+- **Error Resolution Script**: `scripts/fix-nextjs-build-errors.js` - Complete error resolution
+- **Migration Plan**: `docs/09_nextjs_migration_plan.md` - Updated with CSS module guidance
+- **Startup Commands**: `docs/11_startup_commands_guide.md` - Updated with new scripts
+- **Technical Debt**: `docs/06_tech_debt.md` - CSS module issues resolved
+
+**Next Steps:**
+1. **Immediate**: Use `npm run fix-nextjs` for any future CSS module issues
+2. **Testing**: Verify all migrated routes work correctly with CSS modules
+3. **Monitoring**: Use error resolution script for any future build issues
+4. **Development**: Continue with stable Next.js development workflow
+
+This resolution ensures reliable CSS module functionality in the Next.js development environment, eliminating the import failures that were blocking the Strava project page.
+
+## Update036 - Next.js Build Manifest Errors Resolution - 2025-07-10 - Committed
+
+### 🔧 Next.js Build Manifest Errors - RESOLVED
+
+**Critical Development Issue Resolved:**
+- **Date**: 2025-07-10
+- **Issue**: Multiple ENOENT errors for `_buildManifest.js.tmp` files in Next.js dev server
+- **Root Cause**: Turbopack compilation instability in Next.js 15.3.5
+- **Status**: ✅ **RESOLVED** with comprehensive stability improvements
+
+**Technical Implementation:**
+- **Turbopack Disabled**: Switched from `--turbopack` to stable webpack compilation
+- **Build Stability**: Added webpack configuration for improved development stability
+- **Cache Management**: Created comprehensive cache cleaning and error resolution script
+- **Process Management**: Enhanced port conflict resolution and process cleanup
+
+**Configuration Changes:**
+- **Next.js Dev Script**: `next dev` (stable webpack) instead of `next dev --turbopack`
+- **Turbopack Option**: Available as `npm run dev:turbopack` for experimental use
+- **Webpack Config**: Added watchOptions for better file watching stability
+- **Experimental Features**: Disabled potentially unstable experimental features
+
+**Error Resolution Script:**
+- **Script**: `scripts/fix-nextjs-build-errors.js` - Comprehensive error resolution
+- **Features**: 
+  - Automatic port cleanup (3001, 5000, 3000)
+  - Next.js cache cleaning
+  - Optional dependency reinstallation
+  - Process management and conflict resolution
+- **Usage**: `npm run fix-nextjs` or `node scripts/fix-nextjs-build-errors.js --clean-deps`
+
+**Development Workflow Improvements:**
+- **Stable Compilation**: Webpack-based compilation eliminates Turbopack race conditions
+- **Better Error Handling**: Comprehensive error resolution script for common issues
+- **Process Management**: Automatic cleanup of conflicting development processes
+- **Cache Management**: Proper cache cleaning to prevent build corruption
+
+**Impact Assessment:**
+- **Before Fix**: Frequent ENOENT errors, unstable development environment, compilation failures
+- **After Fix**: Stable compilation, reliable development workflow, comprehensive error resolution
+- **Performance**: Slightly slower initial compilation but much more stable
+- **Developer Experience**: Significantly improved with reliable error resolution tools
+
+**Migration Strategy Support:**
+- **Zero Downtime**: Error resolution doesn't affect existing migration progress
+- **Backward Compatible**: All existing routes and functionality preserved
+- **Future Ready**: Foundation for stable Next.js development environment
+- **Turbopack Option**: Still available for experimental use when needed
+
+**Related Documentation:**
+- **Error Resolution Script**: `scripts/fix-nextjs-build-errors.js` - Complete error resolution
+- **Migration Plan**: `docs/09_nextjs_migration_plan.md` - Updated with stability improvements
+- **Startup Commands**: `docs/11_startup_commands_guide.md` - Updated with new scripts
+- **Technical Debt**: `docs/06_tech_debt.md` - Build process issues resolved
+
+**Next Steps:**
+1. **Immediate**: Use stable webpack compilation for all Next.js development
+2. **Testing**: Verify all migrated routes work correctly with stable compilation
+3. **Monitoring**: Use error resolution script for any future build issues
+4. **Optional**: Test Turbopack periodically for stability improvements
+
+This resolution ensures a stable and reliable Next.js development environment, eliminating the build manifest errors that were blocking migration progress.
+
+## Update035 - Next.js Migration Verification & Issue Identification - 2025-07-10 - Committed
+
+### 🔍 Next.js Migration Status Verification
+
+**Verification Scope:**
+- **Status**: 🔍 **In Progress** - Comprehensive verification of Next.js migration progress
+- **Core Achievement**: Identified current development issues and migration completion status
+- **Scope**: Development environment stability, build process verification, and migration progress assessment
+
+**Migration Progress Assessment:**
+- **Completed Routes**: ✅ `/login`, `/contact`, `/projects`, `/blog`, `/projects/habit`, `/projects/bookmarks`, `/projects/eat-safe-uk`, `/projects/ai/text-analysis`, `/projects/data-value-game`
+- **Partially Complete**: ⚠️ `/projects/strava` (CSS module missing)
+- **Remaining Routes**: `/cv`, PWA migration, CRA cleanup
+
+**Development Environment Issues Identified:**
+- **Build Manifest Errors**: Multiple ENOENT errors for `_buildManifest.js.tmp` files in Next.js dev server
+  - **Impact**: Turbopack compilation instability, potential build failures
+  - **Root Cause**: Next.js 15.3.5 Turbopack manifest generation conflicts
+  - **Status**: Needs investigation and resolution
+
+- **Missing CSS Module**: `./strava.module.css` not found in `/projects/strava` page
+  - **Impact**: Strava project page fails to load with 500 error
+  - **Root Cause**: CSS module not copied during migration from CRA
+  - **Status**: Blocking Strava project completion
+
+- **Port Conflicts**: Multiple Next.js dev servers running on port 3001
+  - **Impact**: Development environment instability, proxy errors
+  - **Root Cause**: Multiple terminal sessions running Next.js dev servers
+  - **Status**: Requires cleanup of development processes
+
+- **Authentication Token Field Mismatch**: Backend expects `token` field, frontend sends `credential`
+  - **Impact**: Authentication failures in some contexts
+  - **Root Cause**: Google OAuth field name inconsistency between frontend and backend
+  - **Status**: Partially resolved but needs verification
+
+**Infrastructure Status:**
+- **Express Server**: ✅ Running on port 5000 with Next.js proxy configuration
+- **Next.js Dev Server**: ⚠️ Multiple instances running on port 3001 (conflict)
+- **CRA Development Server**: ✅ Available as fallback
+- **Database**: ✅ PostgreSQL connection working
+- **Authentication**: ⚠️ Cookie-based auth implemented but field name issues persist
+
+**Documentation Updates:**
+- **Migration Tracker**: Updated to reflect current issues and priorities
+- **Migration Log**: Added current issues entry for tracking
+- **Progress Tracking**: Moved completed items to proper sections
+- **Issue Documentation**: Comprehensive logging of development environment problems
+
+**Next Steps Prioritized:**
+1. **Immediate**: Clean up development environment (kill duplicate processes)
+2. **High Priority**: Resolve CSS module migration for Strava project
+3. **Medium Priority**: Investigate and fix build manifest errors
+4. **Low Priority**: Verify authentication flow consistency
+
+**Technical Debt Identified:**
+- **Build Process**: Turbopack stability issues affecting development workflow
+- **CSS Migration**: Incomplete migration of CSS modules from CRA
+- **Process Management**: Multiple development servers causing conflicts
+- **Authentication**: Field name inconsistencies between frontend and backend
+
+**Migration Completion Estimate:**
+- **Routes**: ~85% complete (8/9 major routes migrated)
+- **Infrastructure**: ~90% complete (proxy, auth, layout working)
+- **Build Process**: ~70% complete (stability issues present)
+- **Overall**: ~80% complete with critical issues blocking final completion
+
+**Related Documentation:**
+- **Migration Plan**: `docs/09_nextjs_migration_plan.md` - Strategic overview
+- **Migration Tracker**: `docs/09_nextjs_migration_tracker.md` - Updated with current issues
+- **Migration Log**: `docs/09_nextjs_migration_log.md` - Added current issues entry
+- **Module Development Flow**: `docs/08_module_development_flow.md` - Development workflow guidance
 
 ## Update034 - Next.js Route Swapping Implementation - 2025-07-09 - Committed
 

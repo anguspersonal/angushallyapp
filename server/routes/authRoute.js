@@ -166,15 +166,17 @@ router.post('/login', validateLogin, async (req, res) => {
  */
 router.post('/google', async (req, res) => {
   try {
-    const { token } = req.body;
-    if (!token) {
+    const { token, credential } = req.body;
+    const idToken = token || credential; // Support both 'token' and 'credential' field names
+    
+    if (!idToken) {
       console.error('No token provided in request body');
       return res.status(400).json({ error: 'No authentication token provided' });
     }
 
     // Verify Google token
     const ticket = await googleClient.verifyIdToken({
-      idToken: token,
+      idToken: idToken,
       audience: config.auth.google.clientId
     }).catch(error => {
       console.error('Google token verification failed:', error);

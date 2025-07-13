@@ -18,26 +18,26 @@ interface ProjectSnippetProps {
 function ProjectSnippet({ project }: ProjectSnippetProps) {
   const { name, desc, route, tags = [] } = project;
   
-  const getTagColor = (tag: string) => {
-    const tagColors: Record<string, string> = {
-      'AI': 'green',
-      'Data': 'blue',
-      'Map': 'indigo',
-      'Food': 'orange',
-      'Game': 'teal',
+  const getTagColor = (tag: string): "dark" | "primary" | "secondary" | "accent" | "success" => {
+    const tagColors: Record<string, "dark" | "primary" | "secondary" | "accent" | "success"> = {
+      'AI': 'success',
+      'Data': 'primary',
+      'Map': 'secondary',
+      'Food': 'accent',
+      'Game': 'success',
       'Education': 'dark',
-      'NLP': 'cyan',
-      'Fitness': 'lime',
-      'Visualization': 'emerald',
-      'Productivity': 'gray',
-      'Habit': 'green',
-      'Writing': 'blue',
+      'NLP': 'primary',
+      'Fitness': 'success',
+      'Visualization': 'primary',
+      'Productivity': 'dark',
+      'Habit': 'success',
+      'Writing': 'primary',
       'Tech': 'dark',
-      'Learning': 'gray',
-      'Bookmarks': 'blue',
-      'API': 'indigo'
+      'Learning': 'dark',
+      'Bookmarks': 'primary',
+      'API': 'secondary'
     };
-    return tagColors[tag] || 'gray';
+    return tagColors[tag] || 'dark';
   };
   
   return (

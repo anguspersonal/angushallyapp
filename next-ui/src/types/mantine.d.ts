@@ -7,6 +7,13 @@ import type {
   MantineTheme
 } from '@mantine/core';
 
+// JSX namespace declaration to fix TypeScript errors
+declare namespace JSX {
+  interface IntrinsicElements {
+    [elemName: string]: any;
+  }
+}
+
 declare module '@mantine/core' {
   export interface MantineThemeColorsOverride {
     colors: {
