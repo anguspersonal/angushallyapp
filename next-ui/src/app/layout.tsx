@@ -2,6 +2,7 @@ import * as React from 'react';
 import '@mantine/core/styles.css';
 import '../index.css';
 import '../general.css';
+import './globals.css';
 import type { Metadata } from 'next';
 import ClientLayout from '@/components/ClientLayout';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
@@ -27,6 +28,7 @@ export default function RootLayout({
         {process.env.NODE_ENV === 'production' && <link rel="manifest" href="/manifest.json" />}
         <link rel="icon" href="/AH-logo-no-background.ico" />
         <link rel="shortcut icon" href="/AH-logo-no-background.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
         <ClientLayout>{children}</ClientLayout>

@@ -34,3 +34,17 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## CSS Optimization Script
+
+A script is available to help audit and optimize CSS usage in the Next.js frontend. This can help reduce preload warnings and improve performance.
+
+**Usage:**
+
+```bash
+npm run optimize-css
+```
+
+This will analyze CSS files and modules in the project and provide optimization tips.
+
+The script is located at `next-ui/scripts/optimize-css.js` and is only relevant to the frontend.

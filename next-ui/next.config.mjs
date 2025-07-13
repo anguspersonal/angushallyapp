@@ -20,11 +20,15 @@ const nextConfig = {
     // Development tweaks — Turbopack is still unstable for many setups
     experimental: {
       // turbo: false,
+      optimizeCss: true, // Optimize CSS loading
     },
   
     // Disable browser source-maps in production to shrink the slug
     // Note: CSS module source maps still appear in dev mode - use "Hide network" in DevTools to clean console
     productionBrowserSourceMaps: false,
+
+    // Optimize CSS loading to reduce preload warnings
+    compress: true,
   
     // Custom webpack tweaks
     webpack: (config, { webpack, dev }) => {

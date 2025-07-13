@@ -13,7 +13,8 @@
     "fix-nextjs": "node ../scripts/fix-nextjs-build-errors.js",
     "fix-nextjs:clean": "node ../scripts/fix-nextjs-build-errors.js --clean-deps",
     "clean": "rm -rf .next node_modules package-lock.json",
-    "rebuild": "npm run clean && npm install && npm run dev"
+    "rebuild": "npm run clean && npm install && npm run dev",
+    "optimize-css": "node scripts/optimize-css.js"
   },
   "dependencies": {
     "@mantine/carousel": "^8.1.3",
@@ -27,6 +28,7 @@
     "@vis.gl/react-google-maps": "^1.5.4",
     "autoprefixer": "^10.4.21",
     "axios": "^1.7.9",
+    "critters": "^0.0.25",
     "embla-carousel-autoplay": "^8.6.0",
     "framer-motion": "^12.23.0",
     "next": "^15.3.5",
