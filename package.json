@@ -3,7 +3,10 @@
   "version": "3.0.0",
   "description": "Angus Hally's personal application - a monolithic full-stack app with Next.js frontend and Node.js/Express backend",
   "private": true,
-  "workspaces": ["next-ui", "server"],
+  "workspaces": [
+    "next-ui",
+    "server"
+  ],
   "engines": {
     "node": "20.x",
     "npm": ">=10.x"
@@ -65,6 +68,7 @@
     "@eslint/eslintrc": "^3",
     "chai": "^4.3.7",
     "concurrently": "^9.1.2",
+    "eslint-config-next": "^15.3.5",
     "jest": "^29.7.0",
     "kill-port": "^2.0.1",
     "nodemon": "^2.0.15",
@@ -92,7 +96,7 @@
   "homepage": "https://github.com/angushally/angushallyapp#readme",
   "overrides": {
     "cross-spawn": "^7.0.6",
-    "got": "^11.8.5", 
+    "got": "^11.8.5",
     "http-cache-semantics": "^4.1.1",
     "semver": "^7.5.2",
     "semver-regex": "^4.0.2"
@@ -103,6 +107,4 @@
     "imagemin-pngquant": "^10.0.0",
     "pngquant-bin": "^7.0.0"
   }
-
-
 }
