@@ -1,5 +1,5 @@
 import { Table } from '@mantine/core';
-import { StravaPR } from '@/types/common';
+import type { StravaPR } from '@/types/common';
 import { convertMSToMinKm } from '../strava';
 
 interface PRTableProps {

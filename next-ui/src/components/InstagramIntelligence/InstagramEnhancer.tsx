@@ -27,7 +27,7 @@ import {
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { api } from '../../shared/apiClient';
-import { InstagramBookmark } from '../../types/common';
+import type { InstagramBookmark } from '../../types/common';
 
 // Type definitions
 interface SourceMetadata {

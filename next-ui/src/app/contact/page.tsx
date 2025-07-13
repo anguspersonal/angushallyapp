@@ -14,7 +14,8 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import ReCAPTCHA from "react-google-recaptcha";
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import { api } from '@/shared/apiClient';
 
 // Animation variants for staggered fade-in

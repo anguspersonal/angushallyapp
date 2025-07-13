@@ -10,7 +10,7 @@ import BookmarkCard from './components/BookmarkCard';
 import { Sidebar } from './components/Sidebar';
 import InstagramEnhancer from '../../../components/InstagramIntelligence/InstagramEnhancer';
 import InstagramAnalysisDisplay from '../../../components/InstagramIntelligence/InstagramAnalysisDisplay';
-import { 
+import type {
   Bookmark, 
   InstagramAnalysisData, 
   BookmarkData, 
@@ -183,7 +183,7 @@ const BookmarksPage = () => {
             id: String(bookmark.id),
             title: bookmark.title,
             url: bookmark.url,
-            description: bookmark.description
+            ...(bookmark.description ? { description: bookmark.description } : {})
           };
           setSelectedBookmarkData(bookmarkData);
           setAnalysisDisplayOpened(true);

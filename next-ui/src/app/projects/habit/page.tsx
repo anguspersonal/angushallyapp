@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { Container, Title, LoadingOverlay, Grid, Text, Button, Stack } from '@mantine/core';
 import { getHabitLogs, getLogsByHabit } from "./habit";
-import { HabitLog, HabitType } from "../../../types/common";
+import type { HabitLog, HabitType } from "../../../types/common";
 import HabitHeader from "./components/HabitHeader";
 import HabitTile from "./components/HabitTile";
 import HabitDrawer from "./components/HabitDrawer";

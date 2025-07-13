@@ -3,7 +3,7 @@
 import React from "react";
 import { Card, Text, Progress, Group } from "@mantine/core";
 import { IconCircleDashedCheck } from "@tabler/icons-react";
-import { HabitType } from "../../../../types/common";
+import type { HabitType } from "../../../../types/common";
 
 interface HabitDefinition {
   id: number;

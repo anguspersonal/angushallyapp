@@ -1,4 +1,5 @@
-import { createTheme, MantineColorsTuple, MantineThemeOverride } from '@mantine/core';
+import { createTheme } from '@mantine/core';
+import type { MantineColorsTuple, MantineThemeOverride } from '@mantine/core';
 import type { 
   MotionTransition, 
   ViewportTransition, 

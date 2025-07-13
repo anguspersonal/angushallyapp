@@ -164,7 +164,7 @@ export interface BookmarkData {
   id: string;
   title: string;
   url: string;
-  description?: string;
+  description?: string | undefined;
   [key: string]: unknown;
 }
 

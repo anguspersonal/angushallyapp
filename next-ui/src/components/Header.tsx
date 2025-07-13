@@ -14,7 +14,7 @@ import {
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useAuth } from '../providers/AuthProvider';
-import { NavigationLink } from '../shared/types';
+import type { NavigationLink } from '../shared/types';
 
 const links: NavigationLink[] = [
   { link: '/projects', label: 'Projects', icon: IconFolder },

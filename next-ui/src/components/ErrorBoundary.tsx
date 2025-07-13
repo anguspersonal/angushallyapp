@@ -9,7 +9,7 @@ interface ErrorBoundaryState {
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
-  fallback?: React.ComponentType<{ error?: Error }>;
+  fallback?: React.ComponentType<{ error?: Error | undefined }>;
 }
 
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {

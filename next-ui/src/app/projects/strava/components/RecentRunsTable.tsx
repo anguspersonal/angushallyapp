@@ -1,5 +1,5 @@
 import { Table } from '@mantine/core';
-import { StravaActivity } from '@/types/common';
+import type { StravaActivity } from '@/types/common';
 import { convertMSToMinKm } from '../strava';
 
 interface RecentRunsTableProps {

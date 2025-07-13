@@ -30,7 +30,7 @@ import {
   IconCopy
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import { InstagramAnalysisData, BookmarkData } from '../../types/common';
+import type { InstagramAnalysisData, BookmarkData } from '../../types/common';
 
 interface InstagramAnalysisDisplayProps {
   opened: boolean;

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useAuth } from '@/providers/AuthProvider';
 import { api } from '@/shared/apiClient';
-import { CredentialResponse } from '@react-oauth/google';
+import type { CredentialResponse } from '@react-oauth/google';
 import type { User } from '@/shared/types';
 import {
   Box, Container, Title, Text, Paper,

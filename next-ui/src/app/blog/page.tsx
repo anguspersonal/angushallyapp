@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Container, Title, SimpleGrid, Anchor } from '@mantine/core';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import BlogSnippet from '../../components/blog/BlogSnippet';
 import { fetchBlogList } from '../../utils/fetchBlogData';
 import type { BlogPostSummary } from '@/types/blog';

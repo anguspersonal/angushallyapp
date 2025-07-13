@@ -1,5 +1,5 @@
 import { api } from '../../../shared/apiClient';
-import { HabitLog, HabitType, DrinkCatalogItem, HabitStats } from '../../../types/common';
+import type { HabitLog, HabitType, DrinkCatalogItem, HabitStats } from '../../../types/common';
 
 interface HabitLogResponse {
     data: HabitLog;

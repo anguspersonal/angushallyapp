@@ -7,7 +7,7 @@ import { useForm } from "@mantine/form";
 import { addHabitLog, getHabitSpecificData } from "../habit";
 import { calculateUnits } from "../../../../utils/calculateUnits";
 import { getAggregateStats } from "../aggregateService";
-import { HabitLog, DrinkCatalogItem, HabitType } from "../../../../types/common";
+import type { HabitLog, DrinkCatalogItem, HabitType } from "../../../../types/common";
 
 type ValidPeriod = 'week' | 'month' | 'year';
 

@@ -80,7 +80,7 @@ const GMapView: React.FC<GMapViewProps> = ({
           lat: place.location.latitude,
           lng: place.location.longitude
         },
-        addressComponents: place.addressComponents,
+        addressComponents: place.addressComponents ?? [],
         rating: null
       }));
 
@@ -127,7 +127,7 @@ const GMapView: React.FC<GMapViewProps> = ({
           defaultZoom={13}
           defaultCenter={defaultCenter}
           className="google-map"
-          mapId={mapsID}
+          mapId={mapsID || null}
           onClick={handleMapClick}
         >
           {/* Pass 'markers' array to child, so it can render them */}

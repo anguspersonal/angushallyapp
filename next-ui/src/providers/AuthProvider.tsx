@@ -113,7 +113,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuth,
     isLoading,
     handleAuthError,
-    token: user?.token
+    ...(user?.token ? { token: user.token } : {})
   };
 
   if (isLoading) {

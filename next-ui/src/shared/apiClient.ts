@@ -1,7 +1,9 @@
 import {
+  ApiError,
+} from './types/api';
+import type {
   ApiClientOptions,
   ApiClientInterface,
-  ApiError,
 } from './types/api';
 
 // Determine API base URL (works in both CRA & Next environments)

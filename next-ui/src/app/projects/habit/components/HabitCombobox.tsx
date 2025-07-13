@@ -6,7 +6,7 @@ import {
   InputBase,
   useCombobox
 } from "@mantine/core";
-import { DrinkCatalogItem } from "../../../../types/common";
+import type { DrinkCatalogItem } from "../../../../types/common";
 
 interface GroupedOptions {
   label: string;

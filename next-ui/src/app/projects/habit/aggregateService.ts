@@ -1,5 +1,5 @@
 import { api } from '../../../shared/apiClient';
-import { HabitType } from '../../../types/common';
+import type { HabitType } from '../../../types/common';
 
 // Type definitions for aggregate statistics
 type ValidPeriod = 'day' | 'week' | 'month' | 'year' | 'all';

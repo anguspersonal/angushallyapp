@@ -1,6 +1,7 @@
 'use client';
 
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
+import type { CredentialResponse } from '@react-oauth/google';
 
 interface GoogleLoginButtonProps {
   onSuccess: (credentialResponse: CredentialResponse) => void;

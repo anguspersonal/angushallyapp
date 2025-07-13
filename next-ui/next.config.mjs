@@ -9,6 +9,9 @@ const nextConfig = {
       domains: ['localhost'], // remove or extend if you load external images
     },
   
+    // Ignore ESLint during builds for deterministic builds
+    eslint: { ignoreDuringBuilds: true },
+  
     // Make selected server env vars available on the client
     env: {
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

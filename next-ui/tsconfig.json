@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    // ---------- Language / emit ----------
+    /* ---------- Language / emit ---------- */
     "target": "ES2022",
     "lib": [
       "DOM",
@@ -8,28 +8,24 @@
       "ESNext"
     ],
     "module": "ESNext",
-    "moduleResolution": "bundler", // requires TS 5+
+    "moduleResolution": "bundler", // TS 5+ bundler-aware resolution
     "jsx": "preserve",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true, // (single occurrence)
-    // ---------- Strictness ----------
+    "noEmit": true, // Next.js handles transpile/emit
+    /* ---------- Strictness ---------- */
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    // ---------- Project ergonomics ----------
+    "exactOptionalPropertyTypes": true,
+    /* ---------- Project ergonomics ---------- */
     "incremental": true,
-    "exactOptionalPropertyTypes": false,
-    // ---------- Next.js plugin ----------
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    // ---------- Path aliases ----------
+    "moduleDetection": "force",
+    "verbatimModuleSyntax": true,
+    /* ---------- Path aliases ---------- */
     "baseUrl": ".",
     "paths": {
       "@/*": [
@@ -39,20 +35,24 @@
         "src/types/*"
       ]
     },
-    // ---------- Global types ----------
+    /* ---------- Global types ---------- */
     "types": [
       "node",
       "react",
       "react-dom"
     ],
-    "allowJs": true
+    "allowJs": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
+  /* ---------- File globs ---------- */
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "src/**/*.d.ts"
+    "src",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

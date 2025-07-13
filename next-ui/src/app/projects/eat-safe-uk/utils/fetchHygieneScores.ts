@@ -50,8 +50,8 @@ export const fetchHygieneScores = async (places: Place[]): Promise<any> => {
         name: place.name || "Unknown",
         address: place.formattedAddress || "No Address Available",
         postcode: postcodeComponent ? postcodeComponent.shortText : "N/A",
-        location: place.location,
-        position: place.position
+        ...(place.location ? { location: place.location } : {}),
+        ...(place.position ? { position: place.position } : {})
       };
     });
 

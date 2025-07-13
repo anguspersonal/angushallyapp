@@ -6,7 +6,7 @@ import { Title } from '@mantine/core';
 import { fetchStravaData, getPRs, getWeeklyRuns, getRecentRuns } from './strava';
 import { PRTable } from './components/PRTable';
 import { RecentRunsTable } from './components/RecentRunsTable';
-import { StravaActivity, StravaPR, WeeklyRunData } from '@/types/common';
+import type { StravaActivity, StravaPR, WeeklyRunData } from '@/types/common';
 import styles from './strava.module.css';
 
 export default function StravaPage() {

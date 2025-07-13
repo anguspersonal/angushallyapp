@@ -87,11 +87,11 @@ export async function getStoredUser(): Promise<User | null> {
 
     if (localUser) {
       const user: User = JSON.parse(localUser);
-      return { ...user, token: token || user.token };
+      return { ...user, ...(token || user.token ? { token: token || user.token } : {}) };
     }
     if (sessionUser) {
       const user: User = JSON.parse(sessionUser);
-      return { ...user, token: token || user.token };
+      return { ...user, ...(token || user.token ? { token: token || user.token } : {}) };
     }
     return null;
   } catch (err) {

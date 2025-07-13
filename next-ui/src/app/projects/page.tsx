@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { Container, Title, SimpleGrid } from '@mantine/core';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import projectList from '@/data/projectList';
 import ProjectSnippet from '@/components/ProjectSnippet';
 
