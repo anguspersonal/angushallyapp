@@ -75,18 +75,21 @@ npm install
 
 ## 🛠️ Build & Deploy (Heroku)
 
-### Local production build
+### Local production smoke-test
 
 ```bash
-npm run sync-env:prod
-npm run build            # builds Next UI into next-ui/.next
-NODE_ENV=production npm start
-```
+npm run sync-env:prod           # writes next-ui/.env
+npm run build                   # Next build into next-ui/.next
+NODE_ENV=production npm start   # Express + SSR on :5000
 
 ### Deploy to Heroku
 
 ```bash
-git push heroku main
+git add -u
+git commit -m "feat: <your message>"
+git push origin main            # keep GitHub in sync
+git push heroku main            # trigger Heroku build
+
 ```
 
 Heroku build flow:
@@ -141,6 +144,18 @@ npm test           # Jest (server)
 npm run lint --workspace next-ui   # ESLint (frontend)
 npx tsc --noEmit   # TypeScript check
 ```
+
+---
+
+## 🧹 Cleanup & Reset Commands  *(NEW)*
+
+| Command | Scope | What it does |
+|---------|-------|--------------|
+| `npm run clean:node` | root | Deletes every `node_modules/**`, wipes `package-lock.json`, then runs `npm ci` with workspaces. |
+| `npm run clean:next` | root | Removes `.next/` build & cache, then rebuilds UI. |
+| `npm run clean:public` | root | Moves `*.original.*` images to `assets/archive` and deletes `*:Zone.Identifier` files in `next-ui/public`. |
+| `npm run clean:ports [<port> …]` | root | Kills any process on ports 5000 & 3000 (plus optional extra ports). |
+| `npm run clean:heroku-cache` | root | Purges Heroku's build cache. |
 
 ---
 
