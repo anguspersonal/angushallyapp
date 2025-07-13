@@ -10,7 +10,7 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 
 **Choose your development context:**
 - [**Server Development**](#server-development-workflow) - For changes in `/server`
-- [**Frontend Development**](#frontend-development-workflow) - For changes in `/react-ui`
+- [**Frontend Development**](#frontend-development-workflow) - For changes in `/next-ui`
 
 ---
 
@@ -45,113 +45,38 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 
 ---
 
-### 3. Implementation Validation
+### 3. Testing
 
-- [ ] Quick smoke test of core functionality
-- [ ] Verify integration with existing systems
-- [ ] Confirm interfaces match project patterns
+- [ ] Run unit tests: `npm test`
+- [ ] Run integration tests: `npm test -- --grep="integration"`
+- [ ] Test database migrations (if applicable): `npm run migrate:status`
+- [ ] Verify API endpoints work correctly
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
-✅ Implementation validated? (type `y` to continue)
+✅ Testing complete? (type `y` to proceed)
 
 ---
 
-### 4. Database Migration (If Applicable)
+### 4. Documentation
 
-**If migration files were created:**
-- [ ] Review migration files for correctness
-- [ ] Run migrations in development environment:
-  ```bash
-  npm run migrate
-  ```
-- [ ] Verify schema changes in database
-- [ ] Test rollback if migration is reversible:
-  ```bash
-  npm run migrate:rollback
-  npm run migrate
-  ```
-
-⚠️ **Critical**: Always test migrations before proceeding to comprehensive testing  
-💡 **Common issue**: Migration failures can break all subsequent tests
-
-**🛑 STOP: Wait for user confirmation before proceeding to next step**
-✅ Migrations completed successfully? (type `y` to continue)
-
----
-
-### 5. Feature Testing
-
-- [ ] Create test file(s) using the pattern:
-  - `test[ModuleName].unit.test.js`
-  - `test[ModuleName].integration.test.js`
-  - `test[ModuleName]Controller.test.js`
-- [ ] Add scripts or logs under `scripts/test/` if needed
-- [ ] Load environment with `require('../../config/env')`
-- [ ] Run tests from the correct working directory
-- [ ] **Note**: Tests now run against updated database schema
-
-**⚠️ Authentication Mocking (Critical for Route Testing):**
-If your route uses authentication, use this EXACT pattern:
-```javascript
-jest.mock('../middleware/auth', () => ({
-  authMiddleware: (req, res, next) => {
-    req.user = { id: 'test-user-id' };
-    next();
-  }
-}));
-
-const { authMiddleware } = require('../middleware/auth');
-```
-
-**❌ Never mock as**: 
-```javascript
-jest.mock('../middleware/auth', () => jest.fn(...));  // ← This fails
-```
-
-⚠️ If user opens the terminal, **pause and wait** for command output  
-💡 Common issue: tests fail when run from the wrong directory — double check!  
-💡 **Authentication errors**: Check import destructuring and mock object structure
-
-**🛑 STOP: Wait for user confirmation before proceeding to next step**
-✅ Tests written and passing? (type `y` to continue)
-
----
-
-### 6. Documentation (Post-Testing)
-
-- [ ] Review what documentation changes need to be made to local and global documentation
-- [ ] For guidance on documentation requirements, see `docs/01_guidance.md`
-- [ ] **📅 DATE CHECK**: Confirm the current date for documentation timestamps and changelog entries
-
-**🛑 STOP: Confirm current date with user before making documentation changes**
-📅 What is today's date for documentation updates? (Please provide date in YYYY-MM-DD format)
-
-**📝 Updates Documentation Format (`docs/03_updates.md`):**
-- [ ] **Chronological Order**: Add new updates at the TOP of the file (most recent first)
-- [ ] **Section Header Format**: Use `## Update[number] - [short name] - [YYYY-MM-DD] - [Uncommitted/Committed/Current]`
-  - **[number]**: Incrementing update number, starting from 001 for the earliest update
-  - **[short name]**: A concise summary of the update (e.g. 'Bookmark Transfer', 'Next.js Migration', 'Footer Modernization')
-  - **[YYYY-MM-DD]**: Date of the update
-  - **[status]**: Uncommitted, Committed, or Current
-- [ ] **Example**: `## Update005 - MIME Type Fix - 2025-07-07 - Committed`
-- [ ] **Numbering**: Increment the update number for each new section (Update001, Update002, etc.)
-- [ ] **Short Name**: Use a concise, descriptive short name summarizing the update
-- [ ] **Content**: Include detailed description of changes, technical implementation, and impact
-- [ ] **Status Update**: After committing changes, update the section header status from `Uncommitted` to `Current` or `Committed` as appropriate
+- [ ] Update sub-project README.md if module changes affect public interface
+- [ ] Update API documentation in `/server/routes/README.md` if new endpoints added
+- [ ] Update `docs/03_updates.md` if changes are cross-system or significant
+- [ ] Update `docs/04_schema.md` if database schema changes
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
 ✅ Documentation updated? (type `y` to proceed)
 
 ---
 
-### 7. Git Workflow
+### 5. Git Workflow
 
 - [ ] Stage all changes with verbose output:
   ```bash
   git add . -v
   ```
 - [ ] Review staged changes carefully
-- [ ] Unstage any unintended files:
+- [ ] Unstage any unintended files (build artifacts, etc.):
   ```bash
   git reset <file>
   ```
@@ -166,7 +91,7 @@ jest.mock('../middleware/auth', () => jest.fn(...));  // ← This fails
 
 ---
 
-### 8. Deployment (Optional)
+### 6. Deployment (Optional)
 
 - [ ] Push to the working branch:
   ```bash
@@ -189,8 +114,8 @@ jest.mock('../middleware/auth', () => jest.fn(...));  // ← This fails
 
 - [ ] Confirm the purpose and scope of the frontend module/component update
 - [ ] Review related components, pages, or styling files
-- [ ] Check for open issues or tasks in `react-ui/BACKLOG.md` related to this change
-- [ ] Confirm the component/page location within `react-ui/src/`
+- [ ] Check for open issues or tasks in the backlog related to this change
+- [ ] Confirm the component/page location within `next-ui/src/`
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
 ✅ Ready to proceed? (type `y`)
@@ -200,121 +125,66 @@ jest.mock('../middleware/auth', () => jest.fn(...));  // ← This fails
 ### 2. Component Implementation
 
 - [ ] Create or update React components in appropriate directories:
-  - Pages: `react-ui/src/pages/`
-  - Components: `react-ui/src/components/`
-  - Utilities: `react-ui/src/utils/`
-- [ ] Follow naming conventions: `PascalCase.jsx` for components
-- [ ] Use shared utilities (`apiClient.js`, `authUtils.js`) if applicable
+  - Pages: `next-ui/src/app/`
+  - Components: `next-ui/src/components/`
+  - Utilities: `next-ui/src/utils/`
+- [ ] Follow naming conventions: `PascalCase.tsx` for components
+- [ ] Use shared utilities (`apiClient.ts`, `authUtils.ts`) if applicable
 - [ ] Import styling: component-specific CSS or `mantine-overrides.css`
 
 **⚠️ Authentication Setup (Critical for Protected Components):**
 - [ ] **AuthContext Import**: `import { useAuth } from '../contexts/AuthContext'`
 - [ ] **Protected Routes**: Use `<ProtectedRoute>` wrapper for auth-required pages
-- [ ] **Token Handling**: Use `authUtils.js` for token management
+- [ ] **API Calls**: Use `apiClient.ts` for consistent API communication
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
 ✅ Implementation complete? (type `y` to proceed)
 
 ---
 
-### 3. Implementation Validation
+### 3. Build Verification
 
-- [ ] Quick visual/functional test of component
-- [ ] Verify integration with existing components and state
-- [ ] Check responsive design on different screen sizes
-- [ ] Confirm styling matches project design patterns
+- [ ] Verify Next.js build succeeds:
+  ```bash
+  cd next-ui && npm run build
+  ```
+- [ ] Check for TypeScript errors: `npx tsc --noEmit`
+- [ ] Verify ESLint passes: `npm run lint`
+- [ ] Test component rendering and functionality
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
-✅ Implementation validated? (type `y` to continue)
+✅ Build verification complete? (type `y` to proceed)
 
 ---
 
-### 4. Build Verification
+### 4. Testing
 
-- [ ] Ensure no build errors:
+- [ ] Run component tests (if available):
   ```bash
-  cd react-ui && npm run build
+  cd next-ui && npm test
   ```
-- [ ] Check for any TypeScript/ESLint warnings
-- [ ] Verify no console errors in development mode:
-  ```bash
-  cd react-ui && npm start
-  ```
-
-⚠️ **Critical**: Build must be clean before testing  
-💡 **Common issue**: Import path errors or missing dependencies
+- [ ] Test component in browser at development URL
+- [ ] Verify responsive design and accessibility
+- [ ] Test integration with backend APIs
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
-✅ Build completed successfully? (type `y` to continue)
+✅ Testing complete? (type `y` to proceed)
 
 ---
 
-### 5. Component Testing
+### 5. Documentation
 
-- [ ] Create test file(s) using the pattern:
-  - `[ComponentName].test.jsx` (alongside component)
-  - Follow existing test patterns in `components/` directory
-  - Shared testing utilities & mocks live in `react-ui/src/__tests__/` (import via `@tests/...` alias)
-- [ ] Use React Testing Library for component testing
-- [ ] Test user interactions, props, and state changes
-- [ ] Run tests from `react-ui` directory:
-  ```bash
-  cd react-ui && npm test
-  ```
-
-**⚠️ Authentication Context Mocking (Critical for Auth-dependent Components):**
-```javascript
-import { AuthContext } from '../contexts/AuthContext';
-
-const mockAuthContext = {
-  user: { id: 'test-user', email: 'test@example.com' },
-  isAuthenticated: true,
-  login: jest.fn(),
-  logout: jest.fn()
-};
-
-// Wrap component in test
-<AuthContext.Provider value={mockAuthContext}>
-  <YourComponent />
-</AuthContext.Provider>
-```
-
-⚠️ If user opens the terminal, **pause and wait** for command output  
-💡 Common issue: tests fail due to missing context providers or API mocks
-
-**🛑 STOP: Wait for user confirmation before proceeding to next step**
-✅ Tests written and passing? (type `y` to continue)
-
----
-
-### 6. Documentation (Post-Testing)
-
-- [ ] Review what documentation changes need to be made to local and global documentation
-- [ ] For guidance on documentation requirements, see `docs/01_guidance.md`. If changes are react-nextjs migration specific then refer to `09_nextjs_migration_tracker`.
-- [ ] **📅 DATE CHECK**: Confirm the current date for documentation timestamps and changelog entries
-
-**🛑 STOP: Confirm current date with user before making documentation changes**
-📅 What is today's date for documentation updates? (Please provide date in YYYY-MM-DD format)
-
-**📝 Updates Documentation Format (`docs/03_updates.md`):**
-- [ ] **Chronological Order**: Add new updates at the TOP of the file (most recent first)
-- [ ] **Section Header Format**: Use `## Update[number] - [short name] - [YYYY-MM-DD] - [Uncommitted/Committed/Current]`
-  - **[number]**: Incrementing update number, starting from 001 for the earliest update
-  - **[short name]**: A concise summary of the update (e.g. 'Bookmark Transfer', 'Next.js Migration', 'Footer Modernization')
-  - **[YYYY-MM-DD]**: Date of the update
-  - **[status]**: Uncommitted, Committed, or Current
-- [ ] **Example**: `## Update005 - MIME Type Fix - 2025-07-07 - Committed`
-- [ ] **Numbering**: Increment the update number for each new section (Update001, Update002, etc.)
-- [ ] **Short Name**: Use a concise, descriptive short name summarizing the update
-- [ ] **Content**: Include detailed description of changes, technical implementation, and impact
-- [ ] **Status Update**: After committing changes, update the section header status from `Uncommitted` to `Current` or `Committed` as appropriate
+- [ ] Update component documentation if public interface changes
+- [ ] Update `docs/03_updates.md` if changes are cross-system or significant
+- [ ] Update sub-project README.md if component affects public interface
+- [ ] Add JSDoc comments for complex components
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
 ✅ Documentation updated? (type `y` to proceed)
 
 ---
 
-### 7. Git Workflow
+### 6. Git Workflow
 
 - [ ] Stage all changes with verbose output:
   ```bash
@@ -336,7 +206,7 @@ const mockAuthContext = {
 
 ---
 
-### 8. Deployment (Optional)
+### 7. Deployment (Optional)
 
 - [ ] Push to the working branch:
   ```bash
@@ -358,7 +228,7 @@ const mockAuthContext = {
 * Authentication patterns prevent 90% of route testing failures
 
 **Frontend Development:**
-* Use `AuthContext`, `apiClient.js`, `authUtils.js` for consistency
+* Use `AuthContext`, `apiClient.ts`, `authUtils.ts` for consistency
 * Build verification catches most integration issues early
 * Component testing focuses on user interactions and props
 
@@ -373,15 +243,29 @@ const mockAuthContext = {
 ## Common Authentication Issues 🚨
 
 **Server (Express Routes):**
-**The `auth.js` module exports an OBJECT**: `{ authMiddleware, verifyGoogleToken, requireRoles }`
-
-**✅ Correct Route Import**: `const { authMiddleware } = require('../middleware/auth')`  
-**❌ Wrong Route Import**: `const authMiddleware = require('../middleware/auth')`
+- **❌ Wrong Import**: `const authMiddleware = require('../middleware/auth')` ← Missing destructuring
+- **✅ Correct Import**: `const { authMiddleware } = require('../middleware/auth')` ← Destructuring required
+- **❌ Wrong Usage**: `router.get('/api/test', authMiddleware)` ← Missing function call
+- **✅ Correct Usage**: `router.get('/api/test', authMiddleware())` ← Function call required
 
 **Frontend (React Components):**
-**The `AuthContext` provides user state and authentication methods**
+- **❌ Wrong Import**: `import AuthContext from '../contexts/AuthContext'` ← Missing destructuring
+- **✅ Correct Import**: `import { useAuth } from '../contexts/AuthContext'` ← Hook destructuring
+- **❌ Wrong Usage**: `const user = AuthContext.user` ← Direct context access
+- **✅ Correct Usage**: `const { user } = useAuth()` ← Hook usage required
 
-**✅ Correct Context Usage**: `const { user, isAuthenticated } = useAuth()`  
-**❌ Wrong Context Usage**: Direct token manipulation without context
+**Testing (Jest Mocks):**
+- **❌ Wrong Mock**: `jest.mock('../middleware/auth', () => jest.fn(...))` ← Wrong structure
+- **✅ Correct Mock**: `jest.mock('../middleware/auth', () => ({ authMiddleware: jest.fn(...) }))` ← Object structure
 
-*These patterns prevent 90% of authentication failures in both environments.* 
+**Why This Matters:**
+- 90% of authentication-related test failures stem from incorrect import/mock patterns
+- The `auth.js` module exports an object with multiple functions, not a single function
+- Destructuring is required for both imports and mocks to work correctly
+- Function calls are required when applying middleware to routes
+
+**Quick Fix Checklist:**
+- [ ] Import uses destructuring: `const { authMiddleware } = require(...)`
+- [ ] Usage includes function call: `router.use(authMiddleware())`
+- [ ] Tests mock the object structure: `{ authMiddleware: jest.fn(...) }`
+- [ ] Frontend uses hook destructuring: `const { user } = useAuth()` 

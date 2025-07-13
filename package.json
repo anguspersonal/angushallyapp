@@ -23,7 +23,7 @@
     "compress-big": "node scripts/compress-big-only.mjs",
     "clean:node": "bash scripts/clean-node.sh",
     "clean:next": "bash scripts/clean-next.sh",
-    "clean:public": "node scripts/clean-public.mjs",
+    "clean:public": "node scripts/clean-public.js",
     "clean:ports": "node scripts/clean-ports.js",
     "clean:heroku-cache": "heroku builds:cache:purge -a angushallyapp",
     "test": "cd server && npx jest tests",

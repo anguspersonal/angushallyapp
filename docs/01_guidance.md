@@ -9,7 +9,7 @@ Welcome to the documentation hub for **angushallyapp**. This guide explains how 
 ```
 /
 ├── README.md               ← Project overview & quick start
-├── react-ui/
+├── next-ui/
 │   └── README.md           ← Frontend overview & quick start
 ├── server/
 │   └── README.md           ← Backend overview & quick start
@@ -62,10 +62,10 @@ This is a **monolith application** that combines multiple sub-projects. Document
 
 ### Project Level
 - **Backend**: `/server/[subProjectName]/README.md` (comprehensive)
-- **Frontend**: `react-ui/src/pages/projects/[subProjectName]/README.md` (minimal, references backend)
+- **Frontend**: `next-ui/src/app/projects/[subProjectName]/README.md` (minimal, references backend)
 
 ### File Level
-- In-file documentation for JSX/JS files following best practices
+- In-file documentation for TSX/JS files following best practices
 
 ## 4. Reference-Based Documentation Approach
 
@@ -83,11 +83,11 @@ This is a **monolith application** that combines multiple sub-projects. Document
     ├── fetchEstablishments.js
     └── processRatingValue.js
 
-react-ui/src/pages/projects/
+next-ui/src/app/projects/
 └── eat-safe-uk/
     ├── README.md           ← Minimal, references backend
-    ├── EatSafeUK.jsx
-    └── GMapsSearchBar.jsx
+    ├── page.tsx
+    └── components/GMapsSearchBar.tsx
 ```
 
 ## 5. File Naming & Order
@@ -108,17 +108,17 @@ react-ui/src/pages/projects/
 5. **05\_database.md**: Detailed database setup, migrations, and maintenance.
 6. **06\_tech\_debt.md**: List of known technical debt items, rationale, and references.
 7. **07\_backlog.md**: Prioritized feature backlog, grouped by area.
-8. **08\_module\_development\_flow.md**: Step-by-step workflow guide for developing modules with server and frontend contexts.
-9. **09\_nextjs\_migration\_plan.md**: Comprehensive Next.js migration plan with progress tracking and implementation details.
-10. **10\_unused\_variables\_cleanup.md**: Tracking document for code cleanup efforts, unused variable removal, and technical debt reduction.
-11. **11\_startup\_commands\_guide.md**: Comprehensive reference for all application startup commands, development workflows, and deployment procedures.
-12. **12\_mime\_type\_issue\_resolution.md**: Documentation of MIME type error resolution, root cause analysis, and prevention strategies.
+8. **08\_module\_development_flow.md**: Step-by-step workflow guide for developing modules with server and frontend contexts.
+9. **09\_nextjs\_migration_plan.md**: Comprehensive Next.js migration plan with progress tracking and implementation details.
+10. **10\_unused\_variables_cleanup.md**: Tracking document for code cleanup efforts, unused variable removal, and technical debt reduction.
+11. **11\_startup_commands_guide.md**: Comprehensive reference for all application startup commands, development workflows, and deployment procedures.
+12. **12\_mime\_type\_issue_resolution.md**: Documentation of MIME type error resolution, root cause analysis, and prevention strategies.
 13. **adr/**: Architecture Decision Records documenting significant technical decisions.
 
 ### Project-Level Documentation
 
 - **Backend**: Comprehensive sub-project documentation in `/server/[subProjectName]/README.md`
-- **Frontend**: Minimal documentation in `react-ui/src/pages/projects/[subProjectName]/README.md`
+- **Frontend**: Minimal documentation in `next-ui/src/app/projects/[subProjectName]/README.md`
 
 ### Module-Level Documentation
 
@@ -154,7 +154,7 @@ Documentation updates follow the hierarchy:
 
 ### Project-Level Documentation Updates
 - **Backend**: Update `/server/[subProjectName]/README.md` for any sub-project changes
-- **Frontend**: Update `react-ui/src/pages/projects/[subProjectName]/README.md` for frontend-specific changes
+- **Frontend**: Update `next-ui/src/app/projects/[subProjectName]/README.md` for frontend-specific changes
 - **New routes**: Update API documentation in `/server/routes/` folder
 
 ### Module-Level Documentation Updates
@@ -221,7 +221,7 @@ Document any REST endpoints or API routes exposed by this sub-project.
 ```md
 # [Sub-Project Name] - Frontend
 
-**Location:** `react-ui/src/pages/projects/[subProjectName]`
+**Location:** `next-ui/src/app/projects/[subProjectName]`
 
 ## Purpose
 Brief description of the frontend components for this sub-project.
@@ -268,7 +268,7 @@ We centralise all of our environment‐specific settings in a single place and p
 
 - **One source of truth**: root `.env` files control _all_ variables for server and client  
 - **Zero-if-possible**: application code never contains `if (NODE_ENV === ...)`; it only reads `process.env.*`  
-- **CRA-friendly**: client‐side env vars live in `react-ui/.env.development` and `react-ui/.env.production` (plus optional `.env.local`)  
+- **Next.js-friendly**: client‐side env vars live in `next-ui/.env.development` and `next-ui/.env.production` (plus optional `.env.local`)  
 - **Express-friendly**: server reads root `.env`, `.env.development` or `.env.production`, and `.env.local` via our existing `config/env.js`
 
 When you need full details on the why and how, see our ADR:  

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { execSync } from "node:child_process";
+const { execSync } = require("child_process");
 const ports = process.argv.slice(2).length ? process.argv.slice(2) : ["5000", "3000"];
 for (const p of ports) {
   try {

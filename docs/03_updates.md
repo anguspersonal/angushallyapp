@@ -39,6 +39,112 @@ Each update should include:
 
 ---
 
+## Update043 - README & Module Development Flow Updates for Next.js Architecture - 2025-07-13 - Complete
+
+### Overview
+Updated README.md and module development flow documentation to reflect the completed Next.js migration and current project architecture, ensuring all documentation is consistent with the actual codebase.
+
+### Technical Details
+- **README.md Updates**: Comprehensive updates to reflect current Next.js architecture:
+  - Updated project description from "React" to "Next.js" monorepo
+  - Updated tech stack table to show Next.js 15, React 19, TypeScript, and Mantine UI v7
+  - Updated repository structure to show `next-ui` with App Router structure
+  - Updated quick start commands to reflect current development workflow
+  - Fixed documentation links to use correct `docs/` paths
+  - Updated testing commands to reflect current project structure
+- **Module Development Flow Updates**: Updated `docs/08_module_development_flow.md`:
+  - Changed frontend development context from `/react-ui` to `/next-ui`
+  - Updated component implementation paths to use Next.js App Router structure
+  - Updated file naming conventions from `.jsx` to `.tsx`
+  - Updated build verification commands for Next.js
+  - Updated testing commands and directory references
+  - Enhanced authentication setup guidance with current patterns
+  - Streamlined workflow steps for better usability
+
+### Impact
+- **Documentation Consistency**: All major documentation files now accurately reflect the current Next.js architecture
+- **Developer Onboarding**: New contributors will see correct project structure, commands, and workflows
+- **Maintenance**: Documentation is now consistent with the actual codebase and development practices
+- **Migration Completion**: Documentation updates mark the final completion of the Next.js migration process
+
+### Next Steps
+- Monitor for any remaining outdated references in other documentation files
+- Consider updating any remaining sub-project READMEs to reflect the new structure
+- Ensure all new documentation follows the updated guidance and patterns
+
+---
+
+## Update042 - Documentation Guidance Updates for Next.js Migration Completion - 2025-07-13 - Complete
+
+### Overview
+Updated documentation guidance to reflect the completed Next.js migration, replacing all `react-ui` references with `next-ui` and updating project structure to match the current architecture.
+
+### Technical Details
+- **Documentation Structure Update**: Updated `docs/01_guidance.md` to reflect current project structure:
+  - Changed `react-ui/` to `next-ui/` in documentation structure diagram
+  - Updated frontend documentation paths from `react-ui/src/pages/projects/` to `next-ui/src/app/projects/`
+  - Updated file extensions from `.jsx` to `.tsx` to reflect TypeScript migration
+  - Updated environment variable management section to reference Next.js instead of CRA
+- **Project-Level Documentation**: Updated all references to frontend documentation locations:
+  - Frontend READMEs now located in `next-ui/src/app/projects/[subProjectName]/README.md`
+  - Updated example sub-project structure to show Next.js App Router patterns
+  - Updated file naming conventions to reflect TypeScript usage
+- **Template Updates**: Updated sub-project README templates to reflect current architecture:
+  - Frontend template now references `next-ui/src/app/projects/[subProjectName]`
+  - Updated component examples to use `.tsx` extensions
+  - Maintained reference-based documentation approach
+
+### Impact
+- **Documentation Accuracy**: All documentation now accurately reflects the current Next.js architecture
+- **Developer Onboarding**: New contributors will see correct project structure and file locations
+- **Maintenance**: Documentation is now consistent with the actual codebase structure
+- **Migration Completion**: Documentation updates mark the completion of the Next.js migration process
+
+### Next Steps
+- Continue monitoring for any remaining outdated references in other documentation files
+- Consider updating any remaining sub-project READMEs to reflect the new structure
+- Ensure all new documentation follows the updated guidance
+
+---
+
+## Update041 - Development Workflow Enhancement & Cleanup Scripts - 2025-07-13 - Complete
+
+### Overview
+Implemented comprehensive development workflow improvements with new cleanup scripts and enhanced startup commands guide to streamline development and deployment processes.
+
+### Technical Details
+- **New Cleanup Scripts**: Added four new cleanup commands to `package.json`:
+  - `clean:node`: Complete workspace reset with `npm ci` for dependency issues
+  - `clean:next`: Next.js build cache refresh and rebuild
+  - `clean:public`: Image cleanup and Windows ADS marker removal
+  - `clean:ports`: Process management for port conflicts
+  - `clean:heroku-cache`: Heroku build cache purging
+- **Script Implementation**: Created corresponding script files in `scripts/` directory:
+  - `scripts/clean-node.sh`: Removes all `node_modules` and `package-lock.json`, runs `npm ci`
+  - `scripts/clean-next.sh`: Removes `.next` build cache and rebuilds UI
+  - `scripts/clean-public.js`: Archives original images and removes Windows ADS files
+  - `scripts/clean-ports.js`: Kills processes on specified ports (defaults to 5000, 3000)
+- **Startup Commands Guide Update**: Completely rewrote `docs/11_startup_commands_guide.md`:
+  - Removed all `react-ui` references (now fully Next.js focused)
+  - Added comprehensive cleanup commands section
+  - Enhanced troubleshooting cheatsheet with new scripts
+  - Updated deployment workflow with Heroku cache management
+  - Added CI/CD size gates recommendations
+
+### Impact
+- **Improved Developer Experience**: Streamlined development workflow with one-command solutions for common issues
+- **Reduced Development Friction**: Quick cleanup commands eliminate manual process management
+- **Enhanced Deployment Reliability**: Better cache management and build optimization
+- **Comprehensive Documentation**: Single source of truth for all development commands and workflows
+- **Production Readiness**: Optimized deployment process with proper cache management
+
+### Next Steps
+- Monitor usage of new cleanup scripts for effectiveness
+- Consider adding automated cleanup triggers for common development scenarios
+- Evaluate additional workflow improvements based on developer feedback
+
+---
+
 ## Update040 - Website Title Standardization & Legacy File Cleanup - 2025-07-13 - Uncommitted
 
 ### Overview
