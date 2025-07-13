@@ -7,7 +7,7 @@ import ClientLayout from '@/components/ClientLayout';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 
 export const metadata: Metadata = {
-  title: 'Angus Hally - Strategy Consultant & Developer',
+  title: 'Angus Hally App',
   description: 'Personal website of Angus Hally - strategy consultant and amateur developer passionate about business strategy, software, and data.',
   icons: {
     icon: '/AH-logo-no-background.ico',

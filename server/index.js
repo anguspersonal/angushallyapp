@@ -171,7 +171,7 @@ if (process.env.ENABLE_NEXT_LOGIN === 'true') {
   app.get('/login', (req, res) => res.redirect('/next/login'));
 }
 if (process.env.ENABLE_NEXT_ABOUT === 'true') {
-  app.get('/about', (req, res) => res.redirect('/next/about/'));
+  app.get('/about', (req, res) => res.redirect('/next/about'));
 }
 if (process.env.ENABLE_NEXT_PROJECTS === 'true') {
   app.get('/projects', (req, res) => res.redirect('/next/projects'));
