@@ -15,6 +15,9 @@
     "clean": "rm -rf .next node_modules package-lock.json",
     "rebuild": "npm run clean && npm install && npm run dev"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6"
+  }
 }

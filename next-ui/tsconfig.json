@@ -1,73 +1,48 @@
 {
   "compilerOptions": {
+    // ---------- Language / emit ----------
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
-    "allowJs": false,
-    "skipLibCheck": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",       // requires TS 5+
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,                      // (single occurrence)
+
+    // ---------- Strictness ----------
     "strict": true,
-    "noEmit": true,
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "preserve",
+
+    // ---------- Project ergonomics ----------
     "incremental": true,
     "exactOptionalPropertyTypes": false,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+
+    // ---------- Next.js plugin ----------
+    "plugins": [{ "name": "next" }],
+
+    // ---------- Path aliases ----------
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@/components/*": [
-        "src/components/*"
-      ],
-      "@/lib/*": [
-        "src/lib/*"
-      ],
-      "@/app/*": [
-        "src/app/*"
-      ],
-      "@/types/*": [
-        "src/types/*"
-      ]
+      "@/*": ["src/*"],
+      "@/types/*": ["src/types/*"]
     },
-    "types": [
-      "node",
-      "react",
-      "react-dom"
-    ],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/types"
-    ]
+
+    // ---------- Global types ----------
+    "types": ["node", "react", "react-dom"]
   },
+
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/types/**/*.d.ts"
+    "src/**/*.d.ts"
   ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "dist",
-    "out"
-  ]
+
+  "exclude": ["node_modules", ".next", "dist", "out"]
 }

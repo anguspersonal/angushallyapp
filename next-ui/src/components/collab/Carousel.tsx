@@ -5,7 +5,6 @@ import { Box, Title, Text, useMantineTheme } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
 import { useMediaQuery } from '@mantine/hooks';
 import Autoplay from 'embla-carousel-autoplay';
-import '@mantine/carousel/styles.css';
 import TestimonialSlide from './TestimonialSlide';
 import CaseStudySlide from './CaseStudySlide';
 import { testimonials, type Testimonial } from '@/data/collab/testimonials';
@@ -114,9 +113,11 @@ export default function CustomCarousel({
                 withIndicators
                 slideSize={{ base: '100%', sm: '50%', md: '33.3333%' }}
                 slideGap={{ base: 'xs', sm: 'md' }}
-                loop
-                align="start"
-                slidesToScroll={isMobile ? 1 : 2}
+                emblaOptions={{
+                    loop: true,
+                    align: 'start',
+                    slidesToScroll: isMobile ? 1 : 2
+                }}
                 plugins={[autoplay.current]}
                 controlsOffset={isMobile ? 'xs' : 'md'}
                 controlSize={isMobile ? 24 : 30}
