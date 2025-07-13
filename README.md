@@ -1,13 +1,13 @@
 # Angus Hally App
 
-A personal website combining a blog, portfolio, and a playground for custom tools (habit tracker, Strava integration, FSA lookup, and more). Built as a full-stack monorepo using React, Node.js/Express, and PostgreSQL.
+A personal website combining a blog, portfolio, and a playground for custom tools (habit tracker, Strava integration, FSA lookup, and more). Built as a full-stack monorepo using Next.js, Node.js/Express, and PostgreSQL.
 
 ## 🔥 PRIORITY ITEMS (Next Session - 2025-01-27)
 
 **HIGH PRIORITY:**
 1. **Create Centralized Frontend Test Centre**
    - Frontend testing infrastructure is currently fragmented/missing
-   - Need centralized location: `/react-ui/tests/` similar to `/server/tests/`
+   - Need centralized location: `/next-ui/tests/` similar to `/server/tests/`
    - Install missing dependencies: `@testing-library/react`, etc.
    - Standardize testing patterns across frontend and backend
 
@@ -28,8 +28,8 @@ A personal website combining a blog, portfolio, and a playground for custom tool
 
 | Layer     | Technology                           |
 | --------- | ------------------------------------ |
-| Frontend  | React, Material-UI, React Router     |
-| Styling   | Material-UI, responsive design       |
+| Frontend  | Next.js 15, React 19, TypeScript    |
+| Styling   | Mantine UI v7, responsive design    |
 | Backend   | Node.js, Express                     |
 | Database  | PostgreSQL, Knex.js (migrations)     |
 | Auth      | Google OAuth 2.0, JWT                |
@@ -53,13 +53,13 @@ A personal website combining a blog, portfolio, and a playground for custom tool
 │   ├── index.js         # Express server setup
 │   └── knexfile.js      # Knex configs
 │
-└── react-ui
+└── next-ui
     ├── public/         # Static assets
     ├── src/
+    │   ├── app/        # Next.js App Router pages
     │   ├── components/ # Reusable UI components
-    │   ├── pages/      # Feature-specific pages
     │   ├── utils/      # API client & auth helpers
-    │   └── App.js      # Root React component
+    │   └── types/      # TypeScript type definitions
     └── package.json    # Frontend dependencies & scripts
 ```
 
@@ -90,21 +90,24 @@ A personal website combining a blog, portfolio, and a playground for custom tool
 3. **Start development environment**
 
    ```bash
-   # For current production app (React + Server)
+   # Full-stack development (Next.js + Express)
    npm run dev
    
-   # For Next.js migration testing
-   npm run dev-next
+   # Backend only
+   npm run server
+   
+   # Frontend only
+   npm run client
    ```
 
 4. **Access the application**
 
    ```bash
-   # Production app
+   # Main application
    http://localhost:5000
    
-   # Next.js migrated routes
-   http://localhost:5000/next/
+   # Next.js dev server (for development)
+   http://localhost:3000
    ```
 
 ### 🎯 Quick Start Recommendations
@@ -112,11 +115,6 @@ A personal website combining a blog, portfolio, and a playground for custom tool
 **For most development work:**
 ```bash
 npm run dev
-```
-
-**For Next.js migration testing:**
-```bash
-npm run dev-next
 ```
 
 **For backend-only work:**
@@ -137,20 +135,20 @@ npm run client
 
 For comprehensive documentation, please refer to the following resources:
 
-* [Documentation Guidance](documentation/01_guidance.md) - How to navigate and update docs
-* [Project Roadmap](documentation/02_roadmap.md) - High-level vision and milestones
-* [Change Log](documentation/03_updates.md) - Detailed, chronological change log
-* [Database Schema](documentation/04_schema.md) - Human-readable DB schema overview
-* [Database Guide](documentation/05_database.md) - Database setup and migrations guide
-* [Technical Debt](documentation/06_tech_debt.md) - Known architectural and code-quality debt
-* [Feature Backlog](documentation/07_backlog.md) - Feature wishlist and prioritization
+* [Documentation Guidance](docs/01_guidance.md) - How to navigate and update docs
+* [Project Roadmap](docs/02_roadmap.md) - High-level vision and milestones
+* [Change Log](docs/03_updates.md) - Detailed, chronological change log
+* [Database Schema](docs/04_schema.md) - Human-readable DB schema overview
+* [Database Guide](docs/05_database.md) - Database setup and migrations guide
+* [Technical Debt](docs/06_tech_debt.md) - Known architectural and code-quality debt
+* [Feature Backlog](docs/07_backlog.md) - Feature wishlist and prioritization
 
 ---
 
 ## 🔍 Testing
 
-* **Backend**: `cd server && npm test`
-* **Frontend**: `cd react-ui && npm test`
+* **Backend**: `npm test`
+* **Frontend**: `cd next-ui && npm test`
 
 ---
 
