@@ -20,6 +20,7 @@ const nextConfig = {
     },
   
     // Disable browser source-maps in production to shrink the slug
+    // Note: CSS module source maps still appear in dev mode - use "Hide network" in DevTools to clean console
     productionBrowserSourceMaps: false,
   
     // Custom webpack tweaks
@@ -27,6 +28,9 @@ const nextConfig = {
       if (dev) {
         // Improve file-watcher reliability on WSL/Docker
         config.watchOptions = { poll: 1000, aggregateTimeout: 300 };
+        
+        // Optional: Disable CSS source maps in development too
+        // config.devtool = 'eval'; // Uncomment if you want to disable CSS source maps in dev
       }
   
       // Drop all moment.js locale bundles (~280 kB)
@@ -38,6 +42,16 @@ const nextConfig = {
       );
   
       return config;
+    },
+
+    // API proxy configuration
+    async rewrites() {
+      return [
+        {
+          source: "/api/:path*",
+          destination: "http://localhost:5000/api/:path*",
+        },
+      ];
     },
   };
   
