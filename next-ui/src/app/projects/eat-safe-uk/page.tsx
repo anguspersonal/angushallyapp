@@ -85,7 +85,6 @@ export default function EatSafeUK() {
           <MapView
             searchResults={searchResults}
             userLocation={userLocation}
-            isSearching={isSearching}
             setIsSearching={setIsSearching}
             selectedMarker={selectedMarker}
             setSelectedMarker={setSelectedMarker}

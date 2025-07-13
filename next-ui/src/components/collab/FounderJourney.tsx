@@ -80,11 +80,10 @@ const stepVariants = {
 interface StepProps {
   title: string;
   description: string;
-  index: number;
   icon: ComponentType<{ size: number; color?: string }>;
 }
 
-function Step({ title, description, index, icon: Icon }: StepProps) {
+function Step({ title, description, icon: Icon }: StepProps) {
   const theme = useMantineTheme();
 
   return (
@@ -167,7 +166,7 @@ export default function FounderJourney() {
         {/* Steps Container */}
         <Box style={{ position: 'relative', zIndex: 1 }}>
           {steps.map((step, index) => (
-            <Step key={index} index={index} title={step.title} description={step.description} icon={step.icon} />
+            <Step key={index} title={step.title} description={step.description} icon={step.icon} />
           ))}
         </Box>
       </motion.div>

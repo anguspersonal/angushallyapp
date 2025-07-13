@@ -12,13 +12,6 @@ import { testimonials, type Testimonial } from '@/data/collab/testimonials';
 import { caseStudies, type CaseStudy } from '@/data/collab/caseStudies';
 import styles from './Carousel.module.css';
 
-interface SlideItem {
-    type: 'testimonial' | 'caseStudy';
-    id: number;
-    uniqueId: string;
-    [key: string]: any;
-}
-
 interface CustomCarouselProps {
     title?: string;
     description?: string;

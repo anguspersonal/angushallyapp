@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import Markers from "./Markers";
 import { fetchHygieneScores } from "../utils/fetchHygieneScores";
@@ -47,7 +47,6 @@ interface GMapViewProps {
   userLocation: UserLocation | null;
   selectedMarker: Marker | null;
   setSelectedMarker: (marker: Marker | null) => void;
-  isSearching: boolean;
   setIsSearching: (searching: boolean) => void;
 }
 
@@ -56,7 +55,6 @@ const GMapView: React.FC<GMapViewProps> = ({
   userLocation,
   selectedMarker,
   setSelectedMarker,
-  isSearching,
   setIsSearching
 }) => {
   const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -137,7 +135,6 @@ const GMapView: React.FC<GMapViewProps> = ({
             places={markers}
             selectedMarker={selectedMarker}
             setSelectedMarker={setSelectedMarker}
-            isSearching={isSearching}
             setIsSearching={setIsSearching}
           />
         </Map>

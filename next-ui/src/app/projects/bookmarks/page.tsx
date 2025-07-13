@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Loader, Text, Group, Stack, Title, Container, Card, Badge, Paper, SimpleGrid } from '@mantine/core';
 import { IconRefresh, IconTrendingUp, IconBolt, IconUsers, IconBook, IconArrowRight, IconBrain } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -90,7 +90,7 @@ const BookmarksPage = () => {
       } else {
         setBookmarks([]);
       }
-    } catch (error: unknown) {
+    } catch (_error: unknown) { // eslint-disable-line @typescript-eslint/no-unused-vars
       notifications.show({
         title: 'Error',
         message: 'Failed to fetch bookmarks',
@@ -102,7 +102,7 @@ const BookmarksPage = () => {
     }
   };
 
-  const calculateStats = () => {
+  const calculateStats = useCallback(() => {
     const totalItems = bookmarks.length;
     const thisWeek = bookmarks.filter(bookmark => {
       const created = new Date(bookmark.created_at);
@@ -121,7 +121,7 @@ const BookmarksPage = () => {
       knowledgeScore,
       connections
     });
-  };
+  }, [bookmarks]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -139,11 +139,11 @@ const BookmarksPage = () => {
     };
 
     initialize();
-  }, [user]);
+  }, [user, calculateStats]);
 
   useEffect(() => {
     calculateStats();
-  }, [bookmarks]);
+  }, [bookmarks, calculateStats]);
 
   const handleViewChange = (view: NavigationItemId) => {
     setActiveView(view);

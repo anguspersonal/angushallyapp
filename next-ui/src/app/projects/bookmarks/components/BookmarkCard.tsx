@@ -10,10 +10,7 @@ import {
 
 const BookmarkCard: React.FC<BookmarkCardProps> = ({ 
   bookmark, 
-  onInstagramAnalysisClick,
-  onEdit,
-  onDelete,
-  showActions = false
+  onInstagramAnalysisClick
 }) => {
   const [imageError, setImageError] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);

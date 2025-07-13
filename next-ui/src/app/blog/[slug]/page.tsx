@@ -1,55 +1,27 @@
-'use client';
-
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Image, Text, Box, Anchor, Container, Title, Loader, Center } from '@mantine/core';
-import { fetchBlogPost } from '../../../utils/fetchBlogData';
-import type { BlogPostFull } from '@/types/blog';
+import { notFound } from 'next/navigation';
+import { Image, Text, Box, Anchor, Container, Title } from '@mantine/core';
+import { fetchBlogPost } from '@/utils/fetchBlogData';
 import '../blog.css';
 
-interface BlogPostPageProps {
-  params: Promise<{ slug: string }>;
+interface PageProps {
+  params: { slug: string };
 }
 
-export default function BlogPost({ params }: BlogPostPageProps) {
-  // Unwrap params using React.use for Next.js 15+
-  const { slug } = React.use(params);
-  const [post, setPost] = useState<BlogPostFull | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!slug) {
-        setLoading(false);
-        return;
-      }
-      const postData = await fetchBlogPost(slug);
-      setPost(postData);
-      setLoading(false);
-    }
-    fetchData();
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <Container py="xl">
-        <Center>
-          <Loader size="lg" />
-        </Center>
-      </Container>
-    );
+export default async function BlogPostPage({ params }: PageProps) {
+  const { slug } = params;
+  
+  if (!slug) {
+    notFound();
   }
 
+  const post = await fetchBlogPost(slug);
+
   if (!post) {
-    return (
-      <Container py="xl">
-        <Center>
-          <Text size="lg" opacity={0.7}>Post not found.</Text>
-        </Center>
-      </Container>
-    );
+    notFound();
   }
 
   return (

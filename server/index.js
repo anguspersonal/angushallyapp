@@ -70,44 +70,6 @@ app.use(express.json());
 // Use cookie-parser middleware
 app.use(cookieParser());
 
-// Priority serve Next.js static files at /next route
-if (isDev) {
-  // In development, proxy to Next.js dev server
-  console.log('Setting up Next.js proxy to http://localhost:3000');
-  const { createProxyMiddleware } = require('http-proxy-middleware');
-  app.use('/next', createProxyMiddleware({
-    target: 'http://localhost:3000',
-    changeOrigin: true,
-    pathRewrite: {
-      '^/next': '', // Remove /next prefix when forwarding to Next.js dev server
-    },
-    onError: (err, req, res) => {
-      console.error('Proxy error:', err.message);
-      res.status(500).send('Proxy error: ' + err.message);
-    },
-    logLevel: 'debug',
-  }));
-} else {
-  // In production, serve static files (only if Next.js build exists)
-  const nextUiPath = path.resolve(__dirname, '../next-ui/out');
-  if (fs.existsSync(nextUiPath)) {
-    app.use('/next', express.static(nextUiPath));
-  } else {
-    // Next.js not built for production, skip the route
-    console.log('Next.js build not found, skipping /next routes');
-  }
-}
-
-// Priority serve Next.js static files in production
-if (!isDev) {
-  const nextUiPath = path.resolve(__dirname, '../next-ui/out');
-  if (fs.existsSync(nextUiPath)) {
-    app.use(express.static(nextUiPath));
-  } else {
-    console.log('Next.js build not found, skipping static file serving');
-  }
-}
-
 // Trust proxy for express rate limit to work correctly
 app.set("trust proxy", 1);
 
@@ -204,20 +166,33 @@ app.get('/api/health', (req, res) => {
 
 // Bookmark routes removed - not used by frontend (uses raindrop routes instead)
 
-// SEO redirects for migrated routes
+// Route swapping to Next.js pages (enable via environment variables)
+if (process.env.ENABLE_NEXT_LOGIN === 'true') {
+  app.get('/login', (req, res) => res.redirect('/next/login'));
+}
+if (process.env.ENABLE_NEXT_ABOUT === 'true') {
+  app.get('/about', (req, res) => res.redirect('/next/about'));
+}
+if (process.env.ENABLE_NEXT_PROJECTS === 'true') {
+  app.get('/projects', (req, res) => res.redirect('/next/projects'));
+}
+if (process.env.ENABLE_NEXT_BLOG === 'true') {
+  app.get('/blog', (req, res) => res.redirect('/next/blog'));
+}
+if (process.env.ENABLE_NEXT_CONTACT === 'true') {
+  app.get('/contact', (req, res) => res.redirect('/next/contact'));
+}
+if (process.env.ENABLE_NEXT_CV === 'true') {
+  app.get('/cv', (req, res) => res.redirect('/next/cv'));
+}
+if (process.env.ENABLE_NEXT_COLLAB === 'true') {
+  app.get('/collab', (req, res) => res.redirect('/next/collab'));
+}
+
+// SEO redirects for migrated routes (fallback)
 app.get('/about', function (req, res) {
   res.redirect(301, '/next/about/');
 });
-
-// Proxy /login to Next.js server in all environments
-// NOTE: Next.js server must be running in production (e.g., 'next start' in next-ui)
-const { createProxyMiddleware } = require('http-proxy-middleware');
-app.use('/login', createProxyMiddleware({
-  target: 'http://localhost:3000',
-  changeOrigin: true,
-  pathRewrite: { '^/login': '/login' },
-  logLevel: 'debug',
-}));
 
 // Answer all other API requests.
 app.get('/api', function (req, res) {
@@ -228,8 +203,8 @@ app.get('/api', function (req, res) {
 // All remaining requests should be handled by Next.js
 // This fallback ensures any unmatched routes are handled gracefully
 app.get('*', function (request, response) {
-  // In development, proxy to Next.js dev server
   if (isDev) {
+    // In development, proxy to Next.js dev server
     const { createProxyMiddleware } = require('http-proxy-middleware');
     const proxy = createProxyMiddleware({
       target: 'http://localhost:3000',
@@ -240,10 +215,10 @@ app.get('*', function (request, response) {
       response.status(404).json({ error: 'Route not found' });
     });
   } else {
-    // In production, serve Next.js static files
+    // In production, serve Next.js static index.html for all unmatched routes
     const nextUiPath = path.resolve(__dirname, '../next-ui/out');
     if (fs.existsSync(nextUiPath)) {
-      response.sendFile(path.resolve(nextUiPath, '404.html'), (err) => {
+      response.sendFile(path.resolve(nextUiPath, 'index.html'), (err) => {
         if (err) {
           response.status(404).json({ error: 'Route not found' });
         }

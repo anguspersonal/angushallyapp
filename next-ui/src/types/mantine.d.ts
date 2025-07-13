@@ -2,9 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { 
-  MantineColorsTuple, 
-  MantineThemeOverride, 
-  MantineTheme
+  MantineColorsTuple
 } from '@mantine/core';
 
 // JSX namespace declaration to fix TypeScript errors
@@ -28,9 +26,7 @@ declare module '@mantine/core' {
 
 // Re-export important Mantine types for easier access
 export type { 
-  MantineColorsTuple, 
-  MantineThemeOverride, 
-  MantineTheme
+  MantineColorsTuple
 } from '@mantine/core';
 
 // Global type declarations for theme assets

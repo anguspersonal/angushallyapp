@@ -67,7 +67,7 @@ export default function ContactPage() {
         setStatus("Sending...");
         setIsSubmitting(true);
         try {
-            const result = await api.post('/contact', { ...values, recaptchaToken: captchaValue });
+            await api.post('/contact', { ...values, recaptchaToken: captchaValue });
             setStatus("Message sent successfully! Thanks for reaching out.");
             form.reset();
             setCaptchaValue(null);

@@ -1,5 +1,5 @@
 //Imports
-import React, { useState, useEffect, useDebugValue} from 'react';
+import React, { useState, useEffect, useDebugValue, useCallback} from 'react';
 import './Gameboard.css';
 import industries from './Industries.json';
 import Win from './Win';
@@ -53,7 +53,7 @@ const shuffleDeck = () => {
   };
 };
 
-const GameBoard: React.FC<GameBoardProps> = ({ gameStatus: initialGameStatus }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ gameStatus: _initialGameStatus }) => {
 
   // State variables
   const [lives, setLives] = useLabeledState<number>(3, 'Lives');
@@ -66,7 +66,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ gameStatus: initialGameStatus }) 
   const [roundCounter, setRoundCounter] = useLabeledState<number>(0, 'Round');
 
   // Function to restart the game
-  const restartGame = () => {
+  const restartGame = useCallback(() => {
     const { deck, startingIndustry } = shuffleDeck();
     setLives(3);
     setStartingIndustry(startingIndustry);
@@ -76,12 +76,12 @@ const GameBoard: React.FC<GameBoardProps> = ({ gameStatus: initialGameStatus }) 
     setCards(deck);
     setSelectedCard(null);
     setRoundCounter(0);
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // UseEffect hook to restart the game when the component mounts
   useEffect(() => {
     restartGame();
-  }, []);
+  }, [restartGame]);
 
   // Function to update the card state
   const updateCardState = (index: number, newState: CardStates) => {

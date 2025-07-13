@@ -52,6 +52,8 @@ const GMapsSearchBar: React.FC<GMapsSearchBarProps> = ({
   selectedMarker, 
   setSelectedMarker
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const unused = selectedMarker;
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [placeholder, setPlaceholder] = useState("Search restaurants...");

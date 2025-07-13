@@ -58,7 +58,7 @@ const NearbySearchButton: React.FC<NearbySearchButtonProps> = ({
   setUserSearched,
   isSearching,
   setIsSearching,
-  selectedMarker,
+  selectedMarker: _selectedMarker,
   setSelectedMarker
 }) => {
   // Handle nearby search when user clicks button

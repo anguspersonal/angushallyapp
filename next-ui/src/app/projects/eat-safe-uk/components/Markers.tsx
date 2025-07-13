@@ -29,7 +29,6 @@ interface MarkersProps {
   places: Marker[];
   selectedMarker: Marker | null;
   setSelectedMarker: (marker: Marker | null) => void;
-  isSearching: boolean;
   setIsSearching: (searching: boolean) => void;
 }
 
@@ -37,7 +36,6 @@ const Markers: React.FC<MarkersProps> = ({
   places,
   selectedMarker,
   setSelectedMarker,
-  isSearching,
   setIsSearching
 }) => {
   const map = useMap();

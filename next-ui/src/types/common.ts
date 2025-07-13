@@ -80,9 +80,6 @@ export interface Bookmark extends BaseEntity {
 export interface BookmarkCardProps {
   bookmark: Bookmark;
   onInstagramAnalysisClick?: (bookmark: Bookmark) => void;
-  onEdit?: (bookmark: Bookmark) => void;
-  onDelete?: (bookmark: Bookmark) => void;
-  showActions?: boolean;
 }
 
 export interface BookmarkFolder {

@@ -1,4 +1,3 @@
-````md
 # 09_migration_plan.md
 
 # 🚀 Next.js Migration Plan (High-Level)
@@ -14,14 +13,15 @@ This document outlines the **strategic overview** of migrating `angushallyapp` f
 - ✅ Standardize with **TypeScript + Mantine v7**
 - ✅ Preserve **authentication, layout, and PWA functionality**
 - ✅ Improve build speed, maintainability, and scalability
+- ✅ Achieve **spotless builds** with no ESLint warnings or errors
 
----
+
 
 ## 🛠️ Strategy
 
 ### 🧩 Architecture
-- **Dual-app architecture**: CRA and Next.js run in parallel
-- **Express proxy**: Serves migrated Next.js pages via `/next/*` route
+- **Next.js-only architecture**: Express server serves Next.js application exclusively
+- **Express proxy**: Serves Next.js pages and handles API routing
 - **Component pattern**: Copy → Convert → Test → Replace route
 
 ### ⚙️ Migration Pattern
@@ -31,6 +31,25 @@ This document outlines the **strategic overview** of migrating `angushallyapp` f
 4. Move static assets and CSS modules
 5. Test at `/next/[route]`
 6. Add Express proxy rule when stable
+
+---
+
+## 📚 Documentation Orchestration
+
+This migration effort is coordinated across three documents:
+
+| Document | Purpose | Role |
+|----------|---------|------|
+| `09_migration_plan.md` | High-level goals, strategy, patterns | 📘 The blueprint |
+| `09_migration_tracker.md` | Live task board of all migration tasks | ✅ The task board |
+| `09_migration_log.md` | Reverse-chronological changelog of completed work | 🧾 The changelog |
+
+### 🧭 Workflow
+- **Plan** defines the approach and checklist templates
+- **Tracker** tracks real-time progress (what's in progress, completed, or blocked)
+- **Log** is updated only after a task is ✅ complete — it serves as the final audit trail
+
+> 🔄 Maintain the tracker as the daily source of truth, and backfill the log after task completion.
 
 ---
 
@@ -81,10 +100,11 @@ Use this checklist format in `09_migration_tracker.md` to track individual route
 | 3. Core Pages            | ✅ Complete     | Home, About, Blog, Contact, CV, Collab        |
 | 4. Layout + Auth         | ✅ Complete     | Shared layout, login/logout, route protection |
 | 5. Interactive Projects  | ✅ Complete     | Habit, Strava, Eat Safe UK, Bookmarks, AI tools |
-| 6. PWA Migration         | ⏳ Pending      | Service worker, offline caching (`next-pwa`)  |
-| 7. Cleanup & Removal     | ⏳ Pending      | Remove CRA, optimize build and deploy flow    |
+| 6. Code Quality & Build  | ✅ Complete     | ESLint cleanup, build optimization, spotless builds |
+| 7. PWA Migration         | ⏳ Pending      | Service worker, offline caching (`next-pwa`)  |
+| 8. Cleanup & Removal     | ✅ Complete     | CRA app deleted, Express server optimized     |
 
-**Current Status**: ~90% of major routes migrated to Next.js with stable development environment
+**Current Status**: ~98% of major routes migrated to Next.js with stable development environment and clean builds
 
 ---
 

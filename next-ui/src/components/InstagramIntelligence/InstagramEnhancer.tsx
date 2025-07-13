@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Modal,
   Stack,
@@ -14,7 +14,6 @@ import {
   Loader,
   ActionIcon,
   Tooltip,
-  Box,
   Select,
   Pagination,
   SimpleGrid
@@ -28,7 +27,7 @@ import {
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { api } from '../../shared/apiClient';
-import { InstagramBookmark, InstagramAnalysisData } from '../../types/common';
+import { InstagramBookmark } from '../../types/common';
 
 // Type definitions
 interface SourceMetadata {
@@ -77,7 +76,7 @@ const InstagramEnhancer: React.FC<InstagramEnhancerProps> = ({
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 8;
 
-  const fetchBookmarks = async (): Promise<void> => {
+  const fetchBookmarks = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
       const response = await api.get('/bookmarks') as BookmarksResponse;
@@ -99,9 +98,9 @@ const InstagramEnhancer: React.FC<InstagramEnhancerProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const filterAndPaginateBookmarks = (): void => {
+  const filterAndPaginateBookmarks = useCallback((): void => {
     let filtered = bookmarks;
 
     // Apply search filter
@@ -143,17 +142,17 @@ const InstagramEnhancer: React.FC<InstagramEnhancerProps> = ({
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     setFilteredBookmarks(filtered.slice(startIndex, endIndex));
-  };
+  }, [bookmarks, searchQuery, filterType, currentPage, itemsPerPage]);
 
   useEffect(() => {
     if (opened) {
       fetchBookmarks();
     }
-  }, [opened]);
+  }, [opened, fetchBookmarks]);
 
   useEffect(() => {
     filterAndPaginateBookmarks();
-  }, [bookmarks, searchQuery, filterType, currentPage]);
+  }, [filterAndPaginateBookmarks]);
 
   const isInstagramUrl = (url: string): boolean => {
     const instagramPattern = /^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/[a-zA-Z0-9_-]+\/?/;

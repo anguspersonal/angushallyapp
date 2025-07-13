@@ -3,7 +3,6 @@
 import React from 'react';
 import { Box, Text, Blockquote, useMantineTheme, Group, Avatar, ActionIcon } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
-import ReactMarkdown from 'react-markdown';
 import type { Testimonial } from '@/data/collab/testimonials';
 
 interface TestimonialSlideProps {
