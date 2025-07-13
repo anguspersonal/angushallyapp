@@ -1,73 +1,50 @@
-# Testing
-server/tests
-**/tests
-**/test
-**/*.test.js
-**/*.spec.js
-**/__tests__
+########################################
+#  .slugignore – keep slug < 300 MB   #
+########################################
 
-# Documentation 
+# 1. Tests
+**/__tests__/
+**/tests/
+**/test/
+**/*.test.[jt]s?(x)
+**/*.spec.[jt]s?(x)
+
+# 2. Docs
+docs/
+documentation/
 *.md
-docs
 
-# Development configs
-.vscode
-.github
-.git
-.gitignore
-.env.example
+# 3. Dev configs
+.vscode/
+.github/
+.eslintrc*
+.prettierrc*
+jest.config.js
 nodemon.json
 
-# Misc
-.DS_Store
-
-# Development files
-/documentation
-*.test.js
-*.spec.js
-/server/tests
-.env*
-.git*
-
-# Dependencies that are only needed for development
-/node_modules/@types
-/react-ui/node_modules/@types
-*.map
-
-# Development configurations
-.eslintrc
-.prettierrc
-jest.config.js
-
-# Database dumps and files that shouldn't be deployed
-*.dump
-*.sql
-*.backup
-
-# Windows metadata files
-*.Zone.Identifier
-
-# Large image files that are NOT used in the codebase
-react-ui/public/20230208_AH_Profile.jpg
-react-ui/public/20230208_AH_Profile_Walking-Down-Steps.jpg
-react-ui/public/20230208_AH_Profile_Tree-Lean.jpg
-react-ui/public/20230208_AH_Profile_Professional_Balcony.jpg
-react-ui/public/20230208_AH_Profile-Professional.jpg
-react-ui/public/20230208_AH_Profile-Coffee.jpg
-react-ui/public/20230208_AH_Profile_Professional-Balcony-2.jpg
-react-ui/public/20240411_AH_Profile_Florence.jpg
-
-# Image backups created during compression
-react-ui/public/*.original.jpg
-react-ui/public/*.original.jpeg
-react-ui/public/*.original.png
-
-# Misc
+# 4. VCS + local env
+.git/
+.gitignore
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+yarn-*log*
+.env*
+.env.*.local
+*.Zone.Identifier
+
+# 5. Build artefacts / cache
+**/.next/cache/
+coverage/
+cypress/
+
+# 6. Large / unused static assets
+next-ui/public/2023*.jpg
+next-ui/public/2024*.jpg
+next-ui/public/*.original.*
+assets/archive/
+
+# 7. Dev-only type packages
+**/node_modules/@types/**
+
+# 8. Source-maps (belt-and-braces)
+*.map

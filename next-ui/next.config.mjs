@@ -1,3 +1,4 @@
+import webpack from 'webpack';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     // Ensure all routes end with a slash (optional but helpful for trailing consistency)
@@ -19,6 +20,9 @@ const nextConfig = {
       // turbo: false, // Disabled due to stability issues
     },
   
+    // Production optimizations
+    productionBrowserSourceMaps: false,
+  
     // Optional: polling for stable dev experience (especially on WSL or Docker)
     webpack: (config, { dev }) => {
       if (dev) {
@@ -27,6 +31,12 @@ const nextConfig = {
           aggregateTimeout: 300,
         };
       }
+      
+      // Ignore moment.js locales to reduce bundle size
+      config.plugins.push(
+        new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ })
+      );
+      
       return config;
     },
   };
