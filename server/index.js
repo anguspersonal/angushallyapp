@@ -205,8 +205,18 @@ app.get('/api', function (req, res) {
 const NEXT_UI_DIR = path.join(__dirname, '..', 'next-ui');   // <root>/next-ui
 const nextBuildDir = path.join(NEXT_UI_DIR, '.next');
 
+console.log('🔎 Server start diagnostics ⬇');
+console.log('  __dirname      :', __dirname);
+console.log('  NEXT_UI_DIR    :', NEXT_UI_DIR);
+console.log('  nextBuildDir   :', nextBuildDir);
+console.log('  exists?        :', fs.existsSync(nextBuildDir));
+
 (async () => {
-  if (fs.existsSync(nextBuildDir)) {
+  if (isDev) {
+    // In development, don't try to load Next.js production build
+    console.log('Development mode: Next.js will be handled by dev server');
+  } else if (fs.existsSync(nextBuildDir)) {
+    // In production, load the Next.js build
     const next = require('next');
     const nextApp = next({ dev: false, dir: NEXT_UI_DIR });
     await nextApp.prepare();
