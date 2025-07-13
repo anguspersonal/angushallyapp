@@ -9,10 +9,15 @@ export default function ServiceWorkerRegistration() {
         navigator.serviceWorker
           .register('/sw.js')
           .then((registration) => {
-            console.log('SW registered: ', registration);
+            console.log('✅ Service Worker registered successfully:', registration);
+            
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              console.log('🔄 Service Worker update found');
+            });
           })
           .catch((registrationError) => {
-            console.log('SW registration failed: ', registrationError);
+            console.error('❌ Service Worker registration failed:', registrationError);
           });
       });
     }
