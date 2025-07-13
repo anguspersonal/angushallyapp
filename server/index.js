@@ -200,6 +200,22 @@ app.get('/api', function (req, res) {
   res.send('{"message":"Hello from the custom server!"}');
 });
 
+// ----- Next.js integration ---------------------------------
+// Look for the build inside the workspace folder `next-ui`
+const NEXT_UI_DIR = path.join(__dirname, '..', 'next-ui');   // <root>/next-ui
+const nextBuildDir = path.join(NEXT_UI_DIR, '.next');
+
+(async () => {
+  if (fs.existsSync(nextBuildDir)) {
+    const next = require('next');
+    const nextApp = next({ dev: false, dir: NEXT_UI_DIR });
+    await nextApp.prepare();
+    app.use((req, res) => nextApp.getRequestHandler()(req, res));
+  } else {
+    console.warn('Next.js build not found, skipping /next routes');
+  }
+})();
+
 // All remaining requests should be handled by Next.js
 // This fallback ensures any unmatched routes are handled gracefully
 app.get('*', function (request, response) {
