@@ -40,6 +40,10 @@
     // This fixes Heroku build issues where --omit=dev removes devDependencies
     // that were accidentally providing type declarations
     "allowJs": true,
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ],
     "plugins": [
       {
         "name": "next"
