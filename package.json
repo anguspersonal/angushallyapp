@@ -1,7 +1,7 @@
 {
-  "name": "heroku-cra-node",
+  "name": "angushallyapp",
   "version": "3.0.0",
-  "description": "How to use Next.js with a custom Node API on Heroku",
+  "description": "Angus Hally's personal application - a monolithic full-stack app with Next.js frontend and Node.js/Express backend",
   "private": true,
   "workspaces": ["next-ui", "server"],
   "engines": {
@@ -109,19 +109,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mars/heroku-cra-node.git"
+    "url": "git+https://github.com/angushally/angushallyapp.git"
   },
   "keywords": [
     "node",
     "heroku",
     "nextjs",
-    "react"
+    "react",
+    "express",
+    "postgresql"
   ],
   "license": "MIT",
   "main": "index.js",
   "author": "angushally",
   "bugs": {
-    "url": "https://github.com/mars/heroku-cra-node/issues"
+    "url": "https://github.com/angushally/angushallyapp/issues"
   },
-  "homepage": "https://github.com/mars/heroku-cra-node#readme"
+  "homepage": "https://github.com/angushally/angushallyapp#readme",
+  "overrides": {
+    "cross-spawn": "^7.0.6",
+    "got": "^11.8.5", 
+    "http-cache-semantics": "^4.1.1",
+    "semver": "^7.5.2",
+    "semver-regex": "^4.0.2"
+  }
+
 }
