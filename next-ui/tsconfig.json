@@ -36,12 +36,9 @@
       ]
     },
     /* ---------- Global types ---------- */
-    "types": [
-      "node",
-      "react",
-      "react-dom",
-      "react-google-recaptcha"
-    ],
+    // Removed "types" whitelist to allow all @types/* packages to be discovered
+    // This fixes Heroku build issues where --omit=dev removes devDependencies
+    // that were accidentally providing type declarations
     "allowJs": true,
     "plugins": [
       {
