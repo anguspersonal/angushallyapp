@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   icons: {
     icon: '/AH-logo-no-background.ico',
     shortcut: '/AH-logo-no-background.ico',
-    apple: '/AH-logo-no-background-9.jpg',
+    apple: '/ah-logo.jpg',
   },
 };
 

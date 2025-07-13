@@ -8,13 +8,13 @@
       "type": "image/x-icon"
     },
     {
-      "src": "/AH-logo-no-background-8.jpg",
+      "src": "/ah-logo.jpg",
       "sizes": "128x128",
       "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "/AH-logo-no-background-9.jpg",
+      "src": "/ah-logo.jpg",
       "sizes": "256x256",
       "type": "image/jpeg",
       "purpose": "any maskable"

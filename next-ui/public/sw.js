@@ -3,8 +3,7 @@ const urlsToCache = [
   '/',
   '/manifest.json',
   '/AH-logo-no-background.ico',
-  '/AH-logo-no-background-4.jpg',
-  '/AH-logo-no-background-9.jpg'
+  '/ah-logo.jpg'
 ];
 
 // Install event - cache static assets
