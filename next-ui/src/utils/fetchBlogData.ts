@@ -3,7 +3,7 @@ import type { BlogPostSummary, BlogPostFull } from '@/types/blog';
 // Detect server-side environment and set appropriate API base URL
 const isServer = typeof window === 'undefined';
 const API_BASE_URL = isServer 
-  ? (process.env.API_BASE_URL || 'http://localhost:3001/api')
+  ? (process.env.API_BASE_URL || 'http://localhost:5000/api')
   : '/api';
 
 export async function fetchBlogList(): Promise<BlogPostSummary[]> {
