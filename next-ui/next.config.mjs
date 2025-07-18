@@ -68,7 +68,12 @@ const nextConfig = {
     disable: isDev,
     register: true,
     skipWaiting: true,
-    cacheId: 'angushally-v1' // ✅ bump this on major changes
+    cacheId: 'angushally-v2', // 🔄 Bumped from v1 to v2
+    buildExcludes: [
+      /app-build-manifest\.json$/,
+      /_middleware\.js$/,
+      /_middleware\.ts$/,
+    ],
   })
   
   export default withPWAConfig(nextConfig)
