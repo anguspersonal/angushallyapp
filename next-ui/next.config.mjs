@@ -1,8 +1,9 @@
+import withPWA from 'next-pwa'
+
+const isDev = process.env.NODE_ENV !== 'production'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Ensure all routes end with a slash (helps with trailing-slash consistency)
-    trailingSlash: true,
-  
     // Image settings — unoptimized keeps the bundle light (adjust as needed)
     images: {
       unoptimized: true,
@@ -62,5 +63,13 @@ const nextConfig = {
     },
   };
   
-  export default nextConfig;
+  const withPWAConfig = withPWA({
+    dest: 'public',
+    disable: isDev,
+    register: true,
+    skipWaiting: true,
+    cacheId: 'angushally-v1' // ✅ bump this on major changes
+  })
+  
+  export default withPWAConfig(nextConfig)
   

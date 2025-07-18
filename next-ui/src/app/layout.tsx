@@ -5,7 +5,7 @@ import '../general.css';
 import './globals.css';
 import type { Metadata } from 'next';
 import ClientLayout from '@/components/ClientLayout';
-import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
+import PwaUpdatePrompt from '@/components/PwaUpdatePrompt';
 
 export const metadata: Metadata = {
   title: 'Angus Hally App',
@@ -32,7 +32,7 @@ export default function RootLayout({
       </head>
       <body>
         <ClientLayout>{children}</ClientLayout>
-        {process.env.NODE_ENV === 'production' && <ServiceWorkerRegistration />}
+        {process.env.NODE_ENV === 'production' && <PwaUpdatePrompt />}
       </body>
     </html>
   );
