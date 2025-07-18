@@ -15,7 +15,19 @@
     },
     {
       "src": "/ah-logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/ah-logo.jpg",
       "sizes": "256x256",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/ah-logo.jpg",
+      "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
     }
@@ -30,11 +42,11 @@
   "share_target": {
     "action": "/share",
     "method": "POST",
-    "enctype": "application/x-www-form-urlencoded",
+    "enctype": "multipart/form-data",
     "params": {
-      "url": "url",
-      "text": "text", 
-      "title": "title"
+      "title": "title",
+      "text": "text",
+      "url": "url"
     }
   }
 }
