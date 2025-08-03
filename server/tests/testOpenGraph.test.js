@@ -62,8 +62,8 @@ describe('OpenGraph Service', () => {
         description: null,
         image: null,
         site_name: null,
-        resolved_url: null,
-        error: 'Network error'
+        resolved_url: 'https://example.com',
+        error: { message: 'Network error', code: 'UNKNOWN_ERROR' }
       });
     });
 
@@ -76,7 +76,7 @@ describe('OpenGraph Service', () => {
         image: null,
         site_name: null,
         resolved_url: null,
-        error: 'Invalid URL format'
+        error: { message: 'Invalid URL format', code: 'INVALID_URL' }
       });
     });
 
