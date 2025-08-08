@@ -66,7 +66,7 @@ export default function EatSafeUK() {
 
             <p>Update 8th August 2025: This app is no longer being maintained and so is no longer working. I'm sorry for the inconvenience.
               Here are some alternatives:
-              <ul>
+              <ul style={{textAlign: 'left'}}>
                 <li><a href="https://ratings.food.gov.uk/" target="_blank" rel="noopener noreferrer">Food Standards Agency Ratings</a></li>
                 <li><a href="https://www.scoresonthedoors.org.uk/" target="_blank" rel="noopener noreferrer">Scores on the Doors</a></li>
                 <li><a href="https://pantryandlarder.com/grubby-grub/" target="_blank" rel="noopener noreferrer">Grubby Grub</a></li>
