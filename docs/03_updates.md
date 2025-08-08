@@ -2,6 +2,35 @@
 
 This file tracks chronological changes to the project, with the most recent updates at the top.
 
+## Update050 - PWA Production Bug Fix & Mobile Installation Success - 2025-07-18 - Complete
+
+### Overview
+Fixed critical production bug with `next-pwa` that was preventing PWA installation on mobile devices. The app is now fully installable on mobile with working share target functionality on Android.
+
+### Technical Details
+- **Fixed `next-pwa` precaching errors** by adding `buildExcludes` to `next-ui/next.config.mjs`:
+  - Excluded `/app-build-manifest\.json$/` - This was causing 404 errors in production
+  - Excluded `/_middleware\.js$/` and `/_middleware\.ts$/` - Prevented precaching of Next.js middleware files
+- **Bumped cache version** from `angushally-v1` to `angushally-v2` to ensure users get updated service worker
+- **Added `trailingSlash: false`** for consistency with PWA best practices
+- **Resolved console error**: `bad-precaching-response :: [{"url":"https://angushally.com/_next/app-build-manifest.json","status":404}]`
+
+### Impact
+- **✅ PWA Installation Working**: App can now be installed on mobile devices
+- **✅ Share Target Functional**: Android users can share content directly to the app
+- **✅ Production Errors Resolved**: No more 404 errors for Next.js internal files
+- **✅ Service Worker Clean**: Proper caching without problematic file attempts
+- **✅ Mobile Experience**: Full PWA functionality available on mobile platforms
+
+### Technical Root Cause
+The issue occurred because `next-pwa` was trying to precache Next.js internal files like `app-build-manifest.json` that don't exist at runtime in SSR mode. The `buildExcludes` configuration tells the service worker to skip these files entirely.
+
+### Next Steps
+- Monitor production logs for any remaining PWA-related issues
+- Test share target functionality across different Android devices
+- Consider adding PWA installation prompts for better user discovery
+- Document PWA capabilities for end users
+
 ## Update049 - PWA Configuration Cleanup & next-pwa Enablement - 2025-07-18 - Complete
 
 ### Overview
