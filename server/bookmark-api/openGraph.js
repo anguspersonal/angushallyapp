@@ -18,21 +18,44 @@ const OG_OPTIONS = {
  * @returns {Promise<Object>} - Resolved metadata object or null if failed
  */
 async function fetchMetadata(url) {
+  // Validate URL before attempting fetch
+  if (!isValidUrl(url)) {
+    return {
+      title: null,
+      description: null,
+      image: null,
+      site_name: null,
+      resolved_url: null,
+      error: { message: 'Invalid URL format', code: 'INVALID_URL' }
+    };
+  }
+
   try {
     const { result } = await ogs({ ...OG_OPTIONS, url });
+
+    const getImage = (img) => {
+      if (!img) return null;
+      if (Array.isArray(img)) {
+        return img[0]?.url || null;
+      }
+      if (typeof img === 'object') {
+        return img.url || null;
+      }
+      return null;
+    };
 
     // Extract the most relevant metadata
     return {
       title: result.ogTitle || result.twitterTitle || result.title || null,
       description: result.ogDescription || result.twitterDescription || result.description || null,
-      image: result.ogImage?.[0]?.url || result.twitterImage?.[0]?.url || null,
+      image: getImage(result.ogImage) || getImage(result.twitterImage),
       site_name: result.ogSiteName || null,
       resolved_url: result.requestUrl || url, // In case of redirects
       error: null
     };
   } catch (error) {
     console.error(`Error fetching metadata for ${url}:`, error.message);
-    
+
     // Return a structured error response
     return {
       title: null,
