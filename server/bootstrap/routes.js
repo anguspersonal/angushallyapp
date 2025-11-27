@@ -1,8 +1,22 @@
 const { createContactLimiter } = require('./middleware');
 
+function isExpressRouter(route) {
+  return (
+    typeof route === 'function' &&
+    typeof route.use === 'function' &&
+    Array.isArray(route.stack)
+  );
+}
+
 function loadRoute(modulePath, deps) {
   // Supports both plain routers and factory functions for DI
-  const route = require(modulePath);
+  const loaded = require(modulePath);
+  const route = loaded && loaded.default ? loaded.default : loaded;
+
+  if (isExpressRouter(route)) {
+    return route;
+  }
+
   return typeof route === 'function' ? route(deps) : route;
 }
 
@@ -42,4 +56,4 @@ function registerRoutes(app, deps = {}) {
   });
 }
 
-module.exports = { registerRoutes };
+module.exports = { registerRoutes, loadRoute };
