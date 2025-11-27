@@ -14,7 +14,6 @@ const config = require('../../config/env');
 
 const path = require('path');
 
-const axios = require('axios');
 const db = require('../db');
 
 // Base URL for the /api/strava route

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const axios = require('axios');
+const { httpClient } = require('../http/client');
 
 // Load environment variables
 require('dotenv').config();
@@ -33,13 +33,13 @@ async function testRaindropEndpoints() {
     
     // Test verify endpoint
     console.log('\n1. Testing /verify endpoint...');
-    const verifyResponse = await axios.get(`${baseURL}/verify`, { headers });
+    const verifyResponse = await httpClient.get(`${baseURL}/verify`, { headers });
     console.log('Verify response:', verifyResponse.data);
 
     // Test sync endpoint (this should show the access token issue)
     console.log('\n2. Testing /sync endpoint...');
     try {
-      const syncResponse = await axios.post(`${baseURL}/sync`, {}, { headers });
+      const syncResponse = await httpClient.post(`${baseURL}/sync`, {}, { headers });
       console.log('Sync response:', syncResponse.data);
     } catch (syncError) {
       console.log('Sync error:', {
@@ -51,7 +51,7 @@ async function testRaindropEndpoints() {
 
     // Test OAuth start endpoint
     console.log('\n3. Testing /oauth/start endpoint...');
-    const oauthResponse = await axios.get(`${baseURL}/oauth/start`, { headers });
+    const oauthResponse = await httpClient.get(`${baseURL}/oauth/start`, { headers });
     console.log('OAuth start response:', oauthResponse.data);
 
   } catch (error) {

@@ -1,5 +1,4 @@
 const express = require('express');
-const axios = require('axios');
 const getStravaActivitiesFromDB = require('../strava-api/getActivitesFromDB');
 const router = express.Router();
 const config = require('../../config/env');

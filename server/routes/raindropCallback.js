@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
 
   let userId;
   try {
-    const decoded = jwt.verify(state, process.env.JWT_SECRET);
+    const decoded = jwt.verify(state, config.auth.jwtSecret);
     
     // Verify timestamp is within acceptable range (5 minutes)
     if (Date.now() - decoded.timestamp > 5 * 60 * 1000) {

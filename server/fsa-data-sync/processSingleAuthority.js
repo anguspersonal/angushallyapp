@@ -1,6 +1,6 @@
 const config = require('../../config/env');
 const path = require('path');
- const axios = require('axios');
+const { httpClient } = require('../http/client');
 const { XMLParser } = require('fast-xml-parser'); // Library for parsing XML
 const db = require('../db'); // Database connection module
 const fs = require('fs');
@@ -14,7 +14,7 @@ const processSingleAuthority = async (props) => {
 
     // 1 Get the XML data from the FSA API for the given url
     // console.log(`Processing: ${laName}, ID:${localAuthorityID}, fetching data from: ${url}`);
-    const response = await axios.get(url, { responseType: 'text' });
+    const response = await httpClient.get(url, { responseType: 'text' });
     const xmldata = response.data;
     if (!xmldata) {
         // console.log(`No data returned for local authority id ${localAuthorityID}, ${laName}`);

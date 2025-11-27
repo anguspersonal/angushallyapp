@@ -1,6 +1,5 @@
-const axios = require("axios");
-const db = require("../db");
-const { getValidAccessToken } = require("./stravaAuth");
+const db = require('../db');
+const { getValidAccessToken, stravaHttpClient } = require('./stravaAuth');
 
 /**
  * 🔹 Fetch all historical Strava activities (ONE-TIME RUN)
@@ -20,7 +19,7 @@ const getAllActivities = async () => {
         let page = 1;
 
         while (hasMoreData) {
-            const response = await axios.get("https://www.strava.com/api/v3/athlete/activities", {
+            const response = await stravaHttpClient.get('/athlete/activities', {
                 headers: { Authorization: `Bearer ${accessToken}` },
                 params: {
                     before: Math.floor(Date.now() / 1000),
@@ -70,7 +69,7 @@ const getNewActivities = async () => {
 
         // console.log(`🔍 Fetching new activities after: ${new Date(lastUpdated * 1000).toISOString()}`);
 
-        const response = await axios.get("https://www.strava.com/api/v3/athlete/activities", {
+        const response = await stravaHttpClient.get('/athlete/activities', {
             headers: { Authorization: `Bearer ${accessToken}` },
             params: {
                 after: lastUpdated, // ✅ Fetch only new activities

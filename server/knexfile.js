@@ -1,10 +1,10 @@
-const config = require('../config/env');
+const config = require('./config');
 const db = require('./db');
 
 // --- Optional: More robust debug connection --- 
 // This debug connection will now more reliably use the centralized config.
 let directPgClient;
-if (config.nodeEnv === 'development' || process.env.KNEX_DEBUG_CONNECT === 'true') {
+if (config.nodeEnv === 'development' || config.debug.knexDebugConnect) {
   const pg = require('pg');
   directPgClient = new pg.Client({
     host: config.database.host,

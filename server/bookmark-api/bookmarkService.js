@@ -1,4 +1,4 @@
-const axios = require('axios');
+const { raindropHttpClient } = require('./raindropClient');
 const db = require('../db');
 const openGraph = require('./openGraph');
 
@@ -17,7 +17,7 @@ const getRaindropCollections = async (accessToken) => {
   // });
   
   try {
-    const response = await axios.get('https://api.raindrop.io/rest/v1/collections', {
+    const response = await raindropHttpClient.get('/rest/v1/collections', {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ const getRaindropBookmarksFromCollection = async (accessToken, collectionId) => 
   // });
   
   try {
-    const response = await axios.get(`https://api.raindrop.io/rest/v1/raindrops/${collectionId}`, {
+    const response = await raindropHttpClient.get(`/rest/v1/raindrops/${collectionId}`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'

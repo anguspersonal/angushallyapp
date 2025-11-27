@@ -34,7 +34,7 @@
  */
 
 const { Pool } = require('pg');
-const config = require('../config/env');
+const config = require('./config');
 
 // Determine pool configuration based on environment
 const poolConfig = config.database.url

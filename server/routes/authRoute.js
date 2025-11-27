@@ -140,7 +140,7 @@ router.post('/login', validateLogin, async (req, res) => {
     // Set JWT as secure HttpOnly cookie
     res.cookie('jwt_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: config.server.isProduction,
       sameSite: 'Strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/'
@@ -319,7 +319,7 @@ router.post('/google', async (req, res) => {
       // Set JWT as secure HttpOnly cookie
       res.cookie('jwt_token', jwtToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: config.server.isProduction,
         sameSite: 'Strict',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         path: '/'
@@ -379,7 +379,7 @@ router.post('/logout', async (req, res) => {
     // Clear the JWT cookie
     res.clearCookie('jwt_token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: config.server.isProduction,
       sameSite: 'Strict',
       path: '/'
     });

@@ -19,7 +19,6 @@ const config = require('../../config/env');
  */
 
 const path = require('path');
-const axios = require('axios');
 const db = require('../db'); // if you want to close the pool
 
 // Mock the database before any imports

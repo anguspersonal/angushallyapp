@@ -1,6 +1,5 @@
-const axios = require('axios');
-const path = require('path');
 const { testDatabaseConnection } = require('../tests/testDatabaseConnection.js');
+const { httpClient } = require('../http/client');
 const config = require('../../config/env');
 
 const db = require('../db.js'); // Database connection module
@@ -18,7 +17,7 @@ async function getLocalAuthorities() {
     try {
         console.log('Fetching local authorities data from FHRS API...');
 
-        const response = await axios.get('https://api.ratings.food.gov.uk/Authorities', {
+        const response = await httpClient.get('https://api.ratings.food.gov.uk/Authorities', {
             headers: {
                 'x-api-version': '2',
                 'accept': 'application/json',

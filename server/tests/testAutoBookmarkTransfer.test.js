@@ -1,13 +1,17 @@
-const axios = require('axios');
+jest.mock('../http/client', () => ({
+  httpClient: {
+    get: jest.fn(),
+    post: jest.fn(),
+  },
+}));
+const { httpClient } = require('../http/client');
 require('../../config/env'); // Load environment variables
 
 const BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://angushally.com/api' 
   : 'http://localhost:5000/api';
 
-// Mock axios since we're in test environment
-jest.mock('axios');
-const mockedAxios = axios;
+const mockedHttpClient = httpClient;
 
 describe('Auto Bookmark Transfer', () => {
   beforeEach(() => {
@@ -17,7 +21,7 @@ describe('Auto Bookmark Transfer', () => {
   describe('Bookmark Transfer API', () => {
     it('should be mockable for testing', () => {
       // Mock a successful API response
-      mockedAxios.post.mockResolvedValue({
+      mockedHttpClient.post.mockResolvedValue({
         data: {
           success: true,
           transferred: 5,
@@ -26,7 +30,7 @@ describe('Auto Bookmark Transfer', () => {
       });
 
       // Basic test to ensure the mock works
-      expect(mockedAxios.post).toBeDefined();
+      expect(mockedHttpClient.post).toBeDefined();
       expect(BASE_URL).toBeDefined();
     });
 
@@ -63,7 +67,7 @@ async function testAutoTransfer() {
     // Test the endpoint structure (without authentication for now)
     console.log('📋 Testing endpoint availability...');
     
-    const healthCheck = await axios.get(`${BASE_URL}/bookmarks`, {
+    const healthCheck = await httpClient.get(`${BASE_URL}/bookmarks`, {
       validateStatus: () => true // Don't throw on 4xx/5xx
     });
     

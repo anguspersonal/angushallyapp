@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const config = require('../../config/env');
+const config = require('../config');
 
 /**
  * Creates a configured email transporter
