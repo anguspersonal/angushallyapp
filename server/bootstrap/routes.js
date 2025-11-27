@@ -4,8 +4,13 @@ function isExpressRouter(route) {
   return (
     typeof route === 'function' &&
     typeof route.use === 'function' &&
+    typeof route.handle === 'function' &&
     Array.isArray(route.stack)
   );
+}
+
+function isMiddleware(route) {
+  return typeof route === 'function' && route.length >= 2;
 }
 
 function loadRoute(modulePath, deps) {
@@ -13,7 +18,7 @@ function loadRoute(modulePath, deps) {
   const loaded = require(modulePath);
   const route = loaded && loaded.default ? loaded.default : loaded;
 
-  if (isExpressRouter(route)) {
+  if (isExpressRouter(route) || isMiddleware(route)) {
     return route;
   }
 
