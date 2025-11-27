@@ -1,7 +1,6 @@
-const axios = require('axios');
+const { raindropHttpClient } = require('./raindropClient');
 const config = require('../../config/env');
 const { saveRaindropTokens } = require('../bookmark-api/raindropTokens.js');
-const { authMiddleware } = require('../middleware/auth.js');
 
 const RAINDROP_CLIENT_ID = config.raindrop.clientId;
 const RAINDROP_CLIENT_SECRET = config.raindrop.clientSecret;
@@ -38,7 +37,7 @@ const getAuthUrl = (state) => {
     state
   });
   
-  const authUrl = `https://raindrop.io/oauth/authorize?${params.toString()}`;
+  const authUrl = `${config.raindrop.baseUrl.replace(/\/$/, '')}/oauth/authorize?${params.toString()}`;
   // console.log('\n=== Generated Raindrop Auth URL ===');
   // console.log(`Authorization URL: ${authUrl}`);
   // console.log('===================================\n');
@@ -53,8 +52,8 @@ const getAuthUrl = (state) => {
  */
 const exchangeCodeForTokens = async (code) => {
   try {
-    const response = await axios.post(
-      'https://raindrop.io/oauth/access_token',
+    const response = await raindropHttpClient.post(
+      '/oauth/access_token',
       new URLSearchParams({
         client_id: RAINDROP_CLIENT_ID,
         client_secret: RAINDROP_CLIENT_SECRET,
@@ -87,7 +86,7 @@ const exchangeCodeForTokens = async (code) => {
  */
 const refreshAccessToken = async (refreshToken) => {
   try {
-    const response = await axios.post('https://raindrop.io/oauth/access_token', {
+    const response = await raindropHttpClient.post('/oauth/access_token', {
       client_id: RAINDROP_CLIENT_ID,
       client_secret: RAINDROP_CLIENT_SECRET,
       refresh_token: refreshToken,

@@ -1,9 +1,13 @@
-const axios = require('axios');
+jest.mock('../http/client', () => ({
+  httpClient: {
+    post: jest.fn(),
+  },
+}));
+const { httpClient } = require('../http/client');
 const { getAuthUrl, exchangeCodeForTokens, refreshAccessToken } = require('../bookmark-api/raindropAuth.js');
 const config = require('../../config/env');
 
-// Mock axios for testing
-jest.mock('axios');
+const mockedHttpClient = httpClient;
 
 describe('Raindrop.io Authentication', () => {
   beforeEach(() => {
@@ -34,7 +38,7 @@ describe('Raindrop.io Authentication', () => {
         }
       };
 
-      axios.post.mockResolvedValue(mockResponse);
+      mockedHttpClient.post.mockResolvedValue(mockResponse);
 
       const result = await exchangeCodeForTokens('mock_auth_code');
 
@@ -43,7 +47,7 @@ describe('Raindrop.io Authentication', () => {
         refresh_token: 'mock_refresh_token',
         expires_in: 3600
       });
-      expect(axios.post).toHaveBeenCalledWith(
+      expect(mockedHttpClient.post).toHaveBeenCalledWith(
         'https://raindrop.io/oauth/access_token',
         expect.any(URLSearchParams),
         { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
@@ -52,7 +56,7 @@ describe('Raindrop.io Authentication', () => {
 
     it('should handle errors when exchanging code', async () => {
       const mockError = new Error('Invalid authorization code');
-      axios.post.mockRejectedValue(mockError);
+      mockedHttpClient.post.mockRejectedValue(mockError);
 
       await expect(exchangeCodeForTokens('invalid_code')).rejects.toThrow('Invalid authorization code');
     });
@@ -68,12 +72,12 @@ describe('Raindrop.io Authentication', () => {
         }
       };
 
-      axios.post.mockResolvedValue(mockResponse);
+      mockedHttpClient.post.mockResolvedValue(mockResponse);
 
       const result = await refreshAccessToken('old_refresh_token');
 
       expect(result).toEqual(mockResponse.data);
-      expect(axios.post).toHaveBeenCalledWith(
+      expect(mockedHttpClient.post).toHaveBeenCalledWith(
         'https://raindrop.io/oauth/access_token',
         {
           client_id: config.raindrop.clientId,
@@ -86,7 +90,7 @@ describe('Raindrop.io Authentication', () => {
 
     it('should handle errors when refreshing token', async () => {
       const mockError = new Error('Invalid refresh token');
-      axios.post.mockRejectedValue(mockError);
+      mockedHttpClient.post.mockRejectedValue(mockError);
 
       await expect(refreshAccessToken('invalid_refresh_token')).rejects.toThrow('Invalid refresh token');
     });

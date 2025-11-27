@@ -1,6 +1,6 @@
 const express = require('express');
-const axios = require('axios');
 const Fuse = require('fuse.js');
+const { httpClient } = require('../http/client');
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.get('/api/hygiene-score', async (req, res) => {
 
     try {
         // Fetch establishments from the UK Food Hygiene Ratings API
-        const response = await axios.get('https://api.ratings.food.gov.uk/establishments', {
+        const response = await httpClient.get('https://api.ratings.food.gov.uk/establishments', {
             headers: {
                 'x-api-version': '2',
                 'accept': 'application/json',

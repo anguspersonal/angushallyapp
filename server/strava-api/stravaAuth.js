@@ -1,23 +1,19 @@
-const axios = require("axios");
+const { createHttpClient } = require('../http/client');
 const config = require('../../config/env');
-
-const db = require("../db.js");
-// const { testDatabaseConnection } = require("../tests/testDatabaseConnection.js");
+const db = require('../db.js');
 
 const STRAVA_CLIENT_ID = config.strava.clientId;
 const STRAVA_CLIENT_SECRET = config.strava.clientSecret;
+const stravaHttpClient = createHttpClient({
+  baseURL: config.strava.baseUrl,
+  config: config.http,
+});
 
 /**
  * Fetch the latest valid Strava token from the database.
  * ✅ Always retrieves the most recent access & refresh token.
  */
 const getStoredTokens = async () => {
-  // console.log("🔍 checkig for tokens stored in DB");
-  // console.log('Calling testDatabaseConnection...');
-  const success = await testDatabaseConnection();
-  // console.log('testDatabaseConnection returned:', success);
-
-  // console.log("🔍 Retrieving tokens from DB...");
   try {
     const result = await db.query(
       `SELECT * FROM habit.strava_tokens ORDER BY expires_at DESC LIMIT 1`
@@ -25,7 +21,7 @@ const getStoredTokens = async () => {
 
     return result.length > 0 ? result[0] : null;
   } catch (err) {
-    console.error("❌ Error retrieving tokens from DB:", err);
+    console.error('❌ Error retrieving tokens from DB:', err);
     return null;
   }
 };
@@ -41,7 +37,6 @@ const saveTokens = async (accessToken, refreshToken, expiresAt) => {
     const existingTokens = await getStoredTokens();
 
     if (existingTokens) {
-      // ✅ Always update to store the latest refresh token
       await db.query(
         `UPDATE habit.strava_tokens SET access_token = $1, refresh_token = $2, expires_at = $3 WHERE id = $4`,
         [accessToken, refreshToken, expiresAt, existingTokens.id]
@@ -52,9 +47,8 @@ const saveTokens = async (accessToken, refreshToken, expiresAt) => {
         [accessToken, refreshToken, expiresAt]
       );
     }
-    // console.log("✅ Tokens stored/updated in database.");
   } catch (err) {
-    console.error("❌ Error saving tokens to DB:", err);
+    console.error('❌ Error saving tokens to DB:', err);
   }
 };
 
@@ -66,19 +60,18 @@ const saveTokens = async (accessToken, refreshToken, expiresAt) => {
  */
 const getAccessToken = async (authCode) => {
   try {
-    const response = await axios.post("https://www.strava.com/api/v3/oauth/token", {
+    const response = await stravaHttpClient.post('/oauth/token', {
       client_id: STRAVA_CLIENT_ID,
       client_secret: STRAVA_CLIENT_SECRET,
       code: authCode,
-      grant_type: "authorization_code",
+      grant_type: 'authorization_code',
     });
 
     const { access_token, refresh_token, expires_at } = response.data;
     await saveTokens(access_token, refresh_token, expires_at);
-    // console.log("✅ New access & refresh tokens stored.");
     return response.data;
   } catch (error) {
-    console.error("❌ Error exchanging auth code:", error.response?.data || error.message);
+    console.error('❌ Error exchanging auth code:', error.response?.data || error.message);
     return null;
   }
 };
@@ -90,33 +83,31 @@ const getAccessToken = async (authCode) => {
  */
 const refreshAccessToken = async (storedTokens = null) => {
   if (!storedTokens) {
-    // console.log("🔍 No storedTokens passed, retrieving from DB...");
     storedTokens = await getStoredTokens();
   }
 
   if (!storedTokens || !storedTokens.refresh_token) {
-    console.error("❌ No refresh token available. Manual reauthorization required.");
+    console.error('❌ No refresh token available. Manual reauthorization required.');
     return null;
   }
 
   try {
-    const response = await axios.post("https://www.strava.com/api/v3/oauth/token", {
+    const response = await stravaHttpClient.post('/oauth/token', {
       client_id: STRAVA_CLIENT_ID,
       client_secret: STRAVA_CLIENT_SECRET,
-      grant_type: "refresh_token",
-      refresh_token: storedTokens.refresh_token, // ✅ Use passed refresh token
+      grant_type: 'refresh_token',
+      refresh_token: storedTokens.refresh_token,
     });
 
     const { access_token, refresh_token, expires_at } = response.data;
 
-    await saveTokens(access_token, refresh_token, expires_at); // ✅ Store the new refresh token
-    // console.log(`✅ Tokens updated: Access token expires at ${new Date(expires_at * 1000).toISOString()}`);
+    await saveTokens(access_token, refresh_token, expires_at);
     return access_token;
   } catch (error) {
-    console.error("❌ Error refreshing access token:", error.response?.data || error.message);
+    console.error('❌ Error refreshing access token:', error.response?.data || error.message);
 
     if (error.response?.status === 400) {
-      console.log("❌ Refresh token is invalid or expired. Manual reauthorization required.");
+      console.log('❌ Refresh token is invalid or expired. Manual reauthorization required.');
       return null;
     }
 
@@ -131,35 +122,26 @@ const refreshAccessToken = async (storedTokens = null) => {
  * ❌ If refresh fails, user must manually reauthorize.
  */
 const getValidAccessToken = async () => {
-  // console.log("🔍 Checking for valid access token...");
   const storedTokens = await getStoredTokens();
 
   if (storedTokens && storedTokens.expires_at > Math.floor(Date.now() / 1000)) {
-    // console.log("✅ Using stored access token.");
     return storedTokens.access_token;
   }
 
-  // console.log("🔄 Access token expired, attempting refresh...");
-  const refreshedToken = await refreshAccessToken(storedTokens); // ✅ Pass storedTokens here
+  const refreshedToken = await refreshAccessToken(storedTokens);
 
   if (!refreshedToken) {
-    // console.log("❌ Unable to refresh token. Manual reauthorization required.");
     return null;
   }
 
   return refreshedToken;
 };
 
-/**
- * Test Script: Run `node stravaAuth.js test`
- */
-if (process.argv[2] === "test") {
+if (process.argv[2] === 'test') {
   (async () => {
-    // console.log("🔍 Testing Strava Auth...");
-    const token = await getValidAccessToken();
-    // console.log(token ? `✅ Token Retrieved: ${token}` : "❌ No valid token available.");
-    // process.exit(); // Uncomment to exit after testing
+    await getValidAccessToken();
   })();
 }
 
-module.exports = { getAccessToken, refreshAccessToken, getValidAccessToken };
+module.exports = { getAccessToken, refreshAccessToken, getValidAccessToken, stravaHttpClient };
+

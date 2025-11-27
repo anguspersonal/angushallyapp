@@ -11,8 +11,6 @@
  * - Provides detailed logging for monitoring
  */
 
-const axios = require('axios');
-
 /**
  * OpenGraph metadata fetching with timeout and error handling
  */
