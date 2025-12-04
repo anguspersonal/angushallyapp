@@ -139,7 +139,7 @@ function buildConfig() {
     KNEX_DEBUG_CONNECT: raw.KNEX_DEBUG_CONNECT,
   };
 
-  const required = ['JWT_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'OPENAI_API_KEY'];
+  const required = [];
   if (normalizedEnv !== 'test' && !parsed.DATABASE_URL) {
     ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD'].forEach((key) => required.push(key));
   }
