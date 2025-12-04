@@ -1,9 +1,11 @@
+jest.mock('../http/client', () => ({
+  httpClient: {
+    get: jest.fn(),
+  },
+}));
 const bookmarkService = require('../bookmark-api/bookmarkService');
 const openGraph = require('../bookmark-api/openGraph');
 const db = require('../db');
-
-// Mock axios for API calls
-jest.mock('axios');
 
 // Mock open-graph-scraper
 jest.mock('../bookmark-api/openGraph');

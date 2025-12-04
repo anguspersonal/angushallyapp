@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const db = require('../db');
-const config = require('../../config/env');
+const config = require('../config');
 
 const client = new OAuth2Client(config.auth.google.clientId);
 
@@ -67,8 +67,8 @@ function authMiddleware(options = {}) {
             }
 
             // Special handling for test mode and development bypass
-            if ((process.env.NODE_ENV === 'test' && token === 'test-token') ||
-                (process.env.NODE_ENV === 'development' && token === 'dev-bypass')) {
+            if ((config.nodeEnv === 'test' && token === 'test-token') ||
+                (config.nodeEnv === 'development' && token === 'dev-bypass')) {
                 req.user = TEST_USER;
                 return next();
             }

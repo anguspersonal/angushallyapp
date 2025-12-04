@@ -1,10 +1,13 @@
-const axios = require('axios');
+jest.mock('../bookmark-api/raindropClient', () => ({
+  raindropHttpClient: {
+    get: jest.fn(),
+  },
+}));
+const { raindropHttpClient } = require('../bookmark-api/raindropClient');
 const bookmarkService = require('../bookmark-api/bookmarkService');
 const db = require('../db');
 
-// Mock axios for API calls
-jest.mock('axios');
-const mockedAxios = axios;
+const mockedHttpClient = raindropHttpClient;
 
 // Mock db for database operations
 jest.mock('../db');
@@ -29,12 +32,12 @@ describe('BookmarkService', () => {
           }
         };
 
-        mockedAxios.get.mockResolvedValue(mockResponse);
+        mockedHttpClient.get.mockResolvedValue(mockResponse);
 
         const result = await bookmarkService.getRaindropCollections(mockAccessToken);
 
-        expect(mockedAxios.get).toHaveBeenCalledWith(
-          'https://api.raindrop.io/rest/v1/collections',
+        expect(mockedHttpClient.get).toHaveBeenCalledWith(
+          '/rest/v1/collections',
           {
             headers: {
               'Authorization': `Bearer ${mockAccessToken}`,
@@ -48,7 +51,7 @@ describe('BookmarkService', () => {
 
       it('should throw error when response format is invalid', async () => {
         const mockResponse = { data: {} };
-        mockedAxios.get.mockResolvedValue(mockResponse);
+        mockedHttpClient.get.mockResolvedValue(mockResponse);
 
         await expect(bookmarkService.getRaindropCollections(mockAccessToken))
           .rejects.toThrow('Invalid response format from Raindrop.io');
@@ -57,7 +60,7 @@ describe('BookmarkService', () => {
       it('should handle API errors', async () => {
         const mockError = new Error('API Error');
         mockError.response = { data: { error: 'Unauthorized' } };
-        mockedAxios.get.mockRejectedValue(mockError);
+        mockedHttpClient.get.mockRejectedValue(mockError);
 
         await expect(bookmarkService.getRaindropCollections(mockAccessToken))
           .rejects.toThrow('API Error');
@@ -76,12 +79,12 @@ describe('BookmarkService', () => {
           }
         };
 
-        mockedAxios.get.mockResolvedValue(mockResponse);
+        mockedHttpClient.get.mockResolvedValue(mockResponse);
 
         const result = await bookmarkService.getRaindropBookmarksFromCollection(mockAccessToken, collectionId);
 
-        expect(mockedAxios.get).toHaveBeenCalledWith(
-          `https://api.raindrop.io/rest/v1/raindrops/${collectionId}`,
+        expect(mockedHttpClient.get).toHaveBeenCalledWith(
+          `/rest/v1/raindrops/${collectionId}`,
           {
             headers: {
               'Authorization': `Bearer ${mockAccessToken}`,
@@ -99,7 +102,7 @@ describe('BookmarkService', () => {
 
       it('should handle empty collections', async () => {
         const mockResponse = { data: { items: [] } };
-        mockedAxios.get.mockResolvedValue(mockResponse);
+        mockedHttpClient.get.mockResolvedValue(mockResponse);
 
         const result = await bookmarkService.getRaindropBookmarksFromCollection(mockAccessToken, '123');
         expect(result).toEqual([]);
@@ -122,7 +125,7 @@ describe('BookmarkService', () => {
         ];
 
         // Mock getRaindropCollections
-        mockedAxios.get
+        mockedHttpClient.get
           .mockResolvedValueOnce({ data: { items: mockCollections } })
           .mockResolvedValueOnce({ data: { items: mockBookmarks1 } })
           .mockResolvedValueOnce({ data: { items: mockBookmarks2 } });

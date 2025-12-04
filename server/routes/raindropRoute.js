@@ -6,7 +6,7 @@ const { saveRaindropTokens, getRaindropTokens } = require('../bookmark-api/raind
 const { getRaindropCollections, getRaindropBookmarksFromCollection, saveRaindropBookmarks, getUserRaindropBookmarks, transferUnorganizedRaindropBookmarks } = require('../bookmark-api/bookmarkService.js');
 const router = express.Router();
 const { authMiddleware } = require('../middleware/auth.js');
-const config = require('../../config/env.js'); // Your existing config loader
+const config = require('../../config/env.js');
 const jwt = require('jsonwebtoken');
 
 // server/routes/raindropRoute.js
@@ -22,7 +22,7 @@ router.get('/oauth/start', authMiddleware(), (req, res) => {
         user_id: id,
         timestamp: Date.now()
       },
-      process.env.JWT_SECRET,
+      config.auth.jwtSecret,
       { expiresIn: '5m' }
     );
 
