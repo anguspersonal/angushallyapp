@@ -5,6 +5,7 @@ function dummyRouter() {
 }
 
 dummyRouter.use = () => {};
+dummyRouter.handle = () => {};
 dummyRouter.stack = [];
 dummyRouter.getCalls = () => calls;
 dummyRouter.reset = () => {
