@@ -1,13 +1,13 @@
-jest.mock('../http/client', () => ({
-  httpClient: {
+jest.mock('../bookmark-api/raindropClient', () => ({
+  raindropHttpClient: {
     get: jest.fn(),
   },
 }));
-const { httpClient } = require('../http/client');
+const { raindropHttpClient } = require('../bookmark-api/raindropClient');
 const bookmarkService = require('../bookmark-api/bookmarkService');
 const db = require('../db');
 
-const mockedHttpClient = httpClient;
+const mockedHttpClient = raindropHttpClient;
 
 // Mock db for database operations
 jest.mock('../db');
@@ -37,7 +37,7 @@ describe('BookmarkService', () => {
         const result = await bookmarkService.getRaindropCollections(mockAccessToken);
 
         expect(mockedHttpClient.get).toHaveBeenCalledWith(
-          'https://api.raindrop.io/rest/v1/collections',
+          '/rest/v1/collections',
           {
             headers: {
               'Authorization': `Bearer ${mockAccessToken}`,
@@ -84,7 +84,7 @@ describe('BookmarkService', () => {
         const result = await bookmarkService.getRaindropBookmarksFromCollection(mockAccessToken, collectionId);
 
         expect(mockedHttpClient.get).toHaveBeenCalledWith(
-          `https://api.raindrop.io/rest/v1/raindrops/${collectionId}`,
+          `/rest/v1/raindrops/${collectionId}`,
           {
             headers: {
               'Authorization': `Bearer ${mockAccessToken}`,
