@@ -6,4 +6,9 @@ const raindropHttpClient = createHttpClient({
   config: config.http,
 });
 
-module.exports = { raindropHttpClient };
+const raindropOAuthHttpClient = createHttpClient({
+  baseURL: config.raindrop.oauthBaseUrl,
+  config: config.http,
+});
+
+module.exports = { raindropHttpClient, raindropOAuthHttpClient };

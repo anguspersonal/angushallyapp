@@ -116,6 +116,7 @@ function buildConfig() {
     RAINDROP_CLIENT_ID: coerceString('RAINDROP_CLIENT_ID', raw.RAINDROP_CLIENT_ID, { required: true }, errors),
     RAINDROP_CLIENT_SECRET: coerceString('RAINDROP_CLIENT_SECRET', raw.RAINDROP_CLIENT_SECRET, { required: true }, errors),
     RAINDROP_REDIRECT_URI: coerceString('RAINDROP_REDIRECT_URI', raw.RAINDROP_REDIRECT_URI, { required: true, url: true }, errors),
+    RAINDROP_OAUTH_BASE_URL: coerceString('RAINDROP_OAUTH_BASE_URL', raw.RAINDROP_OAUTH_BASE_URL, { defaultValue: 'https://raindrop.io', url: true }, errors),
     RAINDROP_BASE_URL: coerceString('RAINDROP_BASE_URL', raw.RAINDROP_BASE_URL, { defaultValue: 'https://api.raindrop.io', url: true }, errors),
     RECAPTCHA_SECRET_KEY: coerceString('RECAPTCHA_SECRET_KEY', raw.RECAPTCHA_SECRET_KEY, { required: true }, errors),
     RECAPTCHA_SITE_KEY: raw.RECAPTCHA_SITE_KEY,
@@ -230,6 +231,7 @@ function buildConfig() {
       clientId: parsed.RAINDROP_CLIENT_ID,
       clientSecret: parsed.RAINDROP_CLIENT_SECRET,
       redirectUri: parsed.RAINDROP_REDIRECT_URI,
+      oauthBaseUrl: parsed.RAINDROP_OAUTH_BASE_URL,
       baseUrl: parsed.RAINDROP_BASE_URL,
     },
     apify: {

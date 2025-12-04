@@ -1,13 +1,12 @@
-jest.mock('../http/client', () => ({
-  httpClient: {
-    post: jest.fn(),
-  },
+jest.mock('../bookmark-api/raindropClient', () => ({
+  raindropHttpClient: { post: jest.fn() },
+  raindropOAuthHttpClient: { post: jest.fn() },
 }));
-const { httpClient } = require('../http/client');
+const { raindropOAuthHttpClient } = require('../bookmark-api/raindropClient');
 const { getAuthUrl, exchangeCodeForTokens, refreshAccessToken } = require('../bookmark-api/raindropAuth.js');
 const config = require('../../config/env');
 
-const mockedHttpClient = httpClient;
+const mockedHttpClient = raindropOAuthHttpClient;
 
 describe('Raindrop.io Authentication', () => {
   beforeEach(() => {
