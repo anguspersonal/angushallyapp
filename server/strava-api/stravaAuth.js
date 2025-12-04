@@ -9,6 +9,11 @@ const stravaHttpClient = createHttpClient({
   config: config.http,
 });
 
+const stravaOauthHttpClient = createHttpClient({
+  baseURL: config.strava.oauthBaseUrl,
+  config: config.http,
+});
+
 /**
  * Fetch the latest valid Strava token from the database.
  * ✅ Always retrieves the most recent access & refresh token.
@@ -60,7 +65,7 @@ const saveTokens = async (accessToken, refreshToken, expiresAt) => {
  */
 const getAccessToken = async (authCode) => {
   try {
-    const response = await stravaHttpClient.post('/oauth/token', {
+    const response = await stravaOauthHttpClient.post('/oauth/token', {
       client_id: STRAVA_CLIENT_ID,
       client_secret: STRAVA_CLIENT_SECRET,
       code: authCode,
@@ -92,7 +97,7 @@ const refreshAccessToken = async (storedTokens = null) => {
   }
 
   try {
-    const response = await stravaHttpClient.post('/oauth/token', {
+    const response = await stravaOauthHttpClient.post('/oauth/token', {
       client_id: STRAVA_CLIENT_ID,
       client_secret: STRAVA_CLIENT_SECRET,
       grant_type: 'refresh_token',
@@ -143,5 +148,5 @@ if (process.argv[2] === 'test') {
   })();
 }
 
-module.exports = { getAccessToken, refreshAccessToken, getValidAccessToken, stravaHttpClient };
+module.exports = { getAccessToken, refreshAccessToken, getValidAccessToken, stravaHttpClient, stravaOauthHttpClient };
 

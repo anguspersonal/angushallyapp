@@ -113,6 +113,7 @@ function buildConfig() {
     STRAVA_WEBHOOK_SECRET: raw.STRAVA_WEBHOOK_SECRET,
     STRAVA_REDIRECT_URI: coerceString('STRAVA_REDIRECT_URI', raw.STRAVA_REDIRECT_URI, { required: true, url: true }, errors),
     STRAVA_BASE_URL: coerceString('STRAVA_BASE_URL', raw.STRAVA_BASE_URL, { defaultValue: 'https://www.strava.com/api/v3', url: true }, errors),
+    STRAVA_OAUTH_BASE_URL: coerceString('STRAVA_OAUTH_BASE_URL', raw.STRAVA_OAUTH_BASE_URL, { defaultValue: 'https://www.strava.com', url: true }, errors),
     RAINDROP_CLIENT_ID: coerceString('RAINDROP_CLIENT_ID', raw.RAINDROP_CLIENT_ID, { required: true }, errors),
     RAINDROP_CLIENT_SECRET: coerceString('RAINDROP_CLIENT_SECRET', raw.RAINDROP_CLIENT_SECRET, { required: true }, errors),
     RAINDROP_REDIRECT_URI: coerceString('RAINDROP_REDIRECT_URI', raw.RAINDROP_REDIRECT_URI, { required: true, url: true }, errors),
@@ -212,6 +213,7 @@ function buildConfig() {
       webhookSecret: parsed.STRAVA_WEBHOOK_SECRET,
       redirectUri: parsed.STRAVA_REDIRECT_URI,
       baseUrl: parsed.STRAVA_BASE_URL || 'https://www.strava.com/api/v3',
+      oauthBaseUrl: parsed.STRAVA_OAUTH_BASE_URL || 'https://www.strava.com',
     },
     email: {
       user: parsed.EMAIL_USER,
