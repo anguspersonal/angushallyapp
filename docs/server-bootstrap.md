@@ -12,7 +12,7 @@
    - `server/bootstrap/createApp.js` builds an Express app from injected dependencies (`config`, `httpClient`, `db`, logger, optional `nextHandler`).
    - `server/bootstrap/middleware.js` registers security headers, JSON parsing, cookies, rate limiting, and HTTPS trust using the supplied config.
    - `server/bootstrap/routes.js` attaches API routers; `server/bootstrap/health.js` adds `/api/health` plus `/api/ready` (optionally checking `db.query`).
-   - `server/bootstrap/createServer.js` / `server/index.js` are thin wrappers that construct dependencies, create the app, and start listening on `config.server.port`.
+   - `server/bootstrap/createServer.js` / `server/index.js` construct dependencies, build the app, attach Next.js routes via `attachNext` when a `.next` build exists, and start listening on `config.server.port`.
 
 4. **Adding routes or integrations**
    - Add middleware in `registerMiddleware`, routes in `registerRoutes`, and any health/ready probes in `registerHealthChecks`. Routes loaded through `registerRoutes` can be plain routers or factories that accept injected deps.

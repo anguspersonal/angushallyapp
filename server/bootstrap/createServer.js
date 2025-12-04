@@ -1,16 +1,24 @@
 const config = require('../config');
 const { createHttpClient } = require('../http/client');
 const { createApp } = require('./createApp');
+const { attachNext } = require('./next');
 
-function createServer() {
+function createServer({ withNext = true } = {}) {
   const httpClient = createHttpClient({ config: config.http, logger: console });
-  return createApp({ config, httpClient });
+  const app = createApp({ config, httpClient });
+
+  if (withNext) {
+    attachNext(app);
+  }
+
+  return app;
 }
 
-function startServer(app = createServer()) {
+function startServer({ app, withNext } = {}) {
+  const serverApp = app || createServer({ withNext });
   const PORT = config.server.port;
   const isDev = config.nodeEnv !== 'production';
-  return app.listen(PORT, () => {
+  return serverApp.listen(PORT, () => {
     console.log(`Node ${isDev ? 'dev server' : 'server'} listening on port ${PORT}`);
   });
 }
