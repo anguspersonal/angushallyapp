@@ -3,14 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { Paper, Text, Title, Box } from '@mantine/core';
+import type { ContentPostSummary } from '@shared/services/content/contracts';
 
-interface SnippetProps {
-  excerpt: string;
-  id: string;
-  slug: string;
-  title: string;
-  link?: string;
-}
+type SnippetProps = Pick<ContentPostSummary, 'excerpt' | 'id' | 'slug' | 'title'> & { link?: string };
 
 function Snippet({ excerpt, id, slug, title, link = `/blog/${slug}` }: SnippetProps) {
   return (
@@ -31,9 +26,9 @@ function Snippet({ excerpt, id, slug, title, link = `/blog/${slug}` }: SnippetPr
         }}
       >
         <Box>
-          <Title 
-            order={3} 
-            size="h4" 
+          <Title
+            order={3}
+            size="h4"
             mb="xs"
             style={{
               display: '-webkit-box',
@@ -42,12 +37,12 @@ function Snippet({ excerpt, id, slug, title, link = `/blog/${slug}` }: SnippetPr
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               lineHeight: 1.4,
-              maxHeight: '2.8em'
+              maxHeight: '2.8em',
             }}
           >
             {title}
           </Title>
-          <Text 
+          <Text
             size="sm"
             style={{
               display: '-webkit-box',
@@ -56,10 +51,10 @@ function Snippet({ excerpt, id, slug, title, link = `/blog/${slug}` }: SnippetPr
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               lineHeight: 1.4,
-              maxHeight: '2.8em'
+              maxHeight: '2.8em',
             }}
           >
-            {excerpt}
+            {excerpt || ''}
           </Text>
         </Box>
       </Paper>

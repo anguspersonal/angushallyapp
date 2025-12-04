@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { Container, Title, SimpleGrid, Anchor } from '@mantine/core';
+import { Container, Title, SimpleGrid, Anchor, Loader, Alert } from '@mantine/core';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import BlogSnippet from '../../components/blog/BlogSnippet';
-import { fetchBlogList } from '../../utils/fetchBlogData';
-import type { BlogPostSummary } from '@/types/blog';
+import { usePosts } from '@/services/content/hooks';
 
 // Animation variants
 const containerVariants = {
@@ -31,15 +30,7 @@ const itemVariants: Variants = {
 };
 
 export default function Blog() {
-    const [posts, setPosts] = useState<BlogPostSummary[]>([]);
-
-    useEffect(() => {
-        async function fetchData() {
-            const blogs = await fetchBlogList();
-            setPosts(blogs);
-        }
-        fetchData();
-    }, []);
+    const { data: posts, isLoading, error } = usePosts({ sortBy: 'createdAt', order: 'desc' });
 
     return (
         <Container py="xl">
@@ -50,13 +41,23 @@ export default function Blog() {
                 initial="hidden"
                 animate="visible"
             >
+                {isLoading && (
+                    <Loader size="sm" />
+                )}
+
+                {error && (
+                    <Alert color="red" title="Error loading posts" mt="md">
+                        {error}
+                    </Alert>
+                )}
+
                 <SimpleGrid
                     cols={{ base: 1, sm: 2, md: 3 }}
                     spacing="lg"
                 >
                     {posts.map((post) => (
                         <motion.div key={post.id} variants={itemVariants}>
-                            <Anchor 
+                            <Anchor
                                 component={Link} 
                                 href={`/blog/${post.slug}`}
                                 underline="never"

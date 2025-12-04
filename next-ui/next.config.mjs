@@ -22,6 +22,7 @@ const nextConfig = {
     experimental: {
       // turbo: false,
       optimizeCss: true, // Optimize CSS loading
+      externalDir: true, // allow shared contracts outside next-ui
     },
   
     // Disable browser source-maps in production to shrink the slug

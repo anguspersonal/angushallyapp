@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Snippet from '../components/Snippet';
 import ProjectSnippet from '../components/ProjectSnippet';
-import { fetchLatestBlog } from '../utils/fetchBlogData';
+import { useLatestPost } from '@/services/content/hooks';
 import projectList from '../data/projectList';
 import { assets } from '../lib/theme';
 
@@ -15,13 +15,6 @@ const contentVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 }
 };
-
-interface BlogPost {
-  id: string;
-  title: string;
-  excerpt: string;
-  slug: string;
-}
 
 interface Project {
   id: number;
@@ -33,17 +26,8 @@ interface Project {
 }
 
 export default function Home() {
-  const [latestBlog, setBlog] = useState<BlogPost | null>(null);
+  const { post: latestBlog } = useLatestPost();
   const [latestProject, setProject] = useState<Project | null>(null);
-
-  // Fetch latest blog
-  useEffect(() => {
-    async function getLatestblog() {
-      const latestBlogData = await fetchLatestBlog();
-      setBlog(latestBlogData);
-    }
-    getLatestblog();
-  }, []);
 
   // Fetch latest project
   useEffect(() => {
