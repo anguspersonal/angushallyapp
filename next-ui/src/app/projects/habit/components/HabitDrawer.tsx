@@ -6,10 +6,9 @@ import HabitCombobox from "./HabitCombobox";
 import { useForm } from "@mantine/form";
 import { addHabitLog, getHabitSpecificData } from "../habit";
 import { calculateUnits } from "../../../../utils/calculateUnits";
-import { getAggregateStats } from "../aggregateService";
 import type { HabitLog, DrinkCatalogItem, HabitType } from "../../../../types/common";
-
-type ValidPeriod = 'week' | 'month' | 'year';
+import type { HabitPeriod, HabitStats } from "@shared/services/habit/contracts";
+import { useHabitStats } from "../../../../services/habits/hooks";
 
 // Constants
 const TARGET_UNITS = 14; // UK recommended weekly limit
@@ -22,14 +21,7 @@ interface HabitDefinition {
   progress: number;
 }
 
-// Local interface matching the aggregateService response
-interface AggregateStats {
-  sum: number;
-  avg: number;
-  min: number;
-  max: number;
-  stddev: number;
-}
+type DisplayPeriod = Extract<HabitPeriod, 'week' | 'month' | 'year'>;
 
 interface TempDrinkLog {
   id: string;
@@ -54,11 +46,24 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
   const [logs, setLogs] = useState<HabitLog[]>([]);
   const [tempDrinkLogs, setTempDrinkLogs] = useState<TempDrinkLog[]>([]);
   const comboboxRef = useRef<(() => void) | null>(null);
-  const [stats, setStats] = useState<Record<string, AggregateStats>>({
-    week: { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 },
-    month: { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 },
-    year: { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 }
+  const createEmptyStats = (period: DisplayPeriod): HabitStats => ({
+    period,
+    totalCompleted: 0,
+    averagePerEntry: 0,
+    minimumPerEntry: 0,
+    maximumPerEntry: 0,
+    standardDeviation: 0,
   });
+
+  const weekStats = useHabitStats('week');
+  const monthStats = useHabitStats('month');
+  const yearStats = useHabitStats('year');
+
+  const stats: Record<DisplayPeriod, HabitStats> = {
+    week: weekStats.data ?? createEmptyStats('week'),
+    month: monthStats.data ?? createEmptyStats('month'),
+    year: yearStats.data ?? createEmptyStats('year'),
+  };
 
   // Fetch options for the selected habit
   useEffect(() => {
@@ -96,43 +101,6 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
       console.error("Invalid selectedLogs data:", selectedLogs);
     }
   }, [selectedLogs, habit]);
-
-  useEffect(() => {
-    if (habit) {
-      const fetchStats = async () => {
-        const periods: ValidPeriod[] = ['week', 'month', 'year'];
-        const newStats: Record<string, AggregateStats> = {};
-        
-        console.log('Fetching stats for habit:', habit);
-        
-        for (const period of periods) {
-          try {
-            // Make sure we're using 'alcohol' as the habit type for alcohol habits
-            const habitType = habit.name.toLowerCase() === 'alcohol' ? 'alcohol' : habit.name;
-            console.log(`Fetching ${period} stats for ${habitType}`);
-            const data = await getAggregateStats(habitType, period as ValidPeriod);
-            console.log(`${period} stats result:`, data);
-            // Ensure the data has all required properties
-            newStats[period] = {
-              sum: data.sum || 0,
-              avg: data.avg || 0,
-              min: data.min || 0,
-              max: data.max || 0,
-              stddev: data.stddev || 0
-            };
-          } catch (error) {
-            console.error(`Error fetching ${period} stats:`, error);
-            newStats[period] = { sum: 0, avg: 0, min: 0, max: 0, stddev: 0 };
-          }
-        }
-        
-        console.log('Setting stats:', newStats);
-        setStats(newStats);
-      };
-      
-      fetchStats();
-    }
-  }, [habit]);
 
   // Initialize form with default values
   const form = useForm({
@@ -242,11 +210,11 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
         </Stack>
       </form>
       <Stack mt="md">
-        <Text>So far this week: {stats.week.sum.toFixed(1)} units</Text>
-        <Text>Last week: {stats.week.sum.toFixed(1)} units</Text>
+        <Text>So far this week: {stats.week.totalCompleted.toFixed(1)} units</Text>
+        <Text>Last week: {stats.week.totalCompleted.toFixed(1)} units</Text>
         <Text>Target units: {TARGET_UNITS} units</Text>
-        <Text>Average units: {stats.week.avg.toFixed(1)} units</Text>
-        <Text>Min/Max: {stats.week.min.toFixed(1)}/{stats.week.max.toFixed(1)} units</Text>
+        <Text>Average units: {stats.week.averagePerEntry.toFixed(1)} units</Text>
+        <Text>Min/Max: {stats.week.minimumPerEntry.toFixed(1)}/{stats.week.maximumPerEntry.toFixed(1)} units</Text>
         <LogsTable logs={logs} habitType={habit?.name.toLowerCase() === 'alcohol' ? 'alcohol' : 'other'} />
       </Stack>
     </Drawer>

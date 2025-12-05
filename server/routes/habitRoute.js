@@ -1,154 +1,168 @@
 /**
- * habitRoute.js - Express Router for Habit Logging API
- *
- * This module defines API endpoints for logging and retrieving habits.
- * It supports multiple habit types (e.g., alcohol, exercise) and dynamically
- * routes requests to the appropriate habit service.
- *
- * Endpoints:
- * - GET  /api/habit          → Fetch all habit logs from the database.
- * - POST /api/habit/:habitType → Log a habit entry based on habit type.
- *
- * How It Works:
- * 1. The frontend sends a request to `/api/habit/:habitType` with habit data.
- * 2. The router logs the habit entry in `habit_log`.
- * 3. The correct habit service (`logAlcohol`, `logExercise`, etc.) is called
- *    to handle additional habit-specific logic.
- *
- * Dependencies:
- * - habitService.js    → Handles general habit logging.
- * - alcoholService.js  → Handles alcohol-specific logging.
- * - exerciseService.js → Handles exercise-specific logging.
- *
- * Author: Angus Hally
- * Date: [2025-02-28]
+ * Express Router for Habit Logging API with dependency injection support.
  */
 
+const express = require('express');
+const { authMiddleware } = require('../middleware/auth');
+module.exports = function createHabitRoutes(deps = {}) {
+  const router = express.Router();
+  const { habitService, alcoholService, exerciseService, habitApi, logger = console } = deps;
 
-const express = require("express");
-const { getHabitLogsFromDB, logHabitLog } = require("../habit-api/habitService");
-const { logAlcohol, getAlcoholLogs, getDrinkCatalog, getAlcoholAggregates } = require("../habit-api/alcoholService");
-const { logExercise, getExerciseLogs } = require("../habit-api/exerciseService");
-const { getAggregateStats } = require("../habit-api/aggregateService");
-const { authMiddleware } = require("../middleware/auth");
-const router = express.Router();
-
-
-// Apply authentication middleware to all routes
-router.use(authMiddleware());
-
-// Get all habit logs for the authenticated user
-router.get('/', async (req, res) => {
-    try {
-        const logs = await getHabitLogsFromDB(req.user.id);
-        res.json(logs);
-    } catch (error) {
-        console.error("Error fetching habit logs:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-// Add Habit Log
-router.post('/:habitType', async (req, res) => {
-    console.log("Habit route POST hit to log habit!");
-    const { value, metric, extraData } = req.body;
-    const { habitType } = req.params;
-    
-    // Validate habit type first before doing any database operations
-    if (!['alcohol', 'exercise'].includes(habitType)) {
-        return res.status(400).json({ error: "Invalid habit type" });
-    }
-    
-    try {
-        // Log the habit in `habit_log` with the user's ID
-        const logId = await logHabitLog(req.user.id, habitType, value, metric, extraData);
-        console.log(`✅ Habit log created for user ${req.user.id} with ID: ${logId}`);
-
-        let result;
-
-        // Call the correct habit service based on habit type
-        switch (habitType) {
-            case "alcohol":
-                result = await logAlcohol(logId, extraData, req.user.id);
-                break;
-            case "exercise":
-                result = await logExercise(logId, extraData, req.user.id);
-                break;
-        }
-
-        res.json({ message: "Habit logged successfully", logId, ...result });
-
-    } catch (error) {
-        console.error("❌ Error logging habit:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-// Get logs for a specific habit type
-router.get('/:habitType/logs', async (req, res) => {
-    const { habitType } = req.params;
-    try {
-        let logs;
-        switch (habitType) {
-            case "alcohol":
-                logs = await getAlcoholLogs(req.user.id);
-                break;
-            case "exercise":
-                logs = await getExerciseLogs(req.user.id);
-                break;
-            default:
-                return res.status(400).json({ error: "Invalid habit type" });
-        }
-        res.json(logs);
-    } catch (error) {
-        console.error("Error fetching habit logs:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-// Get habit-specific data (e.g., drink catalog)
-router.get('/:habitType/data', async (req, res) => {
-    const { habitType } = req.params;
-    try {
-        let data;
-        switch (habitType) {
-            case "alcohol":
-                data = await getDrinkCatalog();
-                break;
-            default:
-                return res.status(400).json({ error: "Invalid habit type" });
-        }
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching habit data:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-// Get aggregate stats for the authenticated user
-router.get('/stats/:period', async (req, res) => {
-    const { period } = req.params;
-    try {
-        const stats = await getAggregateStats(period, req.user.id);
-        res.json(stats);
-    } catch (error) {
-        console.error("Error fetching aggregate stats:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-module.exports = router;
-
-
-/*
-Request Params { habitType: 'alcohol' } Request Body {
-    user_id: 1,
-    habitType: 'Alcohol',
-    value: 170,
-    metric: 'units',
-    extra_data: { drink_id: 2, volume_ml: 34, abv: 5 }
+  if (!habitService) {
+    throw new Error('createHabitRoutes requires a habitService dependency');
   }
 
-drink id: 2 drinkName: undefined volumeML: undefined abvPerc: undefined
+  router.use(authMiddleware());
 
-*/
+  // Get all habit logs for the authenticated user
+  router.get('/', async (req, res) => {
+    try {
+      const params = {
+        page: req.query.page ? Number(req.query.page) : undefined,
+        pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
+      };
+      const result = await habitService.listHabits(req.user.id, params);
+      res.json(result);
+    } catch (error) {
+      logger.error?.('Error fetching habit logs', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Aggregate stats for the authenticated user over a given period
+  router.get('/stats/:period', async (req, res) => {
+    try {
+      if (!habitService.getStats) {
+        return res.status(501).json({ error: 'Habit stats not available', code: 'HABIT_STATS_PROVIDER_MISSING' });
+      }
+
+      const stats = await habitService.getStats(req.user.id, req.params.period);
+      return res.json(stats);
+    } catch (error) {
+      const code = error?.code;
+      const status =
+        ['HABIT_INVALID_PERIOD', 'HABIT_INVALID_METRIC'].includes(code)
+          ? 400
+          : code === 'HABIT_STATS_PROVIDER_MISSING'
+            ? 501
+            : 500;
+      logger.error?.('Error fetching habit stats', error);
+      return res.status(status).json({
+        error: status === 400 ? 'Invalid stats request' : status === 501 ? 'Stats provider unavailable' : 'Internal Server Error',
+        code,
+      });
+    }
+  });
+
+  // Get a single habit log by id (stubbed contract)
+  router.get('/entries/:id', async (req, res) => {
+    try {
+      const habit = await habitService.getHabitById(req.params.id);
+      if (!habit) {
+        return res.status(404).json({ error: 'Habit not found' });
+      }
+      return res.json(habit);
+    } catch (error) {
+      logger.error?.('Error fetching habit detail', error);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Add Habit Log
+  router.post('/:habitType', async (req, res) => {
+    const { value, metric, extraData } = req.body;
+    const { habitType } = req.params;
+
+    if (!['alcohol', 'exercise'].includes(habitType)) {
+      return res.status(400).json({ error: 'Invalid habit type' });
+    }
+
+    try {
+      const logId = await habitApi.logHabitLog(req.user.id, habitType, value, metric, extraData);
+      let result;
+
+      switch (habitType) {
+        case 'alcohol':
+          result = await alcoholService.logAlcohol(logId, extraData, req.user.id);
+          break;
+        case 'exercise':
+          result = await exerciseService.logExercise(logId, extraData, req.user.id);
+          break;
+        default:
+          break;
+      }
+
+      res.json({ message: 'Habit logged successfully', logId, ...result });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('❌ Error logging habit:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Get logs for a specific habit type
+  router.get('/:habitType/logs', async (req, res) => {
+    const { habitType } = req.params;
+    try {
+      let logs;
+      switch (habitType) {
+        case 'alcohol':
+          logs = await alcoholService.getAlcoholLogs(req.user.id);
+          break;
+        case 'exercise':
+          logs = await exerciseService.getExerciseLogs(req.user.id);
+          break;
+        default:
+          return res.status(400).json({ error: 'Invalid habit type' });
+      }
+      res.json(logs);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching habit logs:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Get habit-specific data (e.g., drink catalog)
+  router.get('/:habitType/data', async (req, res) => {
+    const { habitType } = req.params;
+    try {
+      let data;
+      switch (habitType) {
+        case 'alcohol':
+          data = await alcoholService.getDrinkCatalog();
+          break;
+        default:
+          return res.status(400).json({ error: 'Invalid habit type' });
+      }
+      res.json(data);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching habit data:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Aggregates
+  router.get('/:habitType/aggregates', async (req, res) => {
+    const { habitType } = req.params;
+    try {
+      const aggregates = await habitService.getAggregates(req.user.id, habitType);
+      res.json(aggregates);
+    } catch (error) {
+      const status =
+        error?.code === 'HABIT_INVALID_TYPE'
+          ? 400
+          : error?.code === 'HABIT_AGGREGATE_PROVIDER_MISSING'
+            ? 501
+            : 500;
+      logger.error?.('Error fetching habit aggregates', error);
+      res.status(status).json({
+        error: status === 400 ? 'Invalid habit type' : status === 501 ? 'Aggregate provider unavailable' : 'Internal Server Error',
+        code: error?.code,
+      });
+    }
+  });
+
+  return router;
+};

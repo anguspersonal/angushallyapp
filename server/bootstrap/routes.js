@@ -1,4 +1,7 @@
 const { createContactLimiter } = require('./middleware');
+const { createContentService } = require('../services/contentService');
+const { createHabitService } = require('../services/habitService');
+const db = require('../db');
 
 function isExpressRouter(route) {
   return (
@@ -27,20 +30,38 @@ function loadRoute(modulePath, deps) {
 
 function registerRoutes(app, deps = {}) {
   const contactLimiter = createContactLimiter();
+  const habitApi = deps.habitApi || require('../habit-api/habitService');
+  const alcoholService = deps.alcoholService || require('../habit-api/alcoholService');
+  const exerciseService = deps.exerciseService || require('../habit-api/exerciseService');
+  const aggregateService = deps.aggregateService || require('../habit-api/aggregateService');
+  const contentService = deps.contentService || createContentService({ db: deps.db || db, logger: deps.logger });
+  const habitService =
+    deps.habitService ||
+    createHabitService({ habitApi, aggregateService, alcoholService, exerciseService, logger: deps.logger });
 
-  const contactRoute = loadRoute('../routes/contact', deps);
-  const dbRoute = loadRoute('../routes/dbRoute', deps);
-  const contentRoute = loadRoute('../routes/contentRoute', deps);
-  const hygieneScoreRoute = loadRoute('../routes/hygieneScoreRoute', deps);
-  const stravaRoute = loadRoute('../routes/stravaRoute', deps);
-  const habitRoute = loadRoute('../routes/habitRoute', deps);
-  const authRoute = loadRoute('../routes/authRoute', deps);
-  const analyseTextRoute = loadRoute('../routes/analyseTextRoute', deps);
-  const raindropRoute = loadRoute('../routes/raindropRoute', deps);
-  const raindropCallbackRoute = loadRoute('../routes/raindropCallback', deps);
-  const bookmarkRoute = loadRoute('../routes/bookmarkRoute', deps);
-  const f5CertaintyRoute = loadRoute('../routes/f5CertaintyRoute', deps);
-  const instagramIntelligenceRoute = loadRoute('../routes/instagramIntelligenceRoute', deps);
+  const sharedDeps = {
+    ...deps,
+    contentService,
+    habitService,
+    habitApi,
+    alcoholService,
+    exerciseService,
+    aggregateService,
+  };
+
+  const contactRoute = loadRoute('../routes/contact', sharedDeps);
+  const dbRoute = loadRoute('../routes/dbRoute', sharedDeps);
+  const contentRoute = loadRoute('../routes/contentRoute', sharedDeps);
+  const hygieneScoreRoute = loadRoute('../routes/hygieneScoreRoute', sharedDeps);
+  const stravaRoute = loadRoute('../routes/stravaRoute', sharedDeps);
+  const habitRoute = loadRoute('../routes/habitRoute', sharedDeps);
+  const authRoute = loadRoute('../routes/authRoute', sharedDeps);
+  const analyseTextRoute = loadRoute('../routes/analyseTextRoute', sharedDeps);
+  const raindropRoute = loadRoute('../routes/raindropRoute', sharedDeps);
+  const raindropCallbackRoute = loadRoute('../routes/raindropCallback', sharedDeps);
+  const bookmarkRoute = loadRoute('../routes/bookmarkRoute', sharedDeps);
+  const f5CertaintyRoute = loadRoute('../routes/f5CertaintyRoute', sharedDeps);
+  const instagramIntelligenceRoute = loadRoute('../routes/instagramIntelligenceRoute', sharedDeps);
 
   app.use('/api/contact', contactLimiter, contactRoute);
   app.use('/api/db', dbRoute);

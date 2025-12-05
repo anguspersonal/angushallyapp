@@ -20,7 +20,7 @@ This roadmap sequences the upcoming modernization work into four phases with cle
   - All outbound calls use consolidated HTTP client.
   - Server bootstrap passes smoke tests with modular initialization path.
 
-## Phase 2 — Domain & Service Layer Extraction for Frontend Hooks and Backend Routes
+## Phase 2 — Domain & Service Layer Extraction (Content/Blog pilot, Habits scaffold)
 - **Owner:** Application Engineering (Alex Kim)
 - **Goals:**
   - Introduce domain/services layer consumed by frontend hooks and backend routes.
@@ -28,15 +28,18 @@ This roadmap sequences the upcoming modernization work into four phases with cle
   - Provide typed hooks/components that rely on service contracts.
 - **Entry Criteria:**
   - Phase 1 exit criteria met.
-  - Prioritized list of domains (e.g., identity, content, telemetry) with owners.
-- **Checkpoints:**
-  - Service interface definitions merged with examples for both server and client consumption.
-  - First domain migrated to new service layer with integration tests.
-  - Frontend hooks refactored to consume services; legacy direct fetches deprecated.
+  - Prioritized list of domains with owners.
+- **Checkpoints (Content/Blog as the pilot, Habits scaffolded second):**
+  - Shared contracts defined under `shared/services/content/contracts.ts` and `shared/services/habit/contracts.ts` (using the common pagination meta in `shared/services/contracts/pagination.ts`) and reused by services, routes, and frontend hooks.
+  - Content/Blog service (`server/services/contentService`) and route factory (`server/routes/contentRoute`) wired through DI with pagination/validation owned by the service.
+  - Frontend Content/Blog client/hooks (`next-ui/src/services/content`) consume the service contracts; legacy fetch utilities removed.
+  - Habit domain scaffolded with shared contracts, service skeleton, route factory, and client/hooks mirroring the Content pattern.
 - **Exit Criteria:**
-  - Majority of routes and hooks consume the shared service layer.
-  - Data access isolation verified via dependency graph checks.
-  - Documentation updated with service usage patterns.
+  - Content/Blog domain fully migrated to the service layer with typed hooks and integration tests.
+  - Habits domain scaffolded for the same pattern, ready for full migration.
+  - Majority of routes and hooks consume the shared service layer; data access isolation verified via dependency graph checks.
+  - Documentation updated with service usage patterns and “how to add a new domain service” guidance.
+  - Compatibility: `/api/habit/stats/:period` remains available (via the habit service) for the existing UI until that client migrates off the legacy stats path.
 
 ## Phase 3 — Structured Logging & Error Taxonomy Adoption
 - **Owner:** Reliability (Priya Patel)
