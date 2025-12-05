@@ -12,6 +12,7 @@
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGE_SIZE = 50;
+const DEFAULT_METRICS = ['sum', 'avg', 'min', 'max', 'stddev'];
 
 function clampPageSize(value) {
   const parsed = parseInt(String(value), 10);
@@ -107,10 +108,37 @@ function createHabitService(deps = {}) {
     }
   }
 
+  /**
+   * Aggregate stats for the authenticated user over a period.
+   * Falls back to the legacy habitApi implementation while we migrate.
+   * @param {string} userId
+   * @param {'day' | 'week' | 'month' | 'year' | 'all'} period
+   * @param {string[]} [metrics]
+   */
+  async function getStats(userId, period, metrics = DEFAULT_METRICS) {
+    const supportedPeriods = new Set(['day', 'week', 'month', 'year', 'all']);
+    const resolvedPeriod = supportedPeriods.has(period) ? period : null;
+    if (!resolvedPeriod) {
+      const error = new Error(`Unsupported period: ${period}`);
+      error.code = 'INVALID_PERIOD';
+      throw error;
+    }
+
+    if (typeof habitApi.getHabitAggregates !== 'function') {
+      const error = new Error('Habit stats provider not configured');
+      error.code = 'MISSING_STATS_PROVIDER';
+      throw error;
+    }
+
+    const stats = await habitApi.getHabitAggregates(resolvedPeriod, metrics, userId);
+    return { period: resolvedPeriod, ...stats };
+  }
+
   return {
     listHabits,
     getHabitById,
     createHabit,
+    getStats,
   };
 }
 

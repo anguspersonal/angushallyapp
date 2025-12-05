@@ -36,6 +36,22 @@ module.exports = function createHabitRoutes(deps = {}) {
     }
   });
 
+  // Aggregate stats for the authenticated user over a given period
+  router.get('/stats/:period', async (req, res) => {
+    try {
+      if (!habitService.getStats) {
+        return res.status(501).json({ error: 'Habit stats not available' });
+      }
+
+      const stats = await habitService.getStats(req.user.id, req.params.period);
+      return res.json(stats);
+    } catch (error) {
+      const status = error?.code === 'INVALID_PERIOD' ? 400 : 500;
+      logger.error?.('Error fetching habit stats', error);
+      return res.status(status).json({ error: status === 400 ? 'Invalid period' : 'Internal Server Error' });
+    }
+  });
+
   // Get a single habit log by id (stubbed contract)
   router.get('/entries/:id', async (req, res) => {
     try {
