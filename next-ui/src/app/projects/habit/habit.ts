@@ -1,7 +1,5 @@
 import { api } from '../../../shared/apiClient';
 import type { HabitLog, HabitType, DrinkCatalogItem } from '../../../types/common';
-import type { HabitPeriod, HabitStats } from '@shared/services/habit/contracts';
-import { habitClient } from '../../../services/habits/client';
 
 interface HabitLogResponse {
     data: HabitLog;
@@ -76,15 +74,6 @@ export const getDrinkCatalog = async (): Promise<DrinkCatalogItem[]> => {
         return response;
     } catch (error) {
         console.error('Error fetching drink catalog:', error);
-        throw error;
-    }
-};
-
-export const getHabitStats = async (period: HabitPeriod): Promise<HabitStats> => {
-    try {
-        return await habitClient.getStats(period);
-    } catch (error) {
-        console.error('Error fetching aggregate stats:', error);
         throw error;
     }
 };

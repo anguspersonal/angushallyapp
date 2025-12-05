@@ -9,6 +9,8 @@ import type { PaginationMeta } from '../contracts/pagination';
 export type HabitPeriod = 'day' | 'week' | 'month' | 'year' | 'all';
 export const HABIT_PERIODS: HabitPeriod[] = ['day', 'week', 'month', 'year', 'all'];
 
+// Metrics are the provider-level inputs; the service maps them onto the domain
+// HabitStats fields so routes and UI never deal with raw provider names.
 export type HabitMetric = 'sum' | 'avg' | 'min' | 'max' | 'stddev';
 export const HABIT_METRICS: HabitMetric[] = ['sum', 'avg', 'min', 'max', 'stddev'];
 
@@ -38,9 +40,9 @@ export interface HabitListResult {
 
 export interface HabitStats {
   period: HabitPeriod;
-  sum: number;
-  avg: number;
-  min: number;
-  max: number;
-  stddev: number;
+  totalCompleted: number;
+  averagePerEntry: number;
+  minimumPerEntry: number;
+  maximumPerEntry: number;
+  standardDeviation: number;
 }

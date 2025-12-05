@@ -48,7 +48,14 @@ describe('habitService', () => {
     const stats = await service.getStats('user-1', 'week', ['sum', 'avg']);
 
     expect(habitApi.getHabitAggregates).toHaveBeenCalledWith('week', ['sum', 'avg'], 'user-1');
-    expect(stats).toEqual({ period: 'week', sum: 10, avg: 5, min: 0, max: 0, stddev: 0 });
+    expect(stats).toEqual({
+      period: 'week',
+      totalCompleted: 10,
+      averagePerEntry: 5,
+      minimumPerEntry: 0,
+      maximumPerEntry: 0,
+      standardDeviation: 0,
+    });
 
     await expect(service.getStats('user-1', 'invalid')).rejects.toMatchObject({ code: 'HABIT_INVALID_PERIOD' });
   });
@@ -62,7 +69,14 @@ describe('habitService', () => {
     const stats = await service.getStats('user-2', 'month');
 
     expect(habitApi.getHabitAggregates).toHaveBeenCalledWith('month', HABIT_METRICS, 'user-2');
-    expect(stats).toEqual({ period: 'month', sum: 4, avg: 0, min: 0, max: 0, stddev: 0 });
+    expect(stats).toEqual({
+      period: 'month',
+      totalCompleted: 4,
+      averagePerEntry: 0,
+      minimumPerEntry: 0,
+      maximumPerEntry: 0,
+      standardDeviation: 0,
+    });
   });
 
   test('getStats wraps provider failures without leaking internals', async () => {

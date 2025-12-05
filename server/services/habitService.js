@@ -18,6 +18,13 @@ const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGE_SIZE = 50;
 /** @type {HabitMetric[]} */
 const DEFAULT_METRICS = [...HABIT_METRICS];
+const METRIC_TO_FIELD = {
+  sum: 'totalCompleted',
+  avg: 'averagePerEntry',
+  min: 'minimumPerEntry',
+  max: 'maximumPerEntry',
+  stddev: 'standardDeviation',
+};
 
 function clampPageSize(value) {
   const parsed = parseInt(String(value), 10);
@@ -150,16 +157,17 @@ function createHabitService(deps = {}) {
       /** @type {HabitStats} */
       const shaped = {
         period: resolvedPeriod,
-        sum: 0,
-        avg: 0,
-        min: 0,
-        max: 0,
-        stddev: 0,
+        totalCompleted: 0,
+        averagePerEntry: 0,
+        minimumPerEntry: 0,
+        maximumPerEntry: 0,
+        standardDeviation: 0,
       };
 
       HABIT_METRICS.forEach((metric) => {
+        const field = METRIC_TO_FIELD[metric];
         const value = rawStats?.[metric];
-        shaped[metric] = typeof value === 'number' ? value : 0;
+        shaped[field] = typeof value === 'number' ? value : 0;
       });
 
       return shaped;

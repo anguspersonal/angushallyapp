@@ -18,7 +18,14 @@ function createApp(overrides = {}) {
       pagination: { page: 1, pageSize: 10, totalItems: 1, totalPages: 1, hasMore: false },
     }),
     getHabitById: jest.fn().mockResolvedValue(sampleHabit),
-    getStats: jest.fn().mockResolvedValue({ period: 'week', sum: 3 }),
+    getStats: jest.fn().mockResolvedValue({
+      period: 'week',
+      totalCompleted: 3,
+      averagePerEntry: 1,
+      minimumPerEntry: 1,
+      maximumPerEntry: 1,
+      standardDeviation: 0,
+    }),
     getAggregates: jest.fn().mockResolvedValue({ sum: 2 }),
     ...overrides,
   };
@@ -57,7 +64,7 @@ describe('habitRoute integration', () => {
 
     expect(habitService.getStats).toHaveBeenCalledWith('user-1', 'week');
     expect(response.status).toBe(200);
-    expect(response.body).toMatchObject({ period: 'week' });
+    expect(response.body).toMatchObject({ period: 'week', totalCompleted: 3 });
 
     const { app: invalidApp } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'HABIT_INVALID_PERIOD' }) });
     const invalid = await request(invalidApp).get('/api/habit/stats/invalid');

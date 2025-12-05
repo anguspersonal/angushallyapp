@@ -39,11 +39,17 @@ module.exports = function createHabitRoutes(deps = {}) {
       const stats = await habitService.getStats(req.user.id, req.params.period);
       return res.json(stats);
     } catch (error) {
-      const status = ['HABIT_INVALID_PERIOD', 'HABIT_INVALID_METRIC'].includes(error?.code) ? 400 : 500;
+      const code = error?.code;
+      const status =
+        ['HABIT_INVALID_PERIOD', 'HABIT_INVALID_METRIC'].includes(code)
+          ? 400
+          : code === 'HABIT_STATS_PROVIDER_MISSING'
+            ? 501
+            : 500;
       logger.error?.('Error fetching habit stats', error);
       return res.status(status).json({
-        error: status === 400 ? 'Invalid stats request' : 'Internal Server Error',
-        code: error?.code,
+        error: status === 400 ? 'Invalid stats request' : status === 501 ? 'Stats provider unavailable' : 'Internal Server Error',
+        code,
       });
     }
   });
@@ -151,7 +157,10 @@ module.exports = function createHabitRoutes(deps = {}) {
             ? 501
             : 500;
       logger.error?.('Error fetching habit aggregates', error);
-      res.status(status).json({ error: status === 400 ? 'Invalid habit type' : 'Internal Server Error', code: error?.code });
+      res.status(status).json({
+        error: status === 400 ? 'Invalid habit type' : status === 501 ? 'Aggregate provider unavailable' : 'Internal Server Error',
+        code: error?.code,
+      });
     }
   });
 
