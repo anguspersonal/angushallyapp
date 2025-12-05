@@ -39,6 +39,7 @@ This roadmap sequences the upcoming modernization work into four phases with cle
   - Habits domain scaffolded for the same pattern, ready for full migration.
   - Majority of routes and hooks consume the shared service layer; data access isolation verified via dependency graph checks.
   - Documentation updated with service usage patterns and “how to add a new domain service” guidance.
+  - Compatibility: `/api/habit/stats/:period` remains available (via the habit service) for the existing UI until that client migrates off the legacy stats path.
 
 ## Phase 3 — Structured Logging & Error Taxonomy Adoption
 - **Owner:** Reliability (Priya Patel)

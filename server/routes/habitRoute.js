@@ -6,14 +6,7 @@ const express = require('express');
 const { authMiddleware } = require('../middleware/auth');
 module.exports = function createHabitRoutes(deps = {}) {
   const router = express.Router();
-  const {
-    habitService,
-    alcoholService,
-    exerciseService,
-    habitApi,
-    aggregateService,
-    logger = console,
-  } = deps;
+  const { habitService, alcoholService, exerciseService, habitApi, logger = console } = deps;
 
   if (!habitService) {
     throw new Error('createHabitRoutes requires a habitService dependency');
@@ -145,20 +138,12 @@ module.exports = function createHabitRoutes(deps = {}) {
   router.get('/:habitType/aggregates', async (req, res) => {
     const { habitType } = req.params;
     try {
-      let aggregates;
-      switch (habitType) {
-        case 'alcohol':
-          aggregates = await alcoholService.getAlcoholAggregates(req.user.id);
-          break;
-        default:
-          aggregates = await aggregateService.getAggregateStats(req.user.id, habitType);
-          break;
-      }
+      const aggregates = await habitService.getAggregates(req.user.id, habitType);
       res.json(aggregates);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching habit aggregates:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      const status = error?.code === 'INVALID_HABIT_TYPE' ? 400 : error?.code === 'MISSING_AGGREGATE_PROVIDER' ? 501 : 500;
+      logger.error?.('Error fetching habit aggregates', error);
+      res.status(status).json({ error: status === 400 ? 'Invalid habit type' : 'Internal Server Error' });
     }
   });
 

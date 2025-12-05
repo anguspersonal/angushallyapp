@@ -8,6 +8,9 @@
 /** @typedef {import('../../shared/services/habit/contracts').HabitListResult} HabitListResult */
 /** @typedef {import('../../shared/services/habit/contracts').HabitSummary} HabitSummary */
 /** @typedef {import('../../shared/services/habit/contracts').HabitDetail} HabitDetail */
+/** @typedef {import('../../shared/services/habit/contracts').HabitStats} HabitStats */
+/** @typedef {import('../../shared/services/habit/contracts').HabitPeriod} HabitPeriod */
+/** @typedef {import('../../shared/services/habit/contracts').HabitMetric} HabitMetric */
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;
@@ -37,7 +40,7 @@ function mapHabitLog(log) {
 }
 
 function createHabitService(deps = {}) {
-  const { habitApi, logger = console } = deps;
+  const { habitApi, aggregateService, alcoholService, exerciseService, logger = console } = deps;
 
   if (!habitApi || typeof habitApi.getHabitLogsFromDB !== 'function') {
     throw new Error('createHabitService requires a habitApi dependency with getHabitLogsFromDB');
@@ -117,7 +120,7 @@ function createHabitService(deps = {}) {
    */
   async function getStats(userId, period, metrics = DEFAULT_METRICS) {
     const supportedPeriods = new Set(['day', 'week', 'month', 'year', 'all']);
-    const resolvedPeriod = supportedPeriods.has(period) ? period : null;
+    const resolvedPeriod = supportedPeriods.has(period) ? /** @type {HabitPeriod} */ (period) : null;
     if (!resolvedPeriod) {
       const error = new Error(`Unsupported period: ${period}`);
       error.code = 'INVALID_PERIOD';
@@ -130,8 +133,48 @@ function createHabitService(deps = {}) {
       throw error;
     }
 
-    const stats = await habitApi.getHabitAggregates(resolvedPeriod, metrics, userId);
-    return { period: resolvedPeriod, ...stats };
+    try {
+      const rawStats = await habitApi.getHabitAggregates(resolvedPeriod, metrics, userId);
+      /** @type {HabitStats} */
+      const shaped = { period: resolvedPeriod };
+      metrics.forEach((metric) => {
+        const value = rawStats?.[metric];
+        if (typeof value === 'number') {
+          shaped[metric] = value;
+        }
+      });
+      return shaped;
+    } catch (error) {
+      logger.error?.('Failed to fetch habit stats', error);
+      const wrapped = new Error('Failed to fetch habit stats');
+      wrapped.code = 'STATS_FETCH_FAILED';
+      throw wrapped;
+    }
+  }
+
+  async function getAggregates(userId, habitType) {
+    if (!habitType) {
+      const error = new Error('Habit type is required');
+      error.code = 'INVALID_HABIT_TYPE';
+      throw error;
+    }
+
+    try {
+      if (habitType === 'alcohol' && alcoholService?.getAlcoholAggregates) {
+        return await alcoholService.getAlcoholAggregates(userId);
+      }
+
+      if (aggregateService?.getAggregateStats) {
+        return await aggregateService.getAggregateStats(userId, habitType);
+      }
+
+      const error = new Error('Habit aggregate provider not configured');
+      error.code = 'MISSING_AGGREGATE_PROVIDER';
+      throw error;
+    } catch (error) {
+      logger.error?.('Failed to fetch habit aggregates', error);
+      throw error;
+    }
   }
 
   return {
@@ -139,6 +182,7 @@ function createHabitService(deps = {}) {
     getHabitById,
     createHabit,
     getStats,
+    getAggregates,
   };
 }
 

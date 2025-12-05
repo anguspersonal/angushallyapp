@@ -36,7 +36,8 @@ function registerRoutes(app, deps = {}) {
   const aggregateService = deps.aggregateService || require('../habit-api/aggregateService');
   const contentService = deps.contentService || createContentService({ db: deps.db || db, logger: deps.logger });
   const habitService =
-    deps.habitService || createHabitService({ habitApi, logger: deps.logger });
+    deps.habitService ||
+    createHabitService({ habitApi, aggregateService, alcoholService, exerciseService, logger: deps.logger });
 
   const sharedDeps = {
     ...deps,

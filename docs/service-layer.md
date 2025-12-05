@@ -8,10 +8,14 @@
 - **Tests:** `server/tests/contentService.test.js` covers service behavior (pagination defaults/clamping, mapping, missing records); `server/tests/contentRoute.integration.test.js` validates route → service wiring and payload shape. Locally, run `npm test` (uses the local Jest binary) or narrow to `npm test -- --runTestsByPath server/tests/contentService.test.js server/tests/contentRoute.integration.test.js`.
 
 ## Habits (second domain, scaffolded)
-- Shared contracts live at `shared/services/habit/contracts.ts` and mirror the Content structure (`HabitListParams`, `HabitSummary`, `HabitDetail`, `HabitListResult`) with the same pagination shape from `shared/services/contracts/pagination.ts`.
-- Server service scaffold: `server/services/habitService.js` exposes `listHabits`, `getHabitById`, and `createHabit` while delegating to existing habit APIs until the migration is complete. Pagination defaults/clamping and list/detail shapes follow the shared contracts.
-- Frontend client/hooks scaffold: `next-ui/src/services/habits/client.ts` and `next-ui/src/services/habits/hooks.ts` follow the same pattern to keep the migration path clear.
-- Tests: `server/tests/habitService.test.js` and `server/tests/habitRoute.integration.test.js` assert list/detail payloads honor the contracts and include pagination metadata/404 handling.
+- Shared contracts live at `shared/services/habit/contracts.ts` and mirror the Content structure (`HabitListParams`, `HabitSummary`, `HabitDetail`, `HabitListResult`) with the same pagination shape from `shared/services/contracts/pagination.ts`. Habit stats share the same source of truth via `HabitStats` and `HabitPeriod`.
+- Server service scaffold: `server/services/habitService.js` exposes `listHabits`, `getHabitById`, `createHabit`, `getStats`, and `getAggregates` while delegating to existing habit APIs until the migration is complete. Pagination defaults/clamping, stat period validation, and list/detail shapes follow the shared contracts.
+- Routes: `server/routes/habitRoute.js` is a factory that injects the habit service; stats (`/api/habit/stats/:period`) and aggregates (`/api/habit/:habitType/aggregates`) both delegate into the service to centralize validation/mapping while preserving the legacy stats path used by the existing UI.
+- Frontend client/hooks scaffold: `next-ui/src/services/habits/client.ts` and `next-ui/src/services/habits/hooks.ts` follow the same pattern to keep the migration path clear, and UI types (`next-ui/src/types/common.ts`) alias the shared contracts to avoid drift.
+- Tests: `server/tests/habitService.test.js` and `server/tests/habitRoute.integration.test.js` assert list/detail payloads honor the contracts, include pagination metadata/404 handling, and cover stats/aggregate error codes.
+
+### Compatibility note: legacy habit stats
+- The legacy `/api/habit/stats/:period` route remains available for the current habit UI and is implemented through the habit service (`getStats`) to enforce shared validation and typing. Do not remove this route until the UI migrates to the newer aggregates pattern; both stats and aggregates must continue to delegate into the habit service.
 
 ### Example flow: Content list view (end-to-end)
 1. **Contract** — `shared/services/content/contracts.ts` declares `ContentListParams` (page, pageSize, sort/order) and `ContentListResult` with `{ items: ContentPostSummary[], pagination: PaginationMeta }`.

@@ -6,6 +6,9 @@
 
 import type { PaginationMeta } from '../contracts/pagination';
 
+export type HabitPeriod = 'day' | 'week' | 'month' | 'year' | 'all';
+export type HabitMetric = 'sum' | 'avg' | 'min' | 'max' | 'stddev';
+
 export interface HabitListParams {
   page?: number;
   pageSize?: number;
@@ -28,4 +31,8 @@ export interface HabitDetail extends HabitSummary {
 export interface HabitListResult {
   items: HabitSummary[];
   pagination: PaginationMeta;
+}
+
+export interface HabitStats extends Partial<Record<HabitMetric, number>> {
+  period: HabitPeriod;
 }

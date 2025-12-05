@@ -3,6 +3,8 @@
  * This file contains reusable type definitions used across components and services
  */
 
+import type { HabitStats as HabitStatsContract } from '@shared/services/habit/contracts';
+
 // =============================================================================
 // CORE UTILITY TYPES
 // =============================================================================
@@ -292,14 +294,7 @@ export interface DrinkCatalogItem {
   catalog_type?: string;
 }
 
-export interface HabitStats {
-  period: 'day' | 'week' | 'month' | 'year';
-  total_logs: number;
-  average_per_day: number;
-  trend?: 'increasing' | 'decreasing' | 'stable';
-  comparison_previous_period?: number;
-  [key: string]: any;
-}
+export type HabitStats = HabitStatsContract;
 
 export interface HabitAggregateData {
   habit_type: HabitType;
