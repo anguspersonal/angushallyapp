@@ -8,6 +8,7 @@ import { addHabitLog, getHabitSpecificData, getHabitStats } from "../habit";
 import { calculateUnits } from "../../../../utils/calculateUnits";
 import type { HabitLog, DrinkCatalogItem, HabitType } from "../../../../types/common";
 import type { HabitPeriod } from "@shared/services/habit/contracts";
+import { HABIT_PERIODS } from "@shared/services/habit/contracts";
 
 // Constants
 const TARGET_UNITS = 14; // UK recommended weekly limit
@@ -98,7 +99,7 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
   useEffect(() => {
     if (habit) {
       const fetchStats = async () => {
-        const periods: HabitPeriod[] = ['week', 'month', 'year'];
+        const periods: HabitPeriod[] = HABIT_PERIODS.filter((period): period is HabitPeriod => ['week', 'month', 'year'].includes(period));
         const newStats: Record<string, AggregateStats> = {};
         
         console.log('Fetching stats for habit:', habit);

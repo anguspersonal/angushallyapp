@@ -12,14 +12,27 @@ const API_BASE_URL = isServer
   : '/api';
 
 async function handleResponse<T>(response: Response): Promise<T> {
+  const contentType = response.headers.get('content-type');
+  const isJson = contentType?.includes('application/json');
+  const payload = isJson ? await response.json().catch(() => null) : await response.text();
+
   if (!response.ok) {
-    const message = await response.text();
-    const error = new Error(message || `Request failed with status ${response.status}`);
+    const message = typeof payload === 'object' && payload !== null && 'error' in payload
+      ? /** @type {{ error?: string }} */ (payload).error
+      : typeof payload === 'string'
+        ? payload
+        : `Request failed with status ${response.status}`;
+    const error = new Error(message || 'Request failed');
     // @ts-expect-error adding code for hooks consumers
-    error.code = response.status === 404 ? 'NOT_FOUND' : 'HTTP_ERROR';
+    error.code = typeof payload === 'object' && payload !== null && 'code' in payload
+      ? /** @type {{ code?: string }} */ (payload).code
+      : response.status === 404
+        ? 'NOT_FOUND'
+        : 'HTTP_ERROR';
     throw error;
   }
-  return response.json();
+
+  return (payload as T) ?? (await response.json());
 }
 
 export function createHabitClient(baseUrl = API_BASE_URL) {
@@ -41,12 +54,6 @@ export function createHabitClient(baseUrl = API_BASE_URL) {
     },
     async getStats(period: HabitPeriod): Promise<HabitStats> {
       const response = await fetch(`${base}/habit/stats/${period}`, { credentials: 'include' });
-      if (response.status === 400) {
-        const error = new Error('Invalid period');
-        // @ts-expect-error code for hook consumers
-        error.code = 'INVALID_PERIOD';
-        throw error;
-      }
       return handleResponse<HabitStats>(response);
     },
   };

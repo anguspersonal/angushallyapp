@@ -59,17 +59,24 @@ describe('habitRoute integration', () => {
     expect(response.status).toBe(200);
     expect(response.body).toMatchObject({ period: 'week' });
 
-    const { app: invalidApp } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'INVALID_PERIOD' }) });
+    const { app: invalidApp } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'HABIT_INVALID_PERIOD' }) });
     const invalid = await request(invalidApp).get('/api/habit/stats/invalid');
     expect(invalid.status).toBe(400);
-    expect(invalid.body).toMatchObject({ code: 'INVALID_PERIOD' });
+    expect(invalid.body).toMatchObject({ code: 'HABIT_INVALID_PERIOD' });
   });
 
   test('GET /api/habit/stats/:period handles provider failures as 500', async () => {
-    const { app } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'STATS_FETCH_FAILED' }) });
+    const { app } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'HABIT_STATS_FETCH_FAILED' }) });
     const response = await request(app).get('/api/habit/stats/week');
     expect(response.status).toBe(500);
-    expect(response.body).toMatchObject({ code: 'STATS_FETCH_FAILED' });
+    expect(response.body).toMatchObject({ code: 'HABIT_STATS_FETCH_FAILED' });
+  });
+
+  test('GET /api/habit/stats/:period rejects invalid metrics with 400', async () => {
+    const { app } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'HABIT_INVALID_METRIC' }) });
+    const response = await request(app).get('/api/habit/stats/week');
+    expect(response.status).toBe(400);
+    expect(response.body).toMatchObject({ code: 'HABIT_INVALID_METRIC' });
   });
 
   test('GET /api/habit/:habitType/aggregates delegates to habitService with validation', async () => {
@@ -79,8 +86,9 @@ describe('habitRoute integration', () => {
     expect(habitService.getAggregates).toHaveBeenCalledWith('user-1', 'exercise');
     expect(response.status).toBe(200);
 
-    const { app: invalidApp } = createApp({ getAggregates: jest.fn().mockRejectedValue({ code: 'INVALID_HABIT_TYPE' }) });
+    const { app: invalidApp } = createApp({ getAggregates: jest.fn().mockRejectedValue({ code: 'HABIT_INVALID_TYPE' }) });
     const invalid = await request(invalidApp).get('/api/habit/invalid/aggregates');
     expect(invalid.status).toBe(400);
+    expect(invalid.body).toMatchObject({ code: 'HABIT_INVALID_TYPE' });
   });
 });

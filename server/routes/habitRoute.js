@@ -33,16 +33,16 @@ module.exports = function createHabitRoutes(deps = {}) {
   router.get('/stats/:period', async (req, res) => {
     try {
       if (!habitService.getStats) {
-        return res.status(501).json({ error: 'Habit stats not available' });
+        return res.status(501).json({ error: 'Habit stats not available', code: 'HABIT_STATS_PROVIDER_MISSING' });
       }
 
       const stats = await habitService.getStats(req.user.id, req.params.period);
       return res.json(stats);
     } catch (error) {
-      const status = error?.code === 'INVALID_PERIOD' ? 400 : 500;
+      const status = ['HABIT_INVALID_PERIOD', 'HABIT_INVALID_METRIC'].includes(error?.code) ? 400 : 500;
       logger.error?.('Error fetching habit stats', error);
       return res.status(status).json({
-        error: status === 400 ? 'Invalid period' : 'Internal Server Error',
+        error: status === 400 ? 'Invalid stats request' : 'Internal Server Error',
         code: error?.code,
       });
     }
@@ -144,9 +144,14 @@ module.exports = function createHabitRoutes(deps = {}) {
       const aggregates = await habitService.getAggregates(req.user.id, habitType);
       res.json(aggregates);
     } catch (error) {
-      const status = error?.code === 'INVALID_HABIT_TYPE' ? 400 : error?.code === 'MISSING_AGGREGATE_PROVIDER' ? 501 : 500;
+      const status =
+        error?.code === 'HABIT_INVALID_TYPE'
+          ? 400
+          : error?.code === 'HABIT_AGGREGATE_PROVIDER_MISSING'
+            ? 501
+            : 500;
       logger.error?.('Error fetching habit aggregates', error);
-      res.status(status).json({ error: status === 400 ? 'Invalid habit type' : 'Internal Server Error' });
+      res.status(status).json({ error: status === 400 ? 'Invalid habit type' : 'Internal Server Error', code: error?.code });
     }
   });
 

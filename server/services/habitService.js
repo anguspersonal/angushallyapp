@@ -30,6 +30,12 @@ function parsePage(value) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_PAGE;
 }
 
+function createInvalidInputError(message, code) {
+  const error = new Error(message);
+  error.code = code;
+  return error;
+}
+
 function mapHabitLog(log) {
   return /** @type {HabitSummary} */ ({
     id: log.id,
@@ -124,35 +130,43 @@ function createHabitService(deps = {}) {
     const supportedPeriods = new Set(HABIT_PERIODS);
     const resolvedPeriod = supportedPeriods.has(period) ? /** @type {HabitPeriod} */ (period) : null;
     if (!resolvedPeriod) {
-      const error = new Error(`Unsupported period: ${period}`);
-      error.code = 'INVALID_PERIOD';
-      throw error;
+      throw createInvalidInputError(`Unsupported period: ${period}`, 'HABIT_INVALID_PERIOD');
     }
 
     if (typeof habitApi.getHabitAggregates !== 'function') {
       const error = new Error('Habit stats provider not configured');
-      error.code = 'MISSING_STATS_PROVIDER';
+      error.code = 'HABIT_STATS_PROVIDER_MISSING';
       throw error;
     }
 
-    const allowedMetrics = Array.isArray(metrics)
-      ? metrics.filter((metric) => HABIT_METRICS.includes(metric))
-      : DEFAULT_METRICS;
-    const metricList = allowedMetrics.length > 0 ? allowedMetrics : DEFAULT_METRICS;
+    const metricList = Array.isArray(metrics) ? metrics : DEFAULT_METRICS;
+    const invalidMetrics = metricList.filter((metric) => !HABIT_METRICS.includes(metric));
+    if (invalidMetrics.length > 0) {
+      throw createInvalidInputError('Invalid habit metrics requested', 'HABIT_INVALID_METRIC');
+    }
 
     try {
       const rawStats = await habitApi.getHabitAggregates(resolvedPeriod, metricList, userId);
       /** @type {HabitStats} */
-      const shaped = { period: resolvedPeriod };
-      metricList.forEach((metric) => {
+      const shaped = {
+        period: resolvedPeriod,
+        sum: 0,
+        avg: 0,
+        min: 0,
+        max: 0,
+        stddev: 0,
+      };
+
+      HABIT_METRICS.forEach((metric) => {
         const value = rawStats?.[metric];
         shaped[metric] = typeof value === 'number' ? value : 0;
       });
+
       return shaped;
     } catch (error) {
       logger.error?.('Failed to fetch habit stats', error);
       const wrapped = new Error('Failed to fetch habit stats');
-      wrapped.code = 'STATS_FETCH_FAILED';
+      wrapped.code = 'HABIT_STATS_FETCH_FAILED';
       throw wrapped;
     }
   }
@@ -160,7 +174,7 @@ function createHabitService(deps = {}) {
   async function getAggregates(userId, habitType) {
     if (!habitType) {
       const error = new Error('Habit type is required');
-      error.code = 'INVALID_HABIT_TYPE';
+      error.code = 'HABIT_INVALID_TYPE';
       throw error;
     }
 
@@ -174,7 +188,7 @@ function createHabitService(deps = {}) {
       }
 
       const error = new Error('Habit aggregate provider not configured');
-      error.code = 'MISSING_AGGREGATE_PROVIDER';
+      error.code = 'HABIT_AGGREGATE_PROVIDER_MISSING';
       throw error;
     } catch (error) {
       logger.error?.('Failed to fetch habit aggregates', error);

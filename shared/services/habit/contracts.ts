@@ -36,6 +36,11 @@ export interface HabitListResult {
   pagination: PaginationMeta;
 }
 
-export interface HabitStats extends Partial<Record<HabitMetric, number>> {
+export interface HabitStats {
   period: HabitPeriod;
+  sum: number;
+  avg: number;
+  min: number;
+  max: number;
+  stddev: number;
 }

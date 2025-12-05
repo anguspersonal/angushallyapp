@@ -48,16 +48,18 @@ describe('habitService', () => {
     const stats = await service.getStats('user-1', 'week', ['sum', 'avg']);
 
     expect(habitApi.getHabitAggregates).toHaveBeenCalledWith('week', ['sum', 'avg'], 'user-1');
-    expect(stats).toEqual({ period: 'week', sum: 10, avg: 5 });
+    expect(stats).toEqual({ period: 'week', sum: 10, avg: 5, min: 0, max: 0, stddev: 0 });
 
-    await expect(service.getStats('user-1', 'invalid')).rejects.toMatchObject({ code: 'INVALID_PERIOD' });
+    await expect(service.getStats('user-1', 'invalid')).rejects.toMatchObject({ code: 'HABIT_INVALID_PERIOD' });
   });
 
   test('getStats falls back to default metrics when input is invalid and fills missing values', async () => {
     const habitApi = createHabitApi({ getHabitAggregates: jest.fn().mockResolvedValue({ sum: 4 }) });
     const service = createHabitService({ habitApi });
 
-    const stats = await service.getStats('user-2', 'month', ['bogus']);
+    await expect(service.getStats('user-2', 'month', ['bogus'])).rejects.toMatchObject({ code: 'HABIT_INVALID_METRIC' });
+
+    const stats = await service.getStats('user-2', 'month');
 
     expect(habitApi.getHabitAggregates).toHaveBeenCalledWith('month', HABIT_METRICS, 'user-2');
     expect(stats).toEqual({ period: 'month', sum: 4, avg: 0, min: 0, max: 0, stddev: 0 });
@@ -67,7 +69,7 @@ describe('habitService', () => {
     const habitApi = createHabitApi({ getHabitAggregates: jest.fn().mockRejectedValue(new Error('db broke')) });
     const service = createHabitService({ habitApi });
 
-    await expect(service.getStats('user-1', 'week')).rejects.toMatchObject({ code: 'STATS_FETCH_FAILED' });
+    await expect(service.getStats('user-1', 'week')).rejects.toMatchObject({ code: 'HABIT_STATS_FETCH_FAILED' });
   });
 
   test('getAggregates delegates to alcohol provider and validates habit type', async () => {
@@ -84,6 +86,6 @@ describe('habitService', () => {
     expect(aggregateService.getAggregateStats).toHaveBeenCalledWith('user-1', 'exercise');
     expect(exerciseResult).toEqual({ sum: 2 });
 
-    await expect(service.getAggregates('user-1')).rejects.toMatchObject({ code: 'INVALID_HABIT_TYPE' });
+    await expect(service.getAggregates('user-1')).rejects.toMatchObject({ code: 'HABIT_INVALID_TYPE' });
   });
 });
