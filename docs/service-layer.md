@@ -16,6 +16,7 @@
 
 ### Compatibility note: legacy habit stats
 - The legacy `/api/habit/stats/:period` route remains available for the current habit UI and is implemented through the habit service (`getStats`) to enforce shared validation and typing. Do not remove this route until the UI migrates to the newer aggregates pattern; both stats and aggregates must continue to delegate into the habit service.
+- Frontend calls should go through the contract-aware helpers (e.g., `habitClient.getStats` or `getHabitStats`) so the browser hits `/api/habit/stats/:period` using the shared `HabitPeriod`/`HabitStats` types rather than bespoke fetch logic.
 
 ### Example flow: Content list view (end-to-end)
 1. **Contract** — `shared/services/content/contracts.ts` declares `ContentListParams` (page, pageSize, sort/order) and `ContentListResult` with `{ items: ContentPostSummary[], pagination: PaginationMeta }`.

@@ -7,6 +7,8 @@ import type {
   HabitListParams,
   HabitListResult,
   HabitSummary,
+  HabitPeriod,
+  HabitStats,
 } from '@shared/services/habit/contracts';
 
 export function useHabits(params?: HabitListParams) {
@@ -82,6 +84,41 @@ export function useHabit(id: string | number | undefined) {
       active = false;
     };
   }, [id]);
+
+  return state;
+}
+
+export function useHabitStats(period: HabitPeriod | undefined) {
+  const [state, setState] = useState<{ data: HabitStats | null; pagination?: undefined; isLoading: boolean; error?: string }>(
+    {
+      data: null,
+      isLoading: Boolean(period),
+      pagination: undefined,
+    },
+  );
+
+  useEffect(() => {
+    let active = true;
+    if (!period) {
+      setState({ data: null, isLoading: false, pagination: undefined });
+      return undefined;
+    }
+
+    habitClient
+      .getStats(period)
+      .then((result) => {
+        if (!active) return;
+        setState({ data: result, isLoading: false, pagination: undefined });
+      })
+      .catch((error: Error & { code?: string }) => {
+        if (!active) return;
+        setState({ data: null, isLoading: false, pagination: undefined, error: error.message });
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [period]);
 
   return state;
 }

@@ -11,11 +11,13 @@
 /** @typedef {import('../../shared/services/habit/contracts').HabitStats} HabitStats */
 /** @typedef {import('../../shared/services/habit/contracts').HabitPeriod} HabitPeriod */
 /** @typedef {import('../../shared/services/habit/contracts').HabitMetric} HabitMetric */
+const { HABIT_PERIODS, HABIT_METRICS } = require('../../shared/services/habit/contracts');
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGE_SIZE = 50;
-const DEFAULT_METRICS = ['sum', 'avg', 'min', 'max', 'stddev'];
+/** @type {HabitMetric[]} */
+const DEFAULT_METRICS = [...HABIT_METRICS];
 
 function clampPageSize(value) {
   const parsed = parseInt(String(value), 10);
@@ -115,11 +117,11 @@ function createHabitService(deps = {}) {
    * Aggregate stats for the authenticated user over a period.
    * Falls back to the legacy habitApi implementation while we migrate.
    * @param {string} userId
-   * @param {'day' | 'week' | 'month' | 'year' | 'all'} period
-   * @param {string[]} [metrics]
+   * @param {HabitPeriod} period
+   * @param {HabitMetric[]} [metrics]
    */
   async function getStats(userId, period, metrics = DEFAULT_METRICS) {
-    const supportedPeriods = new Set(['day', 'week', 'month', 'year', 'all']);
+    const supportedPeriods = new Set(HABIT_PERIODS);
     const resolvedPeriod = supportedPeriods.has(period) ? /** @type {HabitPeriod} */ (period) : null;
     if (!resolvedPeriod) {
       const error = new Error(`Unsupported period: ${period}`);
@@ -133,15 +135,18 @@ function createHabitService(deps = {}) {
       throw error;
     }
 
+    const allowedMetrics = Array.isArray(metrics)
+      ? metrics.filter((metric) => HABIT_METRICS.includes(metric))
+      : DEFAULT_METRICS;
+    const metricList = allowedMetrics.length > 0 ? allowedMetrics : DEFAULT_METRICS;
+
     try {
-      const rawStats = await habitApi.getHabitAggregates(resolvedPeriod, metrics, userId);
+      const rawStats = await habitApi.getHabitAggregates(resolvedPeriod, metricList, userId);
       /** @type {HabitStats} */
       const shaped = { period: resolvedPeriod };
-      metrics.forEach((metric) => {
+      metricList.forEach((metric) => {
         const value = rawStats?.[metric];
-        if (typeof value === 'number') {
-          shaped[metric] = value;
-        }
+        shaped[metric] = typeof value === 'number' ? value : 0;
       });
       return shaped;
     } catch (error) {

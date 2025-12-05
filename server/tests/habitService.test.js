@@ -1,4 +1,5 @@
 const { createHabitService, DEFAULT_PAGE_SIZE, DEFAULT_PAGE, MAX_PAGE_SIZE } = require('../services/habitService');
+const { HABIT_METRICS } = require('../../shared/services/habit/contracts');
 
 describe('habitService', () => {
   function createHabitApi(overrides = {}) {
@@ -50,6 +51,16 @@ describe('habitService', () => {
     expect(stats).toEqual({ period: 'week', sum: 10, avg: 5 });
 
     await expect(service.getStats('user-1', 'invalid')).rejects.toMatchObject({ code: 'INVALID_PERIOD' });
+  });
+
+  test('getStats falls back to default metrics when input is invalid and fills missing values', async () => {
+    const habitApi = createHabitApi({ getHabitAggregates: jest.fn().mockResolvedValue({ sum: 4 }) });
+    const service = createHabitService({ habitApi });
+
+    const stats = await service.getStats('user-2', 'month', ['bogus']);
+
+    expect(habitApi.getHabitAggregates).toHaveBeenCalledWith('month', HABIT_METRICS, 'user-2');
+    expect(stats).toEqual({ period: 'month', sum: 4, avg: 0, min: 0, max: 0, stddev: 0 });
   });
 
   test('getStats wraps provider failures without leaking internals', async () => {

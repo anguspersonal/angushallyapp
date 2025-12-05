@@ -1,12 +1,12 @@
 import { api } from '../../../shared/apiClient';
-import type { HabitLog, HabitType, DrinkCatalogItem, HabitStats } from '../../../types/common';
+import type { HabitLog, HabitType, DrinkCatalogItem } from '../../../types/common';
+import type { HabitPeriod, HabitStats } from '@shared/services/habit/contracts';
+import { habitClient } from '../../../services/habits/client';
 
 interface HabitLogResponse {
     data: HabitLog;
     habit_type: HabitType;
 }
-
-type StatsPeriod = 'day' | 'week' | 'month' | 'year' | 'all';
 
 // Function that calls the API to log habit data
 export const addHabitLog = async (logData: Partial<HabitLog>, habitType: HabitType): Promise<HabitLogResponse> => {
@@ -80,12 +80,11 @@ export const getDrinkCatalog = async (): Promise<DrinkCatalogItem[]> => {
     }
 };
 
-export const getAggregateStats = async (period: StatsPeriod): Promise<HabitStats> => {
+export const getHabitStats = async (period: HabitPeriod): Promise<HabitStats> => {
     try {
-        const response = await api.get<HabitStats>(`/habit/stats/${period}`);
-        return response;
+        return await habitClient.getStats(period);
     } catch (error) {
         console.error('Error fetching aggregate stats:', error);
         throw error;
     }
-}; 
+};

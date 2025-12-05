@@ -4,12 +4,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { Drawer, Button, Stack, Group, Table, ActionIcon, Text } from "@mantine/core";
 import HabitCombobox from "./HabitCombobox";
 import { useForm } from "@mantine/form";
-import { addHabitLog, getHabitSpecificData } from "../habit";
+import { addHabitLog, getHabitSpecificData, getHabitStats } from "../habit";
 import { calculateUnits } from "../../../../utils/calculateUnits";
-import { getAggregateStats } from "../aggregateService";
 import type { HabitLog, DrinkCatalogItem, HabitType } from "../../../../types/common";
-
-type ValidPeriod = 'week' | 'month' | 'year';
+import type { HabitPeriod } from "@shared/services/habit/contracts";
 
 // Constants
 const TARGET_UNITS = 14; // UK recommended weekly limit
@@ -22,7 +20,7 @@ interface HabitDefinition {
   progress: number;
 }
 
-// Local interface matching the aggregateService response
+// Local interface matching the stats contract
 interface AggregateStats {
   sum: number;
   avg: number;
@@ -100,7 +98,7 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
   useEffect(() => {
     if (habit) {
       const fetchStats = async () => {
-        const periods: ValidPeriod[] = ['week', 'month', 'year'];
+        const periods: HabitPeriod[] = ['week', 'month', 'year'];
         const newStats: Record<string, AggregateStats> = {};
         
         console.log('Fetching stats for habit:', habit);
@@ -109,8 +107,8 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
           try {
             // Make sure we're using 'alcohol' as the habit type for alcohol habits
             const habitType = habit.name.toLowerCase() === 'alcohol' ? 'alcohol' : habit.name;
-            console.log(`Fetching ${period} stats for ${habitType}`);
-            const data = await getAggregateStats(habitType, period as ValidPeriod);
+            console.log(`Fetching ${period} stats`);
+            const data = await getHabitStats(period);
             console.log(`${period} stats result:`, data);
             // Ensure the data has all required properties
             newStats[period] = {

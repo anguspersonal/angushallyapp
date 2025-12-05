@@ -7,7 +7,10 @@
 import type { PaginationMeta } from '../contracts/pagination';
 
 export type HabitPeriod = 'day' | 'week' | 'month' | 'year' | 'all';
+export const HABIT_PERIODS: HabitPeriod[] = ['day', 'week', 'month', 'year', 'all'];
+
 export type HabitMetric = 'sum' | 'avg' | 'min' | 'max' | 'stddev';
+export const HABIT_METRICS: HabitMetric[] = ['sum', 'avg', 'min', 'max', 'stddev'];
 
 export interface HabitListParams {
   page?: number;

@@ -1,4 +1,10 @@
-import type { HabitDetail, HabitListParams, HabitListResult } from '@shared/services/habit/contracts';
+import type {
+  HabitDetail,
+  HabitListParams,
+  HabitListResult,
+  HabitPeriod,
+  HabitStats,
+} from '@shared/services/habit/contracts';
 
 const isServer = typeof window === 'undefined';
 const API_BASE_URL = isServer
@@ -32,6 +38,16 @@ export function createHabitClient(baseUrl = API_BASE_URL) {
       const response = await fetch(`${base}/habit/entries/${id}`, { credentials: 'include' });
       if (response.status === 404) return null;
       return handleResponse<HabitDetail>(response);
+    },
+    async getStats(period: HabitPeriod): Promise<HabitStats> {
+      const response = await fetch(`${base}/habit/stats/${period}`, { credentials: 'include' });
+      if (response.status === 400) {
+        const error = new Error('Invalid period');
+        // @ts-expect-error code for hook consumers
+        error.code = 'INVALID_PERIOD';
+        throw error;
+      }
+      return handleResponse<HabitStats>(response);
     },
   };
 }

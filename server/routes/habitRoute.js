@@ -41,7 +41,10 @@ module.exports = function createHabitRoutes(deps = {}) {
     } catch (error) {
       const status = error?.code === 'INVALID_PERIOD' ? 400 : 500;
       logger.error?.('Error fetching habit stats', error);
-      return res.status(status).json({ error: status === 400 ? 'Invalid period' : 'Internal Server Error' });
+      return res.status(status).json({
+        error: status === 400 ? 'Invalid period' : 'Internal Server Error',
+        code: error?.code,
+      });
     }
   });
 

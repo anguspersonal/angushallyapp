@@ -57,17 +57,19 @@ describe('habitRoute integration', () => {
 
     expect(habitService.getStats).toHaveBeenCalledWith('user-1', 'week');
     expect(response.status).toBe(200);
-    expect(response.body.period).toBe('week');
+    expect(response.body).toMatchObject({ period: 'week' });
 
     const { app: invalidApp } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'INVALID_PERIOD' }) });
     const invalid = await request(invalidApp).get('/api/habit/stats/invalid');
     expect(invalid.status).toBe(400);
+    expect(invalid.body).toMatchObject({ code: 'INVALID_PERIOD' });
   });
 
   test('GET /api/habit/stats/:period handles provider failures as 500', async () => {
     const { app } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'STATS_FETCH_FAILED' }) });
     const response = await request(app).get('/api/habit/stats/week');
     expect(response.status).toBe(500);
+    expect(response.body).toMatchObject({ code: 'STATS_FETCH_FAILED' });
   });
 
   test('GET /api/habit/:habitType/aggregates delegates to habitService with validation', async () => {
