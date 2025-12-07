@@ -1,9 +1,10 @@
 const axios = require('axios');
 const { randomUUID } = require('crypto');
 const defaultConfig = require('../config');
+const { createBackgroundContext } = require('../observability/requestContext');
 
 const RETRYABLE_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
-const SENSITIVE_KEYS = ['token', 'key', 'secret', 'password', 'authorization'];
+const SENSITIVE_KEYS = ['token', 'key', 'secret', 'password', 'authorization', 'cookie', 'set-cookie', 'session'];
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -54,6 +55,8 @@ function createHttpClient(options = {}) {
     retryDelayMs: config.retryDelayMs,
     retryBackoffFactor: config.retryBackoffFactor || 1,
     logger: options.logger || console,
+    getContext: options.getContext || (() => createBackgroundContext('http-client')),
+    dependencyName: options.dependencyName || 'http',
     ...options,
   };
 
@@ -63,10 +66,13 @@ function createHttpClient(options = {}) {
   });
 
   instance.interceptors.request.use((request) => {
-    request.metadata = { start: Date.now(), traceId: randomUUID() };
+    const context = request.context || settings.getContext?.() || createBackgroundContext('http-client');
+    const correlationId = context.correlationId || randomUUID();
+    request.metadata = { start: Date.now(), correlationId, context };
     request.headers = {
       ...request.headers,
-      'x-trace-id': request.metadata.traceId,
+      'x-trace-id': correlationId,
+      'x-correlation-id': correlationId,
     };
     return request;
   });
@@ -76,7 +82,8 @@ function createHttpClient(options = {}) {
       const duration = Date.now() - (response.config.metadata?.start || Date.now());
       response.metadata = {
         duration,
-        traceId: response.config.metadata?.traceId,
+        correlationId: response.config.metadata?.correlationId,
+        context: response.config.metadata?.context,
       };
       return response;
     },
@@ -97,11 +104,14 @@ function createHttpClient(options = {}) {
         const response = await instance(requestConfig);
         const safeUrl = redactUrl(resolveUrl(requestConfig.baseURL || settings.baseURL || instance.defaults.baseURL, requestConfig.url));
         settings.logger.info?.('http:response', {
+          dependency: settings.dependencyName,
+          outcome: 'success',
           method: requestConfig.method?.toUpperCase() || 'GET',
           url: safeUrl,
           status: response.status,
           durationMs: response.metadata?.duration || 0,
-          traceId: response.metadata?.traceId,
+          correlationId: response.metadata?.correlationId,
+          source: response.metadata?.context?.source,
         });
         return response;
       } catch (error) {
@@ -115,19 +125,24 @@ function createHttpClient(options = {}) {
         const safeUrl = redactUrl(resolveUrl(requestConfig.baseURL || settings.baseURL || instance.defaults.baseURL, requestConfig.url));
         if (!shouldRetry || attempt === settings.maxRetries) {
           settings.logger.error?.('http:error', {
-            method: requestConfig.method,
+            dependency: settings.dependencyName,
+            outcome: 'error',
+            method: requestConfig.method?.toUpperCase() || 'GET',
             url: safeUrl,
             status: error.response?.status,
             message: error.message,
-            traceId: error.config?.metadata?.traceId,
+            correlationId: error.config?.metadata?.correlationId,
+            source: error.config?.metadata?.context?.source,
             headers: redactHeaders(requestConfig.headers),
+            error_class: 'dependency',
+            is_recoverable: shouldRetry,
           });
           throw new HttpClientError(error.message, {
             status: error.response?.status,
             data: error.response?.data,
             method: requestConfig.method,
             url: safeUrl,
-            traceId: error.config?.metadata?.traceId,
+            traceId: error.config?.metadata?.correlationId,
           });
         }
 
