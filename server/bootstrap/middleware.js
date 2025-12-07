@@ -1,10 +1,29 @@
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const express = require('express');
+const { applyRequestContext } = require('../observability/requestContext');
 
-function requestLogger() {
-  return (req, _res, next) => {
-    req.requestId = req.headers['x-trace-id'];
+function requestLogger(logger) {
+  return (req, res, next) => {
+    const scopedLogger = req.logger || logger;
+    const startedAt = Date.now();
+
+    scopedLogger?.info?.('request:received', {
+      correlationId: req.context?.correlationId,
+      path: req.path,
+      method: req.method,
+    });
+
+    res.on('finish', () => {
+      scopedLogger?.info?.('request:completed', {
+        correlationId: req.context?.correlationId,
+        path: req.path,
+        method: req.method,
+        status: res.statusCode,
+        durationMs: Date.now() - startedAt,
+      });
+    });
+
     next();
   };
 }
@@ -61,8 +80,10 @@ function createContactLimiter() {
   });
 }
 
-function configureMiddleware(app, { config }) {
-  app.use(requestLogger());
+function configureMiddleware(app, { config, logger }) {
+  const attachRequestContext = applyRequestContext(logger);
+  app.use(attachRequestContext);
+  app.use(requestLogger(logger));
   app.use(securityHeaders(config.cors));
   app.use(express.json());
   app.use(cookieParser());

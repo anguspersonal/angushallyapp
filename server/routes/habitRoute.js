@@ -4,9 +4,10 @@
 
 const express = require('express');
 const { authMiddleware } = require('../middleware/auth');
+const { classifyError, mapErrorToResponse } = require('../observability/errors');
 module.exports = function createHabitRoutes(deps = {}) {
   const router = express.Router();
-  const { habitService, alcoholService, exerciseService, habitApi, logger = console } = deps;
+  const { habitService, alcoholService, exerciseService, habitApi, logger } = deps;
 
   if (!habitService) {
     throw new Error('createHabitRoutes requires a habitService dependency');
@@ -15,17 +16,32 @@ module.exports = function createHabitRoutes(deps = {}) {
   router.use(authMiddleware());
 
   // Get all habit logs for the authenticated user
+  function logError(event, error, classification, req) {
+    const scopedLogger = req.logger || logger;
+    const level = classification?.type === 'validation' ? 'warn' : 'error';
+    scopedLogger?.[level]?.(event, {
+      error,
+      correlationId: req.context?.correlationId,
+      error_class: classification?.errorClass,
+      is_recoverable: classification?.isRecoverable,
+      is_user_facing: classification?.isUserFacing,
+    });
+  }
+
   router.get('/', async (req, res) => {
+    const requestLogger = req.logger || logger;
     try {
       const params = {
         page: req.query.page ? Number(req.query.page) : undefined,
         pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
       };
-      const result = await habitService.listHabits(req.user.id, params);
+      const result = await habitService.listHabits(req.user.id, params, { logger: requestLogger });
       res.json(result);
     } catch (error) {
-      logger.error?.('Error fetching habit logs', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      const classification = classifyError({ ...error, code: error?.code || 'HABIT_LIST_FAILED' });
+      logError('habitRoute.list.failed', error, classification, req);
+      const response = mapErrorToResponse({ ...error, code: classification.code }, { defaultMessage: 'Failed to fetch habits' });
+      res.status(response.status).json(response.body);
     }
   });
 
@@ -36,20 +52,22 @@ module.exports = function createHabitRoutes(deps = {}) {
         return res.status(501).json({ error: 'Habit stats not available', code: 'HABIT_STATS_PROVIDER_MISSING' });
       }
 
-      const stats = await habitService.getStats(req.user.id, req.params.period);
+      const stats = await habitService.getStats(req.user.id, req.params.period, undefined, { logger: req.logger || logger });
       return res.json(stats);
     } catch (error) {
-      const code = error?.code;
-      const status =
-        ['HABIT_INVALID_PERIOD', 'HABIT_INVALID_METRIC'].includes(code)
-          ? 400
-          : code === 'HABIT_STATS_PROVIDER_MISSING'
-            ? 501
-            : 500;
-      logger.error?.('Error fetching habit stats', error);
+      const classification = classifyError(error, { defaultCode: 'HABIT_STATS_FETCH_FAILED' });
+      const status = classification.status;
+      const errorMessage =
+        classification.code === 'HABIT_INVALID_PERIOD' || classification.code === 'HABIT_INVALID_METRIC'
+          ? 'Invalid stats request'
+          : classification.code === 'HABIT_STATS_PROVIDER_MISSING'
+            ? 'Stats provider unavailable'
+            : 'Internal Server Error';
+
+      logError('habitRoute.stats.failed', error, classification, req);
       return res.status(status).json({
-        error: status === 400 ? 'Invalid stats request' : status === 501 ? 'Stats provider unavailable' : 'Internal Server Error',
-        code,
+        error: errorMessage,
+        code: classification.code,
       });
     }
   });
@@ -57,14 +75,15 @@ module.exports = function createHabitRoutes(deps = {}) {
   // Get a single habit log by id (stubbed contract)
   router.get('/entries/:id', async (req, res) => {
     try {
-      const habit = await habitService.getHabitById(req.params.id);
+      const habit = await habitService.getHabitById(req.params.id, { logger: req.logger || logger });
       if (!habit) {
         return res.status(404).json({ error: 'Habit not found' });
       }
       return res.json(habit);
     } catch (error) {
-      logger.error?.('Error fetching habit detail', error);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      const response = mapErrorToResponse(error, { defaultMessage: 'Failed to fetch habit detail' });
+      logError('habitRoute.detail.failed', error, response.classification, req);
+      return res.status(response.status).json(response.body);
     }
   });
 
@@ -94,8 +113,8 @@ module.exports = function createHabitRoutes(deps = {}) {
 
       res.json({ message: 'Habit logged successfully', logId, ...result });
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('❌ Error logging habit:', error);
+      const classification = classifyError(error, { defaultCode: 'HABIT_CREATE_FAILED' });
+      logError('habitRoute.log.failed', error, classification, req);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
@@ -117,8 +136,7 @@ module.exports = function createHabitRoutes(deps = {}) {
       }
       res.json(logs);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching habit logs:', error);
+      logError('habitRoute.typeLogs.failed', error, classifyError(error), req);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
@@ -137,8 +155,7 @@ module.exports = function createHabitRoutes(deps = {}) {
       }
       res.json(data);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching habit data:', error);
+      logError('habitRoute.data.failed', error, classifyError(error), req);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
@@ -147,19 +164,15 @@ module.exports = function createHabitRoutes(deps = {}) {
   router.get('/:habitType/aggregates', async (req, res) => {
     const { habitType } = req.params;
     try {
-      const aggregates = await habitService.getAggregates(req.user.id, habitType);
+      const aggregates = await habitService.getAggregates(req.user.id, habitType, { logger: req.logger || logger });
       res.json(aggregates);
     } catch (error) {
-      const status =
-        error?.code === 'HABIT_INVALID_TYPE'
-          ? 400
-          : error?.code === 'HABIT_AGGREGATE_PROVIDER_MISSING'
-            ? 501
-            : 500;
-      logger.error?.('Error fetching habit aggregates', error);
+      const classification = classifyError(error, { defaultCode: 'HABIT_AGGREGATE_PROVIDER_MISSING' });
+      const status = classification.status || 500;
+      logError('habitRoute.aggregates.failed', error, classification, req);
       res.status(status).json({
         error: status === 400 ? 'Invalid habit type' : status === 501 ? 'Aggregate provider unavailable' : 'Internal Server Error',
-        code: error?.code,
+        code: classification.code,
       });
     }
   });

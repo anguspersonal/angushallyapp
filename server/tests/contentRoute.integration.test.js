@@ -23,7 +23,7 @@ describe('contentRoute integration (service-backed)', () => {
       ...overrides,
     };
 
-    app.use('/api/content', contentRouteFactory({ contentService, logger: { error: jest.fn() } }));
+    app.use('/api/content', contentRouteFactory({ contentService, logger: { error: jest.fn(), warn: jest.fn() } }));
     return { app, contentService };
   }
 
@@ -40,6 +40,7 @@ describe('contentRoute integration (service-backed)', () => {
     });
     expect(response.body.items[0].slug).toBe('hello-world');
     expect(response.body.pagination.hasMore).toBe(false);
+    expect(response.body).not.toHaveProperty('error_class');
   });
 
   test('GET /posts/:identifier resolves numeric ids', async () => {
@@ -61,5 +62,28 @@ describe('contentRoute integration (service-backed)', () => {
     const { app, contentService } = createApp({ getPostBySlug: jest.fn().mockResolvedValue(null) });
     const response = await request(app).get('/api/content/posts/missing');
     expect(response.status).toBe(404);
+    expect(response.body).toEqual({ error: 'Post not found', code: 'CONTENT_NOT_FOUND' });
+  });
+
+  test('GET /posts/:identifier surfaces service errors without leaking internals', async () => {
+    const error = { code: 'CONTENT_FETCH_FAILED', message: 'upstream down' };
+    const { app, contentService } = createApp({ getPostBySlug: jest.fn().mockRejectedValue(error) });
+    const response = await request(app).get('/api/content/posts/hello-world');
+
+    expect(contentService.getPostBySlug).toHaveBeenCalledWith('hello-world');
+    expect(response.status).toBe(500);
+    expect(response.body).toMatchObject({ code: 'CONTENT_FETCH_FAILED', error: 'Failed to load post' });
+    expect(response.body).not.toHaveProperty('error_class');
+    expect(Object.keys(response.body)).toEqual(['error', 'code']);
+  });
+
+  test('GET /posts/:identifier retains status code contract when service rejects', async () => {
+    const error = { code: 'CONTENT_NOT_FOUND', message: 'missing' };
+    const { app, contentService } = createApp({ getPostById: jest.fn().mockRejectedValue(error) });
+    const response = await request(app).get('/api/content/posts/99');
+
+    expect(contentService.getPostById).toHaveBeenCalledWith(99);
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ error: 'Post not found', code: 'CONTENT_NOT_FOUND' });
   });
 });
