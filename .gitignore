@@ -61,6 +61,7 @@ dist/
 coverage/
 server/coverage/
 react-ui/coverage/
+shared/services/habit/dist/
 *.lcov
 .nyc_output/
 

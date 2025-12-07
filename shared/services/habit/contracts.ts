@@ -1,18 +1,19 @@
 /**
- * Shared contracts for the Habits domain. These mirror the content service
- * pattern so the migration path is clear even while the implementation is
- * stubbed.
+ * Shared contracts for the Habits domain. This TypeScript module is the
+ * canonical source of contract shapes and habit constants. CommonJS shims
+ * re-export the compiled output generated via `tsc -p ./tsconfig.json` so
+ * runtime consumers stay aligned without ts-node or duplicated literal arrays.
  */
 
 import type { PaginationMeta } from '../contracts/pagination';
 
-export type HabitPeriod = 'day' | 'week' | 'month' | 'year' | 'all';
-export const HABIT_PERIODS: HabitPeriod[] = ['day', 'week', 'month', 'year', 'all'];
+export const HABIT_PERIODS = ['day', 'week', 'month', 'year', 'all'] as const;
+export type HabitPeriod = (typeof HABIT_PERIODS)[number];
 
 // Metrics are the provider-level inputs; the service maps them onto the domain
 // HabitStats fields so routes and UI never deal with raw provider names.
-export type HabitMetric = 'sum' | 'avg' | 'min' | 'max' | 'stddev';
-export const HABIT_METRICS: HabitMetric[] = ['sum', 'avg', 'min', 'max', 'stddev'];
+export const HABIT_METRICS = ['sum', 'avg', 'min', 'max', 'stddev'] as const;
+export type HabitMetric = (typeof HABIT_METRICS)[number];
 
 export interface HabitListParams {
   page?: number;

@@ -26,6 +26,7 @@ Welcome to the documentation hub for **angushallyapp**. This guide explains how 
     ├── 10_unused_variables_cleanup.md ← Code cleanup tracking and history
     ├── 11_startup_commands_guide.md   ← Application startup commands & workflows
     ├── 12_mime_type_issue_resolution.md ← MIME type error resolution and prevention
+    ├── runbooks/           ← Operational runbooks (quality, incidents)
     ├── adr/                ← Architecture Decision Records
     │   └── *.md           ← Individual ADR documents
     └── assets/             ← Diagrams, exports, and other visuals
@@ -114,6 +115,7 @@ next-ui/src/app/projects/
 11. **11\_startup_commands_guide.md**: Comprehensive reference for all application startup commands, development workflows, and deployment procedures.
 12. **12\_mime\_type\_issue_resolution.md**: Documentation of MIME type error resolution, root cause analysis, and prevention strategies.
 13. **adr/**: Architecture Decision Records documenting significant technical decisions.
+14. **runbooks/**: Operational and quality runbooks. Start Phase 4 Quality work with `docs/runbooks/testing-harness.md` for harness expectations, CI gates, and golden-path coverage; use `docs/runbooks/browser-e2e.md` to coordinate UI smoke flows. Treat the harness runbook as the authoritative source for test contracts and update it whenever suites or public envelopes change. Any change to service/route contracts or testing strategy should be reflected there first so contributors stay aligned. Phase 4 is only complete when the CI matrix in that runbook is green with enforced coverage thresholds for service and route suites **and** the minimum browser golden paths are implemented and running in CI.
 
 ### Project-Level Documentation
 

@@ -80,8 +80,15 @@ function createHabitService(deps = {}) {
     const logs = await habitApi.getHabitLogsFromDB(userId, pageSize, offset);
     /** @type {HabitSummary[]} */
     const items = Array.isArray(logs) ? logs.map(mapHabitLog) : [];
-    const totalItems = Array.isArray(logs) && typeof logs.total === 'number' ? logs.total : offset + items.length;
-    const hasMore = items.length === pageSize;
+    const totalFromProvider = Array.isArray(logs) && typeof logs.total === 'number' ? logs.total : null;
+    const inferredHasMore = items.length === pageSize;
+    const totalItems = typeof totalFromProvider === 'number'
+      ? totalFromProvider
+      : inferredHasMore
+        ? offset + items.length + 1 // assume at least one more page when the page is full
+        : offset + items.length;
+    const totalPages = Math.max(Math.ceil(totalItems / pageSize), 1);
+    const hasMore = typeof totalFromProvider === 'number' ? page < totalPages : inferredHasMore;
 
     return {
       items,
@@ -89,7 +96,7 @@ function createHabitService(deps = {}) {
         page,
         pageSize,
         totalItems,
-        totalPages: Math.max(hasMore ? page + 1 : page, 1),
+        totalPages,
         hasMore,
       },
     };
