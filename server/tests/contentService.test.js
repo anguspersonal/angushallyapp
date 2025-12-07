@@ -6,29 +6,14 @@ const {
   mapPostRow,
   MAX_PAGE_SIZE,
 } = require('../services/contentService');
+const { createContentServiceDeps, createContentRow } = require('./helpers/serviceMocks');
 
-const baseRow = {
-  id: 1,
-  slug: 'hello-world',
-  title: 'Hello World',
-  excerpt: 'Intro post',
-  cover_image: null,
-  alt_text: null,
-  attribution: null,
-  attribution_link: null,
-  tags: ['intro'],
-  metadata: null,
-  created_at: '2024-01-01',
-  updated_at: '2024-01-02',
-  author_name: 'Alex Kim',
-  author_id: 'user-1',
-  content_md: '# Hello',
-};
+const baseRow = createContentRow();
 
 function createServiceWithMock() {
-  const query = jest.fn();
-  const service = createContentService({ db: { query } });
-  return { service, query };
+  const { db, logger } = createContentServiceDeps();
+  const service = createContentService({ db, logger });
+  return { service, query: db.query, logger };
 }
 
 describe('contentService', () => {
@@ -56,9 +41,62 @@ describe('contentService', () => {
     expect(postsSql).toContain(`ORDER BY p."${SORT_COLUMN_MAP.createdAt}" DESC`);
     expect(postsParams).toEqual([DEFAULT_PAGE_SIZE, 0]);
     expect(result.items[0]).toMatchObject({ slug: 'hello-world', authorName: 'Alex Kim' });
+    expect(result.items[0]).toHaveProperty('publishedAt', '2024-01-01');
     expect(result.pagination.totalItems).toBe(1);
     expect(result.pagination.page).toBe(DEFAULT_PAGE);
+    expect(result.pagination.pageSize).toBe(DEFAULT_PAGE_SIZE);
+    expect(result.pagination.totalPages).toBe(1);
     expect(result.pagination.hasMore).toBe(false);
+  });
+
+  test('listPosts reports hasMore and totalPages for deeper pages', async () => {
+    const { service, query } = createServiceWithMock();
+    query
+      .mockResolvedValueOnce([
+        createContentRow({ id: 2, slug: 'page-2' }),
+        createContentRow({ id: 3, slug: 'page-2b' }),
+      ])
+      .mockResolvedValueOnce([{ total: '12' }]);
+
+    const result = await service.listPosts({ page: 2, pageSize: 5, sortBy: 'createdAt' });
+
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(query.mock.calls[0][1]).toEqual([5, 5]);
+    expect(result.items).toHaveLength(2);
+    expect(result.pagination).toMatchObject({
+      totalItems: 12,
+      page: 2,
+      pageSize: 5,
+      totalPages: 3,
+      hasMore: true,
+    });
+  });
+
+  test('listPosts handles last page and beyond with stable metadata', async () => {
+    const { service, query } = createServiceWithMock();
+    query
+      .mockResolvedValueOnce([createContentRow({ id: 4, slug: 'last-page' })])
+      .mockResolvedValueOnce([{ total: '6' }]);
+
+    const result = await service.listPosts({ page: 3, pageSize: 2 });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.pagination).toMatchObject({
+      totalItems: 6,
+      totalPages: 3,
+      page: 3,
+      hasMore: false,
+    });
+
+    query.mockResolvedValueOnce([]).mockResolvedValueOnce([{ total: '6' }]);
+    const beyond = await service.listPosts({ page: 4, pageSize: 2 });
+    expect(beyond.items).toEqual([]);
+    expect(beyond.pagination).toMatchObject({
+      totalItems: 6,
+      totalPages: 3,
+      page: 4,
+      hasMore: false,
+    });
   });
 
   test('listPosts honors sort and order while protecting allowed list', async () => {
@@ -92,6 +130,7 @@ describe('contentService', () => {
     await service.listPosts({ pageSize: MAX_PAGE_SIZE + 100, page: 2 });
     const [, params] = query.mock.calls[0];
     expect(params[0]).toBe(MAX_PAGE_SIZE);
+    expect(params[1]).toBe(MAX_PAGE_SIZE);
   });
 
   test('getPostBySlug returns mapped detail or null', async () => {
@@ -116,5 +155,13 @@ describe('contentService', () => {
     query.mockResolvedValueOnce([]);
     const missing = await service.getPostById(99);
     expect(missing).toBeNull();
+  });
+
+  test('propagates db errors without mutating the contract', async () => {
+    const { service, query } = createServiceWithMock();
+    const failure = new Error('db unavailable');
+    query.mockRejectedValueOnce(failure);
+
+    await expect(service.listPosts({})).rejects.toBe(failure);
   });
 });

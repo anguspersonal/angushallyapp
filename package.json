@@ -38,6 +38,7 @@
     "migrate:rollback": "cd server && npx knex migrate:rollback",
     "migrate:status": "cd server && npx knex migrate:status",
     "migrate:make": "cd server && npx knex migrate:make",
+    "test:contracts": "npm --workspace server run test:contracts",
     "heroku-prebuild": "npm ci --omit=dev --omit=optional --workspaces --include-workspace-root",
     "heroku-postbuild": "npm --workspaces prune --omit=dev && npm run build --workspace next-ui"
   },
