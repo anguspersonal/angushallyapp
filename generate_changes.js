@@ -40,23 +40,36 @@ Format your response as JSON:
   "explanation": "Brief explanation of changes"
 }`;
 
-  const message = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 4000,
-    messages: [{ role: 'user', content: prompt }]
-  });
-  
-  const responseText = message.content[0].text;
-  // Extract JSON from response (handle markdown code blocks)
-  const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) || 
-                   responseText.match(/({[\s\S]*})/);
-  
-  if (jsonMatch) {
-    const result = JSON.parse(jsonMatch[1]);
-    fs.writeFileSync('changes.json', JSON.stringify(result, null, 2));
-    console.log('Changes generated successfully');
-  } else {
-    throw new Error('Could not parse JSON response from Claude');
+  try {
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 4000,
+      messages: [{ role: 'user', content: prompt }]
+    });
+    
+    const responseText = message.content[0].text;
+    // Extract JSON from response (handle markdown code blocks)
+    const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) || 
+                     responseText.match(/({[\s\S]*})/);
+    
+    if (jsonMatch) {
+      const result = JSON.parse(jsonMatch[1]);
+      fs.writeFileSync('changes.json', JSON.stringify(result, null, 2));
+      console.log('Changes generated successfully');
+    } else {
+      throw new Error('Could not parse JSON response from Claude');
+    }
+  } catch (error) {
+    if (error.status === 429) {
+      console.error('❌ Rate limit exceeded - too many requests to Anthropic API');
+    } else if (error.status === 401) {
+      console.error('❌ Invalid Anthropic API key');
+    } else if (error.message?.includes('credit')) {
+      console.error('❌ Insufficient Anthropic API credits');
+    } else {
+      console.error('❌ Anthropic API error:', error.message || error);
+    }
+    throw error;
   }
 }
 
