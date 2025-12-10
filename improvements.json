@@ -7,8 +7,8 @@
         "src/services/payment.js"
       ],
       "priority": 2,
-      "status": "pending",
-      "pr_number": null
+      "status": "in_review",
+      "pr_number": 29
     },
     {
       "title": "Refactor database connection pooling",
