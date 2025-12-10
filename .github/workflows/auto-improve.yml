@@ -1,4 +1,4 @@
-name: Auto Code Improvements
+name: Auto Code Improvement
 
 on:
   schedule:
