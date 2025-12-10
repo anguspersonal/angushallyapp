@@ -262,16 +262,15 @@ jobs:
         if: steps.create-pr.outputs.pr_number != ''
         env:
           IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
+          PR_NUMBER: ${{ steps.create-pr.outputs.pr_number }}
         run: |
           # Mark this improvement as "in_review" in the queue
           TITLE=$(echo "${IMPROVEMENT_JSON}" | jq -r '.title')
-          PR_NUMBER="${{ steps.create-pr.outputs.pr_number }}"
           
           # Update the status and add PR number
           jq --arg title "$TITLE" \
              --arg pr "$PR_NUMBER" \
-             '(.improvements[] | select(.title == $title) | .status) = "in_review" |
-              (.improvements[] | select(.title == $title) | .pr_number) = ($pr | tonumber)' \
+             '(.improvements[] | select(.title == $title) | .status) = "in_review" | (.improvements[] | select(.title == $title) | .pr_number) = ($pr | tonumber)' \
              improvements.json > improvements.json.tmp
           mv improvements.json.tmp improvements.json
           
