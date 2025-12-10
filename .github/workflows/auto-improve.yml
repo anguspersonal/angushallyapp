@@ -131,7 +131,7 @@ jobs:
         run: |
           # Parse the improvement to get metadata
           IMPROVEMENT='${{ steps.read-queue.outputs.improvement }}'
-          TITLE=$(echo "$IMPROVEMENT" | jq -r '.title')
+          TITLE=$(echo "$IMPROVEMENT" | jq -r '.title' | sed 's/[^a-zA-Z0-9 ]/-/g')
           BRANCH_NAME="auto-improve/$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | head -c 50)"
           
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
