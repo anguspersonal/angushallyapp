@@ -258,39 +258,10 @@ jobs:
             echo "Created PR #$PR_NUMBER"
           fi
 
-      - name: Update improvement status
-        if: steps.create-pr.outputs.pr_number != ''
-        env:
-          IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
-          PR_NUMBER: ${{ steps.create-pr.outputs.pr_number }}
-        run: |
-          TITLE=$(echo "${IMPROVEMENT_JSON}" | jq -r '.title')
-          
-          cat > update_status.js << 'ENDOFFILE'
-          const fs = require('fs');
-          const data = JSON.parse(fs.readFileSync('improvements.json', 'utf8'));
-          const title = process.env.TITLE;
-          const prNumber = parseInt(process.env.PR_NUMBER);
-          
-          const improvement = data.improvements.find(i => i.title === title);
-          if (improvement) {
-            improvement.status = 'in_review';
-            improvement.pr_number = prNumber;
-          }
-          
-          fs.writeFileSync('improvements.json', JSON.stringify(data, null, 2));
-          ENDOFFILE
-          
-          TITLE="$TITLE" node update_status.js
-          
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin main
-          git checkout main
-          git pull origin main
-          git add improvements.json
-          git commit -m "Mark improvement as in_review: $TITLE" || true
-          git push origin main || true
+      # Temporarily disabled - update status manually
+      # - name: Update improvement status
+      #   if: steps.create-pr.outputs.pr_number != ''
+      #   run: echo "Update status manually for now"
 
       - name: Summary
         if: always()
