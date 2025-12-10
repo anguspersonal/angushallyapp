@@ -7,7 +7,7 @@
         "next-ui/src/app/page.tsx"
       ],
       "priority": 1,
-      "status": "pending"
+      "status": "in_review"
     },
     {
       "title": "Fix console.log statements in production code",
