@@ -253,7 +253,6 @@ jobs:
           echo "## Auto-Improvement Run Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Status: Workflow completed" >> $GITHUB_STEP_SUMMARY
-)
             echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
             echo "Created PR #$PR_NUMBER"
           fi
