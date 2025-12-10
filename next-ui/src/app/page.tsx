@@ -54,7 +54,7 @@ export default function Home() {
           >
             <Image
               src="/20250329_AH_Profile_Wales.jpg"
-              alt="Angus Hally, out hiking in Wales"
+              alt="Profile photo of Angus Hally, out hiking in Wales"
               fallbackSrc={assets.placeholderImage.square}
               radius="50%"
               h={300}
