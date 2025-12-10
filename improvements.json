@@ -1,17 +1,6 @@
 {
   "improvements": [
     {
-      "title": "Add input validation to user registration",
-      "description": "Add email and password validation to the registration endpoint. Email should be valid format, password should be at least 8 characters with 1 number and 1 special character.",
-      "files": [
-        "src/routes/auth.js",
-        "src/utils/validators.js"
-      ],
-      "priority": 1,
-      "status": "complete",
-      "pr_number": 28
-    },
-    {
       "title": "Add unit tests for payment processing",
       "description": "Create comprehensive unit tests for the payment processing module, covering success cases, failure cases, and edge cases like network timeouts.",
       "files": [
