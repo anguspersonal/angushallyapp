@@ -264,27 +264,32 @@ jobs:
           IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
           PR_NUMBER: ${{ steps.create-pr.outputs.pr_number }}
         run: |
-          # Mark this improvement as "in_review" in the queue
           TITLE=$(echo "${IMPROVEMENT_JSON}" | jq -r '.title')
           
-          # Update the status and add PR number
-          jq --arg title "$TITLE" \
-             --arg pr "$PR_NUMBER" \
-             '(.improvements[] | select(.title == $title) | .status) = "in_review" | (.improvements[] | select(.title == $title) | .pr_number) = ($pr | tonumber)' \
-             improvements.json > improvements.json.tmp
-          mv improvements.json.tmp improvements.json
+          cat > update_status.js << 'ENDOFFILE'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('improvements.json', 'utf8'));
+          const title = process.env.TITLE;
+          const prNumber = parseInt(process.env.PR_NUMBER);
           
-          # Commit the updated queue back to main
+          const improvement = data.improvements.find(i => i.title === title);
+          if (improvement) {
+            improvement.status = 'in_review';
+            improvement.pr_number = prNumber;
+          }
+          
+          fs.writeFileSync('improvements.json', JSON.stringify(data, null, 2));
+          ENDOFFILE
+          
+          TITLE="$TITLE" node update_status.js
+          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Fetch latest main and merge
           git fetch origin main
           git checkout main
           git pull origin main
-          
           git add improvements.json
-          git commit -m "Mark improvement as in_review: $TITLE (PR #$PR_NUMBER)" || true
+          git commit -m "Mark improvement as in_review: $TITLE" || true
           git push origin main || true
 
       - name: Summary
