@@ -9,5 +9,7 @@
       "content": "const express = require('express');\nconst { validateEmail, validatePassword } = require('../utils/validators');\nconst router = express.Router();\n\nrouter.post('/register', (req, res) => {\n  const { email, password } = req.body;\n  \n  // Validate email format\n  if (!email || !validateEmail(email)) {\n    return res.status(400).json({\n      error: 'Invalid email format'\n    });\n  }\n  \n  // Validate password requirements\n  if (!password || !validatePassword(password)) {\n    return res.status(400).json({\n      error: 'Password must be at least 8 characters long and contain at least 1 number and 1 special character'\n    });\n  }\n  \n  // TODO: Add user registration logic here\n  \n  res.status(201).json({\n    message: 'User registered successfully'\n  });\n});\n\nmodule.exports = router;"
     }
   ],
+
   "explanation": "Created validator functions for email and password validation in validators.js, then implemented input validation in the auth.js registration endpoint. Email validation uses regex for proper format, password validation checks for minimum 8 characters, at least 1 number, and 1 special character. The registration route now returns appropriate error messages for invalid inputs."
+
 }

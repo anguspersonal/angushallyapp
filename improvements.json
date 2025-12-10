@@ -8,8 +8,8 @@
         "src/utils/validators.js"
       ],
       "priority": 1,
-      "status": "pending",
-      "pr_number": null
+      "status": "in_review",
+      "pr_number": 28
     },
     {
       "title": "Add unit tests for payment processing",
