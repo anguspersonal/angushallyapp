@@ -1,4 +1,4 @@
-name: Auto Code Improvement
+name: Auto Code Improvements
 
 on:
   schedule:
@@ -253,13 +253,17 @@ jobs:
           echo "## Auto-Improvement Run Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          if [ "${{ steps.read-queue.outputs.has_improvements }}" != "true" ]; then
+          HAS_IMPROVEMENTS="${{ steps.read-queue.outputs.has_improvements }}"
+          GENERATE_OUTCOME="${{ steps.generate-changes.outcome }}"
+          BRANCH_NAME="${{ steps.apply-changes.outputs.branch_name }}"
+          
+          if [ "$HAS_IMPROVEMENTS" != "true" ]; then
             echo "✅ No pending improvements found - queue is empty or all completed!" >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ steps.generate-changes.outcome }}" == "failure" ]; then
+          elif [ "$GENERATE_OUTCOME" == "failure" ]; then
             echo "⚠️ Code generation failed - check Anthropic API credits or configuration" >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ steps.apply-changes.outputs.branch_name }}" != "" ]; then
+          elif [ -n "$BRANCH_NAME" ]; then
             echo "✅ Successfully created PR for improvement!" >> $GITHUB_STEP_SUMMARY
-            echo "Branch: \`${{ steps.apply-changes.outputs.branch_name }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "Branch: \`$BRANCH_NAME\`" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ Workflow encountered an error" >> $GITHUB_STEP_SUMMARY
           fi
