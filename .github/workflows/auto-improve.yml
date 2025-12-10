@@ -258,10 +258,73 @@ jobs:
             echo "Created PR #$PR_NUMBER"
           fi
 
-      # Temporarily disabled - update status manually
-      # - name: Update improvement status
-      #   if: steps.create-pr.outputs.pr_number != ''
-      #   run: echo "Update status manually for now"
+      - name: Update improvement status
+        if: steps.create-pr.outputs.pr_number != ''
+        run: |
+          # Create a simple Node.js script to update the JSON
+          cat > update_status.js << 'EOF'
+          const fs = require('fs');
+          const title = process.argv[2];
+          const prNumber = parseInt(process.argv[3]);
+          
+          const data = JSON.parse(fs.readFileSync('improvements.json', 'utf8'));
+          const improvement = data.improvements.find(i => i.title === title);
+          
+          if (improvement) {
+            improvement.status = 'in_review';
+            improvement.pr_number = prNumber;
+            fs.writeFileSync('improvements.json', JSON.stringify(data, null, 2));
+            console.log('Updated status for:', title);
+          }
+          EOF
+          
+          # Extract title and run update script
+          TITLE=$(echo '${{ steps.read-queue.outputs.improvement }}' | jq -r '.title')
+          node update_status.js "$TITLE" "${{ steps.create-pr.outputs.pr_number }}"
+          
+          # Commit back to main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git pull origin main
+          git add improvements.json
+          git commit -m "Update status: $TITLE" || true
+          git push origin main || true
+
+      - name: Update improvement status
+        if: steps.create-pr.outputs.pr_number != ''
+        run: |
+          # Create a simple Node.js script to update the JSON
+          cat > update_status.js << 'EOF'
+          const fs = require('fs');
+          const title = process.argv[2];
+          const prNumber = parseInt(process.argv[3]);
+          
+          const data = JSON.parse(fs.readFileSync('improvements.json', 'utf8'));
+          const improvement = data.improvements.find(i => i.title === title);
+          
+          if (improvement) {
+            improvement.status = 'in_review';
+            improvement.pr_number = prNumber;
+            fs.writeFileSync('improvements.json', JSON.stringify(data, null, 2));
+            console.log('Updated status for:', title);
+          }
+          EOF
+          
+          # Extract title and run update script
+          TITLE=$(echo '${{ steps.read-queue.outputs.improvement }}' | jq -r '.title')
+          node update_status.js "$TITLE" "${{ steps.create-pr.outputs.pr_number }}"
+          
+          # Commit back to main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git pull origin main
+          git add improvements.json
+          git commit -m "Update status: $TITLE" || true
+          git push origin main || true
 
       - name: Summary
         if: always()
