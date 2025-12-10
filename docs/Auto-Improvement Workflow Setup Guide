@@ -1,0 +1,127 @@
+# Auto-Improvement Setup Guide
+
+## 1. Add Files to Your Repository
+
+Create these files in your repo:
+
+```
+.github/workflows/auto-improve.yml  # The workflow file
+improvements.json                    # Your improvement queue (in repo root)
+```
+
+## 2. Configure Secrets
+
+Go to your GitHub repo → Settings → Secrets and variables → Actions
+
+Add this secret:
+- `ANTHROPIC_API_KEY` - Your Claude API key from console.anthropic.com
+
+## 3. Set Up the Schedule
+
+The workflow runs based on the `cron` setting in the YAML:
+
+```yaml
+schedule:
+  - cron: '0 2 * * *'  # Runs daily at 2 AM UTC
+```
+
+### Common Schedule Examples:
+
+- `'0 2 * * *'` - Every day at 2 AM UTC
+- `'0 */6 * * *'` - Every 6 hours
+- `'0 0 * * 1'` - Every Monday at midnight
+- `'0 9 * * 1-5'` - Weekdays at 9 AM
+- `'0 22 * * *'` - Every day at 10 PM UTC
+
+**Tip:** Convert to your timezone! If you want 2 AM EST (UTC-5), use `'0 7 * * *'`
+
+Use [crontab.guru](https://crontab.guru) to test schedules!
+
+## 4. Understanding Status Flow
+
+Improvements move through these statuses:
+- `pending` → Action picks this up
+- `in_review` → PR created, waiting for your review
+- `completed` → You merged the PR (manually update status)
+
+## 5. First Run
+
+**Option A: Wait for scheduled time**
+- The action will run automatically at the scheduled time
+
+**Option B: Trigger manually**
+- Go to Actions tab → "Auto Code Improvements" → "Run workflow"
+- Great for testing!
+
+## 6. Your Review Workflow
+
+When you return to your computer:
+
+1. Check the "Pull Requests" tab
+2. Look for PRs with 🤖 prefix (they'll be in draft state)
+3. Review the changes
+4. **If you approve:**
+   - Mark as "Ready for review"
+   - Merge the PR
+   - Manually update `improvements.json` to mark status as `completed`
+5. **If you reject:**
+   - Close the PR
+   - Either remove from queue or add more details to the description
+
+## 7. Cost Estimation
+
+- **GitHub Actions:** Free (well within 2,000 min/month limit)
+- **Claude API:** 
+  - ~$0.01-0.05 per improvement (depends on code size)
+  - 1 improvement/day = ~$0.30-$1.50/month
+  - Very cheap!
+
+## 8. Customization Ideas
+
+### Add automatic testing:
+```yaml
+- name: Run tests
+  run: npm test
+  continue-on-error: true
+```
+
+### Only run on specific repos:
+```yaml
+if: github.repository == 'yourusername/specific-repo'
+```
+
+### Notify on Slack/Discord:
+Add a step at the end that posts to a webhook when PR is created
+
+### Safety limits:
+```json
+"settings": {
+  "maxFilesPerImprovement": 3,
+  "maxLinesPerFile": 500
+}
+```
+
+## 9. Troubleshooting
+
+**No PR created?**
+- Check Actions tab for error logs
+- Verify `ANTHROPIC_API_KEY` is set correctly
+- Ensure `improvements.json` has items with `status: "pending"`
+
+**Permission errors?**
+- Workflow already has `contents: write` and `pull-requests: write`
+- If on organization repo, may need admin to enable Actions
+
+**Want to stop it?**
+- Disable the workflow in Actions settings
+- Or remove the `schedule:` section and keep `workflow_dispatch:` for manual runs only
+
+## 10. Multi-Repo Setup
+
+To use across multiple repos:
+
+**Option 1:** Copy workflow to each repo (each has its own queue)
+
+**Option 2:** Central queue repo that triggers workflows in other repos via repository dispatch
+
+Let me know if you want Option 2 set up!
