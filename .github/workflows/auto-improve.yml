@@ -128,10 +128,11 @@ jobs:
       - name: Apply changes and create branch
         if: steps.read-queue.outputs.improvement != ''
         id: apply-changes
+        env:
+          IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
         run: |
-          # Parse the improvement to get metadata
-          IMPROVEMENT='${{ steps.read-queue.outputs.improvement }}'
-          TITLE=$(echo "$IMPROVEMENT" | jq -r '.title' | sed 's/[^a-zA-Z0-9 ]/-/g')
+          # Parse the improvement to get metadata using environment variable
+          TITLE=$(echo "${IMPROVEMENT_JSON}" | jq -r '.title' | sed 's/[^a-zA-Z0-9 ]/-/g')
           BRANCH_NAME="auto-improve/$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | head -c 50)"
           
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
@@ -168,11 +169,11 @@ jobs:
         if: steps.apply-changes.outputs.branch_name != ''
         env:
           GH_TOKEN: ${{ github.token }}
-          IMPROVEMENT: ${{ steps.read-queue.outputs.improvement }}
+          IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
           BRANCH_NAME: ${{ steps.apply-changes.outputs.branch_name }}
         run: |
-          TITLE=$(echo "$IMPROVEMENT" | jq -r '.title')
-          DESCRIPTION=$(echo "$IMPROVEMENT" | jq -r '.description')
+          TITLE=$(echo "${IMPROVEMENT_JSON}" | jq -r '.title')
+          DESCRIPTION=$(echo "${IMPROVEMENT_JSON}" | jq -r '.description')
           
           # Read the explanation from Claude's response
           EXPLANATION=$(jq -r '.explanation' changes.json 2>/dev/null || echo "See commits for details")
@@ -198,10 +199,11 @@ jobs:
 
       - name: Update improvement status
         if: success()
+        env:
+          IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
         run: |
           # Mark this improvement as "in_review" in the queue
-          IMPROVEMENT='${{ steps.read-queue.outputs.improvement }}'
-          TITLE=$(echo "$IMPROVEMENT" | jq -r '.title')
+          TITLE=$(echo "${IMPROVEMENT_JSON}" | jq -r '.title')
           
           # Update the status in improvements.json
           jq --arg title "$TITLE" \
