@@ -207,6 +207,7 @@ jobs:
 
       - name: Create Draft PR
         if: steps.apply-changes.outputs.branch_name != ''
+        id: create-pr
         env:
           GH_TOKEN: ${{ github.token }}
           IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
@@ -230,12 +231,72 @@ jobs:
           *This PR was automatically generated. Review carefully before merging.*
           *To stop auto-improvements, disable the workflow in Actions settings.*"
           
-          gh pr create \
-            --title "🤖 Auto: $TITLE" \
-            --body "$PR_BODY" \
-            --base main \
-            --head "$BRANCH_NAME" \
-            --draft
+          # Check if PR already exists for this branch
+          EXISTING_PR=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[0].number' 2>/dev/null || echo "")
+          
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #$EXISTING_PR already exists for this branch - skipping creation"
+            echo "pr_number=$EXISTING_PR" >> $GITHUB_OUTPUT
+          else
+            PR_URL=$(gh pr create \
+              --title "🤖 Auto: $TITLE" \
+              --body "$PR_BODY" \
+              --base main \
+              --head "$BRANCH_NAME" \
+              --draft)
+            
+            PR_NUMBER=$(echo "$PR_URL" | grep -oP '\d+
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Auto-Improvement Run Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.read-queue.outputs.has_improvements }}" != "true" ]; then
+            echo "✅ No pending improvements found - queue is empty or all completed!" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.generate-changes.outcome }}" == "failure" ]; then
+            echo "⚠️ Code generation failed - check Anthropic API credits or configuration" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.apply-changes.outputs.branch_name }}" != "" ]; then
+            echo "✅ Successfully created PR for improvement!" >> $GITHUB_STEP_SUMMARY
+            echo "Branch: \`${{ steps.apply-changes.outputs.branch_name }}\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Workflow encountered an error" >> $GITHUB_STEP_SUMMARY
+          fi
+)
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "Created PR #$PR_NUMBER"
+          fi
+
+      - name: Update improvement status
+        if: steps.create-pr.outputs.pr_number != ''
+        env:
+          IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
+        run: |
+          # Mark this improvement as "in_review" in the queue
+          TITLE=$(echo "${IMPROVEMENT_JSON}" | jq -r '.title')
+          PR_NUMBER="${{ steps.create-pr.outputs.pr_number }}"
+          
+          # Update the status and add PR number
+          jq --arg title "$TITLE" \
+             --arg pr "$PR_NUMBER" \
+             '(.improvements[] | select(.title == $title) | .status) = "in_review" |
+              (.improvements[] | select(.title == $title) | .pr_number) = ($pr | tonumber)' \
+             improvements.json > improvements.json.tmp
+          mv improvements.json.tmp improvements.json
+          
+          # Commit the updated queue back to main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Fetch latest main and merge
+          git fetch origin main
+          git checkout main
+          git pull origin main
+          
+          git add improvements.json
+          git commit -m "Mark improvement as in_review: $TITLE (PR #$PR_NUMBER)" || true
+          git push origin main || true
 
       - name: Summary
         if: always()
