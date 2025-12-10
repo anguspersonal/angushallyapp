@@ -1,0 +1,37 @@
+{
+  "improvements": [
+    {
+      "title": "Add input validation to user registration",
+      "description": "Add email and password validation to the registration endpoint. Email should be valid format, password should be at least 8 characters with 1 number and 1 special character.",
+      "files": [
+        "src/routes/auth.js",
+        "src/utils/validators.js"
+      ],
+      "priority": 1,
+      "status": "pending"
+    },
+    {
+      "title": "Add unit tests for payment processing",
+      "description": "Create comprehensive unit tests for the payment processing module, covering success cases, failure cases, and edge cases like network timeouts.",
+      "files": [
+        "src/services/payment.js"
+      ],
+      "priority": 2,
+      "status": "pending"
+    },
+    {
+      "title": "Refactor database connection pooling",
+      "description": "Update the database connection module to use connection pooling with a max of 10 connections. Add proper error handling and retry logic.",
+      "files": [
+        "src/db/connection.js"
+      ],
+      "priority": 3,
+      "status": "pending"
+    }
+  ],
+  "settings": {
+    "maxFilesPerImprovement": 5,
+    "requireTests": false,
+    "autoMergeIfTestsPass": false
+  }
+}
