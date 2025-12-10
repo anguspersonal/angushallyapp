@@ -1,80 +1,39 @@
 {
   "improvements": [
     {
-      "title": "Add missing alt text to profile image on homepage",
-      "description": "The profile image on the homepage (page.tsx) has alt text 'Angus Hally, out hiking in Wales' but could be more descriptive. Update it to include context about it being a profile photo.",
+      "title": "Add input validation to user registration",
+      "description": "Add email and password validation to the registration endpoint. Email should be valid format, password should be at least 8 characters with 1 number and 1 special character.",
       "files": [
-        "next-ui/src/app/page.tsx"
+        "src/routes/auth.js",
+        "src/utils/validators.js"
       ],
       "priority": 1,
-      "status": "in_review"
+      "status": "pending",
+      "pr_number": null
     },
     {
-      "title": "Fix console.log statements in production code",
-      "description": "Remove or convert console.log statements to proper error handling in next-ui/src/app/projects/habit/habit.ts. These logs are useful for debugging but should use proper logging in production.",
+      "title": "Add unit tests for payment processing",
+      "description": "Create comprehensive unit tests for the payment processing module, covering success cases, failure cases, and edge cases like network timeouts.",
       "files": [
-        "next-ui/src/app/projects/habit/habit.ts"
+        "src/services/payment.js"
       ],
       "priority": 2,
-      "status": "pending"
+      "status": "pending",
+      "pr_number": null
     },
     {
-      "title": "Add loading state text to CV page",
-      "description": "The CV page (cv/page.tsx) has loading spinners but no accompanying text. Add descriptive loading messages to improve UX.",
+      "title": "Refactor database connection pooling",
+      "description": "Update the database connection module to use connection pooling with a max of 10 connections. Add proper error handling and retry logic.",
       "files": [
-        "next-ui/src/app/cv/page.tsx"
+        "src/db/connection.js"
       ],
       "priority": 3,
-      "status": "pending"
-    },
-    {
-      "title": "Standardize button sizes in contact page",
-      "description": "The contact page submit button uses size='md' while other pages use 'lg'. Standardize to 'lg' for consistency across the app.",
-      "files": [
-        "next-ui/src/app/contact/page.tsx"
-      ],
-      "priority": 4,
-      "status": "pending"
-    },
-    {
-      "title": "Add missing TypeScript return type to resetCombobox",
-      "description": "The resetCombobox function parameter in HabitCombobox.tsx doesn't have an explicit return type. Add 'void' return type for better type safety.",
-      "files": [
-        "next-ui/src/app/projects/habit/components/HabitCombobox.tsx"
-      ],
-      "priority": 5,
-      "status": "pending"
-    },
-    {
-      "title": "Update copyright year to be dynamic",
-      "description": "The Data Value Game footer has a hardcoded year. Update DVGFooter.tsx to use dynamic year like 'const currentYear = new Date().getFullYear()'.",
-      "files": [
-        "next-ui/src/app/projects/data-value-game/DVGFooter.tsx"
-      ],
-      "priority": 6,
-      "status": "pending"
-    },
-    {
-      "title": "Add aria-label to social media icons on about page",
-      "description": "Social media ActionIcons on the about page already have aria-label attributes, but we should verify they're descriptive enough. Update them to be more specific (e.g., 'Visit my LinkedIn profile').",
-      "files": [
-        "next-ui/src/app/about/page.tsx"
-      ],
-      "priority": 7,
-      "status": "pending"
-    },
-    {
-      "title": "Consolidate duplicate color definitions in CSS",
-      "description": "The DataValueGame.css file has many color variables defined. Consider consolidating or documenting which colors are actively used vs deprecated.",
-      "files": [
-        "next-ui/src/app/projects/data-value-game/DataValueGame.css"
-      ],
-      "priority": 8,
-      "status": "pending"
+      "status": "pending",
+      "pr_number": null
     }
   ],
   "settings": {
-    "maxFilesPerImprovement": 3,
+    "maxFilesPerImprovement": 5,
     "requireTests": false,
     "autoMergeIfTestsPass": false
   }
