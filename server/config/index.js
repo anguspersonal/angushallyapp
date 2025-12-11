@@ -247,6 +247,7 @@ function buildConfig() {
     },
     debug: {
       knexDebugConnect: parsed.KNEX_DEBUG_CONNECT === 'true',
+      googleAuthLogging: raw.GOOGLE_AUTH_LOGGING === 'true',
     },
   };
 
