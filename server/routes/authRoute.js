@@ -37,12 +37,14 @@ router.post('/register', validateRegistration, async (req, res) => {
     const { email, password, firstName, lastName } = req.body;
 
     // Check if user already exists
-    const existingUser = await db.query(
+    const existingUsers = await db.query(
       'SELECT id FROM identity.users WHERE email = $1 AND auth_provider = $2',
       [email, 'local']
     );
 
-    if (existingUser.rows.length > 0) {
+    const existingUser = existingUsers[0];
+
+    if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
@@ -52,27 +54,33 @@ router.post('/register', validateRegistration, async (req, res) => {
 
     // Create new user
     const result = await db.query(
-      `INSERT INTO identity.users 
+      `INSERT INTO identity.users
        (email, password_hash, auth_provider, first_name, last_name, is_active)
        VALUES ($1, $2, $3, $4, $5, true)
        RETURNING id, email, first_name, last_name`,
       [email, passwordHash, 'local', firstName, lastName]
     );
 
+    if (!Array.isArray(result) || result.length === 0) {
+      return res.status(500).json({ error: 'Failed to create user' });
+    }
+
+    const createdUser = result[0];
+
     // Assign default role (assuming 'user' role exists)
     await db.query(
       `INSERT INTO identity.user_roles (user_id, role_id)
        SELECT $1, id FROM identity.roles WHERE name = 'user'`,
-      [result.rows[0].id]
+      [createdUser.id]
     );
 
     res.status(201).json({
       message: 'User registered successfully',
       user: {
-        id: result.rows[0].id,
-        email: result.rows[0].email,
-        firstName: result.rows[0].first_name,
-        lastName: result.rows[0].last_name
+        id: createdUser.id,
+        email: createdUser.email,
+        firstName: createdUser.first_name,
+        lastName: createdUser.last_name
       }
     });
   } catch (error) {
@@ -105,7 +113,7 @@ router.post('/login', validateLogin, async (req, res) => {
       [email, 'local']
     );
 
-    const user = result.rows[0];
+    const user = Array.isArray(result) && result.length > 0 ? result[0] : null;
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
