@@ -200,39 +200,45 @@ router.post('/google', async (req, res) => {
     const { sub: googleSub, email, given_name: firstName, family_name: lastName } = payload;
     console.log('Google auth payload:', { googleSub, email, firstName, lastName });
 
-    await db.query('BEGIN');
+    let client;
+    let user = null;
 
     try {
+      client = await db.pool.connect();
+      await client.query('BEGIN');
+
       // First, check if a user exists with this Google sub
-      let user = null;
-      const googleUserResult = await db.query(
+      const googleUserResult = await client.query(
         `SELECT id, email, auth_provider, google_sub, first_name, last_name, is_active
-         FROM identity.users 
+         FROM identity.users
          WHERE google_sub = $1`,
         [googleSub]
       );
 
-      if (googleUserResult?.[0]) {
+      const googleUser = googleUserResult.rows?.[0];
+
+      if (googleUser) {
         // User exists with this Google account
-        user = googleUserResult[0];
+        user = googleUser;
       } else {
         // Check if user exists with this email
-        const emailUserResult = await db.query(
+        const emailUserResult = await client.query(
           `SELECT id, email, auth_provider, google_sub, first_name, last_name, is_active
-           FROM identity.users 
+           FROM identity.users
            WHERE email = $1
            ORDER BY created_at ASC
            LIMIT 1`,
           [email]
         );
 
-        if (emailUserResult?.[0]) {
-          const existingUser = emailUserResult[0];
-          
+        const existingUser = emailUserResult.rows?.[0];
+
+        if (existingUser) {
+
           // If the existing user has no Google sub, update it
           if (!existingUser.google_sub) {
-            const updateResult = await db.query(
-              `UPDATE identity.users 
+            const updateResult = await client.query(
+              `UPDATE identity.users
                SET google_sub = $1,
                    auth_provider = 'google',
                    first_name = COALESCE($2, first_name),
@@ -243,14 +249,14 @@ router.post('/google', async (req, res) => {
               [googleSub, firstName, lastName, existingUser.id]
             );
 
-            if (!updateResult?.[0]) {
+            if (!updateResult.rows?.[0]) {
               throw new Error('Failed to update existing user');
             }
 
-            user = updateResult[0];
+            user = updateResult.rows[0];
           } else {
             // User exists with a different auth provider and already has a Google sub
-            await db.query('ROLLBACK');
+            await client.query('ROLLBACK');
             return res.status(409).json({
               error: 'Account exists with different auth provider',
               details: `This email is already registered using ${existingUser.auth_provider} authentication`
@@ -258,22 +264,22 @@ router.post('/google', async (req, res) => {
           }
         } else {
           // Create new user
-          const userResult = await db.query(
-            `INSERT INTO identity.users 
+          const userResult = await client.query(
+            `INSERT INTO identity.users
              (email, auth_provider, google_sub, first_name, last_name, is_active, email_verified_at)
              VALUES ($1, 'google', $2, $3, $4, true, CURRENT_TIMESTAMP)
              RETURNING id, email, first_name, last_name, google_sub, is_active`,
             [email, googleSub, firstName, lastName]
           );
 
-          if (!userResult?.[0]) {
+          if (!userResult.rows?.[0]) {
             throw new Error('Failed to create new user record');
           }
 
-          user = userResult[0];
+          user = userResult.rows[0];
 
           // Assign default role
-          await db.query(
+          await client.query(
             `INSERT INTO identity.user_roles (user_id, role_id)
              SELECT $1, id FROM identity.roles WHERE name = 'user'`,
             [user.id]
@@ -282,12 +288,12 @@ router.post('/google', async (req, res) => {
       }
 
       if (!user.is_active) {
-        await db.query('ROLLBACK');
+        await client.query('ROLLBACK');
         return res.status(403).json({ error: 'Account is inactive' });
       }
 
       // Get user roles
-      const userWithRoles = await db.query(
+      const userWithRoles = await client.query(
         `SELECT u.id, u.email, u.first_name, u.last_name, u.google_sub,
                 ARRAY_REMOVE(ARRAY_AGG(r.name), NULL) as roles
          FROM identity.users u
@@ -298,20 +304,20 @@ router.post('/google', async (req, res) => {
         [user.id]
       );
 
-      if (!userWithRoles?.[0]) {
+      if (!userWithRoles.rows?.[0]) {
         throw new Error('Failed to retrieve user data');
       }
 
-      user = userWithRoles[0];
+      user = userWithRoles.rows[0];
       user.roles = user.roles || [];
 
       // Update last login timestamp
-      await db.query(
+      await client.query(
         'UPDATE identity.users SET last_login_at = CURRENT_TIMESTAMP WHERE id = $1',
         [user.id]
       );
 
-      await db.query('COMMIT');
+      await client.query('COMMIT');
 
       // Generate JWT token
       const jwtToken = jwt.sign(
@@ -347,9 +353,15 @@ router.post('/google', async (req, res) => {
       console.log('Successful authentication for:', email);
       res.json(response);
     } catch (dbError) {
-      await db.query('ROLLBACK');
+      if (client) {
+        await client.query('ROLLBACK');
+      }
       console.error('Database operation failed:', dbError);
       throw dbError;
+    } finally {
+      if (client) {
+        client.release();
+      }
     }
   } catch (error) {
     console.error('Google auth error details:', {
@@ -419,4 +431,4 @@ router.get('/verify', authMiddleware(), async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;
