@@ -48,10 +48,11 @@ async function sendEmail({ subject, text, html, to }) {
 /**
  * Sends an email to the app owner with the user's inquiry
  */
-async function sendInquiryToOwner(name, email, subject, message) {
+async function sendInquiryToOwner({ name, email, message }) {
     const ownerEmail = config.email.recipient;
     const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
-    await sendEmail({ subject: `New Inquiry: ${subject}`, text: body });
+    const subject = `New Inquiry from ${name}`;
+    await sendEmail({ subject, text: body, to: ownerEmail });
 }
 
 /**
@@ -59,7 +60,7 @@ async function sendInquiryToOwner(name, email, subject, message) {
  */
 async function sendAcknowledgmentToUser(name, email, message) {
     const body = `Hi ${name},\n\nThank you for reaching out! We've received your message:\n\n"${message}"\n\nWe'll get back to you shortly.\n\nBest regards,\nAngus`;
-    await sendEmail({ subject: "We've received your message!", text: body });
+    await sendEmail({ subject: "We've received your message!", text: body, to: email });
 }
 
 /**
