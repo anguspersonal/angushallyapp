@@ -85,7 +85,17 @@ function configureMiddleware(app, { config, logger }) {
   app.use(attachRequestContext);
   app.use(requestLogger(logger));
   app.use(securityHeaders(config.cors));
-  app.use(express.json());
+
+  const globalJsonParser = express.json();
+  const shouldBypassGlobalJson = (req) => req.originalUrl?.startsWith('/api/analyseText');
+
+  app.use((req, res, next) => {
+    if (shouldBypassGlobalJson(req)) {
+      return next();
+    }
+
+    return globalJsonParser(req, res, next);
+  });
   app.use(cookieParser());
   app.set('trust proxy', 1);
 
