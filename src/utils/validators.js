@@ -4,13 +4,17 @@ const validateEmail = (email) => {
 };
 
 const validatePassword = (password) => {
+  if (!password || typeof password !== 'string') {
+    return false;
+  }
+
   if (password.length < 8) {
     return false;
   }
-  
+
   const hasNumber = /\d/.test(password);
   const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
-  
+
   return hasNumber && hasSpecialChar;
 };
 
