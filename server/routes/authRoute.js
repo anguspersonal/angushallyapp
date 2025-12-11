@@ -198,7 +198,9 @@ router.post('/google', async (req, res) => {
     }
 
     const { sub: googleSub, email, given_name: firstName, family_name: lastName } = payload;
-    console.log('Google auth payload:', { googleSub, email, firstName, lastName });
+    if (config.debug?.googleAuthLogging) {
+      console.log('Google auth payload identifiers:', { googleSub, email });
+    }
 
     await db.query('BEGIN');
 
