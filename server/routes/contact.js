@@ -92,7 +92,7 @@ function buildContactRouter(deps = {}) {
       const { name, email, message } = req.body;
 
       // Send notification to owner
-      await sendInquiryToOwner(name, email, message);
+      await sendInquiryToOwner({ name, email, message });
 
       // Send acknowledgment to user
       await sendAcknowledgmentToUser(name, email, message);

@@ -80,6 +80,18 @@ function createContactLimiter() {
   });
 }
 
+function createAuthLimiter() {
+  return rateLimit({
+    windowMs: 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      error: 'Too many attempts, try again later.',
+    },
+  });
+}
+
 function configureMiddleware(app, { config, logger }) {
   const attachRequestContext = applyRequestContext(logger);
   app.use(attachRequestContext);
@@ -109,4 +121,5 @@ function configureMiddleware(app, { config, logger }) {
 module.exports = {
   configureMiddleware,
   createContactLimiter,
+  createAuthLimiter,
 };

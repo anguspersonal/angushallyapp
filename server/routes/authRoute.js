@@ -6,22 +6,53 @@ const { body, validationResult } = require('express-validator');
 const db = require('../db');
 const config = require('../../config/env');
 const { authMiddleware } = require('../middleware/auth');
+const { validateEmail, validatePassword } = require('../../src/utils/validators');
 
 const router = express.Router();
 const googleClient = new OAuth2Client(config.auth.google.clientId);
 
+const validationHandlers = {
+  email: body('email')
+    .custom((value) => {
+      if (!validateEmail(value)) {
+        throw new Error('Invalid email format');
+      }
+      return true;
+    })
+    .normalizeEmail(),
+  password: body('password').custom((value) => {
+    if (!validatePassword(value)) {
+      throw new Error('Password must be at least 8 characters long and include a number and special character');
+    }
+    return true;
+  }),
+  firstName: body('firstName').trim().notEmpty().withMessage('First name is required'),
+  lastName: body('lastName').trim().notEmpty().withMessage('Last name is required'),
+};
+
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  return next();
+};
+
 // Validation middleware for registration
 const validateRegistration = [
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 8 }),
-  body('firstName').trim().notEmpty(),
-  body('lastName').trim().notEmpty(),
+  validationHandlers.email,
+  validationHandlers.password,
+  validationHandlers.firstName,
+  validationHandlers.lastName,
+  handleValidationErrors,
 ];
 
 // Validation middleware for login
 const validateLogin = [
-  body('email').isEmail().normalizeEmail(),
-  body('password').notEmpty(),
+  validationHandlers.email,
+  validationHandlers.password,
+  handleValidationErrors,
 ];
 
 /**
@@ -29,11 +60,6 @@ const validateLogin = [
  */
 router.post('/register', validateRegistration, async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { email, password, firstName, lastName } = req.body;
 
     // Check if user already exists
@@ -94,11 +120,6 @@ router.post('/register', validateRegistration, async (req, res) => {
  */
 router.post('/login', validateLogin, async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { email, password } = req.body;
 
     // Get user with their roles
