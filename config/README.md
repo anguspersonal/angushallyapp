@@ -119,13 +119,14 @@ When you onboard a new integration (e.g. WidgetCo), you'll typically need:
 2. **Copy** `env.example` → `.env` and fill in your credentials.
 3. **(Optional)** for local overrides, copy `.env` → `.env.development` and adjust values (e.g. localhost URIs).
 4. **In `react-ui`**, copy its `env.example` → `.env.development` and fill `REACT_APP_…` variables.
-5. **Install & start** the backend:
+5. **For tests**, copy `.env.test.example` → `.env.test` (or rely on the committed example defaults) so Jest runs with deterministic, non-production values.
+6. **Install & start** the backend:
 
    ```bash
    npm install
    npm run dev   # NODE_ENV=development
    ```
-6. **Install & start** the frontend:
+7. **Install & start** the frontend:
 
    ```bash
    cd react-ui

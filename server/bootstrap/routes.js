@@ -1,4 +1,4 @@
-const { createContactLimiter } = require('./middleware');
+const { createAuthLimiter, createContactLimiter } = require('./middleware');
 const { createContentService } = require('../services/contentService');
 const { createHabitService } = require('../services/habitService');
 const db = require('../db');
@@ -31,6 +31,7 @@ function loadRoute(modulePath, deps) {
 function registerRoutes(app, deps = {}) {
   const baseLogger = deps.logger;
   const contactLimiter = createContactLimiter();
+  const authLimiter = createAuthLimiter();
   const habitApi = deps.habitApi || require('../habit-api/habitService');
   const alcoholService = deps.alcoholService || require('../habit-api/alcoholService');
   const exerciseService = deps.exerciseService || require('../habit-api/exerciseService');
@@ -84,7 +85,7 @@ function registerRoutes(app, deps = {}) {
   app.use('/api/hygieneScoreRoute', hygieneScoreRoute);
   app.use('/api/strava', stravaRoute);
   app.use('/api/habit', habitRoute);
-  app.use('/api/auth', authRoute);
+  app.use('/api/auth', authLimiter, authRoute);
   app.use('/api/analyseText', analyseTextRoute);
   app.use('/api/raindrop/oauth/callback', raindropCallbackRoute);
   app.use('/api/raindrop', raindropRoute);
