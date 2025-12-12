@@ -48,10 +48,11 @@ async function sendEmail({ subject, text, html, to }) {
 /**
  * Sends an email to the app owner with the user's inquiry
  */
-async function sendInquiryToOwner(name, email, message) {
+async function sendInquiryToOwner({ name, email, message }) {
     const ownerEmail = config.email.recipient;
     const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
-    await sendEmail({ subject: `New Inquiry from ${name}`, text: body, to: ownerEmail });
+    const subject = `New Inquiry from ${name}`;
+    await sendEmail({ subject, text: body, to: ownerEmail });
 }
 
 /**
