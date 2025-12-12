@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "npm run lint",
     "fix-nextjs": "node ../scripts/fix-nextjs-build-errors.js",
     "fix-nextjs:clean": "node ../scripts/fix-nextjs-build-errors.js --clean-deps",
     "clean": "rm -rf .next node_modules package-lock.json",

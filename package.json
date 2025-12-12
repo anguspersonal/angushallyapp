@@ -29,7 +29,7 @@
     "clean:public": "node scripts/clean-public.js",
     "clean:ports": "node scripts/clean-ports.js",
     "clean:heroku-cache": "heroku builds:cache:purge -a angushallyapp",
-    "test": "jest --runTestsByPath server/tests",
+    "test": "npm --workspace server run test && npm --workspace server run test:contracts && npm --workspace next-ui run --if-present test",
     "config:check": "node server/config/validate.js",
     "test--verbose": "jest --runTestsByPath server/tests --verbose",
     "test-cache": "node scripts/test-cache-files.js",
