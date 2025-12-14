@@ -103,19 +103,24 @@ function createHabitService(deps = {}) {
   }
 
   /**
-   * Placeholder detail fetcher.
+   * Fetches a single habit log by ID.
+   * Uses direct database query by ID for efficiency instead of fetching all logs.
    * @param {string | number} id
    * @returns {Promise<HabitDetail | null>}
    */
   async function getHabitById(id, options = {}) {
-    const logs = await habitApi.getHabitLogsFromDB();
-    const match = Array.isArray(logs) ? logs.find((log) => log.id === id) : null;
-    return match
-      ? {
-          ...mapHabitLog(match),
-          description: match.extra_data?.notes ?? null,
-        }
+    const log = typeof habitApi.getHabitLogById === 'function'
+      ? await habitApi.getHabitLogById(id)
       : null;
+    
+    if (!log) {
+      return null;
+    }
+    
+    return {
+      ...mapHabitLog(log),
+      description: log.extra_data?.notes ?? null,
+    };
   }
 
   /**
