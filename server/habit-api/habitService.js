@@ -45,6 +45,26 @@ const getHabitLogsFromDB = async (userId) => {
     }
 };
 
+/**
+ * Fetches a single habit log by ID from the database.
+ * This is more efficient than fetching all logs and filtering in memory.
+ * @param {string|number} id - The habit log ID to fetch
+ * @returns {Promise<Object|null>} The habit log or null if not found
+ */
+const getHabitLogById = async (id) => {
+    const query = `
+        SELECT * FROM habit.habit_log 
+        WHERE id = $1;
+    `;
+    try {
+        const response = await db.query(query, [id]);
+        return response.length > 0 ? response[0] : null;
+    } catch (error) {
+        console.error("Error fetching habit log by ID:", error);
+        return null;
+    }
+};
+
 async function getHabitAggregates(period, metrics, userId) {
     const periodCondition = getPeriodCondition(period);
     
@@ -100,6 +120,7 @@ function formatAggregateResult(result, metrics) {
 module.exports = {
     logHabitLog,
     getHabitLogsFromDB,
+    getHabitLogById,
     getHabitAggregates
 };
 
