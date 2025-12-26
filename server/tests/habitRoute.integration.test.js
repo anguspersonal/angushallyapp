@@ -32,8 +32,9 @@ function createApp(overrides = {}) {
 
   const app = express();
   app.use(express.json());
-  app.use('/api/habit', createHabitRoutes({ habitService, logger: { error: jest.fn() } }));
-  return { app, habitService };
+  const logger = { error: jest.fn(), warn: jest.fn() };
+  app.use('/api/habit', createHabitRoutes({ habitService, logger }));
+  return { app, habitService, logger };
 }
 
 describe('habitRoute integration', () => {
@@ -41,16 +42,21 @@ describe('habitRoute integration', () => {
     const { app, habitService } = createApp();
     const response = await request(app).get('/api/habit?page=2&pageSize=5');
 
-    expect(habitService.listHabits).toHaveBeenCalledWith('user-1', { page: 2, pageSize: 5 });
+    expect(habitService.listHabits).toHaveBeenCalledWith(
+      'user-1',
+      { page: 2, pageSize: 5 },
+      expect.objectContaining({ logger: expect.anything() })
+    );
     expect(response.status).toBe(200);
     expect(response.body.items).toHaveLength(1);
     expect(response.body.pagination.hasMore).toBe(false);
+    expect(Object.keys(response.body)).toEqual(expect.arrayContaining(['items', 'pagination']));
   });
 
   test('GET /api/habit/entries/:id returns detail or 404', async () => {
     const { app, habitService } = createApp();
     const ok = await request(app).get('/api/habit/entries/1');
-    expect(habitService.getHabitById).toHaveBeenCalledWith('1');
+    expect(habitService.getHabitById).toHaveBeenCalledWith('1', expect.objectContaining({ logger: expect.anything() }));
     expect(ok.status).toBe(200);
 
     const missingApp = createApp({ getHabitById: jest.fn().mockResolvedValue(null) });
@@ -62,40 +68,57 @@ describe('habitRoute integration', () => {
     const { app, habitService } = createApp();
     const response = await request(app).get('/api/habit/stats/week');
 
-    expect(habitService.getStats).toHaveBeenCalledWith('user-1', 'week');
+    expect(habitService.getStats).toHaveBeenCalledWith('user-1', 'week', undefined, expect.objectContaining({ logger: expect.anything() }));
     expect(response.status).toBe(200);
-    expect(response.body).toMatchObject({ period: 'week', totalCompleted: 3 });
+    expect(response.body).toMatchObject({
+      period: 'week',
+      totalCompleted: 3,
+      averagePerEntry: 1,
+      minimumPerEntry: 1,
+      maximumPerEntry: 1,
+      standardDeviation: 0,
+    });
+    expect(Object.keys(response.body)).toEqual(
+      expect.arrayContaining(['period', 'totalCompleted', 'averagePerEntry', 'minimumPerEntry', 'maximumPerEntry', 'standardDeviation'])
+    );
 
     const { app: invalidApp } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'HABIT_INVALID_PERIOD' }) });
     const invalid = await request(invalidApp).get('/api/habit/stats/invalid');
     expect(invalid.status).toBe(400);
-    expect(invalid.body).toMatchObject({ code: 'HABIT_INVALID_PERIOD' });
+    expect(invalid.body).toEqual({ code: 'HABIT_INVALID_PERIOD', error: 'Invalid stats request' });
+    expect(invalid.body).not.toHaveProperty('error_class');
   });
 
   test('GET /api/habit/stats/:period handles provider failures as 500', async () => {
     const { app } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'HABIT_STATS_FETCH_FAILED' }) });
     const response = await request(app).get('/api/habit/stats/week');
     expect(response.status).toBe(500);
-    expect(response.body).toMatchObject({ code: 'HABIT_STATS_FETCH_FAILED' });
+    expect(response.body).toEqual({ code: 'HABIT_STATS_FETCH_FAILED', error: 'Internal Server Error' });
+    expect(Object.keys(response.body)).toEqual(['error', 'code']);
   });
 
   test('GET /api/habit/stats/:period rejects invalid metrics with 400', async () => {
     const { app } = createApp({ getStats: jest.fn().mockRejectedValue({ code: 'HABIT_INVALID_METRIC' }) });
     const response = await request(app).get('/api/habit/stats/week');
     expect(response.status).toBe(400);
-    expect(response.body).toMatchObject({ code: 'HABIT_INVALID_METRIC' });
+    expect(response.body).toEqual({ code: 'HABIT_INVALID_METRIC', error: 'Invalid stats request' });
   });
 
   test('GET /api/habit/:habitType/aggregates delegates to habitService with validation', async () => {
     const { app, habitService } = createApp();
     const response = await request(app).get('/api/habit/exercise/aggregates');
 
-    expect(habitService.getAggregates).toHaveBeenCalledWith('user-1', 'exercise');
+    expect(habitService.getAggregates).toHaveBeenCalledWith(
+      'user-1',
+      'exercise',
+      expect.objectContaining({ logger: expect.anything() })
+    );
     expect(response.status).toBe(200);
 
     const { app: invalidApp } = createApp({ getAggregates: jest.fn().mockRejectedValue({ code: 'HABIT_INVALID_TYPE' }) });
     const invalid = await request(invalidApp).get('/api/habit/invalid/aggregates');
     expect(invalid.status).toBe(400);
-    expect(invalid.body).toMatchObject({ code: 'HABIT_INVALID_TYPE' });
+    expect(invalid.body).toMatchObject({ code: 'HABIT_INVALID_TYPE', error: 'Invalid habit type' });
+    expect(invalid.body).not.toHaveProperty('error_class');
   });
 });

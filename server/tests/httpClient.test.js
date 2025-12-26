@@ -59,6 +59,24 @@ test('retries retryable errors and logs success', async () => {
   expect(logger.error).not.toHaveBeenCalled();
 });
 
+test('propagates provided context correlation IDs into logs', async () => {
+  const mockInstance = createMockInstance([{ data: { ok: true }, status: 201 }]);
+  axios.create.mockReturnValue(mockInstance);
+
+  const logger = { info: jest.fn(), error: jest.fn() };
+  const client = createHttpClient({
+    logger,
+    getContext: () => ({ correlationId: 'ctx-123' }),
+    config: { timeoutMs: 100, maxRetries: 0, retryDelayMs: 1, retryBackoffFactor: 1 },
+  });
+
+  await client.post('/context-aware');
+
+  const [, meta] = logger.info.mock.calls[0];
+  expect(meta.correlationId).toBe('ctx-123');
+  expect(meta.outcome).toBe('success');
+});
+
 test('logs and throws on non-retryable error', async () => {
   const mockInstance = createMockInstance([
     Object.assign(new Error('Bad request'), { response: { status: 400 } }),
@@ -70,6 +88,19 @@ test('logs and throws on non-retryable error', async () => {
 
   await expect(client.get('/test')).rejects.toBeInstanceOf(HttpClientError);
   expect(logger.error).toHaveBeenCalledWith('http:error', expect.objectContaining({ status: 400 }));
+});
+
+test('wraps errors with HttpClientError shape and preserves traceId', async () => {
+  const mockInstance = createMockInstance([
+    Object.assign(new Error('Unauthorized'), { response: { status: 401 }, config: { metadata: { correlationId: 'abc-123' } } }),
+  ]);
+  axios.create.mockReturnValue(mockInstance);
+  const logger = { info: jest.fn(), error: jest.fn() };
+  const client = createHttpClient({ logger, config: { timeoutMs: 100, maxRetries: 0, retryDelayMs: 1, retryBackoffFactor: 1 } });
+
+  await expect(client.get('/auth')).rejects.toThrow(HttpClientError);
+  const errorCall = logger.error.mock.calls[0];
+  expect(errorCall[1]).toMatchObject({ outcome: 'error', correlationId: 'abc-123' });
 });
 
 test('applies exponential backoff between retries', async () => {

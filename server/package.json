@@ -6,22 +6,54 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "test": "jest",
+    "pretest": "npm run build:habit-contracts",
+    "test": "node ../scripts/run-jest.js",
+    "build:habit-contracts": "tsc -p ../shared/services/habit/tsconfig.json",
+    "pretest:contracts": "npm run build:habit-contracts",
+    "test:contracts": "node ../scripts/run-jest.js --coverage --runTestsByPath tests/helpers/serviceMocks.test.js tests/contentService.test.js tests/habitService.test.js tests/contentRoute.integration.test.js",
     "test:watch": "jest --watch"
   },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.1.1",
+    "typescript": "^5.4.5"
+  },
   "jest": {
     "testEnvironment": "node",
     "testMatch": [
       "**/tests/**/*.test.js"
     ],
-    "collectCoverage": true,
+    "collectCoverage": false,
+    "collectCoverageFrom": [
+      "<rootDir>/services/**/*.js",
+      "<rootDir>/routes/**/*.js"
+    ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
       "text",
       "lcov"
     ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 65,
+        "functions": 70,
+        "lines": 75,
+        "statements": 75
+      },
+      "./services/**": {
+        "branches": 68,
+        "functions": 72,
+        "lines": 78,
+        "statements": 78
+      },
+      "./routes/**": {
+        "branches": 65,
+        "functions": 70,
+        "lines": 75,
+        "statements": 75
+      }
+    },
     "setupFiles": [
       "<rootDir>/tests/setup.js"
     ]

@@ -2,6 +2,7 @@ const express = require('express');
 const { configureMiddleware } = require('./middleware');
 const { registerRoutes } = require('./routes');
 const { registerHealthChecks } = require('./health');
+const { createLogger } = require('../observability/logger');
 
 function createApp({ config, httpClient, db, logger, nextHandler } = {}) {
   if (!config) {
@@ -9,7 +10,12 @@ function createApp({ config, httpClient, db, logger, nextHandler } = {}) {
     config = require('../config');
   }
 
+  if (!logger) {
+    logger = createLogger({ service: 'api-server', environment: config.nodeEnv });
+  }
+
   const app = express();
+  app.logger = logger;
 
   configureMiddleware(app, { config, logger });
   registerRoutes(app, { config, httpClient, db, logger, nextHandler });

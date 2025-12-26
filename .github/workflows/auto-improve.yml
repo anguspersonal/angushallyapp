@@ -1,0 +1,304 @@
+name: Auto Code Improvements
+
+on:
+  schedule:
+    # Runs every 2 hours from 10 PM to 6 AM UTC
+    - cron: '0 22,0,2,4,6 * * *'  # 10PM, 12AM, 2AM, 4AM, 6AM UTC
+  workflow_dispatch: # Allows manual triggering from GitHub UI
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+jobs:
+  auto-improve:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Get full history for better context
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Read improvement queue
+        id: read-queue
+        run: |
+          # Read the first incomplete improvement from your queue file
+          # Assumes you have a improvements.json file in the repo root
+          if [ ! -f improvements.json ]; then
+            echo "No improvements.json found"
+            echo "has_improvements=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Extract the first improvement that hasn't been completed
+          IMPROVEMENT=$(jq -r '.improvements[] | select(.status != "completed") | @json' improvements.json | head -1)
+          
+          if [ -z "$IMPROVEMENT" ]; then
+            echo "No pending improvements found"
+            echo "has_improvements=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "improvement=$IMPROVEMENT" >> $GITHUB_OUTPUT
+          echo "has_improvements=true" >> $GITHUB_OUTPUT
+          echo "Found improvement: $IMPROVEMENT"
+
+      - name: Generate code changes with Claude
+        if: steps.read-queue.outputs.improvement != ''
+        id: generate-changes
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          IMPROVEMENT: ${{ steps.read-queue.outputs.improvement }}
+        run: |
+          npm install @anthropic-ai/sdk
+          
+          cat << 'EOF' > generate_changes.js
+          const Anthropic = require('@anthropic-ai/sdk');
+          const fs = require('fs');
+          
+          const client = new Anthropic({
+            apiKey: process.env.ANTHROPIC_API_KEY
+          });
+          
+          async function generateChanges() {
+            const improvement = JSON.parse(process.env.IMPROVEMENT);
+            
+            // Read relevant files for context
+            const contextFiles = improvement.files || [];
+            let context = '';
+            for (const file of contextFiles) {
+              if (fs.existsSync(file)) {
+                context += `\n\n=== ${file} ===\n${fs.readFileSync(file, 'utf8')}`;
+              }
+            }
+            
+            const prompt = `You are helping implement the following improvement:
+
+          Title: ${improvement.title}
+          Description: ${improvement.description}
+          Files to modify: ${improvement.files?.join(', ') || 'Not specified'}
+
+          Current code context:${context}
+
+          Please provide:
+          1. The exact file changes needed (as a JSON array)
+          2. A brief explanation of what you did
+
+          Format your response as JSON:
+          {
+            "changes": [
+              {
+                "path": "path/to/file.js",
+                "content": "full new content of the file"
+              }
+            ],
+            "explanation": "Brief explanation of changes"
+          }`;
+
+            try {
+              const message = await client.messages.create({
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 4000,
+                messages: [{ role: 'user', content: prompt }]
+              });
+              
+              const responseText = message.content[0].text;
+              // Extract JSON from response (handle markdown code blocks)
+              const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/) || 
+                               responseText.match(/({[\s\S]*})/);
+              
+              if (jsonMatch) {
+                const result = JSON.parse(jsonMatch[1]);
+                fs.writeFileSync('changes.json', JSON.stringify(result, null, 2));
+                console.log('Changes generated successfully');
+              } else {
+                throw new Error('Could not parse JSON response from Claude');
+              }
+            } catch (error) {
+              if (error.status === 429) {
+                console.error('❌ Rate limit exceeded - too many requests to Anthropic API');
+              } else if (error.status === 401) {
+                console.error('❌ Invalid Anthropic API key');
+              } else if (error.message?.includes('credit')) {
+                console.error('❌ Insufficient Anthropic API credits');
+              } else {
+                console.error('❌ Anthropic API error:', error.message || error);
+              }
+              throw error;
+            }
+          }
+          
+          generateChanges().catch(err => {
+            console.error('Error:', err);
+            process.exit(1);
+          });
+          EOF
+          
+          node generate_changes.js
+          
+          # Check if changes were generated successfully
+          if [ ! -f changes.json ]; then
+            echo "Failed to generate changes - API may have failed"
+            echo "generation_success=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          echo "generation_success=true" >> $GITHUB_OUTPUT
+
+      - name: Check generation status
+        if: steps.read-queue.outputs.has_improvements == 'true' && steps.generate-changes.outcome == 'failure'
+        run: |
+          echo "⚠️ Code generation failed. This could be due to:"
+          echo "  - No Anthropic API credits remaining"
+          echo "  - API rate limiting"
+          echo "  - Network issues"
+          echo "  - Invalid API key"
+          echo ""
+          echo "The workflow will exit gracefully. Check your Anthropic account at console.anthropic.com"
+          exit 0
+
+      - name: Apply changes and create branch
+        if: steps.generate-changes.outputs.generation_success == 'true'
+        id: apply-changes
+        env:
+          IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
+        run: |
+          # Parse the improvement to get metadata using environment variable
+          TITLE=$(echo "${IMPROVEMENT_JSON}" | jq -r '.title' | sed 's/[^a-zA-Z0-9 ]/-/g')
+          BRANCH_NAME="auto-improve/$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | head -c 50)"
+          
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          # Create a new branch
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH_NAME"
+          
+          # Apply the changes
+          if [ -f changes.json ]; then
+            node << 'EOF'
+          const fs = require('fs');
+          const changes = JSON.parse(fs.readFileSync('changes.json', 'utf8'));
+          
+          for (const change of changes.changes) {
+            // Ensure directory exists
+            const dir = change.path.substring(0, change.path.lastIndexOf('/'));
+            if (dir) {
+              fs.mkdirSync(dir, { recursive: true });
+            }
+            fs.writeFileSync(change.path, change.content);
+            console.log(`Updated ${change.path}`);
+          }
+          EOF
+          fi
+          
+          # Commit changes
+          git add .
+          git commit -m "Auto-improvement: $TITLE"
+          git push origin "$BRANCH_NAME" --force
+
+      - name: Create Draft PR
+        if: steps.apply-changes.outputs.branch_name != ''
+        id: create-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          IMPROVEMENT_JSON: ${{ steps.read-queue.outputs.improvement }}
+          BRANCH_NAME: ${{ steps.apply-changes.outputs.branch_name }}
+        run: |
+          TITLE=$(echo "${IMPROVEMENT_JSON}" | jq -r '.title')
+          DESCRIPTION=$(echo "${IMPROVEMENT_JSON}" | jq -r '.description')
+          
+          # Read the explanation from Claude's response
+          EXPLANATION=$(jq -r '.explanation' changes.json 2>/dev/null || echo "See commits for details")
+          
+          PR_BODY="## 🤖 Auto-Generated Improvement
+
+          **Original Request:**
+          $DESCRIPTION
+
+          **Changes Made:**
+          $EXPLANATION
+
+          ---
+          *This PR was automatically generated. Review carefully before merging.*
+          *To stop auto-improvements, disable the workflow in Actions settings.*"
+          
+          # Check if PR already exists for this branch
+          EXISTING_PR=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[0].number' 2>/dev/null || echo "")
+          
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #$EXISTING_PR already exists for this branch - skipping creation"
+            echo "pr_number=$EXISTING_PR" >> "$GITHUB_OUTPUT"
+          else
+            PR_URL=$(gh pr create \
+              --title "🤖 Auto: $TITLE" \
+              --body "$PR_BODY" \
+              --base main \
+              --head "$BRANCH_NAME" \
+              --draft)
+            
+            # Extract the PR number from the URL (assumes URL ends with /<number>)
+            PR_NUMBER=$(echo "$PR_URL" | grep -oP '\d+$')
+            echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+            echo "Created PR #$PR_NUMBER"
+          fi
+
+      - name: Update improvement status
+        if: steps.create-pr.outputs.pr_number != ''
+        run: |
+          # Create a simple Node.js script to update the JSON
+          cat > update_status.js << 'EOF'
+          const fs = require('fs');
+          const title = process.argv[2];
+          const prNumber = parseInt(process.argv[3]);
+          
+          const data = JSON.parse(fs.readFileSync('improvements.json', 'utf8'));
+          const improvement = data.improvements.find(i => i.title === title);
+          
+          if (improvement) {
+            improvement.status = 'in_review';
+            improvement.pr_number = prNumber;
+            fs.writeFileSync('improvements.json', JSON.stringify(data, null, 2));
+            console.log('Updated status for:', title);
+          }
+          EOF
+          
+          # Extract title and run update script
+          TITLE=$(echo '${{ steps.read-queue.outputs.improvement }}' | jq -r '.title')
+          node update_status.js "$TITLE" "${{ steps.create-pr.outputs.pr_number }}"
+          
+          # Commit back to main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git pull origin main
+          git add improvements.json
+          git commit -m "Update status: $TITLE" || true
+          git push origin main || true
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Auto-Improvement Run Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          
+          if [ "${{ steps.read-queue.outputs.has_improvements }}" != "true" ]; then
+            echo "✅ No pending improvements found - queue is empty or all completed!" >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ steps.generate-changes.outcome }}" == "failure" ]; then
+            echo "⚠️ Code generation failed - check Anthropic API credits or configuration" >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ steps.apply-changes.outputs.branch_name }}" != "" ]; then
+            echo "✅ Successfully created PR for improvement!" >> "$GITHUB_STEP_SUMMARY"
+            echo "Branch: \`${{ steps.apply-changes.outputs.branch_name }}\`" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "❌ Workflow encountered an error" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      

@@ -1,4 +1,3 @@
-const config = require('../../config/env');
 /**
  * testStravaActivitiesRoute.test.js
  *
@@ -12,13 +11,6 @@ const config = require('../../config/env');
  *    (or just `npm test` if you want to run all tests).
  */
 
-const path = require('path');
-
-const db = require('../db');
-
-// Base URL for the /api/strava route
-const BASE_URL = 'http://localhost:5000/api/strava';
-
 // Mock the database before any imports
 jest.mock('../db', () => ({
     query: jest.fn(),
@@ -29,18 +21,28 @@ jest.mock('../db', () => ({
 }));
 
 // Mock auth middleware
+let isAuthenticated = true;
+const TEST_USER = {
+    id: '95288f22-6049-4651-85ae-4932ededb5ab',
+    email: 'test@example.com',
+    firstName: 'Test',
+    lastName: 'User',
+    roles: ['member']
+};
+
 jest.mock('../middleware/auth', () => ({
     authMiddleware: () => {
         return (req, res, next) => {
-            req.user = {
-                id: '95288f22-6049-4651-85ae-4932ededb5ab',
-                email: 'test@example.com',
-                firstName: 'Test',
-                lastName: 'User',
-                roles: ['member']
-            };
+            if (!isAuthenticated) {
+                return res.status(401).json({ error: 'No token provided' });
+            }
+
+            req.user = TEST_USER;
             next();
         };
+    },
+    __setAuthenticated: (value) => {
+        isAuthenticated = value;
     }
 }));
 
@@ -51,20 +53,13 @@ const request = require('supertest');
 const express = require('express');
 const getStravaActivitiesFromDB = require('../strava-api/getActivitesFromDB');
 const stravaRoute = require('../routes/stravaRoute');
+const db = require('../db');
+const { __setAuthenticated } = require('../middleware/auth');
 
 // Set test environment
 process.env.NODE_ENV = 'test';
 
-// Mock user for testing
-const TEST_USER = {
-    id: '95288f22-6049-4651-85ae-4932ededb5ab',
-    email: 'test@example.com',
-    firstName: 'Test',
-    lastName: 'User',
-    roles: ['member']
-};
-
-/* 
+/*
  * ────────────────────────────────────────────────────────────────────────────
  * Test Setup and Teardown
  * ────────────────────────────────────────────────────────────────────────────
@@ -75,21 +70,17 @@ beforeAll(async () => {
     // Setup Express app for testing
     app = express();
     app.use(express.json());
-    
-    // Mock auth middleware - inject user into request
-    app.use((req, res, next) => {
-        req.user = TEST_USER;
-        next();
-    });
-    
+
     app.use('/api/strava', stravaRoute);
 });
 
 beforeEach(async () => {
     // Clear all mocks
     jest.clearAllMocks();
-    
+    __setAuthenticated(true);
+
     // Set default successful mock behavior
+    db.query.mockResolvedValue([{ id: 'token-123' }]);
     getStravaActivitiesFromDB.mockResolvedValue([]);
 });
 
@@ -108,7 +99,7 @@ afterAll(async () => {
  * ────────────────────────────────────────────────────────────────────────────
  */
 describe("Strava Activities Route Tests", () => {
-  test("GET /api/strava should return an array of activities", async () => {
+  test("GET /api/strava should return an array of activities for the authenticated user", async () => {
     const mockActivities = [
       {
         id: 1,
@@ -147,6 +138,7 @@ describe("Strava Activities Route Tests", () => {
     expect(response.body[0]).toHaveProperty('type', 'Run');
     expect(response.body[1]).toHaveProperty('name', 'Evening Bike Ride');
     expect(response.body[1]).toHaveProperty('type', 'Ride');
+    expect(getStravaActivitiesFromDB).toHaveBeenCalledWith(TEST_USER.id);
     expect(getStravaActivitiesFromDB).toHaveBeenCalledTimes(1);
   });
 
@@ -160,6 +152,7 @@ describe("Strava Activities Route Tests", () => {
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
     expect(response.body).toHaveLength(0);
+    expect(getStravaActivitiesFromDB).toHaveBeenCalledWith(TEST_USER.id);
     expect(getStravaActivitiesFromDB).toHaveBeenCalledTimes(1);
   });
 
@@ -173,5 +166,28 @@ describe("Strava Activities Route Tests", () => {
     expect(response.status).toBe(500);
     expect(response.body).toHaveProperty('error', 'Failed to fetch Strava data');
     expect(getStravaActivitiesFromDB).toHaveBeenCalledTimes(1);
+  });
+
+  test("GET /api/strava should return 403 when user has no Strava connection", async () => {
+    db.query.mockResolvedValueOnce([]); // No Strava tokens for user
+
+    const response = await request(app)
+      .get('/api/strava');
+
+    expect(response.status).toBe(403);
+    expect(response.body).toHaveProperty('error', 'Strava account not connected');
+    expect(getStravaActivitiesFromDB).not.toHaveBeenCalled();
+  });
+
+  test("GET /api/strava should return 401 when unauthenticated", async () => {
+    __setAuthenticated(false);
+
+    const response = await request(app)
+      .get('/api/strava');
+
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty('error', 'No token provided');
+    expect(db.query).not.toHaveBeenCalled();
+    expect(getStravaActivitiesFromDB).not.toHaveBeenCalled();
   });
 });

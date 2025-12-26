@@ -1,4 +1,4 @@
-const { createContactLimiter } = require('./middleware');
+const { createAuthLimiter, createContactLimiter } = require('./middleware');
 const { createContentService } = require('../services/contentService');
 const { createHabitService } = require('../services/habitService');
 const db = require('../db');
@@ -29,15 +29,25 @@ function loadRoute(modulePath, deps) {
 }
 
 function registerRoutes(app, deps = {}) {
+  const baseLogger = deps.logger;
   const contactLimiter = createContactLimiter();
+  const authLimiter = createAuthLimiter();
   const habitApi = deps.habitApi || require('../habit-api/habitService');
   const alcoholService = deps.alcoholService || require('../habit-api/alcoholService');
   const exerciseService = deps.exerciseService || require('../habit-api/exerciseService');
   const aggregateService = deps.aggregateService || require('../habit-api/aggregateService');
-  const contentService = deps.contentService || createContentService({ db: deps.db || db, logger: deps.logger });
+  const contentService =
+    deps.contentService ||
+    createContentService({ db: deps.db || db, logger: baseLogger?.child?.({ component: 'content-service' }) || baseLogger });
   const habitService =
     deps.habitService ||
-    createHabitService({ habitApi, aggregateService, alcoholService, exerciseService, logger: deps.logger });
+    createHabitService({
+      habitApi,
+      aggregateService,
+      alcoholService,
+      exerciseService,
+      logger: baseLogger?.child?.({ component: 'habit-service' }) || baseLogger,
+    });
 
   const sharedDeps = {
     ...deps,
@@ -51,10 +61,16 @@ function registerRoutes(app, deps = {}) {
 
   const contactRoute = loadRoute('../routes/contact', sharedDeps);
   const dbRoute = loadRoute('../routes/dbRoute', sharedDeps);
-  const contentRoute = loadRoute('../routes/contentRoute', sharedDeps);
+  const contentRoute = loadRoute('../routes/contentRoute', {
+    ...sharedDeps,
+    logger: baseLogger?.child?.({ route: 'content' }) || baseLogger,
+  });
   const hygieneScoreRoute = loadRoute('../routes/hygieneScoreRoute', sharedDeps);
   const stravaRoute = loadRoute('../routes/stravaRoute', sharedDeps);
-  const habitRoute = loadRoute('../routes/habitRoute', sharedDeps);
+  const habitRoute = loadRoute('../routes/habitRoute', {
+    ...sharedDeps,
+    logger: baseLogger?.child?.({ route: 'habit' }) || baseLogger,
+  });
   const authRoute = loadRoute('../routes/authRoute', sharedDeps);
   const analyseTextRoute = loadRoute('../routes/analyseTextRoute', sharedDeps);
   const raindropRoute = loadRoute('../routes/raindropRoute', sharedDeps);
@@ -69,7 +85,7 @@ function registerRoutes(app, deps = {}) {
   app.use('/api/hygieneScoreRoute', hygieneScoreRoute);
   app.use('/api/strava', stravaRoute);
   app.use('/api/habit', habitRoute);
-  app.use('/api/auth', authRoute);
+  app.use('/api/auth', authLimiter, authRoute);
   app.use('/api/analyseText', analyseTextRoute);
   app.use('/api/raindrop/oauth/callback', raindropCallbackRoute);
   app.use('/api/raindrop', raindropRoute);

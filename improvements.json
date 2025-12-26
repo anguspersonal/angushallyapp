@@ -1,0 +1,29 @@
+{
+  "improvements": [
+    {
+      "title": "Add unit tests for payment processing",
+      "description": "Create comprehensive unit tests for the payment processing module, covering success cases, failure cases, and edge cases like network timeouts.",
+      "files": [
+        "src/services/payment.js"
+      ],
+      "priority": 2,
+      "status": "in_review",
+      "pr_number": 29
+    },
+    {
+      "title": "Refactor database connection pooling",
+      "description": "Update the database connection module to use connection pooling with a max of 10 connections. Add proper error handling and retry logic.",
+      "files": [
+        "src/db/connection.js"
+      ],
+      "priority": 3,
+      "status": "pending",
+      "pr_number": null
+    }
+  ],
+  "settings": {
+    "maxFilesPerImprovement": 5,
+    "requireTests": false,
+    "autoMergeIfTestsPass": false
+  }
+}

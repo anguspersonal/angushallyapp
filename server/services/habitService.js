@@ -37,9 +37,13 @@ function parsePage(value) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_PAGE;
 }
 
-function createInvalidInputError(message, code) {
+function createHabitError(message, code, type, options = {}) {
   const error = new Error(message);
   error.code = code;
+  error.type = type;
+  if (options.cause) {
+    error.cause = options.cause;
+  }
   return error;
 }
 
@@ -55,7 +59,7 @@ function mapHabitLog(log) {
 }
 
 function createHabitService(deps = {}) {
-  const { habitApi, aggregateService, alcoholService, exerciseService, logger = console } = deps;
+  const { habitApi, aggregateService, alcoholService, exerciseService, logger } = deps;
 
   if (!habitApi || typeof habitApi.getHabitLogsFromDB !== 'function') {
     throw new Error('createHabitService requires a habitApi dependency with getHabitLogsFromDB');
@@ -69,15 +73,22 @@ function createHabitService(deps = {}) {
    * @param {HabitListParams} [params]
    * @returns {Promise<HabitListResult>}
    */
-  async function listHabits(userId, params = {}) {
+  async function listHabits(userId, params = {}, options = {}) {
     const page = parsePage(params.page);
     const pageSize = clampPageSize(params.pageSize);
     const offset = (page - 1) * pageSize;
     const logs = await habitApi.getHabitLogsFromDB(userId, pageSize, offset);
     /** @type {HabitSummary[]} */
     const items = Array.isArray(logs) ? logs.map(mapHabitLog) : [];
-    const totalItems = Array.isArray(logs) && typeof logs.total === 'number' ? logs.total : offset + items.length;
-    const hasMore = items.length === pageSize;
+    const totalFromProvider = Array.isArray(logs) && typeof logs.total === 'number' ? logs.total : null;
+    const inferredHasMore = items.length === pageSize;
+    const totalItems = typeof totalFromProvider === 'number'
+      ? totalFromProvider
+      : inferredHasMore
+        ? offset + items.length + 1 // assume at least one more page when the page is full
+        : offset + items.length;
+    const totalPages = Math.max(Math.ceil(totalItems / pageSize), 1);
+    const hasMore = typeof totalFromProvider === 'number' ? page < totalPages : inferredHasMore;
 
     return {
       items,
@@ -85,31 +96,31 @@ function createHabitService(deps = {}) {
         page,
         pageSize,
         totalItems,
-        totalPages: Math.max(hasMore ? page + 1 : page, 1),
+        totalPages,
         hasMore,
       },
     };
   }
 
   /**
-   * Placeholder detail fetcher.
+   * Fetches a single habit log by ID.
+   * Uses direct database query by ID for efficiency instead of fetching all logs.
    * @param {string | number} id
    * @returns {Promise<HabitDetail | null>}
    */
-  async function getHabitById(id) {
-    try {
-      const logs = await habitApi.getHabitLogsFromDB();
-      const match = Array.isArray(logs) ? logs.find((log) => log.id === id) : null;
-      return match
-        ? {
-            ...mapHabitLog(match),
-            description: match.extra_data?.notes ?? null,
-          }
-        : null;
-    } catch (error) {
-      logger.error?.('Failed to fetch habit by id', error);
-      throw error;
+  async function getHabitById(id, options = {}) {
+    const log = typeof habitApi.getHabitLogById === 'function'
+      ? await habitApi.getHabitLogById(id)
+      : null;
+    
+    if (!log) {
+      return null;
     }
+    
+    return {
+      ...mapHabitLog(log),
+      description: log.extra_data?.notes ?? null,
+    };
   }
 
   /**
@@ -117,12 +128,13 @@ function createHabitService(deps = {}) {
    * @param {string} userId
    * @param {{ name: string; value: number; metric?: string; extraData?: Record<string, unknown> | null }} input
    */
-  async function createHabit(userId, input) {
+  async function createHabit(userId, input, options = {}) {
+    const scopedLogger = options.logger || logger;
     try {
       return await habitApi.logHabitLog(userId, input.name, input.value, input.metric, input.extraData);
     } catch (error) {
-      logger.error?.('Failed to create habit log', error);
-      throw error;
+      scopedLogger?.error?.('habitService.createHabit.failed', { error });
+      throw createHabitError('Failed to create habit log', 'HABIT_CREATE_FAILED', 'dependency', { cause: error });
     }
   }
 
@@ -133,23 +145,22 @@ function createHabitService(deps = {}) {
    * @param {HabitPeriod} period
    * @param {HabitMetric[]} [metrics]
    */
-  async function getStats(userId, period, metrics = DEFAULT_METRICS) {
+  async function getStats(userId, period, metrics = DEFAULT_METRICS, options = {}) {
+    const scopedLogger = options.logger || logger;
     const supportedPeriods = new Set(HABIT_PERIODS);
     const resolvedPeriod = supportedPeriods.has(period) ? /** @type {HabitPeriod} */ (period) : null;
     if (!resolvedPeriod) {
-      throw createInvalidInputError(`Unsupported period: ${period}`, 'HABIT_INVALID_PERIOD');
+      throw createHabitError(`Unsupported period: ${period}`, 'HABIT_INVALID_PERIOD', 'validation');
     }
 
     if (typeof habitApi.getHabitAggregates !== 'function') {
-      const error = new Error('Habit stats provider not configured');
-      error.code = 'HABIT_STATS_PROVIDER_MISSING';
-      throw error;
+      throw createHabitError('Habit stats provider not configured', 'HABIT_STATS_PROVIDER_MISSING', 'dependency');
     }
 
     const metricList = Array.isArray(metrics) ? metrics : DEFAULT_METRICS;
     const invalidMetrics = metricList.filter((metric) => !HABIT_METRICS.includes(metric));
     if (invalidMetrics.length > 0) {
-      throw createInvalidInputError('Invalid habit metrics requested', 'HABIT_INVALID_METRIC');
+      throw createHabitError('Invalid habit metrics requested', 'HABIT_INVALID_METRIC', 'validation');
     }
 
     try {
@@ -172,18 +183,15 @@ function createHabitService(deps = {}) {
 
       return shaped;
     } catch (error) {
-      logger.error?.('Failed to fetch habit stats', error);
-      const wrapped = new Error('Failed to fetch habit stats');
-      wrapped.code = 'HABIT_STATS_FETCH_FAILED';
-      throw wrapped;
+      scopedLogger?.error?.('habitService.getStats.failed', { error });
+      throw createHabitError('Failed to fetch habit stats', 'HABIT_STATS_FETCH_FAILED', 'dependency', { cause: error });
     }
   }
 
-  async function getAggregates(userId, habitType) {
+  async function getAggregates(userId, habitType, options = {}) {
+    const scopedLogger = options.logger || logger;
     if (!habitType) {
-      const error = new Error('Habit type is required');
-      error.code = 'HABIT_INVALID_TYPE';
-      throw error;
+      throw createHabitError('Habit type is required', 'HABIT_INVALID_TYPE', 'validation');
     }
 
     try {
@@ -195,11 +203,9 @@ function createHabitService(deps = {}) {
         return await aggregateService.getAggregateStats(userId, habitType);
       }
 
-      const error = new Error('Habit aggregate provider not configured');
-      error.code = 'HABIT_AGGREGATE_PROVIDER_MISSING';
-      throw error;
+      throw createHabitError('Habit aggregate provider not configured', 'HABIT_AGGREGATE_PROVIDER_MISSING', 'dependency');
     } catch (error) {
-      logger.error?.('Failed to fetch habit aggregates', error);
+      scopedLogger?.error?.('habitService.getAggregates.failed', { error });
       throw error;
     }
   }

@@ -5,10 +5,17 @@ const checkValueType = require('../utils/checkValueType');
 
 
 
-const getStravaActivitiesFromDB = async () => {
-    const query = `SELECT * FROM habit.strava_activities ORDER BY start_date_local DESC;`;
+const getStravaActivitiesFromDB = async (userId) => {
+    if (!userId) {
+        throw new Error('User ID is required to fetch Strava activities');
+    }
+
+    const query = `SELECT *
+                   FROM habit.strava_activities
+                   WHERE user_id = $1
+                   ORDER BY start_date_local DESC;`;
     try {
-        const response = await db.query(query);
+        const response = await db.query(query, [userId]);
         const valueType = checkValueType(response);
         // console.log(`Value type of rows: ${valueType}`);
         // console.log(`Fetched ${response.length} activities from database`);

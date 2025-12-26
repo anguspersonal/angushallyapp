@@ -5,6 +5,20 @@ let cachedConfig;
 
 const SUPPORTED_ENVS = ['development', 'test', 'production'];
 
+const TEST_DEFAULTS = {
+  JWT_SECRET: 'test-jwt-secret',
+  GOOGLE_CLIENT_ID: 'test-google-client-id',
+  GOOGLE_CLIENT_SECRET: 'test-google-client-secret',
+  OPENAI_API_KEY: 'test-openai-api-key',
+  STRAVA_CLIENT_ID: '12345',
+  STRAVA_CLIENT_SECRET: 'test-strava-client-secret',
+  STRAVA_REDIRECT_URI: 'http://localhost:5000/api/strava/callback',
+  RAINDROP_CLIENT_ID: 'test-raindrop-client-id',
+  RAINDROP_CLIENT_SECRET: 'test-raindrop-client-secret',
+  RAINDROP_REDIRECT_URI: 'http://localhost:5000/api/raindrop/oauth/callback',
+  RECAPTCHA_SECRET_KEY: 'test-recaptcha-secret',
+};
+
 function parseEnvFile(file) {
   const content = fs.readFileSync(file, 'utf8');
   content.split(/\r?\n/).forEach((line) => {
@@ -89,9 +103,12 @@ function buildConfig() {
   const rootDir = path.resolve(__dirname, '..', '..');
   const nodeEnv = process.env.NODE_ENV?.toLowerCase() || 'development';
   const normalizedEnv = SUPPORTED_ENVS.includes(nodeEnv) ? nodeEnv : 'development';
+  const isTestEnv = normalizedEnv === 'test';
   const loadedEnvFiles = loadEnvFiles(rootDir, normalizedEnv);
   const raw = { ...process.env, NODE_ENV: normalizedEnv };
   const errors = [];
+
+  const testDefault = (key, fallback) => (isTestEnv ? TEST_DEFAULTS[key] ?? fallback : fallback);
 
   const parsed = {
     NODE_ENV: normalizedEnv,
@@ -101,22 +118,32 @@ function buildConfig() {
     HTTP_MAX_RETRIES: coerceNumber('HTTP_MAX_RETRIES', raw.HTTP_MAX_RETRIES, { defaultValue: 2, integer: true, min: 0, max: 5 }, errors),
     HTTP_RETRY_DELAY_MS: coerceNumber('HTTP_RETRY_DELAY_MS', raw.HTTP_RETRY_DELAY_MS, { defaultValue: 100, integer: true, min: 0 }, errors),
     HTTP_RETRY_BACKOFF_FACTOR: coerceNumber('HTTP_RETRY_BACKOFF_FACTOR', raw.HTTP_RETRY_BACKOFF_FACTOR, { defaultValue: 2, positive: true }, errors),
-    JWT_SECRET: coerceString('JWT_SECRET', raw.JWT_SECRET, { required: true }, errors),
-    GOOGLE_CLIENT_ID: coerceString('GOOGLE_CLIENT_ID', raw.GOOGLE_CLIENT_ID, { required: true }, errors),
-    GOOGLE_CLIENT_SECRET: coerceString('GOOGLE_CLIENT_SECRET', raw.GOOGLE_CLIENT_SECRET, { required: true }, errors),
-    OPENAI_API_KEY: coerceString('OPENAI_API_KEY', raw.OPENAI_API_KEY, { required: true }, errors),
+    JWT_SECRET: coerceString('JWT_SECRET', raw.JWT_SECRET, { required: !isTestEnv, defaultValue: testDefault('JWT_SECRET') }, errors),
+    GOOGLE_CLIENT_ID: coerceString('GOOGLE_CLIENT_ID', raw.GOOGLE_CLIENT_ID, { required: !isTestEnv, defaultValue: testDefault('GOOGLE_CLIENT_ID') }, errors),
+    GOOGLE_CLIENT_SECRET: coerceString('GOOGLE_CLIENT_SECRET', raw.GOOGLE_CLIENT_SECRET, { required: !isTestEnv, defaultValue: testDefault('GOOGLE_CLIENT_SECRET') }, errors),
+    OPENAI_API_KEY: coerceString('OPENAI_API_KEY', raw.OPENAI_API_KEY, { required: !isTestEnv, defaultValue: testDefault('OPENAI_API_KEY') }, errors),
     OPENAI_BASE_URL: coerceString('OPENAI_BASE_URL', raw.OPENAI_BASE_URL, { defaultValue: 'https://api.openai.com/v1', url: true }, errors),
     GOOGLE_MAPS_API_KEY: raw.GOOGLE_MAPS_API_KEY,
     GOOGLE_MAPS_MAP_ID: raw.GOOGLE_MAPS_MAP_ID,
+    GOOGLE_OAUTH_CLIENT_ID: raw.GOOGLE_OAUTH_CLIENT_ID ?? raw.EMAIL_OAUTH_CLIENT_ID,
+    GOOGLE_OAUTH_CLIENT_SECRET: raw.GOOGLE_OAUTH_CLIENT_SECRET ?? raw.EMAIL_OAUTH_CLIENT_SECRET,
+    GOOGLE_OAUTH_REFRESH_TOKEN: raw.GOOGLE_OAUTH_REFRESH_TOKEN ?? raw.EMAIL_OAUTH_REFRESH_TOKEN,
+    GOOGLE_OAUTH_ACCESS_TOKEN: raw.GOOGLE_OAUTH_ACCESS_TOKEN ?? raw.EMAIL_OAUTH_ACCESS_TOKEN,
+    GOOGLE_OAUTH_TOKEN_EXPIRES: coerceNumber(
+      'GOOGLE_OAUTH_TOKEN_EXPIRES',
+      raw.GOOGLE_OAUTH_TOKEN_EXPIRES ?? raw.EMAIL_OAUTH_TOKEN_EXPIRES,
+      { integer: true, positive: true },
+      errors,
+    ),
     STRAVA_CLIENT_ID: coerceString('STRAVA_CLIENT_ID', raw.STRAVA_CLIENT_ID, { required: true }, errors),
     STRAVA_CLIENT_SECRET: coerceString('STRAVA_CLIENT_SECRET', raw.STRAVA_CLIENT_SECRET, { required: true }, errors),
     STRAVA_WEBHOOK_SECRET: raw.STRAVA_WEBHOOK_SECRET,
-    STRAVA_REDIRECT_URI: coerceString('STRAVA_REDIRECT_URI', raw.STRAVA_REDIRECT_URI, { required: true, url: true }, errors),
+    STRAVA_REDIRECT_URI: coerceString('STRAVA_REDIRECT_URI', raw.STRAVA_REDIRECT_URI, { required: !isTestEnv, url: true, defaultValue: testDefault('STRAVA_REDIRECT_URI') }, errors),
     STRAVA_BASE_URL: coerceString('STRAVA_BASE_URL', raw.STRAVA_BASE_URL, { defaultValue: 'https://www.strava.com/api/v3', url: true }, errors),
     STRAVA_OAUTH_BASE_URL: coerceString('STRAVA_OAUTH_BASE_URL', raw.STRAVA_OAUTH_BASE_URL, { defaultValue: 'https://www.strava.com', url: true }, errors),
-    RAINDROP_CLIENT_ID: coerceString('RAINDROP_CLIENT_ID', raw.RAINDROP_CLIENT_ID, { required: true }, errors),
-    RAINDROP_CLIENT_SECRET: coerceString('RAINDROP_CLIENT_SECRET', raw.RAINDROP_CLIENT_SECRET, { required: true }, errors),
-    RAINDROP_REDIRECT_URI: coerceString('RAINDROP_REDIRECT_URI', raw.RAINDROP_REDIRECT_URI, { required: true, url: true }, errors),
+    RAINDROP_CLIENT_ID: coerceString('RAINDROP_CLIENT_ID', raw.RAINDROP_CLIENT_ID, { required: !isTestEnv, defaultValue: testDefault('RAINDROP_CLIENT_ID') }, errors),
+    RAINDROP_CLIENT_SECRET: coerceString('RAINDROP_CLIENT_SECRET', raw.RAINDROP_CLIENT_SECRET, { required: !isTestEnv, defaultValue: testDefault('RAINDROP_CLIENT_SECRET') }, errors),
+    RAINDROP_REDIRECT_URI: coerceString('RAINDROP_REDIRECT_URI', raw.RAINDROP_REDIRECT_URI, { required: !isTestEnv, url: true, defaultValue: testDefault('RAINDROP_REDIRECT_URI') }, errors),
     RAINDROP_OAUTH_BASE_URL: coerceString('RAINDROP_OAUTH_BASE_URL', raw.RAINDROP_OAUTH_BASE_URL, { defaultValue: 'https://raindrop.io', url: true }, errors),
     RAINDROP_BASE_URL: coerceString('RAINDROP_BASE_URL', raw.RAINDROP_BASE_URL, { defaultValue: 'https://api.raindrop.io', url: true }, errors),
     RECAPTCHA_SECRET_KEY: coerceString('RECAPTCHA_SECRET_KEY', raw.RECAPTCHA_SECRET_KEY, { required: true }, errors),
@@ -130,8 +157,11 @@ function buildConfig() {
     DATABASE_URL: coerceString('DATABASE_URL', raw.DATABASE_URL, { url: true }, errors),
     DB_SEARCH_PATH: raw.DB_SEARCH_PATH,
     PROD_DB_SEARCH_PATH: raw.PROD_DB_SEARCH_PATH,
-    EMAIL_USER: raw.EMAIL_USER,
-    EMAIL_PASS: raw.EMAIL_PASS,
+    SMTP_HOST: raw.SMTP_HOST ?? raw.EMAIL_SMTP_HOST ?? raw.EMAIL_HOST,
+    SMTP_PORT: coerceNumber('SMTP_PORT', raw.SMTP_PORT ?? raw.EMAIL_SMTP_PORT ?? raw.EMAIL_PORT, { integer: true, min: 1, max: 65535 }, errors),
+    SMTP_SECURE: raw.SMTP_SECURE ?? raw.EMAIL_SMTP_SECURE ?? raw.EMAIL_SECURE,
+    SMTP_USER: raw.SMTP_USER ?? raw.EMAIL_USER,
+    SMTP_PASS: raw.SMTP_PASS ?? raw.EMAIL_PASS,
     RECIPIENT_EMAIL: raw.RECIPIENT_EMAIL,
     APIFY_API_TOKEN: raw.APIFY_API_TOKEN,
     APIFY_INSTAGRAM_ACTOR_ID: raw.APIFY_INSTAGRAM_ACTOR_ID,
@@ -216,12 +246,30 @@ function buildConfig() {
       oauthBaseUrl: parsed.STRAVA_OAUTH_BASE_URL || 'https://www.strava.com',
     },
     email: {
-      user: parsed.EMAIL_USER,
-      password: parsed.EMAIL_PASS,
-      recipient: parsed.RECIPIENT_EMAIL,
+      transport: {
+        host: parsed.SMTP_HOST || 'smtp.gmail.com',
+        port: parsed.SMTP_PORT || 465,
+        secure: parsed.SMTP_SECURE === undefined ? true : parsed.SMTP_SECURE === true || parsed.SMTP_SECURE === 'true',
+        user: parsed.SMTP_USER,
+        password: parsed.SMTP_PASS,
+        oauth: {
+          clientId: parsed.GOOGLE_OAUTH_CLIENT_ID,
+          clientSecret: parsed.GOOGLE_OAUTH_CLIENT_SECRET,
+          refreshToken: parsed.GOOGLE_OAUTH_REFRESH_TOKEN,
+          accessToken: parsed.GOOGLE_OAUTH_ACCESS_TOKEN,
+          accessTokenExpires: parsed.GOOGLE_OAUTH_TOKEN_EXPIRES,
+        },
+        maxConnections: 1,
+        maxMessages: 50,
+        rateLimit: 5,
+        rateDelta: 1000,
+      },
+      recipients: {
+        owner: parsed.RECIPIENT_EMAIL,
+      },
     },
     security: {
-      recaptchaSecret: parsed.RECAPTCHA_SECRET_KEY,
+      recaptchaSecret: coerceString('RECAPTCHA_SECRET_KEY', parsed.RECAPTCHA_SECRET_KEY, { required: !isTestEnv, defaultValue: testDefault('RECAPTCHA_SECRET_KEY') }, errors),
       recaptchaSiteKey: parsed.RECAPTCHA_SITE_KEY,
       verifyUrl: parsed.RECAPTCHA_VERIFY_URL || 'https://www.google.com/recaptcha/api/siteverify',
     },
@@ -247,6 +295,7 @@ function buildConfig() {
     },
     debug: {
       knexDebugConnect: parsed.KNEX_DEBUG_CONNECT === 'true',
+      googleAuthLogging: raw.GOOGLE_AUTH_LOGGING === 'true',
     },
   };
 

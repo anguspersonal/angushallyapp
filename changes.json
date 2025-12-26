@@ -1,0 +1,41 @@
+{
+  "changes": [
+    {
+      "path": "package.json",
+      "content": "Root npm test fans out to the server and UI workspaces so contributors run the real suites instead of a no-op."
+    },
+    {
+      "path": "server/package.json",
+      "content": "Server tests now build habit contract artefacts up front and use a shared Jest runner with an explicit missing-dependency message."
+    },
+    {
+      "path": "scripts/run-jest.js",
+      "content": "Added a guarded Jest launcher that surfaces a clear instruction when dev dependencies are unavailable."
+    },
+    {
+      "path": "server/config/index.js",
+      "content": "Test mode supplies safe defaults for required secrets so config validation passes under NODE_ENV=test without real credentials."
+    },
+    {
+      "path": "server/tests/setup.js",
+      "content": "Test bootstrap prefers .env.test/.env.test.example and keeps NODE_ENV=test fixed for deterministic CI runs."
+    },
+    {
+      "path": ".env.test.example",
+      "content": "Documented a non-production test env template for all required auth and integration secrets."
+    },
+    {
+      "path": "server/tests/authRoute.test.js",
+      "content": "New coverage verifies shared auth validators, hashed password storage, timing-safe login compare, and the auth rate limiter response."
+    },
+    {
+      "path": "server/routes/authRoute.js",
+      "content": "Auth router remains the single entry point for /api/auth with hashed persistence and shared validation middleware."
+    },
+    {
+      "path": "config/README.md",
+      "content": "Added test setup guidance so developers copy .env.test.example to run Jest with deterministic values."
+    }
+  ],
+  "explanation": "Tests now run from the root against the workspace suites with clear failure messaging when Jest is unavailable. Configuration loading prefers dedicated .env.test defaults under NODE_ENV=test, and new auth route tests assert validation, hashing, and rate limiting behaviour."
+}

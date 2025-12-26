@@ -2,10 +2,12 @@ const config = require('../config');
 const { createHttpClient } = require('../http/client');
 const { createApp } = require('./createApp');
 const { attachNext } = require('./next');
+const { createLogger } = require('../observability/logger');
 
 function createServer({ withNext = true } = {}) {
-  const httpClient = createHttpClient({ config: config.http, logger: console });
-  const app = createApp({ config, httpClient });
+  const logger = createLogger({ service: 'api-server', environment: config.nodeEnv });
+  const httpClient = createHttpClient({ config: config.http, logger: logger.child({ component: 'http-client' }) });
+  const app = createApp({ config, httpClient, logger });
 
   if (withNext) {
     attachNext(app);
@@ -19,7 +21,8 @@ function startServer({ app, withNext } = {}) {
   const PORT = config.server.port;
   const isDev = config.nodeEnv !== 'production';
   return serverApp.listen(PORT, () => {
-    console.log(`Node ${isDev ? 'dev server' : 'server'} listening on port ${PORT}`);
+    const logger = serverApp?.logger || createLogger({ service: 'api-server', environment: config.nodeEnv });
+    logger.info('server:listening', { port: PORT, nodeEnv: config.nodeEnv, isDev });
   });
 }
 

@@ -6,22 +6,53 @@ const { body, validationResult } = require('express-validator');
 const db = require('../db');
 const config = require('../../config/env');
 const { authMiddleware } = require('../middleware/auth');
+const { validateEmail, validatePassword } = require('../../src/utils/validators');
 
 const router = express.Router();
 const googleClient = new OAuth2Client(config.auth.google.clientId);
 
+const validationHandlers = {
+  email: body('email')
+    .custom((value) => {
+      if (!validateEmail(value)) {
+        throw new Error('Invalid email format');
+      }
+      return true;
+    })
+    .normalizeEmail(),
+  password: body('password').custom((value) => {
+    if (!validatePassword(value)) {
+      throw new Error('Password must be at least 8 characters long and include a number and special character');
+    }
+    return true;
+  }),
+  firstName: body('firstName').trim().notEmpty().withMessage('First name is required'),
+  lastName: body('lastName').trim().notEmpty().withMessage('Last name is required'),
+};
+
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  return next();
+};
+
 // Validation middleware for registration
 const validateRegistration = [
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 8 }),
-  body('firstName').trim().notEmpty(),
-  body('lastName').trim().notEmpty(),
+  validationHandlers.email,
+  validationHandlers.password,
+  validationHandlers.firstName,
+  validationHandlers.lastName,
+  handleValidationErrors,
 ];
 
 // Validation middleware for login
 const validateLogin = [
-  body('email').isEmail().normalizeEmail(),
-  body('password').notEmpty(),
+  validationHandlers.email,
+  validationHandlers.password,
+  handleValidationErrors,
 ];
 
 /**
@@ -29,20 +60,17 @@ const validateLogin = [
  */
 router.post('/register', validateRegistration, async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { email, password, firstName, lastName } = req.body;
 
     // Check if user already exists
-    const existingUser = await db.query(
+    const existingUsers = await db.query(
       'SELECT id FROM identity.users WHERE email = $1 AND auth_provider = $2',
       [email, 'local']
     );
 
-    if (existingUser.rows.length > 0) {
+    const existingUser = existingUsers[0];
+
+    if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
@@ -52,27 +80,33 @@ router.post('/register', validateRegistration, async (req, res) => {
 
     // Create new user
     const result = await db.query(
-      `INSERT INTO identity.users 
+      `INSERT INTO identity.users
        (email, password_hash, auth_provider, first_name, last_name, is_active)
        VALUES ($1, $2, $3, $4, $5, true)
        RETURNING id, email, first_name, last_name`,
       [email, passwordHash, 'local', firstName, lastName]
     );
 
+    if (!Array.isArray(result) || result.length === 0) {
+      return res.status(500).json({ error: 'Failed to create user' });
+    }
+
+    const createdUser = result[0];
+
     // Assign default role (assuming 'user' role exists)
     await db.query(
       `INSERT INTO identity.user_roles (user_id, role_id)
        SELECT $1, id FROM identity.roles WHERE name = 'user'`,
-      [result.rows[0].id]
+      [createdUser.id]
     );
 
     res.status(201).json({
       message: 'User registered successfully',
       user: {
-        id: result.rows[0].id,
-        email: result.rows[0].email,
-        firstName: result.rows[0].first_name,
-        lastName: result.rows[0].last_name
+        id: createdUser.id,
+        email: createdUser.email,
+        firstName: createdUser.first_name,
+        lastName: createdUser.last_name
       }
     });
   } catch (error) {
@@ -86,11 +120,6 @@ router.post('/register', validateRegistration, async (req, res) => {
  */
 router.post('/login', validateLogin, async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { email, password } = req.body;
 
     // Get user with their roles
@@ -105,7 +134,7 @@ router.post('/login', validateLogin, async (req, res) => {
       [email, 'local']
     );
 
-    const user = result.rows[0];
+    const user = Array.isArray(result) && result.length > 0 ? result[0] : null;
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -190,41 +219,49 @@ router.post('/google', async (req, res) => {
     }
 
     const { sub: googleSub, email, given_name: firstName, family_name: lastName } = payload;
-    console.log('Google auth payload:', { googleSub, email, firstName, lastName });
+    if (config.debug?.googleAuthLogging) {
+      console.log('Google auth payload identifiers:', { googleSub, email });
+    }
 
-    await db.query('BEGIN');
+    let client;
+    let user = null;
 
     try {
+      client = await db.pool.connect();
+      await client.query('BEGIN');
+
       // First, check if a user exists with this Google sub
-      let user = null;
-      const googleUserResult = await db.query(
+      const googleUserResult = await client.query(
         `SELECT id, email, auth_provider, google_sub, first_name, last_name, is_active
-         FROM identity.users 
+         FROM identity.users
          WHERE google_sub = $1`,
         [googleSub]
       );
 
-      if (googleUserResult?.[0]) {
+      const googleUser = googleUserResult.rows?.[0];
+
+      if (googleUser) {
         // User exists with this Google account
-        user = googleUserResult[0];
+        user = googleUser;
       } else {
         // Check if user exists with this email
-        const emailUserResult = await db.query(
+        const emailUserResult = await client.query(
           `SELECT id, email, auth_provider, google_sub, first_name, last_name, is_active
-           FROM identity.users 
+           FROM identity.users
            WHERE email = $1
            ORDER BY created_at ASC
            LIMIT 1`,
           [email]
         );
 
-        if (emailUserResult?.[0]) {
-          const existingUser = emailUserResult[0];
-          
+        const existingUser = emailUserResult.rows?.[0];
+
+        if (existingUser) {
+
           // If the existing user has no Google sub, update it
           if (!existingUser.google_sub) {
-            const updateResult = await db.query(
-              `UPDATE identity.users 
+            const updateResult = await client.query(
+              `UPDATE identity.users
                SET google_sub = $1,
                    auth_provider = 'google',
                    first_name = COALESCE($2, first_name),
@@ -235,14 +272,14 @@ router.post('/google', async (req, res) => {
               [googleSub, firstName, lastName, existingUser.id]
             );
 
-            if (!updateResult?.[0]) {
+            if (!updateResult.rows?.[0]) {
               throw new Error('Failed to update existing user');
             }
 
-            user = updateResult[0];
+            user = updateResult.rows[0];
           } else {
             // User exists with a different auth provider and already has a Google sub
-            await db.query('ROLLBACK');
+            await client.query('ROLLBACK');
             return res.status(409).json({
               error: 'Account exists with different auth provider',
               details: `This email is already registered using ${existingUser.auth_provider} authentication`
@@ -250,22 +287,22 @@ router.post('/google', async (req, res) => {
           }
         } else {
           // Create new user
-          const userResult = await db.query(
-            `INSERT INTO identity.users 
+          const userResult = await client.query(
+            `INSERT INTO identity.users
              (email, auth_provider, google_sub, first_name, last_name, is_active, email_verified_at)
              VALUES ($1, 'google', $2, $3, $4, true, CURRENT_TIMESTAMP)
              RETURNING id, email, first_name, last_name, google_sub, is_active`,
             [email, googleSub, firstName, lastName]
           );
 
-          if (!userResult?.[0]) {
+          if (!userResult.rows?.[0]) {
             throw new Error('Failed to create new user record');
           }
 
-          user = userResult[0];
+          user = userResult.rows[0];
 
           // Assign default role
-          await db.query(
+          await client.query(
             `INSERT INTO identity.user_roles (user_id, role_id)
              SELECT $1, id FROM identity.roles WHERE name = 'user'`,
             [user.id]
@@ -274,12 +311,12 @@ router.post('/google', async (req, res) => {
       }
 
       if (!user.is_active) {
-        await db.query('ROLLBACK');
+        await client.query('ROLLBACK');
         return res.status(403).json({ error: 'Account is inactive' });
       }
 
       // Get user roles
-      const userWithRoles = await db.query(
+      const userWithRoles = await client.query(
         `SELECT u.id, u.email, u.first_name, u.last_name, u.google_sub,
                 ARRAY_REMOVE(ARRAY_AGG(r.name), NULL) as roles
          FROM identity.users u
@@ -290,20 +327,20 @@ router.post('/google', async (req, res) => {
         [user.id]
       );
 
-      if (!userWithRoles?.[0]) {
+      if (!userWithRoles.rows?.[0]) {
         throw new Error('Failed to retrieve user data');
       }
 
-      user = userWithRoles[0];
+      user = userWithRoles.rows[0];
       user.roles = user.roles || [];
 
       // Update last login timestamp
-      await db.query(
+      await client.query(
         'UPDATE identity.users SET last_login_at = CURRENT_TIMESTAMP WHERE id = $1',
         [user.id]
       );
 
-      await db.query('COMMIT');
+      await client.query('COMMIT');
 
       // Generate JWT token
       const jwtToken = jwt.sign(
@@ -339,9 +376,15 @@ router.post('/google', async (req, res) => {
       console.log('Successful authentication for:', email);
       res.json(response);
     } catch (dbError) {
-      await db.query('ROLLBACK');
+      if (client) {
+        await client.query('ROLLBACK');
+      }
       console.error('Database operation failed:', dbError);
       throw dbError;
+    } finally {
+      if (client) {
+        client.release();
+      }
     }
   } catch (error) {
     console.error('Google auth error details:', {
@@ -411,4 +454,4 @@ router.get('/verify', authMiddleware(), async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;
