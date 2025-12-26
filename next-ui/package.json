@@ -10,6 +10,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
     "fix-nextjs": "node ../scripts/fix-nextjs-build-errors.js",
     "fix-nextjs:clean": "node ../scripts/fix-nextjs-build-errors.js --clean-deps",
     "clean": "rm -rf .next node_modules package-lock.json",
@@ -39,11 +43,21 @@
     "typescript": "^5.4.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^29.5.12",
     "@types/node": "^24.0.13",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^1.2.1",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.3.5",
-    "eslint-plugin-unused-imports": "^4.1.4"
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "jsdom": "^24.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vitest": "^1.2.1"
   }
 }
