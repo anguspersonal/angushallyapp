@@ -9,7 +9,7 @@ import type { ComponentType } from 'react';
 interface Step {
   title: string;
   description: string;
-  icon: ComponentType<{ size: number; color?: string }>;
+  icon: ComponentType<Record<string, unknown>>;
 }
 
 const steps: Step[] = [
@@ -80,7 +80,7 @@ const stepVariants = {
 interface StepProps {
   title: string;
   description: string;
-  icon: ComponentType<{ size: number; color?: string }>;
+  icon: ComponentType<Record<string, unknown>>;
 }
 
 function Step({ title, description, icon: Icon }: StepProps) {

@@ -132,10 +132,16 @@ export default function ContactPage() {
 
                         <motion.div custom={5} variants={formElementVariants}>
                             <Group justify="center" mt="md">
-                                <ReCAPTCHA
-                                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "YOUR_RECAPTCHA_SITE_KEY_HERE"}
-                                    onChange={(value: string | null) => setCaptchaValue(value)}
-                                />
+                                {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
+                                    <ReCAPTCHA
+                                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                                        onChange={(value: string | null) => setCaptchaValue(value)}
+                                    />
+                                ) : (
+                                    <Text size="sm" c="dark" ta="center">
+                                        Contact form verification is temporarily unavailable. Please email me directly instead.
+                                    </Text>
+                                )}
                             </Group>
                             {form.errors.captcha && (
                                 <Text c="dark" size="sm" ta="center" mt="xs">{form.errors.captcha}</Text>

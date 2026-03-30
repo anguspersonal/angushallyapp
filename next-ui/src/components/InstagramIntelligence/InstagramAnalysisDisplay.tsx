@@ -93,7 +93,7 @@ const InstagramAnalysisDisplay: React.FC<InstagramAnalysisDisplayProps> = ({
     const metrics: Array<{
       label: string;
       value: number | undefined;
-      icon: React.ComponentType<{ size: number }>;
+      icon: React.ComponentType<Record<string, unknown>>;
       color: MetricColor;
     }> = [
       { label: 'Likes', value: engagement.likes, icon: IconHeart, color: 'primary' },
