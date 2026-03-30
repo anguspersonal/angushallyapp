@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { MantineProvider, AppShell } from '@mantine/core';
+import { MantineProvider, AppShell, ColorSchemeScript } from '@mantine/core';
 import { theme } from '../lib/theme';
 import { AuthProvider } from '../providers/AuthProvider';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -14,7 +14,7 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} defaultColorScheme="auto">
       <ErrorBoundary>
         <AuthProvider>
           <AppShell
