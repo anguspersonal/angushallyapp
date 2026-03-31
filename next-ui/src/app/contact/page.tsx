@@ -7,6 +7,7 @@ import {
     Title,
     TextInput,
     Textarea,
+    Anchor,
     Button,
     Text,
     Group,
@@ -139,7 +140,8 @@ export default function ContactPage() {
                                     />
                                 ) : (
                                     <Text size="sm" c="dark" ta="center">
-                                        Contact form verification is temporarily unavailable. Please email me directly instead.
+                                        Contact form verification is temporarily unavailable. Please email me directly at{' '}
+                                        <Anchor href="mailto:angus.hally@gmail.com">angus.hally@gmail.com</Anchor>.
                                     </Text>
                                 )}
                             </Group>

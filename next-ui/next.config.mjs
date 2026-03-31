@@ -16,6 +16,7 @@ const nextConfig = {
     // Make selected server env vars available on the client
     env: {
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+      NEXT_PUBLIC_RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
     },
   
     // Development tweaks — Turbopack is still unstable for many setups

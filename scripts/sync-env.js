@@ -25,7 +25,8 @@ const out = {
   REACT_APP_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
   REACT_APP_GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || '',
   REACT_APP_GOOGLE_MAPS_MAP_ID: process.env.GOOGLE_MAPS_MAP_ID || '',
-  REACT_APP_RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY || ''
+  REACT_APP_RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY || '',
+  NEXT_PUBLIC_RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY || ''
 };
 
 // Write to next-ui/.env
