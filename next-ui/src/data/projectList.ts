@@ -48,7 +48,8 @@ export const projectList: ProjectItem[] = [
     "desc": "A simple application designed to help build positive routines and track daily habit streaks effectively.",
     "route": "/projects/habit",
     "tags": ["productivity", "habit"],
-    "created_at": "2025-02-23"
+    "created_at": "2025-02-23",
+    "deprecated": true
   },
   {
     "id": 5,
@@ -64,7 +65,8 @@ export const projectList: ProjectItem[] = [
     "desc": "Experimental project using OpenAI's GPT model to analyse imputs from Instapaper.",
     "route": "/projects/ai/instapaper",
     "tags": ["ai", "nlp", "data"],
-    "created_at": "2025-05-21"
+    "created_at": "2025-05-21",
+    "deprecated": true
   },
   {
     "id": 7,
@@ -72,7 +74,8 @@ export const projectList: ProjectItem[] = [
     "desc": "Import and manage your bookmarks from multiple sources including Raindrop.io with automatic syncing and tag organization.",
     "route": "/projects/bookmarks",
     "tags": ["bookmarks", "productivity", "api"],
-    "created_at": "2025-05-22"
+    "created_at": "2025-05-22",
+    "deprecated": true
   }
 ];
 
