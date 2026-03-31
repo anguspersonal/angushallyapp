@@ -24,5 +24,5 @@ export { ApiError } from './api';
 export interface NavigationLink {
   link: string;
   label: string;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: React.ComponentType<Record<string, unknown>>;
 }

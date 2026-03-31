@@ -20,7 +20,7 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     /* ---------- Project ergonomics ---------- */
     "incremental": true,
     "moduleDetection": "force",

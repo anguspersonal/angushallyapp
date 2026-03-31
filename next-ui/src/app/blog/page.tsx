@@ -46,7 +46,7 @@ export default function Blog() {
                 )}
 
                 {error && (
-                    <Alert color="red" title="Error loading posts" mt="md">
+                    <Alert color="dark" title="Error loading posts" mt="md">
                         {error}
                     </Alert>
                 )}

@@ -19,7 +19,7 @@ interface ListState {
 interface PostState {
   data: ContentPostDetail | null;
   pagination?: undefined;
-  error?: string;
+  error?: string | undefined;
   isLoading: boolean;
 }
 

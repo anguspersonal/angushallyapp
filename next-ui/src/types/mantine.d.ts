@@ -80,6 +80,6 @@ export interface NavigationLink {
 
 export interface SocialLink {
   readonly href: string;
-  readonly icon: React.ComponentType<{ size: number }>;
+  readonly icon: React.ComponentType<Record<string, unknown>>;
   readonly label: string;
 }

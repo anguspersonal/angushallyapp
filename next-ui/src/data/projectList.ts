@@ -5,6 +5,7 @@ export interface ProjectItem {
   route: string;
   tags: string[];
   created_at: string;
+  deprecated?: boolean;
 }
 
 export const projectList: ProjectItem[] = [
@@ -19,10 +20,11 @@ export const projectList: ProjectItem[] = [
   {
     "id": 1,
     "name": "Eat Safe UK",
-    "desc": "Check UK food hygiene ratings on an interactive map using official Food Standards Agency data via the Google Maps API.",
+    "desc": "Check UK food hygiene ratings on an interactive map using official Food Standards Agency data. Deprecated — Google Maps API no longer active.",
     "route": "/projects/eat-safe-uk",
     "tags": ["food", "map", "data"],
-    "created_at": "2025-01-03"
+    "created_at": "2025-01-03",
+    "deprecated": true
   },
   {
     "id": 2,

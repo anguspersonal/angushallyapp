@@ -75,12 +75,14 @@ export default function Home() {
 
           <motion.div variants={contentVariants}>
             <Text ta="center" mb="md">
-              👋 Hi, I'm Angus. I'm a  consultant, amateur developer, and constant learner.
-              This site is a mix of personal projects, career experiments and things
-              I've learned by building, shipping, and sometimes failing.
+              👋 Hi, I'm Angus. I'm the COO of{' '}
+              <Anchor href="https://heylina.com" target="_blank" rel="noopener noreferrer">HeyLina</Anchor>,
+              where we're building emotionally intelligent AI.
+              I'm also an amateur developer and constant learner.
             </Text>
             <Text ta="center" mb="lg">
-              I'm also open to collaborating with early-stage founders; helping take raw ideas toward traction, funding, and real-world impact.
+              This site is a mix of personal projects, career experiments and things
+              I've learned by building, shipping, and sometimes failing.
               Feel free to explore, poke around, and say hello via the{' '}
               <Anchor component={Link} href="/contact">contact me</Anchor> page!
             </Text>

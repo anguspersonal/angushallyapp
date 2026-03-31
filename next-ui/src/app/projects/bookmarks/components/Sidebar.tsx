@@ -28,7 +28,7 @@ type NavigationItemId = 'dashboard' | 'bookmarks' | 'search' | 'sync' | 'tags' |
 interface NavigationItem {
   id: NavigationItemId;
   label: string;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: React.ComponentType<Record<string, unknown>>;
 }
 
 interface SidebarProps {

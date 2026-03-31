@@ -9,7 +9,7 @@ import { assets } from '../../lib/theme';
 // Social media links with proper typing
 interface SocialLink {
   readonly href: string;
-  readonly icon: React.ComponentType<{ size: number }>;
+  readonly icon: React.ComponentType<Record<string, unknown>>;
   readonly label: string;
 }
 
@@ -58,8 +58,22 @@ export default function About() {
                 <br />
 
                 <Text mb="md">
-                    I'm a strategy consultant and amateur developer with a passion for the intersection of
+                    I'm a startup operator and amateur developer with a passion for the intersection of
                     <Text span fw={700}> business strategy,</Text> software, and data.
+                </Text>
+
+                <Text mb="md">
+                    Currently, I'm <Text span fw={700}>COO of{' '}
+                    <Anchor href="https://heylina.com" target="_blank" rel="noopener noreferrer">HeyLina</Anchor></Text>,
+                    where we're building emotionally intelligent AI. It's the most exciting thing I've ever worked on.
+                </Text>
+
+                <Text mb="md">
+                    Before that, I was a <Text span fw={700}>Data Strategy Manager at{' '}
+                    <Anchor href="https://www.anmut.co.uk/" target="_blank" rel="noopener noreferrer">Anmut</Anchor></Text>,
+                    working on{' '}
+                    <Anchor href="https://www.anmut.co.uk/solutions/data-valuation/" target="_blank" rel="noopener noreferrer">data valuation</Anchor> and
+                    data maturity tools like <Anchor href="https://www.anmut.co.uk/solutions/data-maturity/" target="_blank" rel="noopener noreferrer">Grace</Anchor>.
                 </Text>
 
                 <Text mb="md">
@@ -76,14 +90,6 @@ export default function About() {
                 <Text mb="md">
                     Before all that, I was a <Text span fw={700}>mathematics teacher</Text> through the
                     <Anchor href="https://www.teachfirst.org.uk/" target="_blank" rel="noopener noreferrer"> TeachFirst program</Anchor>—to this day, the hardest thing I've done.
-                </Text>
-
-                <Text mb="md">
-                    Currently, I work as a <Text span fw={700}>Data Strategy Manager at
-                    <Anchor href="https://www.anmut.co.uk/" target="_blank" rel="noopener noreferrer"> Anmut</Anchor></Text>,
-                    a data management consultancy shaking up the industry with its
-                    <Anchor href="https://www.anmut.co.uk/solutions/data-valuation/" target="_blank" rel="noopener noreferrer"> data valuation service</Anchor> and
-                    cutting-edge data maturity tools, like <Anchor href="https://www.anmut.co.uk/solutions/data-maturity/" target="_blank" rel="noopener noreferrer">Grace</Anchor>.
                 </Text>
 
                 <Text mb="md">

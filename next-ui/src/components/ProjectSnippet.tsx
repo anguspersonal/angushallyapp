@@ -9,6 +9,7 @@ interface Project {
   desc: string;
   route: string;
   tags?: string[];
+  deprecated?: boolean;
 }
 
 interface ProjectSnippetProps {
@@ -16,7 +17,7 @@ interface ProjectSnippetProps {
 }
 
 function ProjectSnippet({ project }: ProjectSnippetProps) {
-  const { name, desc, route, tags = [] } = project;
+  const { name, desc, route, tags = [], deprecated = false } = project;
   
   const getTagColor = (tag: string): "dark" | "primary" | "secondary" | "accent" | "success" => {
     const tagColors: Record<string, "dark" | "primary" | "secondary" | "accent" | "success"> = {
@@ -73,6 +74,11 @@ function ProjectSnippet({ project }: ProjectSnippetProps) {
             }}
           >
             {name}
+            {deprecated && (
+              <Badge color="accent" size="xs" variant="light" ml="xs" style={{ verticalAlign: 'middle' }}>
+                Deprecated
+              </Badge>
+            )}
           </Title>
           <Text 
             size="sm" 

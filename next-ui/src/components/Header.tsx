@@ -8,7 +8,6 @@ import { Menu, Button, Container, Group, Burger } from '@mantine/core';
 import {
   IconUser,
   IconArticle,
-  IconRocket,
   IconFolder,
   IconLogout,
 } from '@tabler/icons-react';
@@ -20,7 +19,6 @@ const links: NavigationLink[] = [
   { link: '/projects', label: 'Projects', icon: IconFolder },
   { link: '/blog', label: 'Blog', icon: IconArticle },
   { link: '/about', label: 'About', icon: IconUser },
-  { link: '/collab', label: 'Collab', icon: IconRocket },
 ];
 
 function Header() {

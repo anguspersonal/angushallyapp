@@ -84,8 +84,8 @@ const SoftwareCV = () => {
 
     const projects: Project[] = [
         {
-            title: 'EatSafeUK',
-            description: 'A public health application that helps users check hygiene scores of food establishments',
+            title: 'EatSafeUK (Deprecated)',
+            description: 'A public health application that helped users check hygiene scores of food establishments',
             color: 'success',
             image: '/20250530_0936_Chef_Preparing_Ingredients_remix_01jwg594xxe4cvhwhc47d9t7r9.jpg',
             alt: 'AI-generated image of a chef preparing ingredients in a professional kitchen',
@@ -193,7 +193,7 @@ const SoftwareCV = () => {
                                 fontWeight: 800
                             }}
                         >
-                            Software Engineering Portfolio
+                            Side Projects & Technical Skills
                         </Title>
                     </motion.div>
 

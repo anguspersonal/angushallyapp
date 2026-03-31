@@ -4,12 +4,13 @@ import '../index.css';
 import '../general.css';
 import './globals.css';
 import type { Metadata } from 'next';
+import { ColorSchemeScript } from '@mantine/core';
 import ClientLayout from '@/components/ClientLayout';
 import PwaUpdatePrompt from '@/components/PwaUpdatePrompt';
 
 export const metadata: Metadata = {
   title: 'Angus Hally App',
-  description: 'Personal website of Angus Hally - strategy consultant and amateur developer passionate about business strategy, software, and data.',
+  description: 'Personal website of Angus Hally - COO of HeyLina, building emotionally intelligent AI. Projects, blog, and more.',
   icons: {
     icon: '/AH-logo-no-background.ico',
     shortcut: '/AH-logo-no-background.ico',
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <ColorSchemeScript defaultColorScheme="auto" />
         {process.env.NODE_ENV === 'production' && <link rel="manifest" href="/manifest.json" />}
         <link rel="icon" href="/AH-logo-no-background.ico" />
         <link rel="shortcut icon" href="/AH-logo-no-background.ico" />
