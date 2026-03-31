@@ -12,14 +12,8 @@
     "npm": ">=10.x"
   },
   "scripts": {
-    "start": "node server/index.js",
-    "sync-env:dev": "cross-env NODE_ENV=development node scripts/sync-env.js",
-    "sync-env:prod": "cross-env NODE_ENV=production node scripts/sync-env.js",
-    "server": "node scripts/check-port.js 5000 && cross-env NODE_ENV=development nodemon server/index.js",
-    "client": "node scripts/check-port.js 3000 && cd next-ui && npm run dev",
-    "build": "npm run sync-env:prod && npm run build-next",
+    "build": "npm run build-next",
     "build-next": "npm run build --prefix next-ui",
-    "dev": "npm run sync-env:dev && node scripts/check-port.js 5000 3000 && concurrently \"npm run server\" \"npm run client\"",
     "kill-ports": "npx kill-port 5000 3000",
     "fix-nextjs": "node scripts/fix-nextjs-build-errors.js",
     "compress-images": "node scripts/compress-images.mjs",
@@ -27,20 +21,7 @@
     "clean:node": "bash scripts/clean-node.sh",
     "clean:next": "bash scripts/clean-next.sh",
     "clean:public": "node scripts/clean-public.js",
-    "clean:ports": "node scripts/clean-ports.js",
-    "clean:heroku-cache": "heroku builds:cache:purge -a angushallyapp",
-    "test": "npm --workspace server run test && npm --workspace server run test:contracts && npm --workspace next-ui run --if-present test",
-    "config:check": "node server/config/validate.js",
-    "test--verbose": "jest --runTestsByPath server/tests --verbose",
-    "test-cache": "node scripts/test-cache-files.js",
-    "predevelop": "npm run sync-env:dev",
-    "migrate": "cd server && npx knex migrate:latest",
-    "migrate:rollback": "cd server && npx knex migrate:rollback",
-    "migrate:status": "cd server && npx knex migrate:status",
-    "migrate:make": "cd server && npx knex migrate:make",
-    "test:contracts": "npm --workspace server run test:contracts",
-    "heroku-prebuild": "npm ci --omit=dev --omit=optional --workspaces --include-workspace-root",
-    "heroku-postbuild": "npm --workspaces prune --omit=dev && npm run build --workspace next-ui"
+    "clean:ports": "node scripts/clean-ports.js"
   },
   "type": "commonjs",
   "cacheDirectories": [

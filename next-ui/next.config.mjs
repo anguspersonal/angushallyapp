@@ -15,7 +15,6 @@ const nextConfig = {
   
     // Make selected server env vars available on the client
     env: {
-      NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
       NEXT_PUBLIC_RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
     },
   
@@ -54,15 +53,6 @@ const nextConfig = {
       return config;
     },
 
-    // API proxy configuration
-    async rewrites() {
-      return [
-        {
-          source: "/api/:path*",
-          destination: "http://localhost:5000/api/:path*",
-        },
-      ];
-    },
   };
   
   const withPWAConfig = withPWA({
