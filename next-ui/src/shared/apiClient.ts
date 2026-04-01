@@ -1,10 +1,6 @@
-import {
-  ApiError,
-} from './types/api';
-import type {
-  ApiClientOptions,
-  ApiClientInterface,
-} from './types/api';
+import { messageForHttpStatus } from './http/httpStatusMessage';
+import { ApiError } from './types/api';
+import type { ApiClientOptions, ApiClientInterface } from './types/api';
 
 export const API_BASE = '/api';
 
@@ -43,7 +39,7 @@ async function apiClient<T = unknown>(endpoint: string, options: ApiClientOption
       throw new ApiError(
         (typeof data === 'object' && data !== null && 'error' in data
           ? (data as { error?: string }).error
-          : undefined) || getErrorMessage(response.status),
+          : undefined) || messageForHttpStatus(response.status),
         response.status,
         data,
       );
@@ -56,25 +52,6 @@ async function apiClient<T = unknown>(endpoint: string, options: ApiClientOption
       throw new ApiError('Network error – please check your connection', 0, null);
     }
     throw new ApiError((err as Error).message, 0, null);
-  }
-}
-
-function getErrorMessage(status: number): string {
-  switch (status) {
-    case 400:
-      return 'Bad request – please check your input';
-    case 401:
-      return 'Unauthorized';
-    case 403:
-      return 'Forbidden – you do not have access to this resource';
-    case 404:
-      return 'Resource not found';
-    case 429:
-      return 'Too many requests – please try again later';
-    case 500:
-      return 'Server error – please try again later';
-    default:
-      return 'An error occurred';
   }
 }
 

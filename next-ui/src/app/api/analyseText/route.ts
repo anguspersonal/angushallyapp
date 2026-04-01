@@ -1,7 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-
-const MAX_TEXT_LENGTH = 2000;
+import { validateAnalyseTextBody } from '@/lib/analyseText/validateAnalyseTextBody';
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -12,24 +11,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
   }
 
-  const { text } = (body as Record<string, unknown>) ?? {};
-
-  if (typeof text !== 'string') {
-    return NextResponse.json({ error: 'Text input is required' }, { status: 400 });
+  const parsed = validateAnalyseTextBody(body);
+  if (!parsed.ok) {
+    return NextResponse.json({ error: parsed.error }, { status: parsed.status });
   }
 
-  const trimmedText = text.trim();
-
-  if (!trimmedText) {
-    return NextResponse.json({ error: 'Text input cannot be empty' }, { status: 400 });
-  }
-
-  if (trimmedText.length > MAX_TEXT_LENGTH) {
-    return NextResponse.json(
-      { error: `Text input exceeds ${MAX_TEXT_LENGTH} characters` },
-      { status: 413 }
-    );
-  }
+  const { text: trimmedText } = parsed.data;
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
