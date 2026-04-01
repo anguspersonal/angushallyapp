@@ -1,13 +1,7 @@
-import { NextResponse } from 'next/server';
+import { migrationInProgressResponse } from '@/lib/api/migrationUnavailable';
 
 // TODO: Replace with Supabase client query after DB migration
 // GET /api/content/posts/:identifier - Get post by slug or ID
 export async function GET() {
-  return NextResponse.json(
-    {
-      error: 'Blog content is temporarily unavailable during platform migration',
-      code: 'MIGRATION_IN_PROGRESS',
-    },
-    { status: 503 }
-  );
+  return migrationInProgressResponse('blog');
 }

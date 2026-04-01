@@ -1,5 +1,7 @@
 const express = require('express');
 const { mapErrorToResponse, classifyError } = require('../observability/errors');
+const { parseContentListQueryParams } = require('../utils/contentListQueryParams');
+const { getPostByRouteIdentifier } = require('../utils/contentPostLookup');
 
 /**
  * Factory for content routes. Expects a contentService dependency that exposes
@@ -26,12 +28,7 @@ module.exports = function createContentRoutes({ contentService, logger }) {
 
   router.get('/posts', async (req, res, next) => {
     try {
-      const params = {
-        page: req.query.page ? Number(req.query.page) : undefined,
-        pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
-        sortBy: req.query.sortBy,
-        order: req.query.order,
-      };
+      const params = parseContentListQueryParams(req.query);
       const result = await contentService.listPosts(params);
       res.json(result);
     } catch (error) {
@@ -44,10 +41,7 @@ module.exports = function createContentRoutes({ contentService, logger }) {
   router.get('/posts/:identifier', async (req, res, next) => {
     try {
       const { identifier } = req.params;
-      const isNumericId = /^\d+$/.test(identifier);
-      const post = isNumericId
-        ? await contentService.getPostById(Number(identifier))
-        : await contentService.getPostBySlug(identifier);
+      const post = await getPostByRouteIdentifier(contentService, identifier);
 
       if (!post) {
         return res.status(404).json({ error: 'Post not found', code: 'CONTENT_NOT_FOUND' });

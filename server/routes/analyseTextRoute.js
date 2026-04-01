@@ -1,30 +1,8 @@
 const express = require('express');
-const rateLimit = require('express-rate-limit');
 const { authMiddleware } = require('../middleware/auth');
 const { analyzeText: analyzeTextService } = require('../ai-api/apiService');
-
-const MAX_PAYLOAD_BYTES = 10 * 1024; // 10kb
-const MAX_TEXT_LENGTH = 2000;
-
-function createAnalysisLimiter(logger) {
-  return rateLimit({
-    windowMs: 60 * 1000,
-    max: 20,
-    standardHeaders: true,
-    legacyHeaders: false,
-    keyGenerator: (req) => req.user?.id || req.ip,
-    handler: (req, res) => {
-      const scopedLogger = req.logger || logger;
-      scopedLogger?.warn?.('analyseText.rate_limited', {
-        correlationId: req.context?.correlationId,
-        userId: req.user?.id,
-        ip: req.ip,
-      });
-
-      res.status(429).json({ error: 'Too many analysis requests. Please slow down.' });
-    },
-  });
-}
+const { validateAnalyseTextPayload, MAX_PAYLOAD_BYTES } = require('../utils/analyseTextValidation');
+const { createAnalysisLimiter } = require('./analyseText/createAnalysisLimiter');
 
 module.exports = function createAnalyseTextRoute(deps = {}) {
   const router = express.Router();
@@ -92,36 +70,19 @@ module.exports = function createAnalyseTextRoute(deps = {}) {
       }
 
       const { text } = req.body || {};
-      if (typeof text !== 'string') {
-        scopedLogger?.warn?.('analyseText.invalid_payload', { correlationId, userId: req.user?.id, reason: 'missing-text' });
-        return res.status(400).json({ error: 'Text input is required' });
-      }
-
-      const trimmedText = text.trim();
-      if (!trimmedText) {
-        scopedLogger?.warn?.('analyseText.invalid_payload', { correlationId, userId: req.user?.id, reason: 'empty-text' });
-        return res.status(400).json({ error: 'Text input cannot be empty' });
-      }
-
-      if (trimmedText.length > MAX_TEXT_LENGTH) {
+      const validation = validateAnalyseTextPayload(text);
+      if (!validation.ok) {
         scopedLogger?.warn?.('analyseText.invalid_payload', {
           correlationId,
           userId: req.user?.id,
-          reason: 'text-too-long',
-          length: trimmedText.length,
+          reason: validation.reason,
+          ...(validation.length !== undefined && { length: validation.length }),
+          ...(validation.payloadBytes !== undefined && { payloadBytes: validation.payloadBytes }),
         });
-        return res.status(413).json({ error: `Text input exceeds ${MAX_TEXT_LENGTH} characters` });
+        return res.status(validation.status).json({ error: validation.error });
       }
 
-      const textBytes = Buffer.byteLength(trimmedText, 'utf8');
-      if (textBytes > MAX_PAYLOAD_BYTES) {
-        scopedLogger?.warn?.('analyseText.payload_too_large', {
-          correlationId,
-          userId: req.user?.id,
-          payloadBytes: textBytes,
-        });
-        return res.status(413).json({ error: 'Text input is too large' });
-      }
+      const { trimmedText } = validation;
 
       const analysis = await analyzeText(trimmedText);
 

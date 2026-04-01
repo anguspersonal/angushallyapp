@@ -51,11 +51,11 @@ describe('contact route', () => {
     const response = await request(app).post('/').send(formPayload);
 
     expect(response.status).toBe(200);
-    expect(sendEmailUtils.sendInquiryToOwner).toHaveBeenCalledWith(
-      formPayload.name,
-      formPayload.email,
-      formPayload.message,
-    );
+    expect(sendEmailUtils.sendInquiryToOwner).toHaveBeenCalledWith({
+      name: formPayload.name,
+      email: formPayload.email,
+      message: formPayload.message,
+    });
     expect(sendEmailUtils.sendAcknowledgmentToUser).toHaveBeenCalledWith(
       formPayload.name,
       formPayload.email,
