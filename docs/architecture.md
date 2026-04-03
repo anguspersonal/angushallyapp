@@ -1,57 +1,63 @@
 # Architecture
 
-This document describes how **angushallyapp** is structured at runtime and in the repository. For product direction, see `docs/02_roadmap.md`. For deep dives on specific choices, see `docs/adr/`. For the content/habit service pattern, see `docs/service-layer.md`.
+This document describes how **angushallyapp** is structured at runtime and in the repository. For product direction, see `docs/02_roadmap.md`. For deep dives on specific choices, see `docs/adr/`. For the colocated Next service pattern, see `docs/service-layer.md`.
+
+**Hosting target (production):** **Vercel** runs **`web` only** (root directory `web`). HTTP APIs are **Next.js Route Handlers** under `web/src/app/api/**`. **Supabase** provides Postgres (and optional Auth). See `docs/migration/heroku-to-vercel.md` and `docs/migration/server-to-next-mapping.md`. ADR `docs/adr/0016-next-supabase-colocated-features.md`.
 
 ---
 
 ## System overview
 
-The application is a **monorepo** with two primary workspaces:
+The application is a **monorepo** with two workspaces; **production traffic does not run Express**.
 
 | Workspace | Role |
 |-----------|------|
-| `next-ui` | Next.js 15 (App Router), React 18, Mantine UI, PWA; pages, layouts, and selected API route handlers |
-| `server` | Node.js **Express** API, Knex, PostgreSQL migrations, domain services, and observability helpers |
+| `web` | **Primary:** Next.js 15 (App Router), React 18, Mantine UI, PWA; pages, layouts, **Route Handlers** (`/api`), and **colocated server logic** under `src/lib/<domain>/`. |
+| `server` | **Legacy / tooling:** Express, Knex, PostgreSQL migrations, Jest integration tests, and one-off scripts. Used for local integrated dev or migration until Express is fully retired—not deployed on Vercel. |
 
-A **root** `package.json` ties workspaces together and still carries some shared backend dependencies used by `server`.
+A **root** `package.json` ties workspaces together and carries shared backend dependencies used when running `server` locally.
 
 ```mermaid
 flowchart LR
   subgraph client [Browser]
-    UI[Next.js pages and client components]
+    UI[Next_pages_and_client]
   end
-  subgraph next [next-ui]
-    RSC[App Router / RSC]
-    NRH[Route Handlers app/api]
-    SharedUI["@/shared/*"]
+  subgraph next [web_production]
+    RSC[App_Router_RSC]
+    NRH[Route_Handlers_app_api]
+    LibColoc["lib_domain_server_only"]
+    SharedUI["shared_contracts_alias"]
   end
-  subgraph api [server]
+  subgraph supa [Supabase]
+    PG[(Postgres)]
+    SA[Auth_optional]
+  end
+  subgraph legacy [server_legacy_local]
     EXP[Express]
-    SVC[Services]
-    DB[(PostgreSQL)]
+    Knex[Knex_migrations]
   end
   subgraph contracts [shared]
-    CTR[TypeScript contracts]
+    CTR[TypeScript_contracts]
   end
   UI --> RSC
-  UI --> SharedUI
   RSC --> NRH
-  RSC --> EXP
-  NRH -.->|"Vercel / Next-only"| ext[External APIs]
-  EXP --> SVC
-  SVC --> DB
+  NRH --> LibColoc
+  LibColoc --> PG
+  LibColoc --> SA
+  RSC --> SharedUI
   CTR --> next
-  CTR --> server
+  EXP -.->|"local_only"| Knex
+  Knex -.-> PG
 ```
 
 ---
 
-## Request paths: Express vs Next route handlers
+## Request paths
 
-- **Integrated server (e.g. single process with Next prepared):** Express registers `/api/*` routes first (`server/bootstrap/routes.js`). The Next request handler is attached as a catch‑all afterward (`server/bootstrap/next.js`), so **registered Express APIs take precedence** for those paths.
-- **Next-only hosting:** Requests hit **Next.js Route Handlers** under `next-ui/src/app/api/**/route.ts` when present. Some handlers are thin or temporary (for example, content list/detail may return a migration stub); production behavior depends on which stack is fronting traffic.
+- **Vercel (canonical):** All `/api/*` requests are handled by **Next Route Handlers** in `web/src/app/api/**/route.ts`. Domain logic lives in `web/src/lib/<domain>/` (server-only imports).
+- **Local integrated mode (optional):** If you run the Express app with Next attached (`server/bootstrap/next.js`), Express may still register `/api/*` first. For **production alignment**, do not rely on that path; implement new behavior only in Next + Supabase.
 
-When adding or changing an HTTP API, confirm whether the live deployment uses the **Express** router, **Next** handlers, or both, and keep behavior aligned.
+When adding or changing an HTTP API, **default to Route Handlers** in `web` and update `docs/migration/server-to-next-mapping.md` if you add a new surface.
 
 ---
 
@@ -59,70 +65,68 @@ When adding or changing an HTTP API, confirm whether the live deployment uses th
 
 ```
 angushallyapp/
-├── next-ui/                 # Frontend + Next API routes
-│   ├── src/app/             # App Router: pages, layouts, route.ts handlers
-│   ├── src/components/      # React components
-│   ├── src/lib/             # Server/client utilities (email, validation, etc.)
-│   ├── src/providers/       # e.g. AuthProvider
-│   ├── src/services/        # Domain clients + hooks (content, habits, …)
-│   └── src/shared/          # API client, HTTP helpers, shared TS types
-├── server/                  # Express application
-│   ├── bootstrap/           # createApp, routes, middleware, Next attachment
-│   ├── routes/              # HTTP routers (many accept injected services)
-│   ├── services/            # contentService, habitService, …
-│   ├── migrations/          # Knex migrations
-│   ├── middleware/          # Auth and cross-cutting HTTP concerns
-│   └── observability/       # Logger, errors, request context
+├── web/                 # Production app + APIs
+│   ├── src/app/             # App Router: pages, layouts, api/**/route.ts
+│   ├── src/lib/             # Server/client utilities; colocated domain logic (content, habit, …)
+│   ├── src/components/
+│   ├── src/providers/
+│   ├── src/services/        # Typed clients + hooks (fetch /api)
+│   └── src/shared/          # apiClient, HTTP helpers
+├── server/                  # Legacy Express + Knex (local / tests / migration)
+│   ├── bootstrap/
+│   ├── routes/
+│   ├── services/
+│   ├── habit-api/, bookmark-api/, strava-api/, fsa-data-sync/, …
+│   ├── migrations/
+│   └── tests/               # Jest — prefer Vitest in web for new tests
 ├── shared/                  # Cross-package TypeScript contracts
 │   └── services/
-│       ├── contracts/       # e.g. pagination types
-│       ├── content/
-│       └── habit/
-└── docs/                    # ADRs, runbooks, this file
+└── docs/
+    └── migration/
+        ├── heroku-to-vercel.md
+        └── server-to-next-mapping.md
 ```
 
 ---
 
 ## Shared contracts (`shared/`)
 
-Type definitions for list/detail payloads and pagination live under `shared/services/**` so **Next UI** and **server** can agree on shapes without duplicating types. In `next-ui`, the alias `@shared/*` maps to this tree (`next-ui/tsconfig.json`).
+Type definitions live under `shared/services/**`. In `web`, `@shared/*` maps to this tree (`web/tsconfig.json`).
 
-**Convention:** add new domain types under `shared/services/<domain>/contracts.ts`, implement server logic in `server/services/<domain>Service.js`, expose HTTP via `server/routes/<domain>Route.js`, and consume from `next-ui/src/services/<domain>/client.ts` and `hooks.ts`. See `docs/service-layer.md` for the full checklist.
-
----
-
-## Frontend (`next-ui`)
-
-- **Routing:** Next.js App Router (`src/app`). Metadata, layouts, and server components follow Next 15 patterns.
-- **UI:** Mantine v8, Tabler icons, Framer Motion where needed; PWA via `next-pwa` (`next.config.mjs`).
-- **Data access:** Feature modules under `src/services/<feature>/` expose **clients** (fetch) and **hooks** (React) so pages and components avoid ad hoc `fetch` to scattered URLs.
-- **Shared HTTP:** `src/shared/apiClient.ts` centralizes JSON `fetch` to `/api`, error mapping, and `ApiError`. Status-to-message copy lives in `src/shared/http/httpStatusMessage.ts`.
-- **Auth:** `AuthProvider` and related utilities under `src/providers/` and `src/shared/authUtils.ts` (see ADR 0007 / 0009 for strategy).
-
-Path alias **`@/*`** resolves to `next-ui/src/*`.
+**Convention (production):** add types under `shared/services/<domain>/contracts.ts`, implement **server-side** logic in `web/src/lib/<domain>/`, expose HTTP via `web/src/app/api/<domain>/.../route.ts`, consume from `web/src/services/<domain>/client.ts` and `hooks.ts`. See `docs/service-layer.md`.
 
 ---
 
-## Backend (`server`)
+## Frontend (`web`)
 
-- **Composition:** `createApp` wires middleware, route registration, and health checks (`server/bootstrap/createApp.js`). `createServer` optionally attaches the Next handler for combined deployments (`server/bootstrap/createServer.js`).
-- **Routes:** Mounted under `/api/...` (contact, content, habit, auth, bookmarks, strava, raindrop, instagram-intelligence, etc.). Several routers are **factories** that receive services for testing and DI (`server/bootstrap/routes.js` + `loadRoute`).
-- **Data:** PostgreSQL via Knex (`server/db.js`, `server/knexfile.js`, `server/migrations/`).
-- **Observability:** Structured logging and error helpers under `server/observability/`.
+- **Routing:** App Router (`src/app`). Metadata, layouts, and server components follow Next 15 patterns.
+- **UI:** Mantine v8, Tabler icons, Framer Motion; PWA via `next-pwa` (`next.config.mjs`).
+- **Data access:** `src/services/<feature>/` exposes **clients** and **hooks** so components avoid ad hoc `fetch`.
+- **Shared HTTP:** `src/shared/apiClient.ts`, `src/shared/http/httpStatusMessage.ts`.
+- **Auth:** Supabase Auth when enabled; `AuthProvider` may wrap session (see ADRs 0007 / 0009 / 0016).
+
+Path alias **`@/*`** resolves to `web/src/*`.
+
+---
+
+## Backend legacy (`server`)
+
+- **Purpose:** Knex migrations against Postgres/Supabase, Jest route/service tests, optional local Express.
+- **Sunset:** Once DDL and tests move to Supabase + Vitest, trim or archive `server/` bootstrap for production workflows. Vercel **never** runs `server/index.js`.
 
 ---
 
 ## Data and migrations
 
-- Schema and migration workflow are documented in `docs/05_database.md` and `docs/04_schema.md`.
-- Migrations are the source of truth for DDL; apply them against the target database with your normal process (for example remote Supabase via `supabase db push` if that is your environment).
+- Schema workflow: `docs/05_database.md`, `docs/04_schema.md`.
+- Apply DDL with your normal process (e.g. **Supabase** `supabase db push`).
 
 ---
 
 ## Configuration and secrets
 
-- **Server:** `server/config/` validates and exposes environment-driven settings.
-- **Next:** Public env vars use `NEXT_PUBLIC_*`; sensitive values stay server-only. `next.config.mjs` can expose selected keys to the client (e.g. reCAPTCHA site key pattern).
+- **Vercel / Next:** `NEXT_PUBLIC_*` for browser; `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, OpenAI, SMTP, etc., as server-only env vars in the Vercel project.
+- **Local Express:** `server/config/` when running the legacy server.
 
 ---
 
@@ -130,10 +134,8 @@ Path alias **`@/*`** resolves to `next-ui/src/*`.
 
 | Area | Tooling | Location |
 |------|---------|----------|
-| Next UI | Vitest, Testing Library | `next-ui/tests/` |
-| Server | Jest, Supertest | `server/tests/` |
-
-Run from each workspace as documented in `README.md` / `next-ui` and `server` READMEs.
+| Next UI | Vitest, Testing Library | `web/tests/`; prefer co-located `*.test.ts` for new code |
+| Server (legacy) | Jest, Supertest | `server/tests/` |
 
 ---
 
@@ -141,15 +143,15 @@ Run from each workspace as documented in `README.md` / `next-ui` and `server` RE
 
 | Topic | Document |
 |-------|----------|
-| Service layer pattern | `docs/service-layer.md` |
+| Service layer (colocated Next) | `docs/service-layer.md` |
+| Express → Next mapping | `docs/migration/server-to-next-mapping.md` |
+| Vercel migration chunks | `docs/migration/heroku-to-vercel.md` |
 | Doc index | `docs/01_guidance.md` |
-| Tech stack decision | `docs/adr/0001-tech-stack.md` |
+| Colocation decision | `docs/adr/0016-next-supabase-colocated-features.md` |
 | Next migration | `docs/adr/0013-nextjs-migration.md` |
-| API routing (Express) | `docs/adr/0005-api-routing-pattern.md` |
-| Hosting / platform moves | `docs/migration/heroku-to-vercel.md`, `docs/14_hosting_mirgation_plan.md` |
 
 ---
 
 ## Maintenance
 
-When you change boundaries (new `/api` surface, new workspace, or deployment target), update this file in the same change so agents and contributors keep a single accurate structural picture.
+When you change API boundaries, hosting, or workspace roles, update this file and `docs/migration/server-to-next-mapping.md` in the same change.

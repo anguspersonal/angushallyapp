@@ -10,7 +10,7 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 
 **Choose your development context:**
 - [**Server Development**](#server-development-workflow) - For changes in `/server`
-- [**Frontend Development**](#frontend-development-workflow) - For changes in `/next-ui`
+- [**Frontend Development**](#frontend-development-workflow) - For changes in `/web`
 
 ---
 
@@ -115,7 +115,7 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 - [ ] Confirm the purpose and scope of the frontend module/component update
 - [ ] Review related components, pages, or styling files
 - [ ] Check for open issues or tasks in the backlog related to this change
-- [ ] Confirm the component/page location within `next-ui/src/`
+- [ ] Confirm the component/page location within `web/src/`
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
 ✅ Ready to proceed? (type `y`)
@@ -125,9 +125,9 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 ### 2. Component Implementation
 
 - [ ] Create or update React components in appropriate directories:
-  - Pages: `next-ui/src/app/`
-  - Components: `next-ui/src/components/`
-  - Utilities: `next-ui/src/utils/`
+  - Pages: `web/src/app/`
+  - Components: `web/src/components/`
+  - Utilities: `web/src/utils/`
 - [ ] Follow naming conventions: `PascalCase.tsx` for components
 - [ ] Use shared utilities (`apiClient.ts`, `authUtils.ts`) if applicable
 - [ ] Import styling: component-specific CSS or `mantine-overrides.css`
@@ -146,7 +146,7 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 
 - [ ] Verify Next.js build succeeds:
   ```bash
-  cd next-ui && npm run build
+  cd web && npm run build
   ```
 - [ ] Check for TypeScript errors: `npx tsc --noEmit`
 - [ ] Verify ESLint passes: `npm run lint`
@@ -161,7 +161,7 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 
 - [ ] Run component tests (if available):
   ```bash
-  cd next-ui && npm test
+  cd web && npm test
   ```
 - [ ] Test component in browser at development URL
 - [ ] Verify responsive design and accessibility

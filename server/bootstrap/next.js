@@ -2,13 +2,13 @@ const fs = require('fs');
 const path = require('path');
 
 function attachNext(app) {
-  const NEXT_UI_DIR = path.join(__dirname, '..', '..', 'next-ui');
-  const nextBuildDir = path.join(NEXT_UI_DIR, '.next');
-  const nextPublicDir = path.join(NEXT_UI_DIR, 'public');
+  const WEB_APP_DIR = path.join(__dirname, '..', '..', 'web');
+  const nextBuildDir = path.join(WEB_APP_DIR, '.next');
+  const nextPublicDir = path.join(WEB_APP_DIR, 'public');
 
   console.log('🔎 Server start diagnostics ⬇');
   console.log('  __dirname      :', __dirname);
-  console.log('  NEXT_UI_DIR    :', NEXT_UI_DIR);
+  console.log('  WEB_APP_DIR    :', WEB_APP_DIR);
   console.log('  nextBuildDir   :', nextBuildDir);
   console.log('  nextPublicDir  :', nextPublicDir);
   console.log('  build exists?  :', fs.existsSync(nextBuildDir));
@@ -20,7 +20,7 @@ function attachNext(app) {
   }
 
   const next = require('next');
-  const nextApp = next({ dev: false, dir: NEXT_UI_DIR });
+  const nextApp = next({ dev: false, dir: WEB_APP_DIR });
 
   nextApp
     .prepare()

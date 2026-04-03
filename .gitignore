@@ -24,6 +24,11 @@ dist-ssr
 *.sln
 *.sw?
 .cursor/
+.claude/
+.kiro/
+
+# TypeScript incremental build info
+*.tsbuildinfo
 
 # Environment files
 # Root environment files

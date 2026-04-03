@@ -7,7 +7,7 @@ This document details the resolution of the "Failed to execute 'addAll' on 'Cach
 ## 🚨 Issue Summary
 
 **Error**: `Uncaught (in promise) TypeError: Failed to execute 'addAll' on 'Cache': Request failed`  
-**Location**: Service Worker (`next-ui/public/sw.js`)  
+**Location**: Service Worker (`web/public/sw.js`)  
 **Impact**: Service worker installation fails, PWA caching disabled  
 **Status**: ✅ **RESOLVED**
 
@@ -40,7 +40,7 @@ cache.addAll(urlsToCache)
 
 ### **1. Individual Caching with Error Handling**
 
-**Updated Service Worker** (`next-ui/public/sw.js`):
+**Updated Service Worker** (`web/public/sw.js`):
 ```javascript
 // Install event - cache static assets with error handling
 self.addEventListener('install', (event) => {
@@ -88,7 +88,7 @@ self.addEventListener('fetch', (event) => {
 
 ### **3. Improved Service Worker Registration**
 
-**Enhanced Registration** (`next-ui/src/components/ServiceWorkerRegistration.tsx`):
+**Enhanced Registration** (`web/src/components/ServiceWorkerRegistration.tsx`):
 ```javascript
 navigator.serviceWorker
   .register('/sw.js')
@@ -192,7 +192,7 @@ npm run test-cache
 ### **Common Cache Issues**
 
 1. **File Not Found (404)**:
-   - Verify file exists in `next-ui/public/`
+   - Verify file exists in `web/public/`
    - Check file paths in `urlsToCache` array
    - Run `npm run test-cache` to verify
 

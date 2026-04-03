@@ -1,4 +1,4 @@
-const { validatePassword } = require('../../src/utils/validators');
+const { validatePassword } = require('../utils/authValidators');
 
 describe('validatePassword', () => {
   it('returns false for missing password values', () => {

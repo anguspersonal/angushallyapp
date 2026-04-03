@@ -6,7 +6,7 @@ const { body, validationResult } = require('express-validator');
 const db = require('../db');
 const config = require('../../config/env');
 const { authMiddleware } = require('../middleware/auth');
-const { validateEmail, validatePassword } = require('../../src/utils/validators');
+const { validateEmail, validatePassword } = require('../utils/authValidators');
 
 const router = express.Router();
 const googleClient = new OAuth2Client(config.auth.google.clientId);

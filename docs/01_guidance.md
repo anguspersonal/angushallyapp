@@ -9,7 +9,7 @@ Welcome to the documentation hub for **angushallyapp**. This guide explains how 
 ```
 /
 ├── README.md               ← Project overview & quick start
-├── next-ui/
+├── web/
 │   └── README.md           ← Frontend overview & quick start
 ├── server/
 │   └── README.md           ← Backend overview & quick start
@@ -63,7 +63,7 @@ This is a **monolith application** that combines multiple sub-projects. Document
 
 ### Project Level
 - **Backend**: `/server/[subProjectName]/README.md` (comprehensive)
-- **Frontend**: `next-ui/src/app/projects/[subProjectName]/README.md` (minimal, references backend)
+- **Frontend**: `web/src/app/projects/[subProjectName]/README.md` (minimal, references backend)
 
 ### File Level
 - In-file documentation for TSX/JS files following best practices
@@ -84,7 +84,7 @@ This is a **monolith application** that combines multiple sub-projects. Document
     ├── fetchEstablishments.js
     └── processRatingValue.js
 
-next-ui/src/app/projects/
+web/src/app/projects/
 └── eat-safe-uk/
     ├── README.md           ← Minimal, references backend
     ├── page.tsx
@@ -120,7 +120,7 @@ next-ui/src/app/projects/
 ### Project-Level Documentation
 
 - **Backend**: Comprehensive sub-project documentation in `/server/[subProjectName]/README.md`
-- **Frontend**: Minimal documentation in `next-ui/src/app/projects/[subProjectName]/README.md`
+- **Frontend**: Minimal documentation in `web/src/app/projects/[subProjectName]/README.md`
 
 ### Module-Level Documentation
 
@@ -156,7 +156,7 @@ Documentation updates follow the hierarchy:
 
 ### Project-Level Documentation Updates
 - **Backend**: Update `/server/[subProjectName]/README.md` for any sub-project changes
-- **Frontend**: Update `next-ui/src/app/projects/[subProjectName]/README.md` for frontend-specific changes
+- **Frontend**: Update `web/src/app/projects/[subProjectName]/README.md` for frontend-specific changes
 - **New routes**: Update API documentation in `/server/routes/` folder
 
 ### Module-Level Documentation Updates
@@ -223,7 +223,7 @@ Document any REST endpoints or API routes exposed by this sub-project.
 ```md
 # [Sub-Project Name] - Frontend
 
-**Location:** `next-ui/src/app/projects/[subProjectName]`
+**Location:** `web/src/app/projects/[subProjectName]`
 
 ## Purpose
 Brief description of the frontend components for this sub-project.
@@ -270,7 +270,7 @@ We centralise all of our environment‐specific settings in a single place and p
 
 - **One source of truth**: root `.env` files control _all_ variables for server and client  
 - **Zero-if-possible**: application code never contains `if (NODE_ENV === ...)`; it only reads `process.env.*`  
-- **Next.js-friendly**: client‐side env vars live in `next-ui/.env.development` and `next-ui/.env.production` (plus optional `.env.local`)  
+- **Next.js-friendly**: client‐side env vars live in `web/.env.development` and `web/.env.production` (plus optional `.env.local`)  
 - **Express-friendly**: server reads root `.env`, `.env.development` or `.env.production`, and `.env.local` via our existing `config/env.js`
 
 When you need full details on the why and how, see our ADR:  

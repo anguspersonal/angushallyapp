@@ -38,9 +38,9 @@ coverage/
 cypress/
 
 # 6. Large / unused static assets
-next-ui/public/2023*.jpg
-next-ui/public/2024*.jpg
-next-ui/public/*.original.*
+web/public/2023*.jpg
+web/public/2024*.jpg
+web/public/*.original.*
 assets/archive/
 
 # 7. Dev-only type packages

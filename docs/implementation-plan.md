@@ -32,7 +32,7 @@ This roadmap sequences the upcoming modernization work into four phases with cle
 - **Checkpoints (Content/Blog as the pilot, Habits scaffolded second):**
   - Shared contracts defined under `shared/services/content/contracts.ts` and `shared/services/habit/contracts.ts` (using the common pagination meta in `shared/services/contracts/pagination.ts`) and reused by services, routes, and frontend hooks.
   - Content/Blog service (`server/services/contentService`) and route factory (`server/routes/contentRoute`) wired through DI with pagination/validation owned by the service.
-  - Frontend Content/Blog client/hooks (`next-ui/src/services/content`) consume the service contracts; legacy fetch utilities removed.
+  - Frontend Content/Blog client/hooks (`web/src/services/content`) consume the service contracts; legacy fetch utilities removed.
   - Habit domain scaffolded with shared contracts, service skeleton, route factory, and client/hooks mirroring the Content pattern.
 - **Exit Criteria:**
   - Content/Blog domain fully migrated to the service layer with typed hooks and integration tests.

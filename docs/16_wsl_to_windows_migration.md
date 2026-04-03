@@ -85,7 +85,7 @@ cd angushallyapp
 npm install
 ```
 
-This will install dependencies for the root workspace and all sub-workspaces (`next-ui` and `server`).
+This will install dependencies for the root workspace and all sub-workspaces (`web` and `server`).
 
 ### 3. Set Up Environment Variables
 
@@ -255,8 +255,8 @@ Then visit:
 # Backend tests
 npm test
 
-# Frontend tests (from next-ui directory)
-cd next-ui
+# Frontend tests (from web directory)
+cd web
 npm test
 ```
 

@@ -13,7 +13,7 @@ This runbook standardizes how we execute service-layer contract tests, integrati
 - Canonical habit contract constants: `shared/services/habit/contracts.ts` (source of truth) with CommonJS shims re-exporting the compiled output at `shared/services/habit/contracts`
 - Service contracts: `shared/services/**/contracts.ts`
 - Content/habit services: `server/services`
-- Frontend clients/hooks: `next-ui/src/services`
+- Frontend clients/hooks: `web/src/services`
 - Browser E2E runbook: `docs/runbooks/browser-e2e.md`
 
 ## 2) Test suite overview
@@ -60,7 +60,7 @@ When adding helpers, keep them narrowly scoped (e.g., "build a content row" or "
 | --- | --- | --- | --- | --- |
 | Service/unit + contract (content, habits) | Validate service contracts, pagination metadata (first/middle/last), error taxonomy, and aggregate edge cases. | `npm --workspace server run test:contracts -- --coverage` (`pretest:contracts` builds the habit bridge first) | `Server Quality Gates` / `Service and Route Contracts` | Blocking on PRs + main |
 | Route integration (content) | Assert HTTP envelope (status, body keys, pagination) stays stable and mirrors service contracts. Included in `test:contracts`. | Included above | Same as above | Blocking |
-| Browser e2e smoke | Golden paths across frontend + backend (login/content browse; habit add → stats). See [browser runbook](./browser-e2e.md). | `cd next-ui && npm run test:e2e` (once added) | `ci/browser-smoke` (initially nightly; promote to per-PR blocking once stable) | Planned → Blocking once stable |
+| Browser e2e smoke | Golden paths across frontend + backend (login/content browse; habit add → stats). See [browser runbook](./browser-e2e.md). | `cd web && npm run test:e2e` (once added) | `ci/browser-smoke` (initially nightly; promote to per-PR blocking once stable) | Planned → Blocking once stable |
 
 Workflow mapping (copy-pasted strings from the workflow for traceability):
 
@@ -96,7 +96,7 @@ Workflow mapping (copy-pasted strings from the workflow for traceability):
 2. Run the gated suite with coverage: `npm --workspace server run test:contracts -- --coverage` (uses `collectCoverageFrom` scoped to `server/services/**` and `server/routes/**`; `pretest:contracts` builds the TS→JS habit bridge first).
 3. Confirm coverage meets the thresholds above (lines/statements ≥75%, functions ≥70%, branches ≥65% globally; see service/route tiers for specifics). If coverage dips, either add tests or intentionally adjust thresholds in `server/package.json` and document the rationale here.
 4. Check the **Server Quality Gates / Service and Route Contracts** workflow in your PR; Phase 4 changes must keep this check green. Documented workflow: `.github/workflows/quality.yml` triggered on `pull_request` and `push` to `main` touching server/shared/runbook paths.
-5. Browser golden-path flows are required for Phase 4 completion once implemented: ensure the minimum flows in [browser-e2e.md](./browser-e2e.md) exist as real tests (`tests/e2e/auth-content.e2e.ts`, `tests/e2e/auth-habits.e2e.ts`), run locally (`cd next-ui && npm run test:e2e`), and are present in CI (`ci/browser-smoke` job, nightly until stable and then blocking).
+5. Browser golden-path flows are required for Phase 4 completion once implemented: ensure the minimum flows in [browser-e2e.md](./browser-e2e.md) exist as real tests (`tests/e2e/auth-content.e2e.ts`, `tests/e2e/auth-habits.e2e.ts`), run locally (`cd web && npm run test:e2e`), and are present in CI (`ci/browser-smoke` job, nightly until stable and then blocking).
 
 ### Phase 4 verification checklist
 - [ ] `npm --workspace server run test:contracts -- --coverage` passes locally with coverage meeting thresholds and any threshold adjustments are documented here.

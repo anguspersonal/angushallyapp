@@ -32,7 +32,7 @@ This migration effort is coordinated across three documents:
   - **Technical Implementation**:
     - **Removed `"types"` whitelist**: Eliminated restrictive type discovery limitation
     - **Added `typeRoots` configuration**: Set `"typeRoots": ["./types", "./node_modules/@types"]` for comprehensive type discovery
-    - **Created fallback stub**: Added `next-ui/types/react-google-recaptcha.d.ts` as production-safe fallback
+    - **Created fallback stub**: Added `web/types/react-google-recaptcha.d.ts` as production-safe fallback
     - **Verified prod-style build**: Tested with `npm ci --omit=dev --omit=optional` to mimic Heroku environment
   - **Build Verification**: ✅ Local prod-style build passes with zero errors
   - **Fallback Strategy**: Stub ensures builds stay green even if packages are accidentally bumped or reshuffled
@@ -51,8 +51,8 @@ This migration effort is coordinated across three documents:
   - **Future-Proofing**: Fallback stub prevents similar issues from package changes
 
 - **Files Modified**:
-  - `next-ui/tsconfig.json` - Removed `"types"` whitelist, added `typeRoots` configuration
-  - `next-ui/types/react-google-recaptcha.d.ts` - Created production-safe fallback stub
+  - `web/tsconfig.json` - Removed `"types"` whitelist, added `typeRoots` configuration
+  - `web/types/react-google-recaptcha.d.ts` - Created production-safe fallback stub
   - `docs/09_nextjs_migration_log.md` - Added comprehensive fix documentation
   - `docs/03_updates.md` - Added chronological update entry
 
@@ -96,15 +96,15 @@ This migration effort is coordinated across three documents:
   - **Production Readiness**: Build process optimized for deployment
 
 - **Files Modified**:
-  - `next-ui/src/app/projects/bookmarks/page.tsx`
-  - `next-ui/src/app/projects/data-value-game/Gameboard.tsx`
-  - `next-ui/src/app/projects/eat-safe-uk/components/GMapView.tsx`
-  - `next-ui/src/app/projects/eat-safe-uk/components/NearbySearchButton.tsx`
-  - `next-ui/src/app/projects/eat-safe-uk/page.tsx`
-  - `next-ui/src/components/collab/Carousel.tsx`
-  - `next-ui/src/components/collab/FounderJourney.tsx`
-  - `next-ui/src/components/collab/TestimonialSlide.tsx`
-  - `next-ui/src/types/mantine.d.ts`
+  - `web/src/app/projects/bookmarks/page.tsx`
+  - `web/src/app/projects/data-value-game/Gameboard.tsx`
+  - `web/src/app/projects/eat-safe-uk/components/GMapView.tsx`
+  - `web/src/app/projects/eat-safe-uk/components/NearbySearchButton.tsx`
+  - `web/src/app/projects/eat-safe-uk/page.tsx`
+  - `web/src/components/collab/Carousel.tsx`
+  - `web/src/components/collab/FounderJourney.tsx`
+  - `web/src/components/collab/TestimonialSlide.tsx`
+  - `web/src/types/mantine.d.ts`
 
 - **Next Steps:**
   - Monitor build stability with clean ESLint output
@@ -210,7 +210,7 @@ This migration effort is coordinated across three documents:
 ## ✅ 2025-07-12 – Conditional PWA Activation for Production
 
 - **Changed layout.tsx to only register service worker and manifest in production**
-  - Modified `next-ui/src/app/layout.tsx` to conditionally render ServiceWorkerRegistration
+  - Modified `web/src/app/layout.tsx` to conditionally render ServiceWorkerRegistration
   - Added conditional rendering for web manifest link in `<head>` section
   - Prevents hydration mismatches and SW caching bugs in development
 - **Development Benefits:**
@@ -238,7 +238,7 @@ This migration effort is coordinated across three documents:
   - **Root package.json**: Updated description from "create-react-app" to "Next.js"
   - **Root package.json**: Changed all port references from 3001 to 3000
   - **Root package.json**: Updated keywords to include "nextjs" instead of "create-react-app"
-  - **next-ui/package.json**: Simplified dev scripts to use port 3000 only
+  - **web/package.json**: Simplified dev scripts to use port 3000 only
   - **server/index.js**: Updated all proxy configurations to target port 3000
 - **Port Standardization:**
   - **Development**: Next.js now runs on port 3000 (standard Next.js port)
@@ -270,14 +270,14 @@ This migration effort is coordinated across three documents:
 - **Updated Express server configuration:**
   - Removed CRA-specific static file serving middleware
   - Updated fallback routing to proxy to Next.js dev server in development
-  - Configured production static file serving from `next-ui/out`
+  - Configured production static file serving from `web/out`
   - Improved error handling for unmatched routes
 - **Updated package.json scripts:**
   - Removed CRA-specific build and client scripts
   - Updated `client` script to use Next.js dev server on port 3001
   - Updated `build` script to build Next.js application
   - Updated Heroku deployment scripts to use Next.js
-  - Updated cache directories to reference `next-ui/node_modules`
+  - Updated cache directories to reference `web/node_modules`
 - **Migration Status:**
   - ✅ All major routes migrated to Next.js (90%+ completion)
   - ✅ Express server now serves Next.js exclusively
@@ -295,8 +295,8 @@ This migration effort is coordinated across three documents:
 
 - **Critical Static Asset Loading Fix:**
   - **Problem**: Next.js app compiling but all static assets (CSS/JS chunks) returning 404s
-  - **Root Cause**: `layout.tsx` importing `./globals.css` that didn't exist in `next-ui/src/app/`
-  - **Solution**: Copied `index.css` and `general.css` from CRA to `next-ui/src/` and updated layout imports
+  - **Root Cause**: `layout.tsx` importing `./globals.css` that didn't exist in `web/src/app/`
+  - **Solution**: Copied `index.css` and `general.css` from CRA to `web/src/` and updated layout imports
   - **Result**: ✅ First successful render of Next.js app at http://localhost:3000 with no 404s
 
 - **Temporary Hydration Fix:**
@@ -307,17 +307,17 @@ This migration effort is coordinated across three documents:
 
 - **Major Route Migrations Completed:**
   - **Blog System**: Complete blog migration with dynamic routing
-    - `next-ui/src/app/blog/page.tsx` - Blog index with listing and tags
-    - `next-ui/src/app/blog/[slug]/page.tsx` - Individual blog post pages with SSG
-    - `next-ui/src/app/blog/blog.css` - Blog-specific styling
+    - `web/src/app/blog/page.tsx` - Blog index with listing and tags
+    - `web/src/app/blog/[slug]/page.tsx` - Individual blog post pages with SSG
+    - `web/src/app/blog/blog.css` - Blog-specific styling
     - Migrated `fetchBlogData.ts` utility with TypeScript support
     - Updated blog types and components for Next.js compatibility
   - **Collaboration Page**: Complex multi-component migration
-    - `next-ui/src/app/collab/page.tsx` - Complete collaboration page with all sections
+    - `web/src/app/collab/page.tsx` - Complete collaboration page with all sections
     - Migrated supporting components (TraitGrid, Carousel, TestimonialSlide, etc.)
     - Preserved all animations, interactions, and TypeScript functionality
   - **CV/Resume Page**: Static resume page migration
-    - `next-ui/src/app/cv/page.tsx` - Complete CV page with all sections
+    - `web/src/app/cv/page.tsx` - Complete CV page with all sections
     - Maintained responsive design and styling
   - **Project Pages**: Multiple project migrations completed
     - `/projects/ai/text-analysis` - AI text analysis tool
@@ -330,7 +330,7 @@ This migration effort is coordinated across three documents:
 
 - **Infrastructure Improvements:**
   - **Configuration Updates**: Updated Next.js config, ESLint, and PostCSS for optimal setup
-  - **Type System**: Enhanced TypeScript types with `next-ui/src/types/common.ts`
+  - **Type System**: Enhanced TypeScript types with `web/src/types/common.ts`
   - **Component Library**: Migrated all components with Mantine v7 compatibility
   - **Authentication**: Maintained cookie-based auth flow throughout migration
   - **Error Handling**: Implemented ErrorBoundary components for both apps
@@ -354,7 +354,7 @@ This migration effort is coordinated across three documents:
 - **Complete Collaboration Page Migration:**
   - Migrated `/collab` route from CRA to Next.js App Router
   - Converted all components to TypeScript with proper type safety
-  - Created comprehensive component structure in `next-ui/src/components/collab/`
+  - Created comprehensive component structure in `web/src/components/collab/`
   - Migrated data files with proper TypeScript interfaces
   - **Main Components Migrated:**
     - `Collab.tsx` → `page.tsx` (main page with all sections)
@@ -443,7 +443,7 @@ This migration effort is coordinated across three documents:
 - **Complete Bookmark Management System Migration:**
   - Migrated `/projects/bookmarks` route from CRA to Next.js App Router
   - Converted all components to TypeScript with proper type safety
-  - Created comprehensive type definitions in `next-ui/src/types/common.ts`
+  - Created comprehensive type definitions in `web/src/types/common.ts`
   - Installed required dependencies: `@mantine/notifications@^7.17.8`
   - **Main Components Migrated:**
     - `Bookmarks.tsx` → `page.tsx` (main dashboard with sidebar navigation)
@@ -471,7 +471,7 @@ This migration effort is coordinated across three documents:
 - **Projects Overview Page Migration:**
   - Migrated `/projects` route from CRA to Next.js App Router
   - Converted to TypeScript with proper type safety
-  - Used existing project data from `next-ui/src/data/projectList.ts`
+  - Used existing project data from `web/src/data/projectList.ts`
   - Added responsive grid layout with Mantine SimpleGrid
   - Verified page loads correctly via Express proxy at `/next/projects`
 
@@ -541,16 +541,16 @@ This migration effort is coordinated across three documents:
   - Maintained backward compatibility with Authorization headers
 
 - **Next.js API Routes:**
-  - Created `next-ui/src/app/api/auth/login/route.ts` for Google OAuth
-  - Created `next-ui/src/app/api/auth/logout/route.ts` for logout
+  - Created `web/src/app/api/auth/login/route.ts` for Google OAuth
+  - Created `web/src/app/api/auth/logout/route.ts` for logout
   - Routes forward requests to backend and handle cookie management
 
 - **Frontend Updates:**
-  - Updated `next-ui/src/providers/AuthProvider.tsx` to use cookie-based auth
+  - Updated `web/src/providers/AuthProvider.tsx` to use cookie-based auth
   - Removed token storage from localStorage/sessionStorage
-  - Updated `next-ui/src/shared/apiClient.ts` to use credentials
-  - Updated `next-ui/src/app/login/page.tsx` to use new API routes
-  - Created `next-ui/middleware.ts` for route protection
+  - Updated `web/src/shared/apiClient.ts` to use credentials
+  - Updated `web/src/app/login/page.tsx` to use new API routes
+  - Created `web/middleware.ts` for route protection
 
 - **Type Safety:**
   - Updated `User` interface to make token optional
@@ -565,7 +565,7 @@ This migration effort is coordinated across three documents:
 
 ## ✅ 2025-07-09 – Shared Layout Migration Complete
 
-- Created `next-ui/src/app/layout.tsx` with Mantine and global styles
+- Created `web/src/app/layout.tsx` with Mantine and global styles
 - Ported `Header` and `Footer` components to Next.js
 - Wrapped all pages in `ClientLayout` for consistent layout
 - Registered service worker in layout

@@ -8,7 +8,7 @@ This file tracks chronological changes to the project, with the most recent upda
 Fixed critical production bug with `next-pwa` that was preventing PWA installation on mobile devices. The app is now fully installable on mobile with working share target functionality on Android.
 
 ### Technical Details
-- **Fixed `next-pwa` precaching errors** by adding `buildExcludes` to `next-ui/next.config.mjs`:
+- **Fixed `next-pwa` precaching errors** by adding `buildExcludes` to `web/next.config.mjs`:
   - Excluded `/app-build-manifest\.json$/` - This was causing 404 errors in production
   - Excluded `/_middleware\.js$/` and `/_middleware\.ts$/` - Prevented precaching of Next.js middleware files
 - **Bumped cache version** from `angushally-v1` to `angushally-v2` to ensure users get updated service worker
@@ -37,8 +37,8 @@ The issue occurred because `next-pwa` was trying to precache Next.js internal fi
 Enabled next-pwa functionality by removing configuration conflicts and manual service worker files. This ensures proper Progressive Web App support and fixes URL routing issues.
 
 ### Technical Details
-- **Removed `trailingSlash: true`** from `next-ui/next.config.mjs` to fix URL routing conflicts with next-pwa
-- **Deleted manual service worker files** from `next-ui/public/`:
+- **Removed `trailingSlash: true`** from `web/next.config.mjs` to fix URL routing conflicts with next-pwa
+- **Deleted manual service worker files** from `web/public/`:
   - `sw.js` (15KB) - Manual Workbox service worker
   - `workbox-69b05f5b.js` (23KB) - Workbox library dependency
 - **Confirmed `manifest.json`** exists and is properly configured for PWA functionality
@@ -67,21 +67,21 @@ Critical production issues identified that require immediate attention. This upd
 
 **1. Static Asset Loading - About Page Image**
 - **Issue**: `20230208_AH_Profile_Poser.jpg` not loading in production (404 error)
-- **Status**: ❌ **BLOCKING** - Image exists in `next-ui/public/` but not served in production
+- **Status**: ❌ **BLOCKING** - Image exists in `web/public/` but not served in production
 - **Investigation Needed**: 
   - Verify Next.js static file serving in production build
   - Check Express server configuration for static file handling
   - Test production build locally to reproduce issue
-- **Files to Check**: `server/index.js`, `next-ui/next.config.mjs`, production build output
+- **Files to Check**: `server/index.js`, `web/next.config.mjs`, production build output
 
 **2. Collaboration Page Performance Issues**
 - **Issue**: `/collab` page re-rendering every second with horizontal scroll bar flickering
 - **Status**: ❌ **BLOCKING** - Carousel completely broken, needs complete rework
 - **Investigation Needed**:
-  - Review `next-ui/src/app/collab/page.tsx` for infinite re-render loops
+  - Review `web/src/app/collab/page.tsx` for infinite re-render loops
   - Check Mantine Carousel component implementation
   - Identify timer/interval issues causing constant re-renders
-- **Files to Check**: `next-ui/src/app/collab/page.tsx`, carousel component dependencies
+- **Files to Check**: `web/src/app/collab/page.tsx`, carousel component dependencies
 
 #### 🟡 Performance Issues (Affecting User Experience)
 
@@ -92,7 +92,7 @@ Critical production issues identified that require immediate attention. This upd
   - Review Next.js CSS optimization configuration
   - Check `next.config.mjs` optimizeCss settings
   - Verify CSS module imports and bundling
-- **Files to Check**: `next-ui/next.config.mjs`, CSS import structure
+- **Files to Check**: `web/next.config.mjs`, CSS import structure
 
 **4. Timer Warning - RenderCollab**
 - **Issue**: `"Timer 'RenderCollab' already exists"` console warning
@@ -101,7 +101,7 @@ Critical production issues identified that require immediate attention. This upd
   - Find RenderCollab timer implementation in collab page
   - Check for proper timer cleanup in useEffect hooks
   - Verify component unmounting behavior
-- **Files to Check**: `next-ui/src/app/collab/page.tsx`, timer management
+- **Files to Check**: `web/src/app/collab/page.tsx`, timer management
 
 **5. Document.write Violation**
 - **Issue**: `"[Violation] Avoid using document.write()"` console warning
@@ -117,7 +117,7 @@ Critical production issues identified that require immediate attention. This upd
 #### Phase 1: Static Asset Issue (Priority 1)
 1. **Local Production Build Test**
    ```bash
-   cd next-ui && npm run build
+   cd web && npm run build
    npm run start  # Test production build locally
    ```
 2. **Express Server Static File Debugging**
@@ -127,7 +127,7 @@ Critical production issues identified that require immediate attention. This upd
 
 #### Phase 2: Collaboration Page Issues (Priority 2)
 1. **Component Analysis**
-   - Review `next-ui/src/app/collab/page.tsx` for:
+   - Review `web/src/app/collab/page.tsx` for:
      - useEffect dependencies causing re-renders
      - Timer/interval management
      - Carousel component implementation
@@ -209,11 +209,11 @@ Each update should include:
 Added a CSS optimization script to the Next.js frontend and improved CSS import structure to reduce preload warnings and improve performance.
 
 ### Technical Details
-- Added `next-ui/scripts/optimize-css.js` to help audit and optimize CSS usage in the Next.js frontend.
-- Consolidated and optimized CSS imports in `next-ui/src/app/layout.tsx`.
+- Added `web/scripts/optimize-css.js` to help audit and optimize CSS usage in the Next.js frontend.
+- Consolidated and optimized CSS imports in `web/src/app/layout.tsx`.
 - Updated `next.config.mjs` to enable CSS optimization features and removed invalid config options.
 - Installed missing `critters` dependency for production CSS inlining.
-- Updated `next-ui/README.md` with usage instructions for the new script.
+- Updated `web/README.md` with usage instructions for the new script.
 
 ### Impact
 - Reduced browser warnings about unused preloaded CSS.
@@ -262,7 +262,7 @@ Resolved critical Heroku build failure caused by TypeScript configuration limita
 - **TypeScript Configuration Changes**:
   - **Removed `"types"` whitelist**: Eliminated restrictive type discovery limitation that blocked `@types/*` packages
   - **Added `typeRoots` configuration**: Set `"typeRoots": ["./types", "./node_modules/@types"]` for comprehensive type discovery
-  - **Created fallback stub**: Added `next-ui/types/react-google-recaptcha.d.ts` as production-safe fallback
+  - **Created fallback stub**: Added `web/types/react-google-recaptcha.d.ts` as production-safe fallback
   - **Verified prod-style build**: Tested with `npm ci --omit=dev --omit=optional` to mimic Heroku environment
 - **Fallback Strategy**: Stub ensures builds stay green even if packages are accidentally bumped or reshuffled
 - **Build Verification**: ✅ Local prod-style build passes with zero errors, Heroku deployment now succeeds
@@ -288,7 +288,7 @@ Resolved critical TypeScript compilation error that was blocking Heroku deployme
 ### Technical Details
 - **TypeScript Error Resolution**: Fixed `react-google-recaptcha` type definition issue:
   - Error: "Could not find a declaration file for module 'react-google-recaptcha'"
-  - Solution: Installed `@types/react-google-recaptcha` as dev dependency in `next-ui/`
+  - Solution: Installed `@types/react-google-recaptcha` as dev dependency in `web/`
   - Result: TypeScript compilation now passes without errors
 - **Workspace Dependency Cleanup**: Applied comprehensive cleanup process from startup guide:
   - Used `npm run clean:node` to remove all `node_modules` and `package-lock.json` files
@@ -322,12 +322,12 @@ Updated README.md and module development flow documentation to reflect the compl
 - **README.md Updates**: Comprehensive updates to reflect current Next.js architecture:
   - Updated project description from "React" to "Next.js" monorepo
   - Updated tech stack table to show Next.js 15, React 19, TypeScript, and Mantine UI v7
-  - Updated repository structure to show `next-ui` with App Router structure
+  - Updated repository structure to show `web` with App Router structure
   - Updated quick start commands to reflect current development workflow
   - Fixed documentation links to use correct `docs/` paths
   - Updated testing commands to reflect current project structure
 - **Module Development Flow Updates**: Updated `docs/08_module_development_flow.md`:
-  - Changed frontend development context from `/react-ui` to `/next-ui`
+  - Changed frontend development context from `/react-ui` to `/web`
   - Updated component implementation paths to use Next.js App Router structure
   - Updated file naming conventions from `.jsx` to `.tsx`
   - Updated build verification commands for Next.js
@@ -351,20 +351,20 @@ Updated README.md and module development flow documentation to reflect the compl
 ## Update042 - Documentation Guidance Updates for Next.js Migration Completion - 2025-07-13 - Complete
 
 ### Overview
-Updated documentation guidance to reflect the completed Next.js migration, replacing all `react-ui` references with `next-ui` and updating project structure to match the current architecture.
+Updated documentation guidance to reflect the completed Next.js migration, replacing all `react-ui` references with `web` and updating project structure to match the current architecture.
 
 ### Technical Details
 - **Documentation Structure Update**: Updated `docs/01_guidance.md` to reflect current project structure:
-  - Changed `react-ui/` to `next-ui/` in documentation structure diagram
-  - Updated frontend documentation paths from `react-ui/src/pages/projects/` to `next-ui/src/app/projects/`
+  - Changed `react-ui/` to `web/` in documentation structure diagram
+  - Updated frontend documentation paths from `react-ui/src/pages/projects/` to `web/src/app/projects/`
   - Updated file extensions from `.jsx` to `.tsx` to reflect TypeScript migration
   - Updated environment variable management section to reference Next.js instead of CRA
 - **Project-Level Documentation**: Updated all references to frontend documentation locations:
-  - Frontend READMEs now located in `next-ui/src/app/projects/[subProjectName]/README.md`
+  - Frontend READMEs now located in `web/src/app/projects/[subProjectName]/README.md`
   - Updated example sub-project structure to show Next.js App Router patterns
   - Updated file naming conventions to reflect TypeScript usage
 - **Template Updates**: Updated sub-project README templates to reflect current architecture:
-  - Frontend template now references `next-ui/src/app/projects/[subProjectName]`
+  - Frontend template now references `web/src/app/projects/[subProjectName]`
   - Updated component examples to use `.tsx` extensions
   - Maintained reference-based documentation approach
 
@@ -425,7 +425,7 @@ Implemented comprehensive development workflow improvements with new cleanup scr
 Standardized website title across the application and removed legacy React app HTML template to eliminate redundancy and improve maintainability.
 
 ### Technical Details
-- **Title Standardization**: Updated `next-ui/public/index.html` title from "Welcome to my website" to "Angus Hally App"
+- **Title Standardization**: Updated `web/public/index.html` title from "Welcome to my website" to "Angus Hally App"
   - Ensures consistency with the Next.js app layout title "Angus Hally - Strategy Consultant & Developer"
   - Aligns with the application branding and identity
 - **Legacy File Removal**: Deleted `public/index.html` (legacy React app template)
@@ -453,22 +453,22 @@ Standardized website title across the application and removed legacy React app H
 **Critical Static Asset Loading Issue Resolved:**
 - **Date**: 2025-01-27
 - **Problem**: Next.js app compiling successfully but all static assets (CSS/JS chunks) returning 404s
-- **Root Cause**: `layout.tsx` importing `./globals.css` that didn't exist in `next-ui/src/app/` directory
-- **Solution**: Copied `index.css` and `general.css` from CRA to `next-ui/src/` and updated layout imports
+- **Root Cause**: `layout.tsx` importing `./globals.css` that didn't exist in `web/src/app/` directory
+- **Solution**: Copied `index.css` and `general.css` from CRA to `web/src/` and updated layout imports
 - **Result**: ✅ First successful render of Next.js app at http://localhost:3000 with no 404s
 
 **Major Route Migrations Completed:**
 - **Blog System**: Complete blog migration with dynamic routing
-  - `next-ui/src/app/blog/page.tsx` - Blog index with listing and tags
-  - `next-ui/src/app/blog/[slug]/page.tsx` - Individual blog post pages with SSG
+  - `web/src/app/blog/page.tsx` - Blog index with listing and tags
+  - `web/src/app/blog/[slug]/page.tsx` - Individual blog post pages with SSG
   - Migrated `fetchBlogData.ts` utility with TypeScript support
   - Updated blog types and components for Next.js compatibility
 - **Collaboration Page**: Complex multi-component migration
-  - `next-ui/src/app/collab/page.tsx` - Complete collaboration page with all sections
+  - `web/src/app/collab/page.tsx` - Complete collaboration page with all sections
   - Migrated supporting components (TraitGrid, Carousel, TestimonialSlide, etc.)
   - Preserved all animations, interactions, and TypeScript functionality
 - **CV/Resume Page**: Static resume page migration
-  - `next-ui/src/app/cv/page.tsx` - Complete CV page with all sections
+  - `web/src/app/cv/page.tsx` - Complete CV page with all sections
   - Maintained responsive design and styling
 - **Project Pages**: Multiple project migrations completed
   - `/projects/ai/text-analysis` - AI text analysis tool
@@ -481,7 +481,7 @@ Standardized website title across the application and removed legacy React app H
 
 **Infrastructure Improvements:**
 - **Configuration Updates**: Updated Next.js config, ESLint, and PostCSS for optimal setup
-- **Type System**: Enhanced TypeScript types with `next-ui/src/types/common.ts`
+- **Type System**: Enhanced TypeScript types with `web/src/types/common.ts`
 - **Component Library**: Migrated all components with Mantine v7 compatibility
 - **Authentication**: Maintained cookie-based auth flow throughout migration
 - **Error Handling**: Implemented ErrorBoundary components for both apps
@@ -1016,7 +1016,7 @@ This comprehensive frontend enhancement suite represents a major leap forward in
 - **Issue**: Build warnings due to unsupported TypeScript version (5.8.x) with @typescript-eslint/typescript-estree in Create React App (CRA) (`react-ui`).
 - **Root Cause**: CRA's ESLint tooling only supports TypeScript <5.2.0, but project was using 5.8.x.
 - **Fix**: Downgraded TypeScript in `react-ui` to 5.1.6 (latest supported by CRA's ESLint stack). Confirmed warning is gone and build is clean.
-- **Scope**: No changes to `next-ui` (remains on TypeScript 5.8.x+), no TypeScript in `server` or root.
+- **Scope**: No changes to `web` (remains on TypeScript 5.8.x+), no TypeScript in `server` or root.
 - **Documentation**: See `docs/01_guidance.md` for update workflow and hierarchy. See `docs/09_nextjs_migration_plan.md` for migration context.
 
 ### 📊 TypeScript Migration Analysis - React UI
@@ -1253,11 +1253,11 @@ This reconciliation ensures the project maintains coherent, logical documentatio
 **Document Reconciliation Completed:**
 - **Date**: 2025-07-07
 - **Objective**: Reconcile TypeScript configuration documentation following `docs-reconciliation.mdc` guidance
-- **Issue**: `next-ui/TYPESCRIPT_CONFIGURATION.md` violates documentation hierarchy and contains content that should be integrated into migration plan
+- **Issue**: `web/TYPESCRIPT_CONFIGURATION.md` violates documentation hierarchy and contains content that should be integrated into migration plan
 - **Solution**: Integrated unique technical content into Next.js migration plan and moved documentation to proper location
 
 **Reconciliation Analysis:**
-- **Documentation Location Violation**: Configuration file in `next-ui/` directory violates `docs/01_guidance.md` hierarchy
+- **Documentation Location Violation**: Configuration file in `web/` directory violates `docs/01_guidance.md` hierarchy
 - **Content Overlap**: Detailed TypeScript configuration information should be part of Next.js migration documentation
 - **Unique Content**: Valuable technical details about Mantine integration, CSS modules, and build configuration
 - **Scope Confusion**: Next.js-specific configuration separated from main migration documentation
@@ -1282,7 +1282,7 @@ This reconciliation ensures the project maintains coherent, logical documentatio
 - **Technical Details**: `docs/09_nextjs_migration_plan.md` - Comprehensive TypeScript configuration section
 - **Strategic Context**: `docs/02_roadmap.md` - High-level Next.js migration status
 - **Change Tracking**: `docs/03_updates.md` - Chronological change log
-- **Removed**: `next-ui/TYPESCRIPT_CONFIGURATION.md` - Content integrated into migration plan
+- **Removed**: `web/TYPESCRIPT_CONFIGURATION.md` - Content integrated into migration plan
 
 **Impact on Development Workflow:**
 - **Single Source of Truth**: All TypeScript configuration now documented in migration plan
@@ -2291,7 +2291,7 @@ This reconciliation ensures the project maintains coherent, logical documentatio
 
 ### Added
 - **docs/09_nextjs_migration_plan.md**: Comprehensive solo-developer migration plan with AI strategy
-- **Shared Types**: Created `next-ui/src/shared/types/` with User and API types
+- **Shared Types**: Created `web/src/shared/types/` with User and API types
 - **API Client**: Migrated to TypeScript with proper error handling
 
 ### Changed

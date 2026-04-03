@@ -62,9 +62,9 @@ The build process now works as follows:
 ```json
 {
   "build": "npm run sync-env:prod && npm run build-next",
-  "build-next": "npm run build --prefix next-ui",
-  "heroku-prebuild": "npm install --prefix next-ui --legacy-peer-deps --production=false",
-  "heroku-postbuild": "npm run sync-env:prod && npm run build --prefix next-ui"
+  "build-next": "npm run build --prefix web",
+  "heroku-prebuild": "npm install --prefix web --legacy-peer-deps --production=false",
+  "heroku-postbuild": "npm run sync-env:prod && npm run build --prefix web"
 }
 ```
 
@@ -78,8 +78,8 @@ The build process now works as follows:
 - Express handles API routes on port 5000
 
 ### Production Mode
-- Next.js builds to static files in `next-ui/out/`
-- Express serves static files from `next-ui/out/`
+- Next.js builds to static files in `web/out/`
+- Express serves static files from `web/out/`
 - Route swapping redirects canonical paths to `/next/*` versions
 
 ### Route Swapping Logic
@@ -128,13 +128,13 @@ heroku run npm run migrate
    heroku logs --tail
    
    # Verify Next.js dependencies
-   cd next-ui && npm install
+   cd web && npm install
    ```
 
 2. **Static Files Not Served**
    ```bash
    # Check if out directory exists
-   ls -la next-ui/out/
+   ls -la web/out/
    
    # Verify Express static serving
    heroku logs --tail | grep "static"
@@ -167,7 +167,7 @@ heroku open
 
 - [ ] Environment variables set in Heroku
 - [ ] Next.js builds successfully locally (`npm run build-next`)
-- [ ] Static files generated in `next-ui/out/`
+- [ ] Static files generated in `web/out/`
 - [ ] Express server starts without errors
 - [ ] Database migrations ready
 - [ ] Google OAuth redirect URIs updated for production
@@ -188,4 +188,4 @@ Current migration status can be tracked in:
 - [Migration Plan](09_nextjs_migration_plan.md) - Strategic overview
 - [Environment Configuration](config/env.js) - Environment loading logic
 - [Express Server](server/index.js) - Server configuration
-- [Next.js Config](next-ui/next.config.mjs) - Next.js build settings 
+- [Next.js Config](web/next.config.mjs) - Next.js build settings 

@@ -24,7 +24,7 @@ This runbook captures the planned Phase 4 browser end-to-end smoke flows so back
 
 ## Execution (planned → required for completion)
 - Runner: Playwright.
-- Local command (planned): `cd next-ui && npm run test:e2e`.
+- Local command (planned): `cd web && npm run test:e2e`.
 - CI job (planned → required): `ci/browser-smoke` executes `tests/e2e/auth-content.e2e.ts` and `tests/e2e/auth-habits.e2e.ts`. Run nightly while stabilising; once flakes are addressed, promote to a per-PR blocking gate. Link this job from the testing harness matrix so contributors know where browser flows sit relative to service and route gates. This job must exist and exercise both flows before Phase 4 can be considered complete.
 
 ## Integration with the testing harness

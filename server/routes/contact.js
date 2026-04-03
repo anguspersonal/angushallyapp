@@ -4,10 +4,8 @@ const { sendInquiryToOwner, sendAcknowledgmentToUser, sendContactFormEmail } = r
 const config = require('../config');
 const { httpClient } = require('../http/client');
 const { createLogger } = require('../observability/logger');
-const {
-  isRecaptchaTokenValidationError,
-  verifyRecaptchaToken,
-} = require('../utils/recaptchaSiteVerify');
+const { verifyRecaptchaToken } = require('../utils/recaptchaSiteVerify');
+const { outcomeForRecaptchaVerification } = require('../utils/recaptchaVerificationOutcome');
 
 // Validation middleware
 const validateContact = [
@@ -43,21 +41,11 @@ function buildContactRouter(deps = {}) {
         correlationId,
       });
 
-      const errorCodes = verificationResult?.['error-codes'] || [];
-
-      if (!verificationResult?.success) {
-        if (isRecaptchaTokenValidationError(errorCodes)) {
-          scopedLogger.warn('Invalid reCAPTCHA token', { correlationId, errorCodes });
-          return res.status(400).json({ error: 'reCAPTCHA verification failed' });
-        }
-
-        scopedLogger.error('reCAPTCHA upstream verification error', { correlationId, errorCodes });
-        return res.status(502).json({ error: 'Failed to verify reCAPTCHA token' });
-      }
-
-      if (errorCodes.length > 0) {
-        scopedLogger.warn('reCAPTCHA returned warnings', { correlationId, errorCodes });
-        return res.status(400).json({ error: 'reCAPTCHA verification failed' });
+      const outcome = outcomeForRecaptchaVerification(verificationResult);
+      if (outcome) {
+        const { level, message, errorCodes } = outcome.log;
+        scopedLogger[level](message, { correlationId, errorCodes });
+        return res.status(outcome.status).json(outcome.body);
       }
 
       const { name, email, message } = req.body;

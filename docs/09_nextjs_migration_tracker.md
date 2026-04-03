@@ -63,13 +63,13 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 
 ### Critical Infrastructure Fixes ✅
 - [x] **Static Asset Loading Fix** – Resolved CSS import issues preventing Next.js app from rendering
-  - [x] Copied `index.css` and `general.css` from CRA to `next-ui/src/`
+  - [x] Copied `index.css` and `general.css` from CRA to `web/src/`
   - [x] Updated `layout.tsx` to import CSS files from correct location
   - [x] Verified Next.js app renders successfully at http://localhost:3000
   - [x] Confirmed no 404s for static assets (CSS/JS chunks)
 
 ### `/contact` Migration ✅
-- [x] Copy CRA component to `next-ui/src/app/contact/page.tsx`
+- [x] Copy CRA component to `web/src/app/contact/page.tsx`
 - [x] Convert to TSX + use App Router
 - [x] Test locally at `/next/contact`
 - [x] Install required dependencies (@mantine/form, react-google-recaptcha)
@@ -85,15 +85,15 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 - [x] Verify footer appears on all pages via Express proxy
 
 ### `/projects` Migration ✅
-- [x] Copy CRA component to `next-ui/src/app/projects/page.tsx`
+- [x] Copy CRA component to `web/src/app/projects/page.tsx`
 - [x] Convert to TSX + use App Router
-- [x] Use existing project data from `next-ui/src/data/projectList.ts`
+- [x] Use existing project data from `web/src/data/projectList.ts`
 - [x] Test locally at `/next/projects`
 - [x] Verify page loads correctly via Express proxy
 
 ### Individual Project Pages Migration ✅
 - [x] `/projects/ai/text-analysis` – Simple AI text analysis tool
-  - [x] Create directory structure `next-ui/src/app/projects/ai/text-analysis/`
+  - [x] Create directory structure `web/src/app/projects/ai/text-analysis/`
   - [x] Migrate main component to Next.js App Router
   - [x] Create supporting `ai.ts` utility with API client integration
   - [x] Fix Mantine v7 compatibility issues (LoadingOverlay, Box styling)
@@ -101,7 +101,7 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
   - [x] Verify page loads correctly via Express proxy
 
 - [x] `/projects/ai/instapaper` – Instapaper AI analysis tool
-  - [x] Create directory structure `next-ui/src/app/projects/ai/instapaper/`
+  - [x] Create directory structure `web/src/app/projects/ai/instapaper/`
   - [x] Create main page component with TypeScript and Mantine v7
   - [x] Implement placeholder AI analysis interface
   - [x] Add future features roadmap and integration plans
@@ -110,7 +110,7 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
   - [x] **Status**: ✅ **Complete** - Ready for future Instapaper API integration
 
 - [x] `/projects/eat-safe-uk` – Google Maps + hygiene score integration
-  - [x] Create directory structure `next-ui/src/app/projects/eat-safe-uk/`
+  - [x] Create directory structure `web/src/app/projects/eat-safe-uk/`
   - [x] Migrate main component to Next.js App Router with TypeScript
   - [x] Create supporting components (GMapView, GMapsSearchBar, NearbySearchButton, Markers)
   - [x] Migrate utility functions (fetchHygieneScores, nearbySearch, askUserLocation, getDynamicPlaceholder)
@@ -121,7 +121,7 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
   - [x] Verify Google Maps integration and hygiene score functionality
 
 ### Data Value Game Migration ✅
-- [x] Create directory structure `next-ui/src/app/projects/data-value-game/`
+- [x] Create directory structure `web/src/app/projects/data-value-game/`
 - [x] Migrate main component to Next.js App Router
 - [x] Create DVGHeader component and CSS
 - [x] Create Welcome component
@@ -132,7 +132,7 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 - [x] Test game functionality
 
 ### `/login` Migration ✅
-- [x] Copy CRA component to `next-ui/src/app/login/page.tsx`
+- [x] Copy CRA component to `web/src/app/login/page.tsx`
 - [x] Convert to TSX + use App Router
 - [x] Test locally at `/next/login`
 - [x] (Optional) Test in production at `/next/login`
@@ -141,7 +141,7 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 - [x] Move page from `/next/login` → `/login`
 
 ### `/blog` Migration ✅
-- [x] Copy CRA components to `next-ui/src/app/blog/` and `next-ui/src/app/blog/[slug]/`
+- [x] Copy CRA components to `web/src/app/blog/` and `web/src/app/blog/[slug]/`
 - [x] Convert to TSX + use App Router with dynamic routing
 - [x] Install required dependencies (react-markdown, remark-gfm)
 - [x] Update blog types to match CRA version
@@ -153,7 +153,7 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 - [x] Verify blog listing and individual post pages load correctly
 
 ### `/collab` Migration ✅
-- [x] Create directory structure `next-ui/src/app/collab/`
+- [x] Create directory structure `web/src/app/collab/`
 - [x] Migrate main page component to Next.js App Router with TypeScript
 - [x] Create supporting components (TraitGrid, CustomCarousel, TestimonialSlide, CaseStudySlide, FounderJourney)
 - [x] Migrate data files (testimonials.ts, caseStudies.tsx) with proper TypeScript interfaces
@@ -165,7 +165,7 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 - [x] Verify all sections load correctly (Hero, TraitGrid, Accordion, Carousel, FounderJourney)
 
 ### `/cv` Migration ✅
-- [x] Create directory structure `next-ui/src/app/cv/`
+- [x] Create directory structure `web/src/app/cv/`
 - [x] Migrate main page component to Next.js App Router with TypeScript
 - [x] Preserve all CV sections and responsive design
 - [x] Maintain styling and layout consistency
@@ -173,10 +173,10 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 - [x] Verify page loads correctly via Express proxy
 
 ### `/projects/habit` Migration ✅
-- [x] Create directory structure `next-ui/src/app/projects/habit/`
+- [x] Create directory structure `web/src/app/projects/habit/`
 - [x] Migrate main page component to Next.js App Router with TypeScript
 - [x] Create supporting components (HabitHeader, HabitTile, HabitDrawer, HabitCombobox)
-- [x] Add habit types to `next-ui/src/types/common.ts` (HabitLog, HabitType, DrinkCatalogItem, etc.)
+- [x] Add habit types to `web/src/types/common.ts` (HabitLog, HabitType, DrinkCatalogItem, etc.)
 - [x] Migrate utility functions (habit.ts, aggregateService.ts, calculateUnits.ts)
 - [x] Fix Mantine v7 compatibility issues (color props, ActionIcon variants)
 - [x] Update API client integration to use shared apiClient
@@ -184,7 +184,7 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 - [x] Verify habit tracking functionality and drawer interactions
 
 ### `/projects/strava` Migration ✅
-- [x] Create directory structure `next-ui/src/app/projects/strava/`
+- [x] Create directory structure `web/src/app/projects/strava/`
 - [x] Migrate main page component to Next.js App Router with TypeScript
 - [x] Copy CSS module files and resolve import issues
 - [x] Maintain Strava API integration and graph display
@@ -193,18 +193,18 @@ This is the **working task board** for the CRA → Next.js migration of `angusha
 - [x] Verify Strava integration and functionality
 
 ### `/projects/bookmarks` Migration ✅
-- [x] Create directory structure `next-ui/src/app/projects/bookmarks/`
+- [x] Create directory structure `web/src/app/projects/bookmarks/`
 - [x] Migrate main page component to Next.js App Router with TypeScript
 - [x] Create supporting components (BookmarkCard, Sidebar)
 - [x] Migrate Instagram Intelligence components (InstagramEnhancer, InstagramAnalysisDisplay)
-- [x] Create shared types in `next-ui/src/types/common.ts`
+- [x] Create shared types in `web/src/types/common.ts`
 - [x] Install required dependencies (@mantine/notifications)
 - [x] Test locally at `/next/projects/bookmarks`
 - [x] Verify page loads correctly via Express proxy
 - [x] **Status**: ✅ **Complete** - All components migrated with TypeScript support
 
 ### `layout.tsx` Shared Layout Migration ✅
-- [x] Create `next-ui/src/app/layout.tsx` with Mantine and global styles
+- [x] Create `web/src/app/layout.tsx` with Mantine and global styles
 - [x] Port `Header` and `Footer` components to Next.js
 - [x] Wrap all pages in `ClientLayout`
 - [x] Register service worker in layout

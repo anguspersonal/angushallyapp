@@ -10,7 +10,7 @@ angushallyapp mono-repo, which now consists of:
 | Folder | Purpose | Tech |
 |--------|---------|------|
 | **root** | Workspace manager, shared deps, build & deploy scripts | npm workspaces |
-| **next-ui/** | Main frontend (Next.js 15 + TypeScript) | SSR/SSG hybrid |
+| **web/** | Main frontend (Next.js 15 + TypeScript) | SSR/SSG hybrid |
 | **server/** | Backend API & auth | Express + PostgreSQL |
 
 ---
@@ -24,7 +24,7 @@ angushallyapp mono-repo, which now consists of:
 | `npm run client`            | Next dev server only | 3000 | Frontend focus |
 | `npm run build`             | Production build (sync env → Next build) | — | Local prod test |
 | `npm start`                 | **Server** in prod mode (serves built Next) | 5000 | Local prod run / Heroku dyno |
-| `npm run compress-images`   | Auto-compress `/next-ui/public` images | — | Keep slug small |
+| `npm run compress-images`   | Auto-compress `/web/public` images | — | Keep slug small |
 
 ---
 
@@ -36,7 +36,7 @@ angushallyapp mono-repo, which now consists of:
 npm run dev
 ````
 
-* Runs `scripts/sync-env:dev` 📥 → writes `next-ui/.env`.
+* Runs `scripts/sync-env:dev` 📥 → writes `web/.env`.
 * Checks ports 5000 & 3000 (interactive kill if occupied).
 * Starts:
 
@@ -67,7 +67,7 @@ npm run dev
 When you **upgrade major deps** (e.g. React 19), wipe modules:
 
 ```bash
-rm -rf node_modules next-ui/node_modules package-lock.json
+rm -rf node_modules web/node_modules package-lock.json
 npm install
 ```
 
@@ -78,8 +78,8 @@ npm install
 ### Local production smoke-test
 
 ```bash
-npm run sync-env:prod           # writes next-ui/.env
-npm run build                   # Next build into next-ui/.next
+npm run sync-env:prod           # writes web/.env
+npm run build                   # Next build into web/.next
 NODE_ENV=production npm start   # Express + SSR on :5000
 
 ### Deploy to Heroku
@@ -97,7 +97,7 @@ Heroku build flow:
 1. **heroku-prebuild**
    `npm ci --omit=dev --workspaces --include-workspace-root`
 2. **heroku-postbuild**
-   `npm --workspaces prune --omit=dev && npm run build --workspace next-ui`
+   `npm --workspaces prune --omit=dev && npm run build --workspace web`
 3. Dyno runs `npm start` (Express + SSR)
 
 Purge stale cache if the slug balloons:
@@ -141,7 +141,7 @@ npm run migrate:make
 
 ```bash
 npm test           # Jest (server)
-npm run lint --workspace next-ui   # ESLint (frontend)
+npm run lint --workspace web   # ESLint (frontend)
 npx tsc --noEmit   # TypeScript check
 ```
 
@@ -153,7 +153,7 @@ npx tsc --noEmit   # TypeScript check
 |---------|-------|--------------|
 | `npm run clean:node` | root | Deletes every `node_modules/**`, wipes `package-lock.json`, then runs `npm ci` with workspaces. |
 | `npm run clean:next` | root | Removes `.next/` build & cache, then rebuilds UI. |
-| `npm run clean:public` | root | Moves `*.original.*` images to `assets/archive` and deletes `*:Zone.Identifier` files in `next-ui/public`. |
+| `npm run clean:public` | root | Moves `*.original.*` images to `assets/archive` and deletes `*:Zone.Identifier` files in `web/public`. |
 | `npm run clean:ports [<port> …]` | root | Kills any process on ports 5000 & 3000 (plus optional extra ports). |
 | `npm run clean:heroku-cache` | root | Purges Heroku's build cache. |
 
@@ -174,7 +174,7 @@ npx tsc --noEmit   # TypeScript check
 
 ## 🛡️ CI / Size Gates (suggested)
 
-* Fail PR if any image in `next-ui/public` > 500 kB.
+* Fail PR if any image in `web/public` > 500 kB.
 * Fail PR if production `du -s` inside slug > 320 MB.
 
 ---

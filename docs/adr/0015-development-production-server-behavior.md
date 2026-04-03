@@ -13,7 +13,7 @@ We clarified the intended behavior of our server scripts:
 
 - **`npm start`**: Production mode
   - Runs only Express server (`node server/index.js`)
-  - Serves built Next.js static files from `next-ui/out/`
+  - Serves built Next.js static files from `web/out/`
   - Requires `npm run build` to be run first
   - Designed for production deployment
 

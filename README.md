@@ -42,7 +42,7 @@ A personal website combining a blog, portfolio, and a playground for custom tool
 │   ├── index.js         # Express server setup
 │   └── knexfile.js      # Knex configs
 │
-└── next-ui
+└── web
     ├── public/         # Static assets
     ├── src/
     │   ├── app/        # Next.js App Router pages
@@ -137,7 +137,7 @@ For comprehensive documentation, please refer to the following resources:
 ## 🔍 Testing
 
 * **Backend**: `npm test`
-* **Frontend**: `cd next-ui && npm test`
+* **Frontend**: `cd web && npm test`
 
 ---
 

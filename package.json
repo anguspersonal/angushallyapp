@@ -4,7 +4,7 @@
   "description": "Angus Hally's personal application - a monolithic full-stack app with Next.js frontend and Node.js/Express backend",
   "private": true,
   "workspaces": [
-    "next-ui",
+    "web",
     "server"
   ],
   "engines": {
@@ -13,7 +13,7 @@
   },
   "scripts": {
     "build": "npm run build-next",
-    "build-next": "npm run build --prefix next-ui",
+    "build-next": "npm run build --prefix web",
     "kill-ports": "npx kill-port 5000 3000",
     "fix-nextjs": "node scripts/fix-nextjs-build-errors.js",
     "compress-images": "node scripts/compress-images.mjs",
@@ -26,7 +26,7 @@
   "type": "commonjs",
   "cacheDirectories": [
     "node_modules",
-    "next-ui/node_modules"
+    "web/node_modules"
   ],
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
@@ -80,6 +80,8 @@
   },
   "homepage": "https://github.com/angushally/angushallyapp#readme",
   "overrides": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "cross-spawn": "^7.0.6",
     "got": "^11.8.5",
     "http-cache-semantics": "^4.1.1",

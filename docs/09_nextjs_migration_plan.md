@@ -25,7 +25,7 @@ This document outlines the **strategic overview** of migrating `angushallyapp` f
 - **Component pattern**: Copy → Convert → Test → Replace route
 
 ### ⚙️ Migration Pattern
-1. Copy component/page from CRA → `next-ui/src/app/`
+1. Copy component/page from CRA → `web/src/app/`
 2. Convert JSX → TSX with type safety
 3. Replace React Router with Next.js `Link` / `app router`
 4. Move static assets and CSS modules
@@ -57,7 +57,7 @@ This migration effort is coordinated across three documents:
 
 Each route follows a consistent, zero-downtime migration path:
 
-1. **Copy** CRA page/component into `next-ui/src/app/[route]/page.tsx`
+1. **Copy** CRA page/component into `web/src/app/[route]/page.tsx`
 2. **Convert** JSX → TSX, adapt imports and routing to Next.js
 3. **Test Locally** at `/next/[route]` via Express proxy
 4. **Test in Production (Optional)** by exposing `/next/[route]` safely
@@ -77,7 +77,7 @@ This process ensures full SSR, styling, and functionality validation without ris
 ```md
 ### `/[route]` Migration
 
-- [ ] Copy CRA component to `next-ui/src/app/[route]/page.tsx`
+- [ ] Copy CRA component to `web/src/app/[route]/page.tsx`
 - [ ] Convert to TSX + use App Router
 - [ ] Test locally at `/next/[route]`
 - [ ] (Optional) Test in production at `/next/[route]`
