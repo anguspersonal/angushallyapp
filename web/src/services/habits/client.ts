@@ -6,10 +6,7 @@ import type {
   HabitStats,
 } from '@shared/services/habit/contracts';
 
-const isServer = typeof window === 'undefined';
-const API_BASE_URL = isServer
-  ? process.env.API_BASE_URL || 'http://localhost:5000/api'
-  : '/api';
+const API_BASE_URL = '/api';
 
 async function handleResponse<T>(response: Response): Promise<T> {
   const contentType = response.headers.get('content-type');

@@ -62,6 +62,9 @@ database_backups/
 build/
 dist/
 
+# Next.js (local build output and cache — do not commit)
+.next/
+
 # Testing
 coverage/
 server/coverage/

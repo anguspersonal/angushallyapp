@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 
-/** Bookmarks / Raindrop / F5 / Instagram-intelligence cluster — not enabled on Vercel until ported from `server/bookmark-api`. */
+/**
+ * @deprecated All bookmark cluster APIs have been ported to Supabase.
+ * This stub is kept only for any overlooked references.
+ */
 export function bookmarksClusterNotPorted(): NextResponse {
   return NextResponse.json(
     {
-      error: 'Bookmarks and related APIs are not enabled on this deployment',
-      code: 'BOOKMARKS_CLUSTER_NOT_PORTED',
+      error: 'This endpoint has been migrated. Please update your client.',
+      code: 'ENDPOINT_MIGRATED',
     },
-    { status: 503 },
+    { status: 410 },
   );
 }

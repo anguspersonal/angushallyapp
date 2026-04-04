@@ -1,21 +1,20 @@
 {
   "name": "angushallyapp",
-  "version": "3.0.0",
-  "description": "Angus Hally's personal application - a monolithic full-stack app with Next.js frontend and Node.js/Express backend",
+  "version": "4.0.0",
+  "description": "Angus Hally's personal application - Next.js frontend with Supabase backend",
   "private": true,
   "workspaces": [
-    "web",
-    "server"
+    "web"
   ],
   "engines": {
     "node": "20.x",
     "npm": ">=10.x"
   },
   "scripts": {
-    "build": "npm run build-next",
-    "build-next": "npm run build --prefix web",
-    "kill-ports": "npx kill-port 5000 3000",
-    "fix-nextjs": "node scripts/fix-nextjs-build-errors.js",
+    "build": "npm run build --prefix web",
+    "dev": "npm run dev --prefix web",
+    "start": "npm run start --prefix web",
+    "kill-ports": "npx kill-port 3000",
     "compress-images": "node scripts/compress-images.mjs",
     "compress-big": "node scripts/compress-big-only.mjs",
     "clean:node": "bash scripts/clean-node.sh",
@@ -31,49 +30,30 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
     "apify-client": "^2.12.6",
-    "bcrypt": "^5.1.1",
-    "cookie-parser": "^1.4.7",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "express-rate-limit": "^7.5.0",
-    "express-validator": "^7.0.1",
     "fuse.js": "^7.0.0",
-    "google-auth-library": "^9.15.1",
-    "http-proxy-middleware": "^3.0.5",
-    "jsonwebtoken": "^9.0.2",
-    "knex": "^3.1.0",
     "nodemailer": "^6.10.0",
     "open-graph-scraper": "^6.10.0",
-    "openai": "^4.100.0",
-    "pg": "^8.15.6"
+    "openai": "^4.100.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.17.0",
     "@eslint/eslintrc": "^3",
-    "chai": "^4.3.7",
     "concurrently": "^9.1.2",
     "eslint-config-next": "^15.3.5",
-    "jest": "^29.7.0",
-    "kill-port": "^2.0.1",
-    "nodemon": "^2.0.15",
-    "puppeteer": "^24.1.1",
-    "supertest": "^7.1.1"
+    "kill-port": "^2.0.1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/angushally/angushallyapp.git"
   },
   "keywords": [
-    "node",
-    "heroku",
     "nextjs",
     "react",
-    "express",
+    "supabase",
     "postgresql"
   ],
   "license": "MIT",
-  "main": "index.js",
   "author": "angushally",
   "bugs": {
     "url": "https://github.com/angushally/angushallyapp/issues"

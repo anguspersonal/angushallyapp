@@ -1,5 +1,62 @@
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useAuth } from '@/providers/AuthProvider';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, Suspense } from 'react';
+import { Button, Container, Title, Text, Stack, Alert } from '@mantine/core';
+
+function LoginContent() {
+  const { user, login, isLoading } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const error = searchParams.get('error');
+
+  useEffect(() => {
+    if (user && !isLoading) {
+      router.push('/');
+    }
+  }, [user, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <Container size="xs" py="xl">
+        <Text ta="center">Loading...</Text>
+      </Container>
+    );
+  }
+
+  if (user) return null;
+
+  return (
+    <Container size="xs" py="xl">
+      <Stack gap="lg" align="center">
+        <Title order={2}>Sign In</Title>
+        <Text c="dimmed" ta="center">
+          Sign in with your Google account to access protected features.
+        </Text>
+
+        {error && (
+          <Alert color="red" title="Authentication Error">
+            Sign-in failed. Please try again.
+          </Alert>
+        )}
+
+        <Button
+          size="lg"
+          onClick={() => login({ email: '', password: '' })}
+          variant="filled"
+        >
+          Sign in with Google
+        </Button>
+      </Stack>
+    </Container>
+  );
+}
 
 export default function LoginPage() {
-  redirect('/');
+  return (
+    <Suspense fallback={<Container size="xs" py="xl"><Text ta="center">Loading...</Text></Container>}>
+      <LoginContent />
+    </Suspense>
+  );
 }
