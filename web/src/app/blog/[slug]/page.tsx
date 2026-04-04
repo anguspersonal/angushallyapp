@@ -4,7 +4,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { notFound } from 'next/navigation';
 import { Image, Text, Box, Anchor, Container, Title } from '@mantine/core';
-import { contentClient } from '@/services/content/client';
+import { getBlogPostDetail } from '@/lib/content/blogRepository';
+import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import '../blog.css';
 
 interface PageProps {
@@ -18,7 +19,12 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
-  const post = await contentClient.getPostBySlug(slug);
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    notFound();
+  }
+
+  const post = await getBlogPostDetail(admin, slug);
 
   if (!post) {
     notFound();
