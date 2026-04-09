@@ -25,6 +25,8 @@ Node version: **20.x** (see `.nvmrc`). Package manager: **npm**.
 - The Next.js app needs a `.env.local` in `web/` with at minimum `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (can be placeholder values for local dev).
 - The full env template is in `.env.example` (root) and `config/env.example`.
 - Supabase clients gracefully return `null` when env vars are missing, so the app boots without a real Supabase instance.
+- **reCAPTCHA**: The contact form (`/contact`) requires both client and server keys. For local dev, use [Google's test keys](https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha): `NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI` and `RECAPTCHA_SECRET_KEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe`. The test site key renders a widget that auto-passes; the test secret key accepts any token.
+- **Email (SMTP)**: Contact form submission will pass reCAPTCHA but fail at the email step without SMTP credentials (`SMTP_HOST`, `SMTP_USER`, `SMTP_PASS` or Google OAuth2 tokens). This is expected in dev without mail config.
 
 ### Gotchas
 
