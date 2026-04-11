@@ -11,9 +11,9 @@
     "npm": ">=10.x"
   },
   "scripts": {
-    "build": "npm run build --prefix web",
-    "dev": "npm run dev --prefix web",
-    "start": "npm run start --prefix web",
+    "build": "cd web && npm run build",
+    "dev": "cd web && npm run dev",
+    "start": "cd web && npm run start",
     "kill-ports": "npx kill-port 3000",
     "compress-images": "node scripts/compress-images.mjs",
     "compress-big": "node scripts/compress-big-only.mjs",

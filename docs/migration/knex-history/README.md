@@ -1,3 +1,13 @@
+> **⚠️ ARCHIVED — DO NOT RUN**
+>
+> These Knex migrations built the schema now hosted on Supabase. They are preserved here **for historical reference only**. The schema is live in Supabase; rerunning these files against it is unnecessary and potentially destructive.
+>
+> For future schema changes, use Supabase's migration workflow (`supabase db diff`, `supabase migration new`, etc.) rather than adding files here.
+>
+> Archived: 2026-04-11 during `server/` directory decommissioning.
+
+---
+
 # Database Schema and Migrations
 
 This directory contains database migrations and schema documentation for the habit tracking application.
