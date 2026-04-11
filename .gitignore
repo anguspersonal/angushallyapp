@@ -5,10 +5,16 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
 
 # Dependencies
 node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 dist
 dist-ssr
 *.local
@@ -26,27 +32,21 @@ dist-ssr
 .cursor/
 .claude/
 .kiro/
+*.swp
+*.swo
+*~
 
-# TypeScript incremental build info
+# TypeScript
 *.tsbuildinfo
+next-env.d.ts
 
 # Environment files
-# Root environment files
 .env
 .env.local
 .env.development
 .env.test
 .env.production
 .env.staging
-
-# React environment files (auto-generated)
-react-ui/.env
-react-ui/.env.local
-react-ui/.env.development
-react-ui/.env.production
-react-ui/.env.staging
-
-# But keep the example file
 !config/env.example
 
 # Database dumps and backups
@@ -59,35 +59,28 @@ pg_dump/
 database_backups/
 
 # Build outputs
+/.next/
+/out/
 build/
 dist/
+/build
 
-# Next.js (local build output and cache — do not commit)
-.next/
+# next-pwa / workbox generated artifacts in public/
+/public/sw.js
+/public/sw.js.map
+/public/workbox-*.js
+/public/workbox-*.js.map
 
 # Testing
 coverage/
-server/coverage/
-react-ui/coverage/
-shared/services/habit/dist/
 *.lcov
 .nyc_output/
 
-# Test directories (keep only the main test files)
-react-ui/src/__tests__/
-react-ui/src/tests/
-react-ui/tests/
+# Vercel
+.vercel
 
-# Scripts (if they contain sensitive data)
-scripts/
-
-# coverage
-coverage/
-server/coverage/
-react-ui/coverage/
-*.lcov
-.nyc_output/
-# Windows metadata files
+# Misc
+*.pem
 *.Zone.Identifier
 
 # Temporary and cache files
@@ -95,11 +88,3 @@ react-ui/coverage/
 .cache/
 *.tmp
 *.temp
-
-# IDE and editor files
-*.swp
-*.swo
-*~
-
-
-
