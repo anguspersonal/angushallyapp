@@ -47,6 +47,8 @@ next-env.d.ts
 .env.test
 .env.production
 .env.staging
+.env.old
+.env.*.old
 !config/env.example
 
 # Database dumps and backups
