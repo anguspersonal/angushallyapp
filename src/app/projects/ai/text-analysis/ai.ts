@@ -1,4 +1,4 @@
-import { api } from '@/shared/apiClient';
+import { api } from '@/lib/api/client';
 
 export async function analyzeText(input: string) {
   try {

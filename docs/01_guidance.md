@@ -266,15 +266,9 @@ See `/server/[subProjectName]/README.md` for comprehensive sub-project documenta
 
 ## Environment Variable Management
 
-We centralise all of our environment‐specific settings in a single place and propagate them to both server and client via a lightweight sync script.  This ensures:
+The **Next.js app** at the repo root loads environment variables from `.env.local` (and related Next conventions). See root `.env.example` for the variables the codebase reads locally; set the same keys in the **Vercel** project for preview/production.
 
-- **One source of truth**: root `.env` files control _all_ variables for server and client  
-- **Zero-if-possible**: application code never contains `if (NODE_ENV === ...)`; it only reads `process.env.*`  
-- **Next.js-friendly**: client‐side env vars live in `web/.env.development` and `web/.env.production` (plus optional `.env.local`)  
-- **Express-friendly**: server reads root `.env`, `.env.development` or `.env.production`, and `.env.local` via our existing `config/env.js`
-
-When you need full details on the why and how, see our ADR:  
-[ADR 0010 – Environment Configuration Management](./adr/0010-env-config-management.md)
+Historical context (CRA + Express + `config/env.js`) is preserved in [ADR 0010 – Environment Configuration Management](./adr/0010-env-config-management.md).
 
 ---
 

@@ -3,7 +3,7 @@
  * This file contains reusable type definitions used across components and services
  */
 
-import type { HabitStats as HabitStatsContract } from '@shared/services/habit/contracts';
+import type { HabitStats as HabitStatsContract } from '@/lib/habit/contracts';
 
 // =============================================================================
 // CORE UTILITY TYPES

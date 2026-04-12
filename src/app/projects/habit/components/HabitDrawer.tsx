@@ -7,7 +7,7 @@ import { useForm } from "@mantine/form";
 import { addHabitLog, getHabitSpecificData } from "../habit";
 import { calculateUnits } from "../../../../utils/calculateUnits";
 import type { HabitLog, DrinkCatalogItem, HabitType } from "../../../../types/common";
-import type { HabitPeriod, HabitStats } from "@shared/services/habit/contracts";
+import type { HabitPeriod, HabitStats } from '@/lib/habit/contracts';
 import { useHabitStats } from "../../../../services/habits/hooks";
 
 // Constants

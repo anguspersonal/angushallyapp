@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import type { AuthContextType, User } from '../shared/types';
+import type { AuthContextType, User } from '@/lib/auth/types';
 
 function mapSupabaseUser(su: SupabaseUser): User {
   const meta = su.user_metadata ?? {};

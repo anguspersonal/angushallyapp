@@ -4,7 +4,7 @@ import type {
   HabitListResult,
   HabitPeriod,
   HabitStats,
-} from '@shared/services/habit/contracts';
+} from '@/lib/habit/contracts';
 
 const API_BASE_URL = '/api';
 

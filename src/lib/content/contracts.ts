@@ -1,7 +1,5 @@
 /**
- * Shared content/blog service contracts.
- * These types are consumed by both backend routes and frontend clients/hooks
- * to ensure a consistent domain boundary.
+ * Content/blog domain types for Route Handlers, repositories, and client hooks.
  */
 
 import type { PaginationMeta } from '../contracts/pagination';

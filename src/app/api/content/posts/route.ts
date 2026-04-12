@@ -1,4 +1,4 @@
-import type { ContentListParams } from '@shared/services/content/contracts';
+import type { ContentListParams } from '@/lib/content/contracts';
 import { listBlogPosts } from '@/lib/content/blogRepository';
 import { migrationInProgressResponse } from '@/lib/api/migrationUnavailable';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';

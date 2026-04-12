@@ -8,8 +8,8 @@
     "npm": ">=10.x"
   },
   "scripts": {
-    "dev": "node scripts/check-port.js 3000 && next dev",
-    "dev:turbopack": "node scripts/check-port.js 3000 && next dev --turbopack",
+    "dev": "next dev",
+    "dev:turbopack": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -19,9 +19,7 @@
     "test:coverage": "vitest run --coverage",
     "fix-nextjs": "node scripts/fix-nextjs-build-errors.js",
     "fix-nextjs:clean": "node scripts/fix-nextjs-build-errors.js --clean-deps",
-    "kill-ports": "npx kill-port 3000",
     "compress-images": "node scripts/compress-images.mjs",
-    "compress-big": "node scripts/compress-big-only.mjs",
     "clean:node": "bash scripts/clean-node.sh",
     "clean:next": "bash scripts/clean-next.sh",
     "clean:ports": "node scripts/clean-ports.js"

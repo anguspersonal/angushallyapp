@@ -186,6 +186,6 @@ Current migration status can be tracked in:
 ## 📚 Related Documentation
 
 - [Migration Plan](09_nextjs_migration_plan.md) - Strategic overview
-- [Environment Configuration](config/env.js) - Environment loading logic
+- Root [`.env.example`](../.env.example) - Template for local `.env.local`; production env lives in Vercel
 - [Express Server](server/index.js) - Server configuration
 - [Next.js Config](web/next.config.mjs) - Next.js build settings 

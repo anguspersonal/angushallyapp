@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Paper, Text, Title, Box } from '@mantine/core';
-import type { ContentPostSummary } from '@shared/services/content/contracts';
+import type { ContentPostSummary } from '@/lib/content/contracts';
 
 type SnippetProps = Pick<ContentPostSummary, 'excerpt' | 'id' | 'slug' | 'title'> & { link?: string };
 

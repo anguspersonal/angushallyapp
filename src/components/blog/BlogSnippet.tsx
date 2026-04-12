@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Card, Image, Text, Title, Box } from '@mantine/core';
-import type { ContentPostSummary } from '@shared/services/content/contracts';
+import type { ContentPostSummary } from '@/lib/content/contracts';
 
 interface BlogSnippetProps {
   post: ContentPostSummary;

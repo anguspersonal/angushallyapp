@@ -1,7 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { HabitMetric, HabitPeriod, HabitStats } from '@shared/services/habit/contracts';
-
-/** Mirrors `shared/services/habit/contracts.ts` — avoid CJS shim (`contracts.js` → missing dist) in the Next bundle. */
+import type { HabitMetric, HabitPeriod, HabitStats } from '@/lib/habit/contracts';
 const HABIT_PERIODS = ['day', 'week', 'month', 'year', 'all'] as const;
 const HABIT_METRICS = ['sum', 'avg', 'min', 'max', 'stddev'] as const;
 

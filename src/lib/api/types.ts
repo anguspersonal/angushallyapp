@@ -1,5 +1,5 @@
 /**
- * API client types and interfaces for shared use
+ * API client types for the browser `fetch` wrapper (`src/lib/api/client.ts`).
  */
 export interface ApiClientOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -14,7 +14,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public readonly status: number,
-    public readonly data: unknown = null
+    public readonly data: unknown = null,
   ) {
     super(message);
     Object.setPrototypeOf(this, ApiError.prototype);
@@ -30,7 +30,6 @@ export interface ApiClientInterface {
   ApiError: typeof ApiError;
 }
 
-// API Response types
 export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
@@ -50,7 +49,6 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
   pagination?: PaginationInfo;
 }
 
-// Auth Response Types
 export interface AuthVerifyResponse {
   id: string;
   email: string;

@@ -1,7 +1,9 @@
 # ADR 0010: Environment Configuration Management
 
 ## Status
-Accepted
+Accepted (historical)
+
+**Current stack (2026):** Single Next.js app at the repo root uses `.env.local` and root `.env.example`; production uses Vercel environment variables. The sections below describe the earlier CRA + Express + `sync-env.js` setup.
 
 ## Context
 We run our full-stack app in three main modes:
@@ -62,7 +64,7 @@ We need a consistent, maintainable way to:
    );
    ```
 
-4. **Express server** continues to load `config/env.js` against the root `.env*` files—no `server/.env*` directories needed.
+4. **Express server** (legacy) loaded `config/env.js` against the root `.env*` files—no `server/.env*` directories needed. This path is no longer used by the colocated Next.js app.
 
 ## Consequences
 
@@ -78,15 +80,9 @@ We need a consistent, maintainable way to:
 - Slightly more complex initial setup
 - Need to maintain two sets of env var names (root vs `REACT_APP_*`)
 
-## Implementation Notes
-1. Root `.env` files should be in `.gitignore` except for `.env.example`
-2. `sync-env.js` should be run:
-   - After cloning the repo
-   - After changing root env vars
-   - As part of the build process
-3. Server code should use `config/env.js` to access variables
-4. Client code should only use `process.env.REACT_APP_*` variables
-5. All API calls should use the centralized `API_BASE_URL` configuration
-6. Avoid hardcoding API URLs in any part of the application
-7. Ensure `API_BASE_URL` is defined in both `.env.development` and `.env.production` with appropriate values for each environment
+## Implementation Notes (historical)
+1. Root `.env` files were git-ignored except for `.env.example`.
+2. `sync-env.js` was run after clone / env changes in the old monorepo layout (removed).
+3. Express used `config/env.js`; the Next.js app reads `process.env` per Next rules and root `.env.local`.
+4. For the current app, follow root `.env.example` and [Next.js Environment Variables](https://nextjs.org/docs/app/building-your-application/configuring/environment-variables).
 

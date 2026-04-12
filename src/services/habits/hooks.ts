@@ -9,7 +9,7 @@ import type {
   HabitSummary,
   HabitPeriod,
   HabitStats,
-} from '@shared/services/habit/contracts';
+} from '@/lib/habit/contracts';
 
 export function useHabits(params?: HabitListParams) {
   const [state, setState] = useState<{

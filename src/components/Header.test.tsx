@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderWithProviders, screen } from '../fixtures/testUtils';
+import { renderWithProviders, screen } from '@/test/fixtures/testUtils';
 import Header from '@/components/Header';
 import { useRouter } from 'next/navigation';
 
@@ -105,4 +105,3 @@ describe('Header', () => {
     expect(mockPush).toHaveBeenCalledWith('/login');
   });
 });
-

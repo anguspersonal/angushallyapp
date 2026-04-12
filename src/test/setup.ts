@@ -55,14 +55,14 @@ vi.mock('@react-oauth/google', () => ({
 // Mock MantineProvider and components that use hooks to avoid React hooks issues
 vi.mock('@mantine/core', () => {
   const React = require('react');
-  
+
   // Create Menu component with sub-components
   const MenuComponent = ({ children }: any) => React.createElement('div', { 'data-testid': 'menu' }, children);
   MenuComponent.Target = ({ children }: any) => React.createElement('div', { 'data-testid': 'menu-target' }, children);
   MenuComponent.Dropdown = ({ children }: any) => React.createElement('div', { 'data-testid': 'menu-dropdown' }, children);
   MenuComponent.Item = ({ children, onClick }: any) => React.createElement('div', { 'data-testid': 'menu-item', onClick }, children);
   MenuComponent.Divider = () => React.createElement('hr', { 'data-testid': 'menu-divider' });
-  
+
   return {
     MantineProvider: ({ children }: any) => children,
     Container: ({ children }: any) => React.createElement('div', { 'data-testid': 'container' }, children),
@@ -81,9 +81,9 @@ vi.mock('@mantine/hooks', () => ({
 // Mock Tabler icons
 vi.mock('@tabler/icons-react', () => {
   const React = require('react');
-  const createIcon = (name: string) => ({ size, ...props }: any) => 
+  const createIcon = (name: string) => ({ size, ...props }: any) =>
     React.createElement('span', { 'data-testid': `icon-${name}`, ...props });
-  
+
   return {
     IconUser: createIcon('user'),
     IconArticle: createIcon('article'),
@@ -118,4 +118,3 @@ if (!process.env.DEBUG_TESTS) {
 
 // Global test timeout
 vi.setConfig({ testTimeout: 10000 });
-

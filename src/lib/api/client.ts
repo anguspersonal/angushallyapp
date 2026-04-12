@@ -1,6 +1,6 @@
-import { messageForHttpStatus } from './http/httpStatusMessage';
-import { ApiError } from './types/api';
-import type { ApiClientOptions, ApiClientInterface } from './types/api';
+import { messageForHttpStatus } from '../http/httpStatusMessage';
+import { ApiError } from './types';
+import type { ApiClientOptions, ApiClientInterface } from './types';
 
 export const API_BASE = '/api';
 
@@ -33,14 +33,12 @@ async function apiClient<T = unknown>(endpoint: string, options: ApiClientOption
   try {
     const response = await fetch(fullUrl, config);
 
-    // If server returns an HTML error page, flag it
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('text/html')) {
       const text = await response.text();
       throw new ApiError('Received HTML response instead of JSON', response.status, text);
     }
 
-    // Parse JSON unless 204 No-Content
     const data: unknown = response.status === 204 ? null : await response.json().catch(() => {
       throw new ApiError('Invalid JSON response from server', response.status, null);
     });

@@ -4,7 +4,7 @@ import type {
   HabitListParams,
   HabitListResult,
   HabitSummary,
-} from '@shared/services/habit/contracts';
+} from '@/lib/habit/contracts';
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;

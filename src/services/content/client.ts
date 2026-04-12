@@ -3,8 +3,8 @@ import type {
   ContentListResult,
   ContentPostDetail,
   ContentPostSummary,
-} from '@shared/services/content/contracts';
-import { API_BASE } from '@/shared/apiClient';
+} from '@/lib/content/contracts';
+import { API_BASE } from '@/lib/api/client';
 import { buildPostsQueryString } from './buildPostsQueryString';
 import { readContentJson } from './readContentJson';
 

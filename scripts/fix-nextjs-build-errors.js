@@ -1,21 +1,17 @@
 #!/usr/bin/env node
 
 /**
- * Next.js Build Error Resolution Script
- * 
- * This script addresses common Next.js development issues including:
- * - CSS module import failures
- * - Build manifest errors
- * - Port conflicts
- * - Cache issues
- * - Development environment cleanup
+ * Next.js build / cache troubleshooting for the root app (src/, .next at repo root).
  */
 
-const { execSync, spawn } = require('child_process');
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// Colors for console output
+const projectRoot = path.join(__dirname, '..');
+const nextCachePath = path.join(projectRoot, '.next');
+const nodeModulesPath = path.join(projectRoot, 'node_modules');
+
 const colors = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
@@ -23,8 +19,7 @@ const colors = {
   green: '\x1b[32m',
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m'
+  cyan: '\x1b[36m',
 };
 
 function log(message, color = 'reset') {
@@ -51,158 +46,93 @@ function logInfo(message) {
   log(`ℹ️  ${message}`, 'blue');
 }
 
-// Parse command line arguments
+function rmDirSafe(dir) {
+  if (!fs.existsSync(dir)) return;
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+
 const args = process.argv.slice(2);
 const cleanDeps = args.includes('--clean-deps');
 const forceClean = args.includes('--force-clean');
 
-logSection('Next.js Build Error Resolution Script');
-logInfo('Starting comprehensive error resolution...');
+logSection('Next.js build error resolution');
+logInfo('Repo root: ' + projectRoot);
 
-// 1. Clean up development processes
-logSection('1. Cleaning Development Processes');
-
+logSection('1. Free common dev ports (optional)');
 try {
-  // Kill any running Next.js processes
-  logInfo('Stopping any running Next.js development servers...');
-  execSync('pkill -f "next dev"', { stdio: 'ignore' });
-  logSuccess('Next.js processes stopped');
-} catch (error) {
-  logWarning('No running Next.js processes found');
-}
-
-try {
-  // Kill processes on common development ports
-  const ports = [3000, 3001, 3002, 5000];
-  ports.forEach(port => {
-    try {
-      execSync(`lsof -ti:${port} | xargs kill -9`, { stdio: 'ignore' });
-      logSuccess(`Port ${port} cleared`);
-    } catch (error) {
-      // Port might not be in use
-    }
+  execSync('npx kill-port 3000 3001 3002 5000', {
+    cwd: projectRoot,
+    stdio: 'ignore',
   });
-} catch (error) {
-  logWarning('Port cleanup completed');
+  logSuccess('kill-port finished (ports may already have been free)');
+} catch {
+  logWarning('kill-port skipped or no processes found');
 }
 
-// 2. Clean Next.js cache and build artifacts
-logSection('2. Cleaning Next.js Cache');
-
-const nextUiPath = path.join(__dirname, '..', 'next-ui');
-const nextCachePath = path.join(nextUiPath, '.next');
-const nodeModulesPath = path.join(nextUiPath, 'node_modules');
-
-if (fs.existsSync(nextCachePath)) {
-  try {
-    execSync(`rm -rf "${nextCachePath}"`, { cwd: nextUiPath });
-    logSuccess('Next.js cache cleared');
-  } catch (error) {
-    logError(`Failed to clear Next.js cache: ${error.message}`);
-  }
+logSection('2. Clear .next cache');
+try {
+  rmDirSafe(nextCachePath);
+  logSuccess('.next removed');
+} catch (e) {
+  logError(`Failed to remove .next: ${e.message}`);
 }
 
-// 3. Clean dependencies if requested
 if (cleanDeps || forceClean) {
-  logSection('3. Cleaning Dependencies');
-  
-  if (fs.existsSync(nodeModulesPath)) {
-    try {
-      execSync(`rm -rf "${nodeModulesPath}"`, { cwd: nextUiPath });
-      logSuccess('node_modules cleared');
-    } catch (error) {
-      logError(`Failed to clear node_modules: ${error.message}`);
-    }
-  }
-  
+  logSection('3. Reinstall dependencies');
   try {
-    execSync('npm install', { cwd: nextUiPath, stdio: 'inherit' });
-    logSuccess('Dependencies reinstalled');
-  } catch (error) {
-    logError(`Failed to reinstall dependencies: ${error.message}`);
+    rmDirSafe(nodeModulesPath);
+    logSuccess('node_modules removed');
+  } catch (e) {
+    logError(`Failed to remove node_modules: ${e.message}`);
+  }
+  try {
+    execSync('npm ci', { cwd: projectRoot, stdio: 'inherit' });
+    logSuccess('npm ci completed');
+  } catch {
+    logError('npm ci failed');
+    process.exit(1);
   }
 }
 
-// 4. Verify CSS module files
-logSection('4. Verifying CSS Module Files');
-
-const cssModulePath = path.join(nextUiPath, 'src', 'app', 'projects', 'strava', 'strava.module.css');
+logSection('4. Verify Strava CSS module');
+const cssModulePath = path.join(
+  projectRoot,
+  'src',
+  'app',
+  'projects',
+  'strava',
+  'strava.module.css',
+);
 if (fs.existsSync(cssModulePath)) {
-  logSuccess('Strava CSS module file exists');
-  
-  // Check file content
   const cssContent = fs.readFileSync(cssModulePath, 'utf8');
-  if (cssContent.includes('.strava-dashboard')) {
-    logSuccess('CSS module contains expected classes');
-  } else {
-    logWarning('CSS module may be missing expected classes');
+  logSuccess('strava.module.css exists');
+  if (!cssContent.includes('.strava-dashboard')) {
+    logWarning('strava.module.css may be missing .strava-dashboard');
   }
 } else {
-  logError('Strava CSS module file missing!');
+  logError('strava.module.css missing');
 }
 
-// 5. Verify TypeScript declarations
-logSection('5. Verifying TypeScript Declarations');
-
-const typeDeclarationsPath = path.join(nextUiPath, 'src', 'types', 'css-modules.d.ts');
+logSection('5. Verify CSS module types');
+const typeDeclarationsPath = path.join(projectRoot, 'src', 'types', 'css-modules.d.ts');
 if (fs.existsSync(typeDeclarationsPath)) {
-  logSuccess('CSS module type declarations exist');
+  logSuccess('src/types/css-modules.d.ts exists');
 } else {
-  logWarning('CSS module type declarations missing');
+  logWarning('src/types/css-modules.d.ts missing');
 }
 
-// 6. Test build process
-logSection('6. Testing Build Process');
-
+logSection('6. Production build check');
 try {
-  logInfo('Running Next.js build test...');
-  execSync('npm run build', { cwd: nextUiPath, stdio: 'inherit' });
-  logSuccess('Build test completed successfully');
-} catch (error) {
-  logError('Build test failed - check for TypeScript/ESLint errors');
-  logInfo('You may need to fix TypeScript errors before proceeding');
+  execSync('npm run build', { cwd: projectRoot, stdio: 'inherit' });
+  logSuccess('Build succeeded');
+} catch {
+  logError('Build failed — fix errors above, then re-run');
+  process.exit(1);
 }
 
-// 7. Start development server
-logSection('7. Starting Development Server');
+logSection('7. Next step');
+logInfo('Start the app: npm run dev  →  http://localhost:3000');
+logInfo('Strava project page: http://localhost:3000/projects/strava');
 
-logInfo('Starting Next.js development server...');
-logInfo('The server will be available at http://localhost:3001');
-
-try {
-  const devProcess = spawn('npm', ['run', 'dev'], {
-    cwd: nextUiPath,
-    stdio: 'inherit',
-    shell: true
-  });
-
-  devProcess.on('error', (error) => {
-    logError(`Failed to start development server: ${error.message}`);
-  });
-
-  // Give the server time to start
-  setTimeout(() => {
-    logInfo('Development server should now be running');
-    logInfo('Test the Strava page at: http://localhost:3001/projects/strava');
-  }, 3000);
-
-} catch (error) {
-  logError(`Failed to start development server: ${error.message}`);
-}
-
-// 8. Summary and next steps
-logSection('8. Resolution Summary');
-
-logSuccess('Development environment cleanup completed');
-logInfo('If issues persist, try the following:');
-logInfo('1. Check browser console for specific error messages');
-logInfo('2. Verify all TypeScript errors are resolved');
-logInfo('3. Clear browser cache and hard refresh');
-logInfo('4. Check network tab for failed requests');
-
-if (cleanDeps) {
-  logInfo('5. Dependencies were reinstalled - restart your IDE if needed');
-}
-
-logSection('Script Complete');
-logSuccess('Next.js error resolution script completed successfully!'); 
+logSection('Done');
+logSuccess('fix-nextjs-build-errors completed');

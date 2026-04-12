@@ -65,47 +65,39 @@ When adding or changing an HTTP API, **default to Route Handlers** in `web` and 
 
 ```
 angushallyapp/
-├── web/                 # Production app + APIs
-│   ├── src/app/             # App Router: pages, layouts, api/**/route.ts
-│   ├── src/lib/             # Server/client utilities; colocated domain logic (content, habit, …)
-│   ├── src/components/
-│   ├── src/providers/
-│   ├── src/services/        # Typed clients + hooks (fetch /api)
-│   └── src/shared/          # apiClient, HTTP helpers
-├── server/                  # Legacy Express + Knex (local / tests / migration)
-│   ├── bootstrap/
-│   ├── routes/
-│   ├── services/
-│   ├── habit-api/, bookmark-api/, strava-api/, fsa-data-sync/, …
-│   ├── migrations/
-│   └── tests/               # Jest — prefer Vitest in web for new tests
-├── shared/                  # Cross-package TypeScript contracts
-│   └── services/
-└── docs/
-    └── migration/
-        ├── heroku-to-vercel.md
-        └── server-to-next-mapping.md
+├── src/
+│   ├── app/              # App Router: pages, layouts, api/**/route.ts
+│   ├── lib/              # Server utilities, domain logic (content, habit, supabase, …), API client
+│   ├── components/
+│   ├── providers/
+│   ├── services/         # Typed clients + hooks (fetch /api)
+│   └── types/            # App-wide TS types (e.g. navigation)
+├── docs/
+│   └── migration/
+│       ├── heroku-to-vercel.md
+│       └── server-to-next-mapping.md
+└── public/
 ```
 
 ---
 
-## Shared contracts (`shared/`)
+## Domain contracts (`src/lib/**/contracts.ts`)
 
-Type definitions live under `shared/services/**`. In `web`, `@shared/*` maps to this tree (`web/tsconfig.json`).
+List/pagination and entity shapes for content and habit live next to their server modules, e.g. `src/lib/content/contracts.ts`, `src/lib/habit/contracts.ts`, with shared pagination meta in `src/lib/contracts/pagination.ts`. Route Handlers, `src/lib/*/Repository` modules, and `src/services/*/client.ts` + hooks import these types.
 
-**Convention (production):** add types under `shared/services/<domain>/contracts.ts`, implement **server-side** logic in `web/src/lib/<domain>/`, expose HTTP via `web/src/app/api/<domain>/.../route.ts`, consume from `web/src/services/<domain>/client.ts` and `hooks.ts`. See `docs/service-layer.md`.
+See `docs/service-layer.md`.
 
 ---
 
-## Frontend (`web`)
+## Frontend (Next.js app root)
 
 - **Routing:** App Router (`src/app`). Metadata, layouts, and server components follow Next 15 patterns.
 - **UI:** Mantine v8, Tabler icons, Framer Motion; PWA via `next-pwa` (`next.config.mjs`).
 - **Data access:** `src/services/<feature>/` exposes **clients** and **hooks** so components avoid ad hoc `fetch`.
-- **Shared HTTP:** `src/shared/apiClient.ts`, `src/shared/http/httpStatusMessage.ts`.
+- **Browser HTTP:** `src/lib/api/client.ts`, `src/lib/http/httpStatusMessage.ts`.
 - **Auth:** Supabase Auth when enabled; `AuthProvider` may wrap session (see ADRs 0007 / 0009 / 0016).
 
-Path alias **`@/*`** resolves to `web/src/*`.
+Path alias **`@/*`** resolves to `src/*`.
 
 ---
 
@@ -134,8 +126,8 @@ Path alias **`@/*`** resolves to `web/src/*`.
 
 | Area | Tooling | Location |
 |------|---------|----------|
-| Next UI | Vitest, Testing Library | `web/tests/`; prefer co-located `*.test.ts` for new code |
-| Server (legacy) | Jest, Supertest | `server/tests/` |
+| Next app | Vitest, Testing Library | `src/**/*.{test,spec}.{ts,tsx}`; shared setup `src/test/setup.ts` |
+| Server (legacy) | Jest, Supertest | `server/tests/` (if present in older checkouts) |
 
 ---
 

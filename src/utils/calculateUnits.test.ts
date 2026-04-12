@@ -32,4 +32,3 @@ describe('calculateUnits', () => {
     expect(result).toBe(2.5);
   });
 });
-

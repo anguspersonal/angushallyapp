@@ -136,8 +136,7 @@ For comprehensive documentation, please refer to the following resources:
 
 ## 🔍 Testing
 
-* **Backend**: `npm test`
-* **Frontend**: `cd web && npm test`
+* **Vitest** (Next app): `npm test` — tests live under `src/` as `*.test.ts` / `*.test.tsx`; shared setup is [`src/test/setup.ts`](src/test/setup.ts).
 
 ---
 

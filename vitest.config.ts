@@ -12,8 +12,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./tests/setup.ts'],
-    include: ['**/*.test.{ts,tsx}'],
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', '.next', 'dist', 'out'],
     coverage: {
       provider: 'v8',
@@ -33,7 +33,6 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@/types': path.resolve(__dirname, './src/types'),
-      '@shared': path.resolve(__dirname, './src/shared'),
     },
     dedupe: ['react', 'react-dom'],
   },

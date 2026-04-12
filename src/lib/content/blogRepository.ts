@@ -4,7 +4,7 @@ import type {
   ContentListResult,
   ContentPostDetail,
   ContentPostSummary,
-} from '@shared/services/content/contracts';
+} from '@/lib/content/contracts';
 
 const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGE_SIZE = 50;

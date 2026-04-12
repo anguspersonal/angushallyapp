@@ -1,11 +1,11 @@
-// User and authentication types shared between CRA and Next.js
+/** Auth context and user shape used by `AuthProvider` and related UI. */
 
 export interface User {
   id: string;
   email: string;
   name: string;
   roles: string[];
-  token?: string; // Optional since we're using cookies now
+  token?: string;
   picture?: string;
   given_name?: string;
   family_name?: string;

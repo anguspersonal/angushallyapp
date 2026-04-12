@@ -26,7 +26,7 @@ import {
   IconSearch
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import { api } from '../../shared/apiClient';
+import { api } from '@/lib/api/client';
 import type { InstagramBookmark } from '../../types/common';
 
 // Type definitions

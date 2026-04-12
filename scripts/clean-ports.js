@@ -1,16 +1,18 @@
 #!/usr/bin/env node
-const { execSync } = require("child_process");
-const ports = process.argv.slice(2).length ? process.argv.slice(2) : ["5000", "3000"];
-for (const p of ports) {
-  try {
-    const pid = execSync(`lsof -ti tcp:${p}`).toString().trim();
-    if (pid) {
-      execSync(`kill -9 ${pid}`);
-      console.log(`🔪 Killed ${pid} on port ${p}`);
-    } else {
-      console.log(`✅ Port ${p} free`);
+
+const killPort = require('kill-port');
+
+const ports = process.argv.slice(2).length
+  ? process.argv.slice(2).map((p) => parseInt(p, 10)).filter((n) => !Number.isNaN(n))
+  : [5000, 3000];
+
+(async () => {
+  for (const p of ports) {
+    try {
+      await killPort(p);
+      console.log(`🔪 Cleared port ${p}`);
+    } catch {
+      console.log(`✅ Port ${p} already free`);
     }
-  } catch {
-    console.log(`✅ Port ${p} free`);
   }
-} 
+})();

@@ -3,8 +3,12 @@ import imageminMozjpeg from 'imagemin-mozjpeg';
 import imageminPngquant from 'imagemin-pngquant';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Recursively find all image files in next-ui/public
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const publicDirRoot = path.join(__dirname, '..', 'public');
+
+// Recursively find all image files in public/
 function findImageFiles(dir, files = []) {
   const items = fs.readdirSync(dir);
   
@@ -30,11 +34,11 @@ function findImageFiles(dir, files = []) {
 }
 
 async function compressImages() {
-  console.log('🖼️  Starting image compression for next-ui/public...\n');
-  
-  const publicDir = 'next-ui/public';
+  console.log('🖼️  Starting image compression for public/...\n');
+
+  const publicDir = publicDirRoot;
   if (!fs.existsSync(publicDir)) {
-    console.error('❌ next-ui/public directory not found');
+    console.error('❌ public/ directory not found');
     process.exit(1);
   }
   

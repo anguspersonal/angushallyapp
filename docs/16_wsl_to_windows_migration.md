@@ -106,7 +106,7 @@ notepad .env
 - Email configuration (if using contact form)
 - Any API keys (Strava, OpenAI, etc.)
 
-See `config/env.example` for the full list of required variables.
+See the repo root `.env.example` (copy to `.env.local`) for variables the Next.js app reads; use the Vercel project dashboard for preview/production.
 
 ### 4. Set Up Database
 

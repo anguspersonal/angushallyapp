@@ -1,4 +1,4 @@
-import { api } from '../../../shared/apiClient';
+import { api } from '@/lib/api/client';
 import type { HabitLog, HabitType, DrinkCatalogItem } from '../../../types/common';
 
 interface HabitLogResponse {

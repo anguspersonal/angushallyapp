@@ -7,7 +7,7 @@ import type {
   ContentListResult,
   ContentPostDetail,
   ContentPostSummary,
-} from '@shared/services/content/contracts';
+} from '@/lib/content/contracts';
 
 interface ListState {
   data: ContentPostSummary[];

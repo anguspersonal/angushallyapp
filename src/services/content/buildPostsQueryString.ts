@@ -1,4 +1,4 @@
-import type { ContentListParams } from '@shared/services/content/contracts';
+import type { ContentListParams } from '@/lib/content/contracts';
 
 export function buildPostsQueryString(params?: ContentListParams): string {
   if (!params) return '';

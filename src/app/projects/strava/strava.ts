@@ -1,4 +1,4 @@
-import { api } from '@/shared/apiClient';
+import { api } from '@/lib/api/client';
 import type { StravaActivity, StravaPR, WeeklyRunData } from '@/types/common';
 
 export const fetchStravaData = async (): Promise<StravaActivity[]> => {
