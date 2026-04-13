@@ -23,6 +23,13 @@ interface HabitDefinition {
 
 type DisplayPeriod = Extract<HabitPeriod, 'week' | 'month' | 'year'>;
 
+type HabitLogFormValues = {
+  userId: number;
+  habitType: string;
+  value: string;
+  metric: string;
+};
+
 interface TempDrinkLog {
   id: string;
   name: string;
@@ -103,7 +110,7 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
   }, [selectedLogs, habit]);
 
   // Initialize form with default values
-  const form = useForm({
+  const form = useForm<HabitLogFormValues>({
     initialValues: {
       userId: 1,
       habitType: habit?.name || "",
@@ -113,7 +120,7 @@ const HabitDrawer: React.FC<HabitDrawerProps> = ({ habit, selectedLogs, opened, 
   });
 
   // Handle submission
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: HabitLogFormValues) => {
     if (tempDrinkLogs.length === 0) {
       console.error("No drinks selected.");
       return;
