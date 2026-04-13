@@ -31,7 +31,7 @@ function LoginContent() {
     <Container size="xs" py="xl">
       <Stack gap="lg" align="center">
         <Title order={2}>Sign In</Title>
-        <Text c="dimmed" ta="center">
+        <Text c="gray" ta="center" opacity={0.65}>
           Sign in with your Google account to access protected features.
         </Text>
 

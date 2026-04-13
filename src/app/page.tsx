@@ -126,7 +126,7 @@ export default function Home() {
             </motion.div>
 
             <motion.div initial="hidden" animate="visible" custom={0.35} variants={fadeUp}>
-              <Text className={styles.subtitleText} c="dimmed">
+              <Text className={styles.subtitleText} c="gray" opacity={0.85}>
                 Startup operator, amateur developer, constant learner.
                 Currently COO at HeyLina, building emotionally intelligent AI.
               </Text>

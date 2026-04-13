@@ -99,6 +99,33 @@ const successColors: MantineColorsTuple = [
   '#386C3D',
 ];
 
+/** Default Mantine scales so utilities like muted text and error alerts type-check. */
+const grayColors: MantineColorsTuple = [
+  '#f8f9fa',
+  '#f1f3f5',
+  '#e9ecef',
+  '#dee2e6',
+  '#ced4da',
+  '#adb5bd',
+  '#868e96',
+  '#495057',
+  '#343a40',
+  '#212529',
+];
+
+const redColors: MantineColorsTuple = [
+  '#fff5f5',
+  '#ffe3e3',
+  '#ffc9c9',
+  '#ffa8a8',
+  '#ff8787',
+  '#ff6b6b',
+  '#fa5252',
+  '#f03e3e',
+  '#e03131',
+  '#c92a2a',
+];
+
 // Global assets with proper typing
 export const assets: ThemeAssets = {
   placeholderImage: {
@@ -135,6 +162,8 @@ const themeConfig: MantineThemeOverride = {
     secondary: secondaryColors,
     accent: accentColors,
     success: successColors,
+    gray: grayColors,
+    red: redColors,
   } as const,
   primaryColor: 'primary',
   primaryShade: 8, // This will use the base color (index 8)

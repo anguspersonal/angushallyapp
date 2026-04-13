@@ -20,6 +20,8 @@ declare module '@mantine/core' {
       accent: MantineColorsTuple;
       success: MantineColorsTuple;
       dark: MantineColorsTuple;
+      gray: MantineColorsTuple;
+      red: MantineColorsTuple;
     };
   }
 }
