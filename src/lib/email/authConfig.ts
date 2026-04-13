@@ -1,5 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function buildSmtpAuthConfig(): any {
+export type SmtpAuthConfig =
+  | {
+      type: 'OAuth2';
+      user: string;
+      clientId: string;
+      clientSecret: string;
+      refreshToken: string;
+    }
+  | { user: string; pass: string };
+
+export function buildSmtpAuthConfig(): SmtpAuthConfig {
   const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
   const refreshToken = process.env.GOOGLE_OAUTH_REFRESH_TOKEN;
