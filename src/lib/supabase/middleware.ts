@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import type { SupabaseCookiesToSet } from '@/lib/supabase/ssrCookies';
 
 /**
  * Refreshes the Supabase auth session on every request so cookies stay valid.
@@ -19,7 +20,7 @@ export async function updateSession(request: NextRequest) {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: SupabaseCookiesToSet) {
         cookiesToSet.forEach(({ name, value }) =>
           request.cookies.set(name, value),
         );
