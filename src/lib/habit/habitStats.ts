@@ -3,16 +3,6 @@ import type { HabitMetric, HabitPeriod, HabitStats } from '@/lib/habit/contracts
 const HABIT_PERIODS = ['day', 'week', 'month', 'year', 'all'] as const;
 const HABIT_METRICS = ['sum', 'avg', 'min', 'max', 'stddev'] as const;
 
-type HabitStatsNumericKey = keyof Omit<HabitStats, 'period'>;
-
-const METRIC_TO_FIELD: Record<HabitMetric, HabitStatsNumericKey> = {
-  sum: 'totalCompleted',
-  avg: 'averagePerEntry',
-  min: 'minimumPerEntry',
-  max: 'maximumPerEntry',
-  stddev: 'standardDeviation',
-};
-
 function startOfPeriodUtc(period: HabitPeriod): Date | null {
   const now = new Date();
   if (period === 'all') return null;
@@ -92,17 +82,12 @@ export async function computeHabitStats(
 
   const shaped: HabitStats = {
     period: p,
-    totalCompleted: 0,
-    averagePerEntry: 0,
-    minimumPerEntry: 0,
-    maximumPerEntry: 0,
-    standardDeviation: 0,
+    totalCompleted: raw.sum,
+    averagePerEntry: raw.avg,
+    minimumPerEntry: raw.min,
+    maximumPerEntry: raw.max,
+    standardDeviation: raw.stddev,
   };
-
-  for (const metric of HABIT_METRICS) {
-    const field = METRIC_TO_FIELD[metric];
-    shaped[field] = raw[metric];
-  }
 
   return { ok: true, stats: shaped };
 }
