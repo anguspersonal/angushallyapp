@@ -38,7 +38,7 @@ export function useHabits(params?: HabitListParams) {
     return () => {
       active = false;
     };
-  }, [params?.page, params?.pageSize]);
+  }, [params]);
 
   const reload = useCallback(() => {
     setState((prev) => ({ ...prev, isLoading: true }));

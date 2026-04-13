@@ -60,7 +60,7 @@ export function usePosts(params?: ContentListParams) {
     return () => {
       isActive = false;
     };
-  }, [params?.page, params?.pageSize, params?.order, params?.sortBy]);
+  }, [params]);
 
   const reload = useCallback(() => {
     setState((prev) => ({ ...prev, isLoading: true }));
