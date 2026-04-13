@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { isRecaptchaTokenValidationError, type RecaptchaSiteVerifyResult } from './siteVerify';
 
+function recaptchaVerificationFailedResponse(): NextResponse {
+  return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 });
+}
+
 /**
  * If verification failed or returned warning codes, the appropriate error response; otherwise null.
  */
@@ -11,13 +15,13 @@ export function nextResponseIfRecaptchaInvalid(
 
   if (!verificationResult?.success) {
     if (isRecaptchaTokenValidationError(errorCodes)) {
-      return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 });
+      return recaptchaVerificationFailedResponse();
     }
     return NextResponse.json({ error: 'Failed to verify reCAPTCHA token' }, { status: 502 });
   }
 
   if (errorCodes.length > 0) {
-    return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 });
+    return recaptchaVerificationFailedResponse();
   }
 
   return null;
