@@ -3,7 +3,9 @@ import type { HabitMetric, HabitPeriod, HabitStats } from '@/lib/habit/contracts
 const HABIT_PERIODS = ['day', 'week', 'month', 'year', 'all'] as const;
 const HABIT_METRICS = ['sum', 'avg', 'min', 'max', 'stddev'] as const;
 
-const METRIC_TO_FIELD: Record<HabitMetric, keyof HabitStats> = {
+type HabitStatsNumericKey = keyof Omit<HabitStats, 'period'>;
+
+const METRIC_TO_FIELD: Record<HabitMetric, HabitStatsNumericKey> = {
   sum: 'totalCompleted',
   avg: 'averagePerEntry',
   min: 'minimumPerEntry',

@@ -32,6 +32,12 @@ function parsePositiveInt(value: number | undefined, fallback: number): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function normalizeAuthorId(value: unknown): string | number | null {
+  if (value == null) return null;
+  if (typeof value === 'string' || typeof value === 'number') return value;
+  return null;
+}
+
 function displayName(row: { first_name?: string | null; last_name?: string | null }): string {
   const fn = row.first_name?.trim();
   const ln = row.last_name?.trim();
@@ -64,7 +70,7 @@ function mapPostRow(
         : null,
     updatedAt: row.updated_at ? String(row.updated_at) : null,
     authorName,
-    authorId: row.author_id ?? null,
+    authorId: normalizeAuthorId(row.author_id),
   };
 }
 
