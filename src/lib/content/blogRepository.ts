@@ -18,7 +18,7 @@ const SORT_COLUMN_MAP: Record<string, string> = {
 };
 
 function normalizeSort(sortBy?: string): string {
-  return SORT_COLUMN_MAP[sortBy ?? ''] ? SORT_COLUMN_MAP[sortBy ?? ''] : 'created_at';
+  return SORT_COLUMN_MAP[sortBy ?? ''] ?? 'created_at';
 }
 
 function clampPageSize(value?: number): number {
