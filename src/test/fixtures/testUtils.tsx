@@ -1,5 +1,7 @@
-import React, { ReactElement } from 'react';
-import { render, RenderOptions, cleanup } from '@testing-library/react';
+import React from 'react';
+import type { ReactElement } from 'react';
+import { render, cleanup } from '@testing-library/react';
+import type { RenderOptions } from '@testing-library/react';
 import { MantineProvider } from '@mantine/core';
 import { afterEach } from 'vitest';
 import type { User } from '@/lib/auth/types';
@@ -28,6 +30,8 @@ export function renderWithProviders(
   options: CustomRenderOptions = {}
 ) {
   const { user, isLoading, ...renderOptions } = options;
+  void user;
+  void isLoading;
 
   const Wrapper = ({ children }: { children: React.ReactNode }) => {
     return (

@@ -1,5 +1,5 @@
-// Set NODE_ENV to test before any modules are loaded
-process.env.NODE_ENV = 'test';
+// Set NODE_ENV to test before any modules are loaded (typed env is read-only)
+(process.env as { NODE_ENV?: string }).NODE_ENV = 'test';
 
 // Import jest-dom matchers
 import '@testing-library/jest-dom';
@@ -34,15 +34,22 @@ vi.mock('next/navigation', () => ({
 
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
-  default: (props: any) => {
-    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+  default: function NextImageMock(props: Record<string, unknown>) {
     return React.createElement('img', props);
   },
 }));
 
 // Mock Next.js Link component
 vi.mock('next/link', () => ({
-  default: ({ children, href, ...props }: any) => {
+  default: function NextLinkMock({
+    children,
+    href,
+    ...props
+  }: {
+    children?: React.ReactNode;
+    href?: string;
+    [key: string]: unknown;
+  }) {
     return React.createElement('a', { href, ...props }, children);
   },
 }));
@@ -53,23 +60,64 @@ vi.mock('@react-oauth/google', () => ({
 }));
 
 // Mock MantineProvider and components that use hooks to avoid React hooks issues
-vi.mock('@mantine/core', () => {
-  const React = require('react');
+vi.mock('@mantine/core', async () => {
+  const R = (await import('react')).default;
 
-  // Create Menu component with sub-components
-  const MenuComponent = ({ children }: any) => React.createElement('div', { 'data-testid': 'menu' }, children);
-  MenuComponent.Target = ({ children }: any) => React.createElement('div', { 'data-testid': 'menu-target' }, children);
-  MenuComponent.Dropdown = ({ children }: any) => React.createElement('div', { 'data-testid': 'menu-dropdown' }, children);
-  MenuComponent.Item = ({ children, onClick }: any) => React.createElement('div', { 'data-testid': 'menu-item', onClick }, children);
-  MenuComponent.Divider = () => React.createElement('hr', { 'data-testid': 'menu-divider' });
+  function MockMenu({ children }: { children?: React.ReactNode }) {
+    return R.createElement('div', { 'data-testid': 'menu' }, children);
+  }
+  function MockMenuTarget({ children }: { children?: React.ReactNode }) {
+    return R.createElement('div', { 'data-testid': 'menu-target' }, children);
+  }
+  function MockMenuDropdown({ children }: { children?: React.ReactNode }) {
+    return R.createElement('div', { 'data-testid': 'menu-dropdown' }, children);
+  }
+  function MockMenuItem({
+    children,
+    onClick,
+  }: {
+    children?: React.ReactNode;
+    onClick?: () => void;
+  }) {
+    return R.createElement('div', { 'data-testid': 'menu-item', onClick }, children);
+  }
+  function MockMenuDivider() {
+    return R.createElement('hr', { 'data-testid': 'menu-divider' });
+  }
+  MockMenu.Target = MockMenuTarget;
+  MockMenu.Dropdown = MockMenuDropdown;
+  MockMenu.Item = MockMenuItem;
+  MockMenu.Divider = MockMenuDivider;
+
+  function MockMantineProvider({ children }: { children?: React.ReactNode }) {
+    return children;
+  }
+  function MockContainer({ children }: { children?: React.ReactNode }) {
+    return R.createElement('div', { 'data-testid': 'container' }, children);
+  }
+  function MockGroup({ children }: { children?: React.ReactNode }) {
+    return R.createElement('div', { 'data-testid': 'group' }, children);
+  }
+  function MockButton({
+    children,
+    onClick,
+  }: {
+    children?: React.ReactNode;
+    onClick?: () => void;
+  }) {
+    return R.createElement('button', { 'data-testid': 'button', type: 'button', onClick }, children);
+  }
+  function MockBurger({ onClick }: { onClick?: () => void }) {
+    return R.createElement('button', { 'data-testid': 'burger', type: 'button', onClick });
+  }
 
   return {
-    MantineProvider: ({ children }: any) => children,
-    Container: ({ children }: any) => React.createElement('div', { 'data-testid': 'container' }, children),
-    Group: ({ children }: any) => React.createElement('div', { 'data-testid': 'group' }, children),
-    Button: ({ children, onClick }: any) => React.createElement('button', { 'data-testid': 'button', type: 'button', onClick }, children),
-    Menu: MenuComponent,
-    Burger: ({ onClick }: any) => React.createElement('button', { 'data-testid': 'burger', type: 'button', onClick }),
+    MantineProvider: MockMantineProvider,
+    Container: MockContainer,
+    Group: MockGroup,
+    Button: MockButton,
+    Menu: MockMenu,
+    Burger: MockBurger,
   };
 });
 
@@ -79,10 +127,16 @@ vi.mock('@mantine/hooks', () => ({
 }));
 
 // Mock Tabler icons
-vi.mock('@tabler/icons-react', () => {
-  const React = require('react');
-  const createIcon = (name: string) => ({ size, ...props }: any) =>
-    React.createElement('span', { 'data-testid': `icon-${name}`, ...props });
+vi.mock('@tabler/icons-react', async () => {
+  const R = (await import('react')).default;
+
+  function createIcon(name: string) {
+    function TablerIconMock({ size: _size, ...props }: Record<string, unknown>) {
+      return R.createElement('span', { 'data-testid': `icon-${name}`, ...props });
+    }
+    TablerIconMock.displayName = `TablerIconMock(${name})`;
+    return TablerIconMock;
+  }
 
   return {
     IconUser: createIcon('user'),
