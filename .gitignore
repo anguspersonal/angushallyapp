@@ -92,3 +92,5 @@ refactorlog.json
 .cache/
 *.tmp
 *.temp
+
+.mcp.json
