@@ -7,6 +7,7 @@ import { Image, Text, Box, Anchor, Container, Title } from '@mantine/core';
 import { getBlogPostDetail } from '@/lib/content/blogRepository';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import '../blog.css';
+import { GlassContent } from '@/components/design/Glass';
 
 interface PageProps {
   params: { slug: string };
@@ -31,31 +32,35 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   return (
-    <Container py="xl">
-      <Title order={1} mb="xl">{post.title}</Title>
-      
-      {post.coverImage && (
-        <Box mb="xl">
-          <Image
-            src={post.coverImage}
-            alt={post.altText || `Cover image for ${post.title}`}
-            fit="cover"
-            style={{ maxHeight: '400px', width: '100%', objectFit: 'cover' }}
-          />
-          {post.attribution && (
-            <Text size="sm" opacity={0.7} ta="right" mt="xs">
-              {post.attributionLink ? (
-                <Anchor href={post.attributionLink} target="_blank" rel="noopener noreferrer" opacity={0.7}>
-                  {post.attribution}
-                </Anchor>
-              ) : (
-                post.attribution
-              )}
-            </Text>
-          )}
-        </Box>
-      )}
-      
+    <Container py="xl" className="blog-post">
+      <GlassContent p="lg" mb="xl">
+        <Title order={1} mb="md" c="var(--site-ink)" style={{ fontWeight: 600 }}>
+          {post.title}
+        </Title>
+
+        {post.coverImage && (
+          <Box mb="md">
+            <Image
+              src={post.coverImage}
+              alt={post.altText || `Cover image for ${post.title}`}
+              fit="cover"
+              style={{ maxHeight: '400px', width: '100%', objectFit: 'cover', borderRadius: 12 }}
+            />
+            {post.attribution && (
+              <Text size="sm" opacity={0.7} ta="right" mt="xs">
+                {post.attributionLink ? (
+                  <Anchor href={post.attributionLink} target="_blank" rel="noopener noreferrer" opacity={0.7}>
+                    {post.attribution}
+                  </Anchor>
+                ) : (
+                  post.attribution
+                )}
+              </Text>
+            )}
+          </Box>
+        )}
+      </GlassContent>
+
       <div className="markdown-content">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.contentMarkdown}</ReactMarkdown>
       </div>

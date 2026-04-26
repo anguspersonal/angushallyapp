@@ -16,19 +16,19 @@ const steps: Step[] = [
   {
     title: 'You Apply',
     description:
-      "You tell me what you're building, where you want to be, and what's holding you back. No pitch deck needed — just clarity, conviction, and a bit of ambition.",
+      "You tell me what you're building, where you want to be, and what's holding you back. No pitch deck needed, just clarity, conviction, and a bit of ambition.",
     icon: IconFileDescription,
   },
   {
     title: 'We Talk',
     description:
-      "If your idea has legs and you're serious, we book time. I'll challenge it, add insight, and suggest where I can help. All confidential — NDAs welcome.",
+      "If your idea has legs and you're serious, we book time. I'll challenge it, add insight, and suggest where I can help. All confidential, NDAs welcome.",
     icon: IconMessageChatbot,
   },
   {
     title: 'We Start to Collaborate',
     description:
-      "This could be light — an hour a week, sparring, or a small project. We solve something real together and see how it feels.",
+      "This could be light: an hour a week, sparring, or a small project. We solve something real together and see how it feels.",
     icon: IconUsers,
   },
   {
@@ -40,7 +40,7 @@ const steps: Step[] = [
   {
     title: 'We Accelerate',
     description:
-      "Now we're in. Building with conviction — toward traction, funding, or growth.",
+      "Now we're in. Building with conviction, toward traction, funding, or growth.",
     icon: IconRocket,
   },
 ];
@@ -137,7 +137,7 @@ export default function FounderJourney() {
       <Box mb="xl">
         <Title order={2} mb="lg">How We Start Building Together</Title>
         <Text size="sm" c="dark">
-          Not a pitch deck. Not a contract. Just a conversation — and a shared intent to build something real.
+          Not a pitch deck. Not a contract. Just a conversation, and a shared intent to build something real.
         </Text>
       </Box>
 

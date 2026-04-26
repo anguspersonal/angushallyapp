@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import { ColorSchemeScript } from '@mantine/core';
 import ClientLayout from '@/components/ClientLayout';
 import PwaUpdatePrompt from '@/components/PwaUpdatePrompt';
+import { fontClassNames } from '@/lib/fonts';
 
 export const metadata: Metadata = {
   title: 'Angus Hally App',
@@ -28,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={fontClassNames} suppressHydrationWarning>
       <head>
         <ColorSchemeScript defaultColorScheme="auto" />
         {process.env.NODE_ENV === 'production' && (

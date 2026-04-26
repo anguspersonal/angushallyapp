@@ -33,7 +33,19 @@ export default function ProjectsPage() {
 
     return (
         <Container py="xl">
-            <Title order={1} ta="center" mb="xl">My Projects</Title>
+            <Title
+                order={1}
+                ta="center"
+                mb="xl"
+                style={{
+                    fontFamily: 'var(--font-display), League Gothic, sans-serif',
+                    textTransform: 'uppercase',
+                    fontWeight: 400,
+                }}
+                c="var(--site-ink)"
+            >
+                My Projects
+            </Title>
 
             <motion.div
                 variants={containerVariants}

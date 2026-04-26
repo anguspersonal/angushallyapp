@@ -10,12 +10,15 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
+  const redirect = searchParams.get('redirect');
 
   useEffect(() => {
     if (user && !isLoading) {
-      router.push('/');
+      // Only honour same-origin relative paths to avoid open-redirect.
+      const target = redirect && redirect.startsWith('/') && !redirect.startsWith('//') ? redirect : '/';
+      router.push(target);
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router, redirect]);
 
   if (isLoading) {
     return (

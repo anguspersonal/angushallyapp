@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Card, Image, Text, Title, Box } from '@mantine/core';
+import { Image, Text, Title, Box } from '@mantine/core';
 import type { ContentPostSummary } from '@/lib/content/contracts';
+import { GlassContent } from '@/components/design/Glass';
 
 interface BlogSnippetProps {
   post: ContentPostSummary;
@@ -17,9 +18,9 @@ export default function BlogSnippet({ post }: BlogSnippetProps) {
   };
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
+    <GlassContent p={0} style={{ overflow: 'hidden', height: '100%' }}>
       {post.coverImage && (
-        <Card.Section>
+        <Box>
           <Image
             src={post.coverImage}
             height={160}
@@ -46,12 +47,13 @@ export default function BlogSnippet({ post }: BlogSnippetProps) {
               )}
             </Text>
           )}
-        </Card.Section>
+        </Box>
       )}
-      <Box mt="md">
+      <Box p="md">
         <Title
           order={3}
           mb="xs"
+          c="var(--site-ink)"
           style={{
             display: '-webkit-box',
             WebkitLineClamp: 2,
@@ -64,7 +66,7 @@ export default function BlogSnippet({ post }: BlogSnippetProps) {
         </Title>
         <Text
           size="sm"
-          opacity={0.7}
+          c="dimmed"
           style={{
             display: '-webkit-box',
             WebkitLineClamp: 2,
@@ -76,6 +78,6 @@ export default function BlogSnippet({ post }: BlogSnippetProps) {
           {post.excerpt}
         </Text>
       </Box>
-    </Card>
+    </GlassContent>
   );
 }

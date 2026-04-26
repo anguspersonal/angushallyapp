@@ -1,9 +1,9 @@
 import { createTheme } from '@mantine/core';
 import type { MantineColorsTuple, MantineThemeOverride } from '@mantine/core';
-import type { 
-  MotionTransition, 
-  ViewportTransition, 
-  ThemeAssets 
+import type {
+  MotionTransition,
+  ViewportTransition,
+  ThemeAssets,
 } from '../types/mantine';
 
 export const motionTransitions: {
@@ -13,93 +13,61 @@ export const motionTransitions: {
   readonly viewportRepeat: ViewportTransition;
   readonly viewportOnce: ViewportTransition;
 } = {
-  // Standard spring animation
   spring: {
-    type: "spring",
+    type: 'spring',
     stiffness: 100,
     damping: 20,
-    duration: 0.8
+    duration: 0.8,
   },
-  // Faster spring for quick animations
   springFast: {
-    type: "spring",
+    type: 'spring',
     stiffness: 120,
     damping: 25,
-    duration: 0.6
+    duration: 0.6,
   },
-  // Slower spring for more dramatic animations
   springSlow: {
-    type: "spring",
+    type: 'spring',
     stiffness: 80,
     damping: 15,
-    duration: 1
+    duration: 1,
   },
-  // Viewport that triggers animation each time
   viewportRepeat: {
-    // once defaults to false
-    amount: 0.3
+    amount: 0.3,
   },
-  // Viewport that triggers animation only once
   viewportOnce: {
     once: true,
-    amount: 0.2 // Keeping the earlier trigger amount
-  }
+    amount: 0.2,
+  },
 };
 
-// Define custom color tuples with proper Mantine types
-const primaryColors: MantineColorsTuple = [
-  '#E8EBE8', // lightest
-  '#D1D7D1',
-  '#BAC3BA',
-  '#A3AFA3',
-  '#8C9B8C',
-  '#758775',
-  '#5E735E',
-  '#475F47',
-  '#384C37', // base color
-  '#2A3929', // darkest
+/** Palette amendment section 2: teal scale anchored at #1F4A44 (index 6). */
+const tealColors: MantineColorsTuple = [
+  '#F4FAF9',
+  '#E4EFED',
+  '#CDE5E1',
+  '#B6DBD5',
+  '#9FD1C9',
+  '#88C7BD',
+  '#1F4A44',
+  '#1A3F3A',
+  '#14302D',
+  '#0D1F1E',
 ];
 
-const secondaryColors: MantineColorsTuple = [
-  '#E8EDF2',
-  '#D1DBE5',
-  '#BAC9D8',
-  '#A3B7CB',
-  '#8CA5BE',
-  '#7593B1',
-  '#88A5BC', // base color
-  '#5B7A9A',
-  '#4A6A8A',
-  '#395A7A',
+/** Coral accent anchored at #F0997B (index 6). */
+const coralColors: MantineColorsTuple = [
+  '#FFF8F6',
+  '#FFEDE8',
+  '#FFE2DA',
+  '#FFD7CC',
+  '#FFCCBE',
+  '#FFB8A5',
+  '#F0997B',
+  '#E08568',
+  '#C86A52',
+  '#A85540',
 ];
 
-const accentColors: MantineColorsTuple = [
-  '#F9F5F3',
-  '#F3EBE7',
-  '#EDE1DB',
-  '#E7D7CF',
-  '#E1CDC3',
-  '#E1C8BC', // base color
-  '#D5B8AC',
-  '#C9A89C',
-  '#BD988C',
-  '#B1887C',
-];
-
-const successColors: MantineColorsTuple = [
-  '#E8F0E9',
-  '#D1E1D3',
-  '#BAD2BD',
-  '#A3C3A7',
-  '#8CB491',
-  '#75A57B',
-  '#6B9F70', // base color
-  '#5A8E5F',
-  '#497D4E',
-  '#386C3D',
-];
-
-/** Default Mantine scales so utilities like muted text and error alerts type-check. */
 const grayColors: MantineColorsTuple = [
   '#f8f9fa',
   '#f1f3f5',
@@ -126,24 +94,58 @@ const redColors: MantineColorsTuple = [
   '#c92a2a',
 ];
 
-// Global assets with proper typing
+const successColors: MantineColorsTuple = [
+  '#E8F0E9',
+  '#D1E1D3',
+  '#BAD2BD',
+  '#A3C3A7',
+  '#8CB491',
+  '#75A57B',
+  '#6B9F70',
+  '#5A8E5F',
+  '#497D4E',
+  '#386C3D',
+];
+
+/** Alias for legacy `color="primary"`; same scale as teal. */
+const primaryColors = [...tealColors] as MantineColorsTuple;
+
 export const assets: ThemeAssets = {
   placeholderImage: {
-    landscape: '/20250418_3BY2_Default_Image_Placeholder.png',  // 3:2 ratio
-    square: '/20250419_1BY1_Default_Image_Placeholder.png',     // 1:1 ratio
-    portrait: '/20250419_2BY3_Default_Image_Placeholder.png',   // 2:3 ratio
-  }
+    landscape: '/20250418_3BY2_Default_Image_Placeholder.png',
+    square: '/20250419_1BY1_Default_Image_Placeholder.png',
+    portrait: '/20250419_2BY3_Default_Image_Placeholder.png',
+  },
 };
 
-// Define the theme configuration with comprehensive typing
+/** Amendment palette tokens (hex only from brief). */
+export const palette = {
+  night: {
+    bg0: '#0D1F1E',
+    bg1: '#14302D',
+    bg2: '#1F4A44',
+    glow: '#F0997B',
+    ink: '#FAF7F0',
+    ctaFill: '#F0997B',
+    ctaTextOnCoral: '#4A1B0C',
+  },
+  day: {
+    bg0: '#FAF7F0',
+    bg1: '#F0ECE0',
+    accent: '#1F4A44',
+    ink: '#0D1F1E',
+    ctaFill: '#1F4A44',
+    ctaTextOnTeal: '#FAF7F0',
+  },
+} as const;
+
 const themeConfig: MantineThemeOverride = {
-  // Define standard breakpoints for clarity and customization
   breakpoints: {
-    xs: '36em',  // 576px
-    sm: '48em',  // 768px
-    md: '62em',  // 992px
-    lg: '75em',  // 1200px
-    xl: '88em',  // 1400px
+    xs: '36em',
+    sm: '48em',
+    md: '62em',
+    lg: '75em',
+    xl: '88em',
   } as const,
   colors: {
     dark: [
@@ -159,22 +161,39 @@ const themeConfig: MantineThemeOverride = {
       '#101113',
     ] as MantineColorsTuple,
     primary: primaryColors,
-    secondary: secondaryColors,
-    accent: accentColors,
+    teal: tealColors,
+    secondary: grayColors,
+    accent: coralColors,
+    coral: coralColors,
     success: successColors,
     gray: grayColors,
     red: redColors,
   } as const,
-  primaryColor: 'primary',
-  primaryShade: 8, // This will use the base color (index 8)
-  defaultRadius: 'md',
-  fontFamily: 'Ubuntu, sans-serif',
+  primaryColor: 'teal',
+  primaryShade: 6,
+  defaultRadius: 'lg',
+  fontFamily: 'var(--font-sans), Ubuntu, system-ui, sans-serif',
+  headings: {
+    fontFamily: 'var(--font-display), League Gothic, sans-serif',
+    fontWeight: '400',
+    sizes: {
+      h1: { fontSize: 'clamp(2.25rem, 4vw, 3rem)', lineHeight: '1.1' },
+      h2: { fontSize: 'clamp(1.75rem, 3vw, 2.25rem)', lineHeight: '1.15' },
+      h3: { fontSize: '1.5rem', lineHeight: '1.2' },
+    },
+  },
+  other: {
+    fontSerif: 'var(--font-serif), Newsreader, Georgia, serif',
+    fontDisplay: 'var(--font-display), League Gothic, sans-serif',
+    /** Cross-fade on mode toggle (amendment section 8). */
+    modeTransitionMs: 300,
+    ...palette,
+  },
   components: {
     Button: {
-      // Default props for all buttons unless overridden
       defaultProps: {
-        color: 'secondary', // Use the secondary color palette
-        variant: 'filled',    // Use the filled style
+        color: 'teal',
+        variant: 'filled',
       },
     },
   },

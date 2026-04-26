@@ -22,7 +22,7 @@ const traits: Trait[] = [
   { 
     label: 'Advocate', 
     icon: '📣', 
-    tooltip: 'External voice — story, pitch, presence', 
+    tooltip: 'External voice: story, pitch, presence',
     full: 'From public speaking and founder events, I bring confident communication, to help your team show up powerfully.'
   },
   { 
@@ -34,7 +34,7 @@ const traits: Trait[] = [
   { 
     label: 'Data Strategist', 
     icon: '📊', 
-    tooltip: 'Data as an asset — structured, valuable, actionable', 
+    tooltip: 'Data as an asset: structured, valuable, actionable',
     full: 'From Anmut, I bring a data strategy lens, to help teams prioritise, structure, and extract value from their data.'
   },
   { 
@@ -46,7 +46,7 @@ const traits: Trait[] = [
   { 
     label: 'Full Stack Dev', 
     icon: '💻', 
-    tooltip: 'Technical fluency — I can build, not just talk', 
+    tooltip: 'Technical fluency. I can build, not just talk.',
     full: 'From self-taught full stack development, I bring technical fluency, to bridge product and engineering and move faster.'
   },
   { 
@@ -59,7 +59,7 @@ const traits: Trait[] = [
     label: 'Conscientious', 
     icon: '🫶', 
     tooltip: 'I care deeply about people, outcomes, and integrity', 
-    full: 'From teaching and team building, I bring conscientious care, to design with empathy and do what\'s right — not just fast.'
+    full: 'From teaching and team building, I bring conscientious care, to design with empathy and do what\'s right, not just fast.'
   }
 ];
 

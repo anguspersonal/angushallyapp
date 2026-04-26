@@ -110,6 +110,11 @@ vi.mock('@mantine/core', async () => {
   function MockBurger({ onClick }: { onClick?: () => void }) {
     return R.createElement('button', { 'data-testid': 'burger', type: 'button', onClick });
   }
+  function makePassthrough(testId: string, tag: string = 'div') {
+    return function Passthrough({ children, ...rest }: { children?: React.ReactNode } & Record<string, unknown>) {
+      return R.createElement(tag, { 'data-testid': testId, ...rest }, children);
+    };
+  }
 
   return {
     MantineProvider: MockMantineProvider,
@@ -118,6 +123,53 @@ vi.mock('@mantine/core', async () => {
     Button: MockButton,
     Menu: MockMenu,
     Burger: MockBurger,
+    Paper: makePassthrough('paper'),
+    Box: makePassthrough('box'),
+    Text: makePassthrough('text', 'span'),
+    Title: makePassthrough('title', 'h3'),
+    Badge: makePassthrough('badge', 'span'),
+    Stack: makePassthrough('stack'),
+    SimpleGrid: makePassthrough('simple-grid'),
+    Card: makePassthrough('card'),
+    ActionIcon: makePassthrough('action-icon', 'button'),
+    Image: makePassthrough('image', 'img'),
+    Anchor: function MockAnchor({
+      children,
+      component: _component,
+      ...rest
+    }: {
+      children?: React.ReactNode;
+      component?: unknown;
+      [key: string]: unknown;
+    }) {
+      return R.createElement('a', { 'data-testid': 'anchor', ...rest }, children);
+    },
+    Alert: makePassthrough('alert'),
+    Divider: makePassthrough('divider', 'hr'),
+    Blockquote: makePassthrough('blockquote', 'blockquote'),
+    List: makePassthrough('list', 'ul'),
+    AppShell: Object.assign(makePassthrough('app-shell'), {
+      Header: makePassthrough('app-shell-header', 'header'),
+      Main: makePassthrough('app-shell-main', 'main'),
+      Footer: makePassthrough('app-shell-footer', 'footer'),
+    }),
+    useMantineTheme: () => ({
+      colors: {
+        primary: ['', '', '', '', '', '', '#384C37', '', '#2A3929', ''],
+        secondary: ['', '', '', '', '', '', '#88A5BC', '', '', ''],
+        accent: ['', '', '', '', '', '', '#E1C8BC', '', '', ''],
+        success: ['', '', '', '', '', '', '#6B9F70', '', '', ''],
+        dark: ['', '', '', '', '', '', '', '', '#111', '#000'],
+        gray: ['', '', '', '', '', '', '#888', '', '', ''],
+      },
+    }),
+    useComputedColorScheme: () => (globalThis as { __mantineComputedColorScheme?: 'light' | 'dark' }).__mantineComputedColorScheme ?? 'light',
+    useMantineColorScheme: () => ({
+      colorScheme: 'light',
+      setColorScheme: vi.fn(),
+      toggleColorScheme: vi.fn(),
+      clearColorScheme: vi.fn(),
+    }),
   };
 });
 
@@ -139,11 +191,15 @@ vi.mock('@tabler/icons-react', async () => {
   }
 
   return {
+    IconHome: createIcon('home'),
     IconUser: createIcon('user'),
     IconArticle: createIcon('article'),
     IconRocket: createIcon('rocket'),
     IconFolder: createIcon('folder'),
     IconLogout: createIcon('logout'),
+    IconMail: createIcon('mail'),
+    IconSun: createIcon('sun'),
+    IconMoonStars: createIcon('moon-stars'),
   };
 });
 

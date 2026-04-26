@@ -1,312 +1,242 @@
 'use client';
 
 import React from 'react';
-import { Box, Container, Title, Text, Image, Button, SimpleGrid, useMantineTheme } from '@mantine/core';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import Link from 'next/link';
-import { IconArrowDown } from '@tabler/icons-react';
-import Snippet from '../components/Snippet';
+import {
+  Box,
+  Container,
+  Title,
+  Text,
+  Image,
+  SimpleGrid,
+  Stack,
+  Group,
+} from '@mantine/core';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import ProjectSnippet from '../components/ProjectSnippet';
-import { useLatestPost } from '@/services/content/hooks';
+import CareerTimeline, { type CareerMilestone } from '../components/timeline/CareerTimeline';
 import projectList from '../data/projectList';
-import { assets, motionTransitions } from '../lib/theme';
+import { assets } from '../lib/theme';
 import styles from './page.module.css';
+import { GlassChrome, GlassContent } from '@/components/design/Glass';
+import { SayHelloPill } from '@/components/design/SayHelloPill';
+import { ScrollReveal } from '@/components/design/ScrollReveal';
+import { useDocumentColorScheme } from '@/hooks/useDocumentColorScheme';
 
-// --- Animation variants ---
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (delay: number = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { ...motionTransitions.spring, delay },
-  }),
-};
-
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: (delay: number = 0) => ({
-    opacity: 1,
-    transition: { duration: 0.8, delay },
-  }),
-};
-
-// --- Data ---
-const milestones = [
+export const careerMilestones: CareerMilestone[] = [
   {
     year: '2015',
     role: 'Mathematics Teacher',
-    org: 'TeachFirst',
-    desc: 'Teaching in London schools through the TeachFirst programme. To this day, the hardest thing I\'ve done.',
+    org: 'TeachFirst / Burnt Mill Academy',
+    desc: "Teaching in London schools through TeachFirst. To this day, the hardest thing I've done.",
     color: 'accent',
-    side: 'left' as const,
+    side: 'left',
   },
   {
     year: '2017',
-    role: 'Analyst & Strategist',
+    role: 'Analyst then Strategist',
     org: 'Accenture',
     desc: 'Digital transformation across the Royal Navy, Police, and Courts. Then pricing strategy and GDPR in telecom and insurance.',
     color: 'secondary',
-    side: 'right' as const,
+    side: 'right',
   },
   {
     year: '2020',
-    role: 'Data Strategy Manager',
-    org: 'Anmut',
-    desc: 'Data valuation and data maturity — helping organisations understand what their data is actually worth.',
+    role: 'COO',
+    org: 'Teamvine (Future Factory Ltd)',
+    desc: 'Oversaw product, customer services, sales, marketing, compliance, governance, content, ops, IP. Led agile dev teams. Shipped 4 digital products in 6 months. Secured £100k UKRI grant.',
     color: 'primary',
-    side: 'left' as const,
+    side: 'left',
   },
   {
-    year: '2024',
+    year: '2022',
+    role: 'Data Strategy Manager',
+    org: 'Anmut',
+    desc: 'Data valuation and data maturity. Helping organisations understand what their data is actually worth.',
+    color: 'secondary',
+    side: 'right',
+  },
+  {
+    year: '2025',
     role: 'COO',
     org: 'HeyLina',
-    desc: 'Building emotionally intelligent AI. The most exciting thing I\'ve ever worked on.',
+    desc: "Building emotionally intelligent AI. The most exciting thing I've ever worked on.",
     color: 'success',
-    side: 'right' as const,
+    side: 'left',
   },
 ];
 
+const NOW_TILES = [
+  {
+    label: 'Role',
+    body: 'COO at HeyLina, building emotionally intelligent AI.',
+  },
+  {
+    label: 'Building',
+    body: 'Agentic workflows that feel human, not robotic.',
+  },
+  {
+    label: 'Reading',
+    body: '(placeholder - swap in current book)',
+  },
+  {
+    label: 'Training',
+    body: '(placeholder - current sport/goal)',
+  },
+] as const;
+
+function HeroChips() {
+  return (
+    <Group justify="center" gap="sm" mt="lg" wrap="wrap">
+      <GlassChrome py={6} px="lg" style={{ height: 40, display: 'inline-flex', alignItems: 'center' }}>
+        <Text size="sm" c="var(--site-ink)" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: '50%',
+              background: 'var(--site-accent)',
+              flexShrink: 0,
+            }}
+            aria-hidden
+          />
+          Available for chats
+        </Text>
+      </GlassChrome>
+      <GlassChrome py={6} px="lg" style={{ height: 40, display: 'inline-flex', alignItems: 'center' }}>
+        <Text size="sm" c="var(--site-ink)">
+          Based in London
+        </Text>
+      </GlassChrome>
+      <GlassChrome py={6} px="lg" style={{ height: 40, display: 'inline-flex', alignItems: 'center' }}>
+        <Text size="sm" c="var(--site-ink)">
+          Shipping weekly
+        </Text>
+      </GlassChrome>
+    </Group>
+  );
+}
+
 export default function Home() {
-  const theme = useMantineTheme();
-  const { post: latestBlog } = useLatestPost();
-  const { scrollYProgress } = useScroll();
+  const timelineVariant = useDocumentColorScheme();
+  const reduceMotion = useReducedMotion();
 
-  // Parallax: hero image moves slower than scroll
+  const { scrollYProgress, scrollY } = useScroll();
   const heroImageY = useTransform(scrollYProgress, [0, 0.3], [0, -60]);
-  // Fade hero on scroll
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
+  const nameY = useTransform(scrollY, [0, 600], [0, -90]);
 
-  const latestProject = projectList
-    .filter(p => p.created_at)
-    .sort((a, b) => new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime())[0];
+  const featuredProjects = projectList
+    .filter((p) => p.status === 'done')
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 3);
 
   return (
     <Box>
-      {/* ──────── HERO ──────── */}
-      <motion.div style={{ opacity: heroOpacity }}>
-        <section className={styles.hero}>
-          <div className={styles.heroContent}>
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              custom={0}
-              variants={fadeUp}
-            >
-              <motion.div style={{ y: heroImageY }}>
-                <Image
-                  src="/20250329_AH_Profile_Wales.jpg"
-                  alt="Angus Hally, hiking in Wales"
-                  fallbackSrc={assets.placeholderImage.square}
-                  h={220}
-                  w={220}
-                  fit="cover"
-                  mx="auto"
-                  mb="xl"
-                  className={styles.profileImage}
-                />
-              </motion.div>
-            </motion.div>
-
-            <motion.div initial="hidden" animate="visible" custom={0.15} variants={fadeUp}>
-              <Title
-                order={1}
-                className={styles.headline}
-                style={{
-                  background: `linear-gradient(135deg, ${theme.colors.primary[8]}, ${theme.colors.secondary[6]})`,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                I build things at the
-                <br />
-                intersection of business
-                <br />
-                &amp; technology.
-              </Title>
-            </motion.div>
-
-            <motion.div initial="hidden" animate="visible" custom={0.35} variants={fadeUp}>
-              <Text className={styles.subtitleText} c="gray" opacity={0.85}>
-                Startup operator, amateur developer, constant learner.
-                Currently COO at HeyLina, building emotionally intelligent AI.
-              </Text>
-            </motion.div>
-          </div>
-
-          <motion.div
-            className={styles.scrollIndicator}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-          >
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-            >
-              <IconArrowDown size={18} />
-            </motion.div>
-            <div className={styles.scrollLine} />
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <motion.div style={reduceMotion ? undefined : { y: heroImageY }}>
+            <Image
+              src="/20250329_AH_Profile_Wales.jpg"
+              alt="Angus Hally, hiking in Wales"
+              fallbackSrc={assets.placeholderImage.square}
+              h={220}
+              w={220}
+              fit="cover"
+              mx="auto"
+              mb="xl"
+              className={styles.profileImage}
+            />
           </motion.div>
-        </section>
-      </motion.div>
 
-      {/* ──────── JOURNEY ──────── */}
-      <Box
-        className={styles.journeySectionDark}
-        style={{
-          background: `linear-gradient(135deg, ${theme.colors.dark[8]}, ${theme.colors.dark[9]})`,
-        }}
-      >
-        <Container size="lg">
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={motionTransitions.viewportOnce}
-            custom={0}
-            variants={fadeUp}
+            style={reduceMotion ? undefined : { y: nameY }}
           >
-            <Text className={styles.sectionSubtitle}>The path here</Text>
-            <Title order={2} className={styles.sectionTitle}>
-              From classroom to startup
+            <Title order={1} className={styles.headline} c="var(--site-ink)">
+              Angus Hally
             </Title>
           </motion.div>
 
-          <div className={styles.timeline} style={{ '--timeline-color': `${theme.colors.secondary[6]}33` } as React.CSSProperties}>
-            <div className={styles.timelineLine} />
+          <Text className={styles.subtitleText} c="dimmed">
+            Building HeyLina, emotionally intelligent AI.
+          </Text>
 
-            {milestones.map((m, i) => {
-              const isLeft = m.side === 'left';
+          <Stack align="center" gap="md" mt="md">
+            <SayHelloPill />
+            <HeroChips />
+          </Stack>
+        </div>
+      </section>
 
-              return (
-                <motion.div
-                  key={m.year}
-                  className={styles.milestone}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={motionTransitions.viewportOnce}
-                  custom={i * 0.1}
-                  variants={fadeUp}
-                >
-                  {/* Dot on the line */}
-                  <div
-                    className={styles.milestoneDot}
-                    style={{ background: theme.colors[m.color as keyof typeof theme.colors]?.[6] ?? theme.colors.primary[6] }}
-                  />
-
-                  {/* Left column */}
-                  <div className={styles.milestoneLeft}>
-                    {isLeft ? (
-                      <>
-                        <div className={styles.milestoneYear}>{m.year}</div>
-                        <div className={styles.milestoneRole}>{m.role}</div>
-                        <div className={styles.milestoneOrg}>{m.org}</div>
-                        <div className={styles.milestoneDescLeft}>{m.desc}</div>
-                      </>
-                    ) : null}
-                  </div>
-
-                  {/* Right column */}
-                  <div className={styles.milestoneRight}>
-                    {!isLeft ? (
-                      <>
-                        <div className={styles.milestoneYear}>{m.year}</div>
-                        <div className={styles.milestoneRole}>{m.role}</div>
-                        <div className={styles.milestoneOrg}>{m.org}</div>
-                        <div className={styles.milestoneDescRight}>{m.desc}</div>
-                      </>
-                    ) : null}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </Container>
-      </Box>
-
-      {/* ──────── PHILOSOPHY QUOTE ──────── */}
-      <Box className={styles.quoteBlock}>
-        <Container size="sm">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={motionTransitions.viewportOnce}
-            custom={0}
-            variants={fadeIn}
-          >
-            <Text className={styles.quoteText}>
-              &ldquo;Growth comes from pushing past discomfort. The best way to develop is to create, share, and learn from others.&rdquo;
+      <Box component="section" className={styles.nowSection}>
+        <Container size="lg">
+          <ScrollReveal>
+            <Text className={styles.sectionEyebrow} tt="uppercase" size="xs" fw={600} style={{ letterSpacing: '0.08em' }} c="dimmed">
+              Snapshot
             </Text>
-            <Text className={styles.quoteAttribution}>— The philosophy behind this site</Text>
-          </motion.div>
+            <Title order={2} className={styles.sectionDisplay} mb="xl">
+              What I&apos;m working on now
+            </Title>
+            <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="lg">
+              {NOW_TILES.map((tile) => (
+                <GlassContent key={tile.label} p="lg">
+                  <Text
+                    size="sm"
+                    tt="uppercase"
+                    fw={600}
+                    mb="xs"
+                    style={{ fontFamily: 'var(--font-display), League Gothic, sans-serif' }}
+                    c="dimmed"
+                  >
+                    {tile.label}
+                  </Text>
+                  <Text size="md" c="var(--site-ink)">
+                    {tile.body}
+                  </Text>
+                </GlassContent>
+              ))}
+            </SimpleGrid>
+          </ScrollReveal>
         </Container>
       </Box>
 
-      {/* ──────── FEATURED WORK ──────── */}
+      <CareerTimeline
+        milestones={careerMilestones}
+        eyebrow="The path here"
+        heading="From classroom to startup"
+        variant={timelineVariant}
+      />
+
       <Box className={styles.featuredSection}>
         <Container size="md">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={motionTransitions.viewportOnce}
-            custom={0}
-            variants={fadeUp}
-          >
-            <Text className={styles.sectionSubtitle}>What I&apos;m working on</Text>
-            <Title order={2} className={styles.sectionTitle} mb="xl">
+          <ScrollReveal>
+            <Text className={styles.sectionEyebrow} tt="uppercase" size="xs" fw={600} style={{ letterSpacing: '0.08em' }} c="dimmed">
+              What I&apos;m working on
+            </Text>
+            <Title order={2} className={styles.sectionDisplay} mb="xl">
               Latest work
             </Title>
-          </motion.div>
+          </ScrollReveal>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={motionTransitions.viewportOnce}
-            custom={0.15}
-            variants={fadeUp}
-          >
-            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
-              {latestBlog && <Snippet {...latestBlog} />}
-              {latestProject && <ProjectSnippet project={latestProject} />}
-            </SimpleGrid>
-          </motion.div>
+          <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
+            {featuredProjects.map((project) => (
+              <ScrollReveal key={project.id}>
+                <ProjectSnippet project={project} />
+              </ScrollReveal>
+            ))}
+          </SimpleGrid>
         </Container>
       </Box>
 
-      {/* ──────── CTA ──────── */}
       <Box className={styles.ctaSection}>
         <Container size="sm">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={motionTransitions.viewportOnce}
-            custom={0}
-            variants={fadeUp}
-          >
-            <Title
-              order={2}
-              className={styles.ctaTitle}
-              style={{
-                background: `linear-gradient(135deg, ${theme.colors.primary[8]}, ${theme.colors.secondary[6]})`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
+          <ScrollReveal>
+            <Title order={2} className={styles.ctaTitle} c="var(--site-ink)">
               Let&apos;s connect.
             </Title>
-            <Text className={styles.ctaSubtitle}>
-              Whether you want to talk startups, data strategy, or just say hello — I&apos;d love to hear from you.
+            <Text className={styles.ctaSubtitle} c="dimmed">
+              Whether you want to talk startups, data strategy, or just say hello, I&apos;d love to hear from you.
             </Text>
-            <Button
-              component={Link}
-              href="/contact"
-              size="lg"
-              variant="gradient"
-              gradient={{ from: 'teal', to: 'blue' }}
-              radius="xl"
-            >
-              Get in Touch
-            </Button>
-          </motion.div>
+            <SayHelloPill />
+          </ScrollReveal>
         </Container>
       </Box>
     </Box>

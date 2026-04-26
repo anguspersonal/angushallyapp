@@ -1,0 +1,137 @@
+[
+  {
+    "date": "1994",
+    "title": "Born, Edinburgh",
+    "body": "Mum Anne, dad Paul, older brother Andrew. The A-team and Paul.",
+    "category": "foundational"
+  },
+  {
+    "date": "~1997",
+    "title": "First memory",
+    "body": "Nursery drop-off. Crying at the handoff with mum, then finding a toy cash register and being instantly drawn to it.",
+    "category": "personal"
+  },
+  {
+    "date": "1999 to 2013",
+    "title": "Stewart's Melville College, Edinburgh",
+    "body": "5 Scottish Highers at A. 3 Advanced Highers at A (Maths, Russian History, Philosophy).",
+    "category": "education"
+  },
+  {
+    "date": "~2004",
+    "title": "Shoe polishing, age 10",
+    "body": "Door to door, 50p a shoe, for charity. Got laughed at. Kept doing it.",
+    "category": "enterprise"
+  },
+  {
+    "date": "~2005",
+    "title": "Lemonade stand",
+    "body": "Grandma's recipe, refilled water bottles, terrible health and safety.",
+    "category": "enterprise"
+  },
+  {
+    "date": "2009 to 2013",
+    "title": "The Yard",
+    "body": "Volunteer with children with special needs. Developed games for them.",
+    "category": "community"
+  },
+  {
+    "date": "~2010",
+    "title": "Babysitting and tutoring, age 16",
+    "body": "First aid course, started babysitting. Discovered I loved teaching the kids what I was learning. Drawing two lines of a triangle and telling them the third side. Blew their minds. Taught Pythagoras from first principles. Got popular enough to try franchising it. Printed business cards. Boys at school found the cards. 'Pedo Hally' for a year after.",
+    "category": "enterprise"
+  },
+  {
+    "date": "June 2012",
+    "title": "Duke of Edinburgh Gold",
+    "body": "Led a group on a 5-day expedition in the Scottish Highlands.",
+    "category": "milestone"
+  },
+  {
+    "date": "September 2013",
+    "title": "Moved to London",
+    "body": "Left Edinburgh for LSE. Haven't left since.",
+    "category": "foundational"
+  },
+  {
+    "date": "2013 to 2016",
+    "title": "LSE, BSc Economics and Philosophy",
+    "body": "First Class Honours. Dissertation on the business ethics of 'economic profits'. Met Megha, first serious relationship.",
+    "category": "education"
+  },
+  {
+    "date": "Summer 2015",
+    "title": "JP Morgan, summer intern (Equities)",
+    "body": "Managed receivable research payments. Wrote a Standard Operating Procedure.",
+    "category": "career"
+  },
+  {
+    "date": "2016 to 2017",
+    "title": "PGCE, UCL",
+    "body": "Awarded Outstanding, qualified teacher status.",
+    "category": "education"
+  },
+  {
+    "date": "September 2016 to July 2018",
+    "title": "Maths teacher, Burnt Mill Academy, Harlow",
+    "body": "The hardest thing I've done. TeachFirst route, so holidays went straight into PGCE study. Pay was awful.\n\nStanding in front of 32 students with a wide mix of abilities, even with setting. Kids with diagnosed and undiagnosed ADHD whose parents refused specialist care. They needed support every 15 minutes. The behaviour system asked you to track first and second warnings across 32 students while delivering an engaging lesson. For me that was impossible.\n\nThe school culture encouraged yelling. When I got stressed, I'd fall back on yelling. It was moderately effective until it wasn't, like water off a duck's back. And I didn't like who I became.\n\nIn the second term of my first year I broke down. Saw a doctor who signed me off work and prescribed antidepressants. I've been on and off them since.",
+    "category": "rupture"
+  },
+  {
+    "date": "March 2018",
+    "title": "Megha and I broke up",
+    "body": "Long distance didn't hold. She was returning to India. I'd just started at Accenture. Our lives were pulling in different directions and we'd grown apart.",
+    "category": "relationships"
+  },
+  {
+    "date": "January 2019 to September 2020",
+    "title": "Accenture Strategy & Consulting",
+    "body": "Royal Navy HR service design, UK Police onboarding during COVID (scaled from 3 to 30 users/day, onboarded 450+ legal professionals), growth and pricing for a UK telecom (£4m value), data privacy and GDPR strategy (£1.1 to 3.5m uplift), go-to-market for a digital startup.",
+    "category": "career"
+  },
+  {
+    "date": "November 2020 to November 2022",
+    "title": "COO, Teamvine (Future Factory Ltd)",
+    "body": "Oversaw product, customer services, sales, marketing, compliance, governance, content, ops, IP. Led agile dev teams. Shipped 4 digital products in 6 months. Secured £100k UKRI grant.",
+    "category": "career"
+  },
+  {
+    "date": "November 2022 to October 2025",
+    "title": "Data Consultant then Manager, Anmut",
+    "body": "Data valuation and data maturity. Worked on Grace. Led high-profile data management projects for large organisations.",
+    "category": "career"
+  },
+  {
+    "date": "2 May 2023",
+    "title": "Met Laura Sharp",
+    "body": "To be expanded.",
+    "category": "relationships",
+    "stub": true
+  },
+  {
+    "date": "April 2025",
+    "title": "Started part-time at HeyLina",
+    "body": "To be expanded. How HeyLina started, how Angus got involved.",
+    "category": "career",
+    "stub": true
+  },
+  {
+    "date": "10 October 2025",
+    "title": "Left Anmut, full-time COO at HeyLina",
+    "body": "Started a 6-month sabbatical from Anmut, already working part-time with HeyLina. Formally left at the end of the sabbatical, went full-time on HeyLina. Building emotionally intelligent AI. The most exciting thing I've ever worked on.",
+    "category": "career"
+  },
+  {
+    "date": "2 November 2025",
+    "title": "Engaged to Laura",
+    "body": "To be expanded.",
+    "category": "relationships",
+    "stub": true
+  },
+  {
+    "date": "16 November 2026",
+    "title": "Wedding",
+    "body": "Upcoming.",
+    "category": "milestone"
+  }
+]

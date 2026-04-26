@@ -84,7 +84,7 @@ const SoftwareCV = () => {
 
     const projects: Project[] = [
         {
-            title: 'EatSafeUK (Deprecated)',
+            title: 'EatSafeUK (Archived)',
             description: 'A public health application that helped users check hygiene scores of food establishments',
             color: 'success',
             image: '/20250530_0936_Chef_Preparing_Ingredients_remix_01jwg594xxe4cvhwhc47d9t7r9.jpg',

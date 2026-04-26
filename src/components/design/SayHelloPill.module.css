@@ -1,0 +1,52 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  font-family: var(--font-sans), Ubuntu, system-ui, sans-serif;
+  transition:
+    transform 150ms ease,
+    filter 150ms ease;
+}
+
+[data-mantine-color-scheme='dark'] .pill {
+  background: #f0997b;
+  color: #4a1b0c;
+}
+
+[data-mantine-color-scheme='light'] .pill {
+  background: #1f4a44;
+  color: #faf7f0;
+}
+
+.pill:hover {
+  transform: scale(1.02);
+  filter: brightness(1.05);
+}
+
+.pill:active {
+  transform: scale(0.98);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+[data-mantine-color-scheme='dark'] .dot {
+  background: #4a1b0c;
+}
+
+[data-mantine-color-scheme='light'] .dot {
+  background: #faf7f0;
+}

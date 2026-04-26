@@ -1,0 +1,64 @@
+.portraitWrap {
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.portrait {
+  display: block;
+}
+
+[data-mantine-color-scheme='dark'] .portrait {
+  box-shadow: 0 0 80px rgba(240, 153, 123, 0.25);
+}
+
+[data-mantine-color-scheme='light'] .portrait {
+  box-shadow: 0 12px 48px rgba(13, 31, 30, 0.12);
+}
+
+.prose {
+  font-family: var(--font-serif), Newsreader, Georgia, serif;
+  font-size: 19px;
+  line-height: 1.7;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--site-ink);
+}
+
+.pullquote {
+  position: relative;
+  padding-left: 0.5rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pullquoteMark {
+  position: absolute;
+  left: 0;
+  top: -0.35em;
+  font-family: var(--font-serif), Newsreader, Georgia, serif;
+  font-size: 4.5rem;
+  line-height: 1;
+  font-weight: 400;
+  font-style: normal;
+  pointer-events: none;
+}
+
+[data-mantine-color-scheme='dark'] .pullquoteMark {
+  color: #f0997b;
+}
+
+[data-mantine-color-scheme='light'] .pullquoteMark {
+  color: #1f4a44;
+}
+
+.pullquoteText {
+  font-family: var(--font-serif), Newsreader, Georgia, serif;
+  font-size: clamp(1.35rem, 2.5vw, 1.65rem);
+  line-height: 1.35;
+  font-style: italic;
+  padding-left: 2.5rem;
+  margin: 0;
+  color: var(--site-ink);
+}

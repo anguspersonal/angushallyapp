@@ -1,0 +1,78 @@
+.toggle {
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 999px;
+  padding: 0;
+  background: transparent !important;
+  color: var(--site-ink) !important;
+  cursor: pointer;
+  line-height: 1;
+}
+
+[data-mantine-color-scheme='dark'] .toggle {
+  color: #faf7f0 !important;
+}
+
+[data-mantine-color-scheme='light'] .toggle {
+  color: #0d1f1e !important;
+}
+
+.toggle:hover {
+  background: rgba(250, 247, 240, 0.1) !important;
+  color: #faf7f0 !important;
+}
+
+[data-mantine-color-scheme='light'] .toggle:hover {
+  background: rgba(13, 31, 30, 0.05) !important;
+  color: #0d1f1e !important;
+}
+
+[data-mantine-color-scheme='light'] .toggle:focus,
+[data-mantine-color-scheme='light'] .toggle:focus-visible {
+  color: #0d1f1e !important;
+  outline-color: rgba(13, 31, 30, 0.35);
+}
+
+[data-mantine-color-scheme='dark'] .toggle:focus,
+[data-mantine-color-scheme='dark'] .toggle:focus-visible {
+  color: #faf7f0 !important;
+  outline-color: rgba(250, 247, 240, 0.35);
+}
+
+.toggleAnimated {
+  transition:
+    transform 150ms ease,
+    background 150ms ease;
+}
+
+.toggleAnimated:hover {
+  transform: translateY(-1px);
+}
+
+.icon {
+  display: none;
+  color: currentColor;
+  stroke: currentColor;
+}
+
+.toggle svg,
+.icon svg {
+  color: currentColor;
+  stroke: currentColor;
+}
+
+[data-mantine-color-scheme='dark'] .sunIcon {
+  display: inline-flex;
+}
+
+[data-mantine-color-scheme='light'] .moonIcon {
+  display: inline-flex;
+}

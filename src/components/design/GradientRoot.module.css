@@ -1,0 +1,46 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.base {
+  position: absolute;
+  inset: 0;
+}
+
+[data-mantine-color-scheme='dark'] .base {
+  background: linear-gradient(120deg, #0d1f1e 0%, #14302d 50%, #1f4a44 100%);
+}
+
+[data-mantine-color-scheme='light'] .base {
+  background: linear-gradient(180deg, #faf7f0 0%, #f0ece0 100%);
+}
+
+.glowLayer {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+}
+
+.glowScroll {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.glowBlob {
+  position: absolute;
+  width: min(120vw, 1400px);
+  height: min(120vw, 1400px);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle at var(--glow-x, 75%) var(--glow-y, 45%),
+    rgba(240, 153, 123, 0.28),
+    transparent 55%
+  );
+}

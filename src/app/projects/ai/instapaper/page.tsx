@@ -13,7 +13,7 @@ export default function InstapaperPage() {
         <Paper p="lg" radius="md" withBorder>
           <Group gap="sm" mb="md">
             <IconAlertTriangle size={24} color="var(--mantine-color-yellow-6)" />
-            <Badge color="accent" variant="light" size="lg">Deprecated</Badge>
+            <Badge color="gray" variant="light" size="lg">Archived</Badge>
           </Group>
           <Text mb="md" c="dark">
             This feature required backend database integration that is no longer maintained.

@@ -37,14 +37,14 @@ describe('Header', () => {
 
     renderWithProviders(<Header />);
 
-    // Check logo is present
-    const logo = screen.getByAltText('AH Logo');
-    expect(logo).toBeInTheDocument();
+    expect(screen.getByText('AH')).toBeInTheDocument();
 
     // Check navigation links exist (both desktop and mobile versions)
+    expect(screen.getAllByText('Home').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Projects').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Blog').length).toBeGreaterThan(0);
     expect(screen.getAllByText('About').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Contact').length).toBeGreaterThan(0);
   });
 
   it('shows login button when user is not authenticated', () => {

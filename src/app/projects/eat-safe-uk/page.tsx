@@ -13,7 +13,7 @@ export default function EatSafeUK() {
         <Paper p="lg" radius="md" withBorder>
           <Group gap="sm" mb="md">
             <IconAlertTriangle size={24} color="var(--mantine-color-yellow-6)" />
-            <Badge color="accent" variant="light" size="lg">Deprecated</Badge>
+            <Badge color="gray" variant="light" size="lg">Archived</Badge>
           </Group>
           <Text mb="md">
             This project helped users check UK food hygiene ratings on an interactive map, combining the Google Maps API with official Food Standards Agency data.
@@ -26,7 +26,7 @@ export default function EatSafeUK() {
               <Anchor href="https://ratings.food.gov.uk/" target="_blank" rel="noopener noreferrer">
                 Food Standards Agency Ratings
               </Anchor>
-              {' '}— the official source
+              {', the official source'}
             </List.Item>
             <List.Item>
               <Anchor href="https://www.scoresonthedoors.org.uk/" target="_blank" rel="noopener noreferrer">
