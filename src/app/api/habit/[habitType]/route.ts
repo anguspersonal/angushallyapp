@@ -29,7 +29,7 @@ export async function POST(request: Request, context: { params: Promise<Params> 
   ) {
     return NextResponse.json(
       {
-        error: 'Alcohol multi-drink logging is not yet ported to Next — use simple value/metric or Express locally',
+        error: 'Alcohol multi-drink logging is not yet ported to Next. Use simple value/metric or Express locally.',
         code: 'HABIT_ALCOHOL_EXTENSION_NOT_PORTED',
       },
       { status: 501 },

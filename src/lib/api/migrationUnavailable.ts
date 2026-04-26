@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 const MESSAGES = {
   strava: 'Strava dashboard is temporarily unavailable during platform migration',
   blog: 'Blog content is temporarily unavailable during platform migration',
-  habit: 'Habit API is temporarily unavailable — configure Supabase or sign in',
+  habit: 'Habit API is temporarily unavailable. Configure Supabase or sign in.',
 } as const;
 
 export type MigrationUnavailableFeature = keyof typeof MESSAGES;

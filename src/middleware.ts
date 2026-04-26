@@ -1,30 +1,34 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { updateSession } from '@/lib/supabase/middleware';
 
-export function middleware(req: NextRequest) {
-  // Check if the request is for a protected route
-  const isProtectedRoute = req.nextUrl.pathname.startsWith('/projects/') ||
-                          req.nextUrl.pathname.startsWith('/admin') ||
-                          req.nextUrl.pathname.startsWith('/dashboard');
+const GATED_PREFIXES = [
+  '/projects/timeline',
+  '/projects/ai/text-analysis',
+  '/admin',
+  '/dashboard',
+];
 
-  if (isProtectedRoute) {
-    const jwt = req.cookies.get('jwt_token');
+function isGated(pathname: string): boolean {
+  return GATED_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
 
-    if (!jwt) {
-      // Redirect to login if no JWT cookie is present
-      const loginUrl = new URL('/login', req.url);
-      loginUrl.searchParams.set('redirect', req.nextUrl.pathname);
-      return NextResponse.redirect(loginUrl);
-    }
+export async function middleware(req: NextRequest) {
+  const { response, user } = await updateSession(req);
+
+  if (isGated(req.nextUrl.pathname) && !user) {
+    const loginUrl = new URL('/login', req.url);
+    loginUrl.searchParams.set('redirect', req.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
-  matcher: [
-    '/projects/:path*',
-    '/admin/:path*',
-    '/dashboard/:path*',
-  ],
+  // Run on everything except Next internals and static files so Supabase cookies
+  // stay fresh on public routes too. Gating itself is enforced by `isGated`.
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'],
 };
