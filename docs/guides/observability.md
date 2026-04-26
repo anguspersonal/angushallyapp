@@ -54,7 +54,7 @@
 - **Routes**: invoke services, catch domain errors, classify/map with the taxonomy, and return only the public envelope `{ error, code }` alongside any existing Phase 2 fields. Follow the patterns in `contentRoute` and `habitRoute`.
 - **HTTP client**: use `createHttpClient` with a `getContext` that returns `req.context` (or `createBackgroundContext` for jobs). Logs must include `method`, sanitized `url`, `status`, `durationMs`, `outcome`, `dependency`, and `correlationId` while preserving the existing retry/timeout behavior.
 
-Cross-reference: keep this layered atop the Phase 2 service contracts documented in `docs/service-layer.md`—domain code stays HTTP-agnostic; routing/middleware own error shaping and taxonomy logging. New features should follow the route/service/background patterns above rather than inventing new entry points.
+Cross-reference: keep this layered atop the Phase 2 service contracts documented in `docs/guides/service-layer.md`—domain code stays HTTP-agnostic; routing/middleware own error shaping and taxonomy logging. New features should follow the route/service/background patterns above rather than inventing new entry points.
 
 ## Data protection in structured logs
 - Avoid logging request bodies, secrets, or PII. Route-level logs should stick to correlation IDs, dependency names, and low-cardinality status fields.

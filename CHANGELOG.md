@@ -2,6 +2,8 @@
 
 This file tracks chronological changes to the project, with the most recent updates at the top.
 
+> **Note on doc paths (April 2026 reorganization):** Historical entries below reference filenames under `docs/` that have since been moved or consolidated. The previous numbered files (`docs/01_…` through `docs/18_…`) now live under [`docs/adr/`](docs/adr/) (historical write-ups), [`docs/guides/`](docs/guides/) (how-tos and runbooks), or were consolidated into [`docs/vision.md`](docs/vision.md) and [`docs/backlog.json`](docs/backlog.json). This changelog (formerly `docs/03_updates.md`) was moved to the repo root. See [`docs/README.md`](docs/README.md) for the current layout. Historical entries are left as-is to preserve the record of what was changed at the time.
+
 ## Update050 - PWA Production Bug Fix & Mobile Installation Success - 2025-07-18 - Complete
 
 ### Overview

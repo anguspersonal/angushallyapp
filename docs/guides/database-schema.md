@@ -1,4 +1,4 @@
-docs/04_schema.md
+<!-- Previously docs/04_schema.md -->
 Purpose: Human-friendly overview of your DB schemas.
 
 Content:

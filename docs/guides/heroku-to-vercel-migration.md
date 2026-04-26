@@ -6,7 +6,7 @@ Migrating from a Heroku monolith (Next.js + Express + Postgres) to **Vercel** (*
 
 ### Strategic decision: Option 1 (no split API)
 
-**Production** is a **single** Vercel project (`web` root). Public HTTP APIs live in **Next Route Handlers**, not a second host (e.g. Railway Express). Domain logic is **colocated** under `web/src/lib/<domain>/` next to the matching UI under `src/app/projects/...` where applicable. Full Express → Next file mapping: **`docs/migration/server-to-next-mapping.md`**.
+**Production** is a **single** Vercel project (`web` root). Public HTTP APIs live in **Next Route Handlers**, not a second host (e.g. Railway Express). Domain logic is **colocated** under `web/src/lib/<domain>/` next to the matching UI under `src/app/projects/...` where applicable. Full Express → Next file mapping: **`docs/guides/server-to-next-mapping.md`**.
 
 **Scope boundary**: This document tracks migration chunks. Chunks 1–6 are done in code. Chunks 7–8 require your Supabase project + Vercel env setup.
 
@@ -17,7 +17,7 @@ Migrating from a Heroku monolith (Next.js + Express + Postgres) to **Vercel** (*
 These phases are **about removing the Express app**, not about reviving deprecated products.
 
 - **Active** — features you still want fully working on Vercel (contact, blog, Strava, AI analysis, etc.): **real** Route Handlers + Supabase (or equivalent) where data is involved.
-- **Deprecated** — products kept online only as placeholders: **stubs are enough for Phase 1.** The page can show deprecation / “unavailable” copy, and matching **`/api/*` routes do not need feature parity** — stable empty responses, 503 + machine-readable code, or no route if nothing calls them. **Pattern:** Eat Safe UK — UI under `web/src/app/projects/eat-safe-uk` with no live hygiene API on Vercel; see `docs/migration/eat-safe-uk-archive.md`. Same idea for Habit, Bookmarks, Instapaper, etc.: **no requirement to port Express logic** for Phase 1.
+- **Deprecated** — products kept online only as placeholders: **stubs are enough for Phase 1.** The page can show deprecation / “unavailable” copy, and matching **`/api/*` routes do not need feature parity** — stable empty responses, 503 + machine-readable code, or no route if nothing calls them. **Pattern:** Eat Safe UK — UI under `web/src/app/projects/eat-safe-uk` with no live hygiene API on Vercel; see `docs/adr/0028-eat-safe-uk-archived.md`. Same idea for Habit, Bookmarks, Instapaper, etc.: **no requirement to port Express logic** for Phase 1.
 
 ### Phase 1 — `web/` is the only runtime you need
 
@@ -29,7 +29,7 @@ These phases are **about removing the Express app**, not about reviving deprecat
 |-----------|--------|
 | **Vercel-shaped deploy** | Single project, **Root Directory = `web`**, `npm run build` and production start succeed. |
 | **Env parity** | All secrets and public vars required by Route Handlers exist in Vercel (see [Environment variables reference](#environment-variables-reference)). |
-| **Express mounts replaced** | Every mount is **documented** in `docs/migration/server-to-next-mapping.md`. **Active** mounts have real Next Route Handlers. **Deprecated** mounts may use **stub handlers** (503, fixed JSON) or **no handler** if the deprecated UI does not call them — same approach as Eat Safe UK / hygiene (no Vercel API). |
+| **Express mounts replaced** | Every mount is **documented** in `docs/guides/server-to-next-mapping.md`. **Active** mounts have real Next Route Handlers. **Deprecated** mounts may use **stub handlers** (503, fixed JSON) or **no handler** if the deprecated UI does not call them — same approach as Eat Safe UK / hygiene (no Vercel API). |
 | **Supabase** | Used for **active** DB-backed routes; **deprecated** products do **not** require Supabase parity or ported domain logic. |
 | **No dual stack in prod** | Production traffic does not depend on `server/index.js`, Heroku-style combined process, or rewrites to an external API. |
 | **Client contracts** | Same paths, methods, and **stable error shapes** where the browser or `web/src/services/*` already depend on them. |
@@ -43,7 +43,7 @@ These phases are **about removing the Express app**, not about reviving deprecat
 
 **DoD — engineering**
 
-- [ ] `docs/migration/server-to-next-mapping.md` updated: each mount = **Active (web path)** / **Deprecated (stub)** / **Not exposed** with reason.
+- [ ] `docs/guides/server-to-next-mapping.md` updated: each mount = **Active (web path)** / **Deprecated (stub)** / **Not exposed** with reason.
 - [ ] Smoke checklist below run against a **Vercel preview** (or prod) with Supabase attached, not only localhost.
 - [ ] No required import from `server/` into `web/` for production code.
 

@@ -148,7 +148,7 @@ cd react-ui && rm -rf build && npm run build
 ## 🔄 Integration with Development Workflow
 
 ### **Updated Migration Plan**
-**Document**: `docs/09_nextjs_migration_plan.md`
+**Document**: `docs/adr/0018-nextjs-migration-history.md` (Part 1 — Migration Plan)
 
 **Added Section**: "Development Workflow Improvements"
 - Cache Management: Added development cache-busting headers
@@ -156,7 +156,7 @@ cd react-ui && rm -rf build && npm run build
 - Error Prevention: Proactive handling of browser cache conflicts during development
 
 ### **Startup Commands Guide**
-**Document**: `docs/11_startup_commands_guide.md`
+**Document**: `docs/guides/startup-commands.md`
 
 **Added Section**: "Troubleshooting"
 - Port Conflicts: Commands to resolve port issues
@@ -168,8 +168,8 @@ cd react-ui && rm -rf build && npm run build
 
 ## 📚 Related Documentation
 
-- **Startup Commands Guide**: [docs/11_startup_commands_guide.md](11_startup_commands_guide.md) - Troubleshooting section
-- **Migration Plan**: [docs/09_nextjs_migration_plan.md](09_nextjs_migration_plan.md) - Development workflow improvements
+- **Startup Commands Guide**: [`docs/guides/startup-commands.md`](../guides/startup-commands.md) - Troubleshooting section
+- **Migration Plan**: [`docs/adr/0018-nextjs-migration-history.md`](./0018-nextjs-migration-history.md) - Development workflow improvements
 - **Server Configuration**: `server/index.js` - Cache-busting headers implementation
 - **Build Process**: `react-ui/package.json` - Build scripts and configuration
 

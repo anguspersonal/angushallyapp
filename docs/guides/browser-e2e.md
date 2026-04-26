@@ -28,7 +28,7 @@ This runbook captures the planned Phase 4 browser end-to-end smoke flows so back
 - CI job (planned → required): `ci/browser-smoke` executes `tests/e2e/auth-content.e2e.ts` and `tests/e2e/auth-habits.e2e.ts`. Run nightly while stabilising; once flakes are addressed, promote to a per-PR blocking gate. Link this job from the testing harness matrix so contributors know where browser flows sit relative to service and route gates. This job must exist and exercise both flows before Phase 4 can be considered complete.
 
 ## Integration with the testing harness
-- The browser suite should reuse the contract language from `docs/runbooks/testing-harness.md` and rely on the same canonical contract constants from `shared/services/habit/contracts`.
+- The browser suite should reuse the contract language from `docs/guides/testing-harness.md` and rely on the same canonical contract constants from `shared/services/habit/contracts`.
 - When flows assert pagination or envelopes, align with the route integration tests to avoid divergent expectations.
 - Update this runbook alongside changes to the testing harness matrix so contributors see how browser flows fit into the overall quality story.
 

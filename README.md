@@ -116,21 +116,22 @@ npm run server
 npm run client
 ```
 
-📚 **For detailed command reference, see [Startup Commands Guide](docs/11_startup_commands_guide.md)**
+📚 **For detailed command reference, see [Startup Commands Guide](docs/guides/startup-commands.md)**
 
 ---
 
 ## 📚 Documentation
 
-For comprehensive documentation, please refer to the following resources:
+Cross-cutting project docs live in [`docs/`](docs/README.md). Start there for the full index. Highlights:
 
-* [Documentation Guidance](docs/01_guidance.md) - How to navigate and update docs
-* [Project Roadmap](docs/02_roadmap.md) - High-level vision and milestones
-* [Change Log](docs/03_updates.md) - Detailed, chronological change log
-* [Database Schema](docs/04_schema.md) - Human-readable DB schema overview
-* [Database Guide](docs/05_database.md) - Database setup and migrations guide
-* [Technical Debt](docs/06_tech_debt.md) - Known architectural and code-quality debt
-* [Feature Backlog](docs/07_backlog.md) - Feature wishlist and prioritization
+* [`docs/README.md`](docs/README.md) — organisation principles, how to navigate and update docs.
+* [`docs/vision.md`](docs/vision.md) — what we're building and why.
+* [`docs/architecture.md`](docs/architecture.md) — how the system is structured at runtime and in the repo.
+* [`docs/backlog.json`](docs/backlog.json) — fixes, tech debt, and future ideas.
+* [`docs/implementation-plan.md`](docs/implementation-plan.md) — active modernization plan.
+* [`docs/guides/`](docs/guides/README.md) — how-tos, runbooks, onboarding (database, startup commands, migration guides, testing, etc.).
+* [`docs/adr/`](docs/adr/) — numbered architectural decision records and historical write-ups.
+* [`CHANGELOG.md`](CHANGELOG.md) — chronological change log.
 
 ---
 

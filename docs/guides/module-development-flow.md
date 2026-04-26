@@ -61,8 +61,8 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 
 - [ ] Update sub-project README.md if module changes affect public interface
 - [ ] Update API documentation in `/server/routes/README.md` if new endpoints added
-- [ ] Update `docs/03_updates.md` if changes are cross-system or significant
-- [ ] Update `docs/04_schema.md` if database schema changes
+- [ ] Update `CHANGELOG.md` if changes are cross-system or significant
+- [ ] Update `docs/guides/database-schema.md` if database schema changes
 
 **🛑 STOP: Wait for user confirmation before proceeding to next step**
 ✅ Documentation updated? (type `y` to proceed)
@@ -175,7 +175,7 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 ### 5. Documentation
 
 - [ ] Update component documentation if public interface changes
-- [ ] Update `docs/03_updates.md` if changes are cross-system or significant
+- [ ] Update `CHANGELOG.md` if changes are cross-system or significant
 - [ ] Update sub-project README.md if component affects public interface
 - [ ] Add JSDoc comments for complex components
 
@@ -235,7 +235,7 @@ If the terminal is opened during this process (e.g. to run tests), **wait for us
 **Common to Both:**
 * **🛑 AI MUST STOP**: Wait for user confirmation (`y`) between every workflow step
 * **📅 DATE CHECK**: Always confirm current date before making documentation changes
-* Use `docs/01_guidance.md` as your reference for documentation rules
+* Use `docs/README.md` as your reference for documentation organisation rules
 * Always pause if terminal is opened — assume model should wait for real-time debugging
 * Documentation comes AFTER successful testing to ensure accuracy
 * Global documentation updates only for significant changes that impact multiple systems

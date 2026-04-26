@@ -1,4 +1,4 @@
-Below is a **drop-in replacement** for `docs/11_startup_commands_guide.md`.
+Below is the canonical startup commands guide (previously `docs/11_startup_commands_guide.md`).
 It removes all `react-ui` references, simplifies the command matrix, and folds in the newer build/deploy advice we just discussed.
 
 ````markdown

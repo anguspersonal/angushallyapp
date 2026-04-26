@@ -26,8 +26,8 @@ The repo historically used a **monorepo** with `web` (Next.js) and `server` (Exp
 ## Related
 
 - `docs/architecture.md`
-- `docs/migration/heroku-to-vercel.md`
-- `docs/migration/server-to-next-mapping.md`
-- `docs/service-layer.md`
+- `docs/guides/heroku-to-vercel-migration.md`
+- `docs/guides/server-to-next-mapping.md`
+- `docs/guides/service-layer.md`
 - `docs/adr/0013-nextjs-migration.md`
 - `docs/adr/0005-api-routing-pattern.md` (Express-era; superseded for production by this ADR)

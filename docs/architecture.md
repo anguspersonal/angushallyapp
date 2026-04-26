@@ -1,8 +1,8 @@
 # Architecture
 
-This document describes how **angushallyapp** is structured at runtime and in the repository. For product direction, see `docs/02_roadmap.md`. For deep dives on specific choices, see `docs/adr/`. For the colocated Next service pattern, see `docs/service-layer.md`.
+This document describes how **angushallyapp** is structured at runtime and in the repository. For product direction, see `docs/vision.md`. For deep dives on specific choices, see `docs/adr/`. For the colocated Next service pattern, see `docs/guides/service-layer.md`.
 
-**Hosting target (production):** **Vercel** runs **`web` only** (root directory `web`). HTTP APIs are **Next.js Route Handlers** under `web/src/app/api/**`. **Supabase** provides Postgres (and optional Auth). See `docs/migration/heroku-to-vercel.md` and `docs/migration/server-to-next-mapping.md`. ADR `docs/adr/0016-next-supabase-colocated-features.md`.
+**Hosting target (production):** **Vercel** runs **`web` only** (root directory `web`). HTTP APIs are **Next.js Route Handlers** under `web/src/app/api/**`. **Supabase** provides Postgres (and optional Auth). See `docs/guides/heroku-to-vercel-migration.md` and `docs/guides/server-to-next-mapping.md`. ADR `docs/adr/0016-next-supabase-colocated-features.md`.
 
 ---
 
@@ -57,7 +57,7 @@ flowchart LR
 - **Vercel (canonical):** All `/api/*` requests are handled by **Next Route Handlers** in `web/src/app/api/**/route.ts`. Domain logic lives in `web/src/lib/<domain>/` (server-only imports).
 - **Local integrated mode (optional):** If you run the Express app with Next attached (`server/bootstrap/next.js`), Express may still register `/api/*` first. For **production alignment**, do not rely on that path; implement new behavior only in Next + Supabase.
 
-When adding or changing an HTTP API, **default to Route Handlers** in `web` and update `docs/migration/server-to-next-mapping.md` if you add a new surface.
+When adding or changing an HTTP API, **default to Route Handlers** in `web` and update `docs/guides/server-to-next-mapping.md` if you add a new surface.
 
 ---
 
@@ -73,9 +73,10 @@ angushallyapp/
 │   ├── services/         # Typed clients + hooks (fetch /api)
 │   └── types/            # App-wide TS types (e.g. navigation)
 ├── docs/
-│   └── migration/
-│       ├── heroku-to-vercel.md
-│       └── server-to-next-mapping.md
+│   ├── guides/
+│   │   ├── heroku-to-vercel-migration.md
+│   │   └── server-to-next-mapping.md
+│   └── adr/
 └── public/
 ```
 
@@ -85,7 +86,7 @@ angushallyapp/
 
 List/pagination and entity shapes for content and habit live next to their server modules, e.g. `src/lib/content/contracts.ts`, `src/lib/habit/contracts.ts`, with shared pagination meta in `src/lib/contracts/pagination.ts`. Route Handlers, `src/lib/*/Repository` modules, and `src/services/*/client.ts` + hooks import these types.
 
-See `docs/service-layer.md`.
+See `docs/guides/service-layer.md`.
 
 ---
 
@@ -110,7 +111,7 @@ Path alias **`@/*`** resolves to `src/*`.
 
 ## Data and migrations
 
-- Schema workflow: `docs/05_database.md`, `docs/04_schema.md`.
+- Schema workflow: `docs/guides/database.md`, `docs/guides/database-schema.md`.
 - Apply DDL with your normal process (e.g. **Supabase** `supabase db push`).
 
 ---
@@ -135,15 +136,18 @@ Path alias **`@/*`** resolves to `src/*`.
 
 | Topic | Document |
 |-------|----------|
-| Service layer (colocated Next) | `docs/service-layer.md` |
-| Express → Next mapping | `docs/migration/server-to-next-mapping.md` |
-| Vercel migration chunks | `docs/migration/heroku-to-vercel.md` |
-| Doc index | `docs/01_guidance.md` |
+| Service layer (colocated Next) | `docs/guides/service-layer.md` |
+| Express → Next mapping | `docs/guides/server-to-next-mapping.md` |
+| Vercel migration chunks | `docs/guides/heroku-to-vercel-migration.md` |
+| Doc index | `docs/README.md` |
+| Vision & strategic goals | `docs/vision.md` |
+| Backlog & tech debt | `docs/backlog.json` |
 | Colocation decision | `docs/adr/0016-next-supabase-colocated-features.md` |
 | Next migration | `docs/adr/0013-nextjs-migration.md` |
+| Next migration history (plan/tracker/log) | `docs/adr/0018-nextjs-migration-history.md` |
 
 ---
 
 ## Maintenance
 
-When you change API boundaries, hosting, or workspace roles, update this file and `docs/migration/server-to-next-mapping.md` in the same change.
+When you change API boundaries, hosting, or workspace roles, update this file and `docs/guides/server-to-next-mapping.md` in the same change.

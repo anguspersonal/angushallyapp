@@ -14,7 +14,7 @@ This runbook standardizes how we execute service-layer contract tests, integrati
 - Service contracts: `shared/services/**/contracts.ts`
 - Content/habit services: `server/services`
 - Frontend clients/hooks: `web/src/services`
-- Browser E2E runbook: `docs/runbooks/browser-e2e.md`
+- Browser E2E runbook: `docs/guides/browser-e2e.md`
 
 ## 2) Test suite overview
 - **Unit & contract tests (server)**: Validate service contracts, pagination (first/middle/last page), and error handling. Run selectively with `cd server && npm test -- --runTestsByPath tests/contentService.test.js tests/habitService.test.js`.
@@ -107,4 +107,4 @@ Workflow mapping (copy-pasted strings from the workflow for traceability):
 ## 10) Ownership and triage
 - **Quality** owns the harness, CI wiring, and flake investigation.
 - **Domain owners** (content, habits) maintain fixtures and service contracts; Quality provides helpers and guidance.
-- Log gaps or flaky cases in `docs/03_updates.md` under the current focus section.
+- Log gaps or flaky cases in `CHANGELOG.md` under the current focus section.

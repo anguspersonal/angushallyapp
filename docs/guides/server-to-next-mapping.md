@@ -1,6 +1,6 @@
 # Server (Express) → Next.js colocation mapping
 
-**Definition of done (phases):** See **`docs/migration/heroku-to-vercel.md`** — *Migration phases (Definition of Done)*: **Phase 1** = `web/` alone on Vercel; **active** routes have real behaviour + Supabase where needed; **deprecated** routes may stay **stubs** (Eat Safe UK pattern). **Phase 2** = delete `server/`.
+**Definition of done (phases):** See **`docs/guides/heroku-to-vercel-migration.md`** — *Migration phases (Definition of Done)*: **Phase 1** = `web/` alone on Vercel; **active** routes have real behaviour + Supabase where needed; **deprecated** routes may stay **stubs** (Eat Safe UK pattern). **Phase 2** = delete `server/`.
 
 **Hosting target:** Option 1 — Vercel deploys `web` only; public `/api/*` are **Next Route Handlers**; **Supabase** for Postgres/auth. The `server/` workspace is **legacy**: local dev, Jest, and Knex migrations until fully retired.
 

@@ -1,0 +1,736 @@
+{
+  "$schema": "./backlog.schema.json",
+  "description": "Consolidated backlog: features, fixes, tech debt, and improvement ideas. Items are flat; filter by type/area/priority.",
+  "legend": {
+    "type": ["feature", "fix", "tech-debt", "idea", "polish"],
+    "priority": ["critical", "high", "medium", "low"],
+    "status": ["not-started", "in-progress", "blocked", "done"]
+  },
+  "items": [
+    {
+      "id": "ui-scroll-narrative",
+      "title": "Scroll-driven landing-page narrative",
+      "type": "feature",
+      "area": "frontend",
+      "priority": "high",
+      "status": "in-progress",
+      "notes": "Replace static hero with scroll-driven journey (TeachFirst → Accenture → Anmut → HeyLina).",
+      "source": "18_wow_factor_improvement_plan.md"
+    },
+    {
+      "id": "ui-page-transitions",
+      "title": "Smooth page transitions",
+      "type": "polish",
+      "area": "frontend",
+      "priority": "high",
+      "status": "not-started",
+      "notes": "AnimatePresence + layout animations between routes; cross-fades instead of hard cuts."
+    },
+    {
+      "id": "ai-chat-widget",
+      "title": "AI chat widget for site",
+      "type": "feature",
+      "area": "frontend",
+      "priority": "high",
+      "status": "not-started",
+      "notes": "Chat bubble using OpenAI, grounded in CV/about/blog content."
+    },
+    {
+      "id": "ui-typography-upgrade",
+      "title": "Display/heading font pairing",
+      "type": "polish",
+      "area": "frontend",
+      "priority": "high",
+      "status": "not-started",
+      "notes": "Space Grotesk / Clash Display / Satoshi paired with Ubuntu body."
+    },
+    {
+      "id": "ui-micro-interactions",
+      "title": "Cursor/hover micro-interactions",
+      "type": "polish",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "ui-dark-mode",
+      "title": "Dark mode with polished toggle",
+      "type": "feature",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "ui-command-palette",
+      "title": "Cmd+K command palette",
+      "type": "feature",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started",
+      "notes": "Use `cmdk` library."
+    },
+    {
+      "id": "ui-live-dashboard",
+      "title": "Live dashboard element (Strava/GitHub)",
+      "type": "feature",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "ui-project-case-studies",
+      "title": "Rich project case studies",
+      "type": "feature",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started",
+      "notes": "Transform 2–3 projects from grid cards into narrative pages."
+    },
+
+    {
+      "id": "raindrop-pagination",
+      "title": "Pagination for large Raindrop bookmark collections",
+      "type": "feature",
+      "area": "bookmarks",
+      "priority": "medium",
+      "status": "not-started",
+      "notes": "Currently limited to 50 per API call."
+    },
+    {
+      "id": "raindrop-search-ui",
+      "title": "Bookmark search and filtering UI",
+      "type": "feature",
+      "area": "bookmarks",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "raindrop-collections",
+      "title": "Display Raindrop collections/categories",
+      "type": "feature",
+      "area": "bookmarks",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "raindrop-delete",
+      "title": "Delete bookmarks from UI (sync back to Raindrop)",
+      "type": "feature",
+      "area": "bookmarks",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "raindrop-auto-sync",
+      "title": "Automatic periodic Raindrop sync",
+      "type": "feature",
+      "area": "bookmarks",
+      "priority": "medium",
+      "status": "not-started",
+      "notes": "Daily background job."
+    },
+    {
+      "id": "raindrop-preview-cards",
+      "title": "Bookmark preview cards with thumbnails",
+      "type": "polish",
+      "area": "bookmarks",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "bookmark-notes-highlights",
+      "title": "Support bookmark notes and highlights",
+      "type": "feature",
+      "area": "bookmarks",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "bookmark-export",
+      "title": "Export bookmarks (JSON, CSV, HTML)",
+      "type": "feature",
+      "area": "bookmarks",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "bookmark-bulk-ops",
+      "title": "Bulk bookmark operations",
+      "type": "feature",
+      "area": "bookmarks",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "bookmark-offline",
+      "title": "Offline bookmark support with local caching",
+      "type": "feature",
+      "area": "bookmarks",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "bookmark-source-integration",
+      "title": "Extensible bookmark-source interface",
+      "type": "tech-debt",
+      "area": "bookmarks",
+      "priority": "medium",
+      "status": "in-progress",
+      "notes": "Currently tightly coupled to Raindrop.io. Design for Pocket, Instapaper, etc."
+    },
+    {
+      "id": "bookmark-schema-consolidation",
+      "title": "Consolidate raindrop.bookmarks / bookmarks.bookmarks",
+      "type": "tech-debt",
+      "area": "bookmarks",
+      "priority": "high",
+      "status": "in-progress",
+      "notes": "Confusing dual-table model; unified storage + genAI categorization planned."
+    },
+    {
+      "id": "raindrop-api-error-handling",
+      "title": "Robust Raindrop API error handling",
+      "type": "tech-debt",
+      "area": "bookmarks",
+      "priority": "medium",
+      "status": "not-started",
+      "notes": "Rate limiting (429) with backoff, revoked scope (403), timeouts, partial-sync recovery, retries."
+    },
+
+    {
+      "id": "content-type-detection",
+      "title": "Content-type detection for different media (video, audio, text)",
+      "type": "feature",
+      "area": "content-intelligence",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "embedded-content-processing",
+      "title": "Process embedded content within bookmarks",
+      "type": "feature",
+      "area": "content-intelligence",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "token-usage-optimization",
+      "title": "Token-usage optimization strategies",
+      "type": "tech-debt",
+      "area": "content-intelligence",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "processed-content-cache",
+      "title": "Caching for processed content",
+      "type": "tech-debt",
+      "area": "content-intelligence",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "tag-management",
+      "title": "Custom tag management, hierarchies, search, analytics",
+      "type": "feature",
+      "area": "content-intelligence",
+      "priority": "medium",
+      "status": "not-started"
+    },
+
+    {
+      "id": "habit-streaks-goals",
+      "title": "Habit streak calculation and goal setting",
+      "type": "feature",
+      "area": "habits",
+      "priority": "low",
+      "status": "not-started"
+    },
+
+    {
+      "id": "db-triggers-timestamps",
+      "title": "Move timestamp maintenance to Postgres triggers",
+      "type": "tech-debt",
+      "area": "database",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "db-indexes",
+      "title": "Add indexes for frequently-joined / filtered columns",
+      "type": "tech-debt",
+      "area": "database",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "db-connection-pool-tuning",
+      "title": "Tune Postgres connection pool for production",
+      "type": "tech-debt",
+      "area": "database",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "db-normalization-review",
+      "title": "Review schemas for normalization opportunities",
+      "type": "tech-debt",
+      "area": "database",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "db-constraints-review",
+      "title": "Add missing FK / check constraints",
+      "type": "tech-debt",
+      "area": "database",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "db-soft-deletes",
+      "title": "Soft-delete pattern for critical data",
+      "type": "tech-debt",
+      "area": "database",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "db-query-result-pattern",
+      "title": "Standardize query-result access pattern (avoid raw .rows)",
+      "type": "tech-debt",
+      "area": "database",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "db-unified-person-entity",
+      "title": "Unified `Person`/`Entity` record across schemas",
+      "type": "idea",
+      "area": "database",
+      "priority": "low",
+      "status": "not-started",
+      "notes": "Link identity.users, inquirers, authors, etc. to a central record."
+    },
+
+    {
+      "id": "api-error-envelope",
+      "title": "Standardize API error responses (code/message/details)",
+      "type": "tech-debt",
+      "area": "api",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "api-pagination-middleware",
+      "title": "Consistent pagination middleware",
+      "type": "tech-debt",
+      "area": "api",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "api-validation-middleware",
+      "title": "Centralized input-validation middleware (schema library)",
+      "type": "tech-debt",
+      "area": "api",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "api-versioning",
+      "title": "API versioning strategy",
+      "type": "tech-debt",
+      "area": "api",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "api-docs-generation",
+      "title": "Auto-generated API docs (OpenAPI/Swagger)",
+      "type": "tech-debt",
+      "area": "api",
+      "priority": "low",
+      "status": "not-started"
+    },
+
+    {
+      "id": "auth-refresh-tokens",
+      "title": "Refresh-token rotation for JWT",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "high",
+      "status": "in-progress"
+    },
+    {
+      "id": "auth-rate-limiting",
+      "title": "Rate-limit auth endpoints",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-session-invalidation",
+      "title": "Server-side session invalidation",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-loading-states",
+      "title": "Consistent auth-operation loading states in UI",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-retry-logic",
+      "title": "Retry logic with backoff for failed auth ops",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-error-messages",
+      "title": "User-friendly auth error messages",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-security-logging",
+      "title": "Security-event logging (failed logins, token issues)",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-error-boundaries",
+      "title": "React error boundaries for auth components",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-token-blacklist",
+      "title": "Token blacklisting + device tracking",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-remember-me-refinement",
+      "title": "Refine Remember-me (granular control, secure storage)",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-mfa",
+      "title": "2FA/MFA and progressive authentication",
+      "type": "feature",
+      "area": "auth",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-monitoring",
+      "title": "Auth monitoring and suspicious-activity detection",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "auth-accounts-table",
+      "title": "Create identity.auth_accounts table (provider separation)",
+      "type": "tech-debt",
+      "area": "auth",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "raindrop-oauth-stability",
+      "title": "Fix Raindrop OAuth flow (env sync, base URL, middleware)",
+      "type": "fix",
+      "area": "auth",
+      "priority": "high",
+      "status": "in-progress"
+    },
+
+    {
+      "id": "fsa-xml-refactor",
+      "title": "Refactor FSA XML parsing (error handling, validation)",
+      "type": "tech-debt",
+      "area": "eat-safe-uk",
+      "priority": "medium",
+      "status": "not-started",
+      "notes": "Module is currently deprecated on Vercel; fix only on revival."
+    },
+    {
+      "id": "fsa-favorites",
+      "title": "Save favorite FSA establishments + updates",
+      "type": "feature",
+      "area": "eat-safe-uk",
+      "priority": "low",
+      "status": "not-started"
+    },
+
+    {
+      "id": "blog-author-names",
+      "title": "Show author names on blog lists",
+      "type": "fix",
+      "area": "content",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "blog-pagination-ui",
+      "title": "Frontend pagination UI for blog posts",
+      "type": "feature",
+      "area": "content",
+      "priority": "low",
+      "status": "not-started"
+    },
+
+    {
+      "id": "heroku-release-hardening",
+      "title": "Heroku release-phase health checks + rollback",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started",
+      "notes": "Deprecated after Vercel migration completes."
+    },
+    {
+      "id": "backup-strategy",
+      "title": "Automated DB backup verification and restoration drills",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "api-docs-automation",
+      "title": "Automated API documentation generation",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "ci-cd-pipeline",
+      "title": "Full CI/CD pipeline (test, build, deploy)",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "deploy-strategy-canary",
+      "title": "Blue-green or canary deploys",
+      "type": "idea",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "monitoring-alerting",
+      "title": "Application and server monitoring + alerts",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "security-audits",
+      "title": "Regular security audits",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "dependency-review",
+      "title": "Regular dependency review + npm audit",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "security-headers",
+      "title": "Enhanced security HTTP headers (CSP, HSTS, X-Frame-Options)",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "node-lts-upgrade",
+      "title": "Upgrade Node.js to current LTS",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "slug-size-reduction",
+      "title": "Reduce Heroku slug size",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started",
+      "notes": "Deprecated after Vercel migration completes."
+    },
+    {
+      "id": "production-script-deps",
+      "title": "Prevent prod scripts from using devDependencies",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "high",
+      "status": "not-started",
+      "notes": "Caused a prestart crash due to cross-env."
+    },
+    {
+      "id": "debug-log-cleanup",
+      "title": "Remove debug console.logs; env-gated logger",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "graceful-shutdown",
+      "title": "Graceful shutdown (SIGINT/SIGTERM, db.end())",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "medium",
+      "status": "not-started"
+    },
+
+    {
+      "id": "component-standardization",
+      "title": "Standardize component APIs (shared component library)",
+      "type": "tech-debt",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "render-perf",
+      "title": "Reduce unnecessary re-renders (memo / useMemo / useCallback)",
+      "type": "tech-debt",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "component-refactor",
+      "title": "Refactor duplicate / overly complex components",
+      "type": "tech-debt",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "state-management-review",
+      "title": "Review state-management consistency",
+      "type": "tech-debt",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "code-splitting",
+      "title": "Route/component-based code splitting",
+      "type": "tech-debt",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "bundle-optimization",
+      "title": "Bundle size optimization (tree-shaking, lazy load)",
+      "type": "tech-debt",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "caching-strategy",
+      "title": "Browser caching for static assets and API responses",
+      "type": "tech-debt",
+      "area": "frontend",
+      "priority": "medium",
+      "status": "not-started"
+    },
+
+    {
+      "id": "test-coverage",
+      "title": "Raise unit-test coverage (esp. auth)",
+      "type": "tech-debt",
+      "area": "testing",
+      "priority": "high",
+      "status": "not-started"
+    },
+    {
+      "id": "integration-tests",
+      "title": "API integration test suite (Jest + Supertest)",
+      "type": "tech-debt",
+      "area": "testing",
+      "priority": "medium",
+      "status": "not-started"
+    },
+    {
+      "id": "e2e-tests",
+      "title": "E2E tests for key journeys (Cypress / Playwright)",
+      "type": "tech-debt",
+      "area": "testing",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "test-prod-independence",
+      "title": "Remove test utilities from production code paths",
+      "type": "tech-debt",
+      "area": "testing",
+      "priority": "medium",
+      "status": "not-started"
+    },
+
+    {
+      "id": "jsdoc-coverage",
+      "title": "Consistent JSDoc across backend modules",
+      "type": "tech-debt",
+      "area": "docs",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "algo-documentation",
+      "title": "Document complex algorithms / business logic",
+      "type": "tech-debt",
+      "area": "docs",
+      "priority": "low",
+      "status": "not-started"
+    },
+    {
+      "id": "inline-comment-review",
+      "title": "Inline comment review for non-obvious code",
+      "type": "tech-debt",
+      "area": "docs",
+      "priority": "low",
+      "status": "not-started"
+    }
+  ]
+}

@@ -37,4 +37,4 @@ We clarified the intended behavior of our server scripts:
 
 ## Related
 - ADR 0013: Next.js Migration
-- Migration log: `docs/09_nextjs_migration_log.md` 
+- Migration log: `docs/adr/0018-nextjs-migration-history.md` (Part 3 — Migration Log) 

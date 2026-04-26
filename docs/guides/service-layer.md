@@ -2,7 +2,7 @@
 
 Production APIs live in the **Next.js app**: **Route Handlers** call **colocated server modules** under `src/lib/<domain>/`, backed by **Supabase** (or external HTTP). Domain TypeScript contracts sit beside those modules: **`src/lib/<domain>/contracts.ts`** (plus `src/lib/contracts/pagination.ts` for list metadata).
 
-The **`server/`** Express + Knex stack is **legacy** for migration and local use; do not add new Express routes for Vercel-bound features. See `docs/migration/server-to-next-mapping.md` and `docs/adr/0016-next-supabase-colocated-features.md`.
+The **`server/`** Express + Knex stack is **legacy** for migration and local use; do not add new Express routes for Vercel-bound features. See `docs/guides/server-to-next-mapping.md` and `docs/adr/0016-next-supabase-colocated-features.md`.
 
 ---
 
