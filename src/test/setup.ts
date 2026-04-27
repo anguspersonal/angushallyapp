@@ -198,6 +198,8 @@ vi.mock('@tabler/icons-react', async () => {
     IconFolder: createIcon('folder'),
     IconLogout: createIcon('logout'),
     IconMail: createIcon('mail'),
+    IconMessageCircle: createIcon('message-circle'),
+    IconChevronDown: createIcon('chevron-down'),
     IconSun: createIcon('sun'),
     IconMoonStars: createIcon('moon-stars'),
   };

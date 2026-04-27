@@ -1,0 +1,26 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  color: var(--site-ink-muted);
+  background: transparent;
+  border: 0.5px solid var(--site-ink-muted);
+  border-radius: 50%;
+  box-shadow: none;
+}
+
+.button:hover,
+.button:focus {
+  color: var(--site-ink);
+  background: transparent;
+}
+
+.button:focus-visible {
+  outline: 4px auto var(--primary-color);
+  outline-offset: 3px;
+}

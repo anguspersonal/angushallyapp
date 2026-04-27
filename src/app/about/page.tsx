@@ -15,13 +15,10 @@ import {
 import { motion } from 'framer-motion';
 import { assets } from '../../lib/theme';
 import CareerTimeline from '@/components/timeline/CareerTimeline';
-import { careerMilestones } from '../page';
+import { careerMilestones } from '@/data/careerMilestones';
 import styles from './about.module.css';
-import { useDocumentColorScheme } from '@/hooks/useDocumentColorScheme';
 
 export default function About() {
-  const timelineVariant = useDocumentColorScheme();
-
   return (
     <Box>
       <Container size="sm" py="xl">
@@ -115,7 +112,6 @@ export default function About() {
         milestones={careerMilestones}
         eyebrow="The career arc"
         heading={"What I've been up to"}
-        variant={timelineVariant}
       />
 
       <Container size="sm" py="xl">

@@ -17,6 +17,26 @@
   z-index: 1;
 }
 
+.profileImageFrame {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+}
+
+.profileImageFrame::before {
+  content: '';
+  position: absolute;
+  inset: -18px;
+  z-index: -1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--site-accent) 32%, transparent) 0 44%, transparent 68%),
+    radial-gradient(circle, color-mix(in srgb, var(--site-ink) 14%, transparent) 0 58%, transparent 72%);
+  filter: blur(18px);
+  opacity: 0.9;
+  transform: translateY(8px) scale(0.94);
+}
+
 .profileImage {
   border: 0.5px solid rgba(250, 247, 240, 0.2);
   box-shadow:
@@ -47,8 +67,135 @@
   margin: 0 auto;
 }
 
+.heroActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.25rem;
+  margin-top: 1.25rem;
+}
+
+.heroChipRow {
+  opacity: 0.7;
+}
+
+.heroChip {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(20px) saturate(1.1);
+  -webkit-backdrop-filter: blur(20px) saturate(1.1);
+}
+
+[data-mantine-color-scheme='dark'] .heroChip {
+  background: rgba(250, 247, 240, 0.1);
+  border: 0.5px solid rgba(250, 247, 240, 0.18);
+}
+
+[data-mantine-color-scheme='light'] .heroChip {
+  background: rgba(250, 247, 240, 0.6);
+  border: 0.5px solid rgba(13, 31, 30, 0.1);
+}
+
+.heroChipText {
+  color: var(--site-ink);
+  font-size: 13px;
+  line-height: 1;
+}
+
 .nowSection {
   padding: 4rem 0 2rem;
+  scroll-margin-top: 96px;
+}
+
+.nowTwoZone {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .nowTwoZone {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2.5rem;
+  }
+
+  .nowZonePrimary {
+    flex: 0 1 65%;
+    min-width: 0;
+  }
+
+  .nowZoneSecondary {
+    flex: 0 1 35%;
+    min-width: 0;
+  }
+}
+
+.nowZonePrimary {
+  min-width: 0;
+}
+
+.nowZoneSecondary {
+  min-width: 0;
+}
+
+.nowKicker {
+  font-size: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.whatIDoThere {
+  margin-top: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+}
+
+.whatIDoThereBody {
+  font-size: 16px;
+  line-height: 1.55;
+  max-width: 60ch;
+  margin: 0;
+}
+
+.alsoList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.alsoLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  row-gap: 0.25rem;
+  column-gap: 0.35rem;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.alsoLabel {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mantine-color-dimmed);
+  flex-shrink: 0;
+}
+
+.alsoSep {
+  color: var(--mantine-color-dimmed);
+  font-weight: 400;
+  user-select: none;
+}
+
+.alsoValue {
+  color: var(--site-ink);
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .sectionEyebrow {

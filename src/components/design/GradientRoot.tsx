@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { motion, useScroll, useTransform, useMotionValue, animate, useReducedMotion } from 'framer-motion';
-import { useDocumentColorScheme } from '@/hooks/useDocumentColorScheme';
 import styles from './GradientRoot.module.css';
 
 const GLOW_X_KEYS = [0, 0.5, 1];
@@ -39,21 +38,17 @@ function AmbientGlow() {
     };
   }, [reduceMotion, driftX, driftY]);
 
-  if (reduceMotion) {
-    return (
-      <div className={styles.glowBlob} style={{ '--glow-x': '75%', '--glow-y': '45%' } as React.CSSProperties} />
-    );
-  }
-
   return (
-    <motion.div className={styles.glowScroll} style={{ y: reduceMotion ? 0 : scrollShiftY }}>
+    <motion.div className={styles.glowScroll} style={reduceMotion ? undefined : { y: scrollShiftY }}>
       <motion.div
         className={styles.glowBlob}
         style={
-          {
-            '--glow-x': driftX,
-            '--glow-y': driftY,
-          } as React.CSSProperties
+          reduceMotion
+            ? ({ '--glow-x': '75%', '--glow-y': '45%' } as React.CSSProperties)
+            : ({
+                '--glow-x': driftX,
+                '--glow-y': driftY,
+              } as React.CSSProperties)
         }
       />
     </motion.div>
@@ -61,17 +56,12 @@ function AmbientGlow() {
 }
 
 export function GradientRoot() {
-  const colorScheme = useDocumentColorScheme();
-  const isDark = colorScheme === 'dark';
-
   return (
     <div className={styles.root} aria-hidden>
       <div className={styles.base} data-testid="gradient-base" />
-      {isDark ? (
-        <div className={styles.glowLayer} data-testid="ambient-glow-layer">
-          <AmbientGlow />
-        </div>
-      ) : null}
+      <div className={styles.glowLayer} data-testid="ambient-glow-layer">
+        <AmbientGlow />
+      </div>
     </div>
   );
 }

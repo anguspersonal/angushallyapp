@@ -10,7 +10,7 @@ import {
   IconArticle,
   IconFolder,
   IconLogout,
-  IconMail,
+  IconMessageCircle,
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useAuth } from '../providers/AuthProvider';
@@ -23,7 +23,7 @@ const links: NavigationLink[] = [
   { link: '/projects', label: 'Projects', icon: IconFolder },
   { link: '/blog', label: 'Blog', icon: IconArticle },
   { link: '/about', label: 'About', icon: IconUser },
-  { link: '/contact', label: 'Contact', icon: IconMail },
+  { link: '/contact', label: 'Contact', icon: IconMessageCircle },
 ];
 
 function Header() {

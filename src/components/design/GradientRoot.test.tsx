@@ -19,7 +19,7 @@ describe('GradientRoot', () => {
     });
   });
 
-  it('does not render the ambient glow when the document scheme is light', async () => {
+  it('keeps the ambient glow layer mounted when the document scheme is light', async () => {
     document.documentElement.setAttribute('data-mantine-color-scheme', 'light');
 
     await act(async () => {
@@ -27,7 +27,7 @@ describe('GradientRoot', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByTestId('ambient-glow-layer')).not.toBeInTheDocument();
+      expect(screen.getByTestId('ambient-glow-layer')).toBeInTheDocument();
     });
   });
 });

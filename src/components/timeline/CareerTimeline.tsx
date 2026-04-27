@@ -5,6 +5,7 @@ import { Box, Container, Text, Title, useMantineTheme } from '@mantine/core';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { motionTransitions } from '@/lib/theme';
 import { GlassContent } from '@/components/design/Glass';
+import { LazyImageSequence } from '@/components/media/LazyImageSequence';
 import styles from './CareerTimeline.module.css';
 
 export type CareerMilestone = {
@@ -12,6 +13,14 @@ export type CareerMilestone = {
   role: string;
   org: string;
   desc: string;
+  image?: {
+    src: string;
+    alt: string;
+  };
+  images?: Array<{
+    src: string;
+    alt: string;
+  }>;
   color: string;
   side: 'left' | 'right';
 };
@@ -20,7 +29,6 @@ interface CareerTimelineProps {
   milestones: CareerMilestone[];
   eyebrow?: string;
   heading?: string;
-  variant?: 'light' | 'dark';
 }
 
 const fadeUp = {
@@ -45,10 +53,8 @@ function CareerTimeline({
   milestones,
   eyebrow,
   heading,
-  variant = 'light',
 }: CareerTimelineProps) {
   const theme = useMantineTheme();
-  const isDark = variant === 'dark';
   const reducedMotion = useReducedMotion();
 
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -57,8 +63,6 @@ function CareerTimeline({
     offset: ['start 80%', 'end 20%'],
   });
   const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
-  const lineColor = isDark ? 'rgba(250, 247, 240, 0.22)' : 'rgba(13, 31, 30, 0.12)';
 
   const cardVariants = reducedMotion ? fadeIn : fadeUp;
 
@@ -94,11 +98,7 @@ function CareerTimeline({
           </motion.div>
         )}
 
-        <div
-          ref={timelineRef}
-          className={styles.timeline}
-          style={{ ['--timeline-color' as string]: lineColor } as React.CSSProperties}
-        >
+        <div ref={timelineRef} className={styles.timeline}>
           <motion.div
             className={styles.timelineLine}
             style={reducedMotion ? undefined : { scaleY: lineScaleY, transformOrigin: 'top' }}
@@ -106,6 +106,7 @@ function CareerTimeline({
 
           {milestones.map((m, i) => {
             const isLeft = m.side === 'left';
+            const milestoneImages = m.images ?? (m.image ? [m.image] : []);
             const dotColor =
               theme.colors[m.color as keyof typeof theme.colors]?.[6] ?? theme.colors.teal[6];
 
@@ -140,6 +141,15 @@ function CareerTimeline({
                         <div className={styles.milestoneDescLeft}>{m.desc}</div>
                       </>
                     )}
+                    {!isLeft && milestoneImages.length > 0 && (
+                      <div className={styles.milestoneImageStackLeft}>
+                        <LazyImageSequence
+                          images={milestoneImages}
+                          className={styles.milestoneImageSequence}
+                          imageClassName={styles.milestoneImage}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className={styles.milestoneRight}>
@@ -150,6 +160,15 @@ function CareerTimeline({
                         <div className={styles.milestoneOrg}>{m.org}</div>
                         <div className={styles.milestoneDescRight}>{m.desc}</div>
                       </>
+                    )}
+                    {isLeft && milestoneImages.length > 0 && (
+                      <div className={styles.milestoneImageStackRight}>
+                        <LazyImageSequence
+                          images={milestoneImages}
+                          className={styles.milestoneImageSequence}
+                          imageClassName={styles.milestoneImage}
+                        />
+                      </div>
                     )}
                   </div>
                 </GlassContent>
