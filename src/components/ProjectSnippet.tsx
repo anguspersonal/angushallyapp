@@ -71,7 +71,7 @@ function ProjectSnippet({ project }: ProjectSnippetProps) {
     <Link href={route} style={{ textDecoration: 'none', color: 'inherit' }}>
       <GlassContent p="md" style={{ cursor: 'pointer', height: '100%' }}>
         <Box>
-          <Group justify="space-between" align="flex-start" wrap="nowrap" mb="xs">
+          <Group justify="space-between" align="flex-start" wrap="wrap" gap="xs" mb="xs" w="100%">
             <Title
               order={3}
               size="h4"
@@ -84,12 +84,13 @@ function ProjectSnippet({ project }: ProjectSnippetProps) {
                 textOverflow: 'ellipsis',
                 lineHeight: 1.4,
                 maxHeight: '2.8em',
-                flex: 1,
+                flex: '1 1 12rem',
+                minWidth: 0,
               }}
             >
               {name}
             </Title>
-            <Group gap={4} wrap="nowrap">
+            <Group gap={4} wrap="nowrap" justify="flex-end" style={{ marginLeft: 'auto' }}>
               {statusBadge}
               {gated && (
                 <Badge color="teal" size="xs" variant="outline">

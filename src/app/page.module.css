@@ -1,19 +1,32 @@
 /* Landing page - scroll-driven narrative */
 
 .hero {
+  /* svh avoids mobile browser chrome jumping; 100vh fallback */
   min-height: calc(100vh - 80px);
+  min-height: calc(100svh - 80px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
-  padding: 2rem 1rem;
+  padding-top: max(1.75rem, env(safe-area-inset-top, 0px));
+  padding-bottom: max(1.75rem, env(safe-area-inset-bottom, 0px));
+  /* Extra horizontal room so profile glow (::before -18px) and display headline do not clip */
+  padding-inline: max(1rem, env(safe-area-inset-left, 0px)) max(1rem, env(safe-area-inset-right, 0px));
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding-inline: max(1.125rem, env(safe-area-inset-left, 0px)) max(1.125rem, env(safe-area-inset-right, 0px));
+  }
 }
 
 .heroContent {
   text-align: center;
-  max-width: 720px;
+  width: 100%;
+  max-width: min(720px, 100%);
+  box-sizing: border-box;
   z-index: 1;
 }
 
@@ -58,13 +71,24 @@
   line-height: 0.95;
   text-transform: uppercase;
   margin-bottom: 1rem;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  hyphens: manual;
+}
+
+@media (max-width: 380px) {
+  .headline {
+    font-size: clamp(3.25rem, 14vw, 10rem);
+  }
 }
 
 .subtitleText {
   font-size: clamp(1.05rem, 2vw, 1.25rem);
   line-height: 1.6;
-  max-width: 560px;
+  max-width: min(560px, 100%);
   margin: 0 auto;
+  padding-inline: 0.125rem;
+  box-sizing: border-box;
 }
 
 .heroActions {
@@ -106,8 +130,8 @@
 }
 
 .nowSection {
-  padding: 4rem 0 2rem;
-  scroll-margin-top: 96px;
+  padding: clamp(2.5rem, 5vw + 1rem, 4rem) 0 2rem;
+  scroll-margin-top: calc(96px + env(safe-area-inset-top, 0px));
 }
 
 .nowTwoZone {
@@ -207,14 +231,16 @@
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 400;
   text-transform: uppercase;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .featuredSection {
-  padding: 4rem 0 6rem;
+  padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(3rem, 8vw, 6rem);
 }
 
 .ctaSection {
-  padding: 4rem 0 8rem;
+  padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(3.5rem, 10vw, 8rem);
   text-align: center;
 }
 
@@ -227,8 +253,10 @@
 }
 
 .ctaSubtitle {
-  font-size: 1.1rem;
-  max-width: 450px;
+  font-size: clamp(1rem, 2.4vw, 1.1rem);
+  max-width: min(450px, 100%);
   margin: 0 auto 2rem;
   line-height: 1.6;
+  padding-inline: 0.25rem;
+  box-sizing: border-box;
 }

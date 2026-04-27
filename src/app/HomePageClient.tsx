@@ -196,12 +196,12 @@ export default function HomePageClient({ og }: HomePageClientProps) {
                 src="/20230208_AH_Profile_Professional_Balcony.original.jpg"
                 alt="Angus Hally professional portrait on a balcony"
                 fallbackSrc={assets.placeholderImage.square}
-                h={220}
-                w={220}
                 fit="cover"
                 mx="auto"
                 mb="xl"
                 className={styles.profileImage}
+                w="clamp(160px, 48vw, 220px)"
+                h="clamp(160px, 48vw, 220px)"
               />
             </motion.div>
           </motion.div>
