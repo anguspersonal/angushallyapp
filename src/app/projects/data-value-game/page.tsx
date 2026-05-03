@@ -1,10 +1,15 @@
 'use client';
 
 import React, { useState, useDebugValue } from 'react';
-import GameBoard from './Gameboard';
+import dynamic from 'next/dynamic';
 import Welcome from './Welcome';
 import DVGHeader from './DVGHeader';
 import DVGFooter from './DVGFooter';
+
+const GameBoard = dynamic(() => import('./Gameboard'), {
+  ssr: false,
+  loading: () => <div className="dvg" style={{ minHeight: '60vh' }} />,
+});
 
 // UseLabelState hook to add labels to state values
 function useLabeledState<T>(initialState: T, label: string): [T, React.Dispatch<React.SetStateAction<T>>] {

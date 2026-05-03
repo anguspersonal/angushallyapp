@@ -1,13 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { LineChart } from '@mantine/charts';
+import dynamic from 'next/dynamic';
 import { Title } from '@mantine/core';
 import { fetchStravaData, getPRs, getWeeklyRuns, getRecentRuns } from './strava';
 import { PRTable } from './components/PRTable';
 import { RecentRunsTable } from './components/RecentRunsTable';
 import type { StravaActivity, StravaPR, WeeklyRunData } from '@/types/common';
 import styles from './strava.module.css';
+
+// @mantine/charts is the heaviest dep on this route; load it only once
+// activity data has resolved and we know the chart will render.
+const LineChart = dynamic(
+  () => import('@mantine/charts').then((m) => m.LineChart),
+  { ssr: false, loading: () => <div style={{ height: 300 }} /> },
+);
 
 export default function StravaPage() {
   const [prs, setPRs] = useState<StravaPR[]>([]);
