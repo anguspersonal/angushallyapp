@@ -6,16 +6,15 @@ import {
   Container,
   Title,
   Text,
-  Image,
   SimpleGrid,
   Group,
 } from '@mantine/core';
+import NextImage from 'next/image';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import ProjectSnippet from '../components/ProjectSnippet';
 import CareerTimeline from '../components/timeline/CareerTimeline';
 import projectList from '../data/projectList';
 import { careerMilestones } from '@/data/careerMilestones';
-import { assets } from '../lib/theme';
 import type { OpenGraphData } from '@/lib/og-fetch';
 import styles from './page.module.css';
 import { SayHelloPill } from '@/components/design/SayHelloPill';
@@ -32,10 +31,6 @@ const HEYLINA_URL = 'https://heylina.ai';
 
 const HEYLINA_CARD_FALLBACK_DESCRIPTION =
   'Emotionally intelligent AI that helps people process what they\'re feeling.';
-
-const AMBIENT_LINES = [
-  { label: 'READING', value: 'The Coming Wave by Mustafa Suleyman' },
-] as const;
 
 const heroPhotoEntrance = {
   hidden: {
@@ -192,16 +187,15 @@ export default function HomePageClient({ og }: HomePageClientProps) {
               animate="visible"
               variants={reduceMotion ? reducedMotionPhotoEntrance : heroPhotoEntrance}
             >
-              <Image
+              <NextImage
                 src="/20230208_AH_Profile_Professional_Balcony.original.jpg"
                 alt="Angus Hally professional portrait on a balcony"
-                fallbackSrc={assets.placeholderImage.square}
-                fit="cover"
-                mx="auto"
-                mb="xl"
+                width={440}
+                height={440}
+                priority
+                fetchPriority="high"
+                sizes="(max-width: 480px) 50vw, 220px"
                 className={styles.profileImage}
-                w="clamp(160px, 48vw, 220px)"
-                h="clamp(160px, 48vw, 220px)"
               />
             </motion.div>
           </motion.div>
@@ -248,32 +242,15 @@ export default function HomePageClient({ og }: HomePageClientProps) {
             <Title order={2} className={styles.sectionDisplay} mb="xl">
               What I&apos;m working on now
             </Title>
-            <div className={styles.nowTwoZone}>
-              <div className={styles.nowZonePrimary}>
-                <RichLinkCard
-                  href={HEYLINA_URL}
-                  title={cardTitle}
-                  description={cardDescription}
-                  imageUrl={og?.image ?? null}
-                  domainLabel="heylina.ai"
-                />
-                <div className={styles.whatIDoThere}>
-                  <Text
-                    className={styles.nowKicker}
-                    tt="uppercase"
-                    size="xs"
-                    fw={600}
-                    style={{ letterSpacing: '0.08em' }}
-                    c="dimmed"
-                  >
-                    WHAT I DO THERE
-                  </Text>
-                  <Text className={styles.whatIDoThereBody} c="var(--site-ink)">
-                    COO. I look after operations, hiring, fundraising, and partnerships, while our team builds the product itself. It&apos;s the most exciting thing I&apos;ve ever worked on.
-                  </Text>
-                </div>
-              </div>
-              <aside className={styles.nowZoneSecondary} aria-label="Also">
+            <div className={styles.nowHero}>
+              <RichLinkCard
+                href={HEYLINA_URL}
+                title={cardTitle}
+                description={cardDescription}
+                imageUrl={og?.image ?? null}
+                domainLabel="heylina.ai"
+              />
+              <div className={styles.whatIDoThere}>
                 <Text
                   className={styles.nowKicker}
                   tt="uppercase"
@@ -281,23 +258,13 @@ export default function HomePageClient({ og }: HomePageClientProps) {
                   fw={600}
                   style={{ letterSpacing: '0.08em' }}
                   c="dimmed"
-                  mb="sm"
                 >
-                  ALSO
+                  WHAT I DO THERE
                 </Text>
-                <ul className={styles.alsoList}>
-                  {AMBIENT_LINES.map((line) => (
-                    <li key={line.label} className={styles.alsoLine}>
-                      <span className={styles.alsoLabel}>{line.label}</span>
-                      <span className={styles.alsoSep} aria-hidden>
-                        {' '}
-                        &middot;{' '}
-                      </span>
-                      <span className={styles.alsoValue}>{line.value}</span>
-                    </li>
-                  ))}
-                </ul>
-              </aside>
+                <Text className={styles.whatIDoThereBody} c="var(--site-ink)">
+                  COO. I look after operations, hiring, fundraising, and partnerships, while our team builds the product itself. It&apos;s the most exciting thing I&apos;ve ever worked on.
+                </Text>
+              </div>
             </div>
           </ScrollReveal>
         </Container>

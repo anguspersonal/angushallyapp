@@ -529,7 +529,7 @@ Same order as Section 10 of the original brief, with these adjustments:
 ## 11. Confirmed decisions (previously open)
 
 - **Serif body face** — Newsreader. Load via Google Fonts. Use regular and italic weights. Paired with League Gothic for display and the current sans for UI chrome.
-- **"What I'm working on now" four-tile grid on homepage** — adopted. Shows Role, Building, Reading, Training. Lives below the hero, above the professional timeline. Uses content glass treatment per Section 4. Intended to be updated as things change — treat as a snapshot, not a static element.
+- **"What I'm working on now" four-tile grid on homepage** — ~~adopted. Shows Role, Building, Reading, Training. Lives below the hero, above the professional timeline. Uses content glass treatment per Section 4. Intended to be updated as things change — treat as a snapshot, not a static element.~~ **Superseded by [ADR 0031](./0031-now-section-heylina-hero.md) (2026-05-03):** the section becomes a HeyLina-led hero on the homepage; reading / training / other facets defer to the About page.
 - **Pill chip wording** — confirmed as written: `• Available for chats`, `Based in London`, `Shipping weekly`. All three are currently true. Update in copy if that changes.
 - **AH nav mark link target** — links to Home (`/`).
 

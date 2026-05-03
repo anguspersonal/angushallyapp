@@ -15,6 +15,10 @@ The site is built to serve multiple audiences at once; the homepage leads with i
 - Blog readers (and, more durably, a record for Angus's children).
 - Opportunistic service enquiries (web dev, consulting, maths tutoring) via hidden landing pages — not a storefront.
 
+## Homepage role
+
+The homepage is the **headlines**, not the full story. Primary audience is investors landing cold; they need a fast, confident read on who Angus is and what he is building right now. Depth (reading, training, side projects, life context, full philosophy) is deferred to the About page and `/projects/timeline`. The homepage's "What I'm working on now" section is a HeyLina-led hero, not a multi-tile life snapshot. See [`adr/0031-now-section-heylina-hero.md`](./adr/0031-now-section-heylina-hero.md).
+
 ## Strategic goals
 
 1. **Content management** — flexible, modern blog; portfolio pages; rich media.
