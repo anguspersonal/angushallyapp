@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Menu, Button, Container, Group, Burger, Anchor, Box } from '@mantine/core';
 import {
@@ -89,18 +90,22 @@ function Header() {
               <Anchor
                 component={Link}
                 href="/"
-                c="var(--site-ink)"
+                aria-label="Angus Hally — home"
                 style={{
-                  fontFamily: 'var(--font-display), League Gothic, sans-serif',
-                  fontSize: '26px',
-                  letterSpacing: 'var(--font-logo-letter-spacing)',
-                  textTransform: 'uppercase',
+                  display: 'inline-flex',
+                  alignItems: 'center',
                   textDecoration: 'none',
-                  lineHeight: 1,
                   flexShrink: 0,
                 }}
               >
-                AH
+                <Image
+                  src="/AH_Logo.png"
+                  alt=""
+                  width={67}
+                  height={57}
+                  priority
+                  style={{ height: 32, width: 'auto', display: 'block' }}
+                />
               </Anchor>
 
               <Group gap={4} visibleFrom="sm" wrap="nowrap" justify="center" style={{ flex: 1, minWidth: 0 }}>

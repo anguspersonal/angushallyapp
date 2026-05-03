@@ -135,7 +135,9 @@ Hero scale drops to 48–72px on mobile.
 
 ### Brand mark
 
-The nav brand is the letters **AH** in League Gothic, −10% tracking. Not an SVG logo. No custom mark. The existing AH logo is retired.
+~~The nav brand is the letters **AH** in League Gothic, −10% tracking. Not an SVG logo. No custom mark. The existing AH logo is retired.~~
+
+**Superseded 2026-05-03:** The nav brand is the **AH logo image** (`/public/AH_Logo.png`, 67×57 PNG). The League Gothic lettermark is dropped. The image renders at 32px height with width auto-scaled. League Gothic remains the display face for hero name, section headings, and other display copy in the rest of the site, just not for the nav brand.
 
 ---
 

@@ -8,27 +8,27 @@
       "type": "image/x-icon"
     },
     {
-      "src": "/ah-logo.jpg",
+      "src": "/AH_Logo.png",
       "sizes": "128x128",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/ah-logo.jpg",
+      "src": "/AH_Logo.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/ah-logo.jpg",
+      "src": "/AH_Logo.png",
       "sizes": "256x256",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/ah-logo.jpg",
+      "src": "/AH_Logo.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
