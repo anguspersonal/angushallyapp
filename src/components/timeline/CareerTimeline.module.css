@@ -100,12 +100,14 @@
 
 .milestoneLeft {
   flex: 1;
+  min-width: 0;
   text-align: right;
   padding-right: 2rem;
 }
 
 .milestoneRight {
   flex: 1;
+  min-width: 0;
   padding-left: 2rem;
 }
 
@@ -168,7 +170,8 @@
 }
 
 .milestoneImageSequence {
-  height: 180px;
+  width: 100%;
+  aspect-ratio: 16 / 9;
 }
 
 .milestoneImageStackLeft,

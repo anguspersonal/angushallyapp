@@ -4,10 +4,16 @@ const isDev = process.env.NODE_ENV !== 'production'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Image settings — unoptimized keeps the bundle light (adjust as needed)
+    // Image optimization is handled by Vercel at request time.
+    // unoptimized: true was a holdover from the static-export era (ADR 0023).
+    // See ADR 0033 for the current image standards.
     images: {
-      unoptimized: true,
-      domains: ['localhost'], // remove or extend if you load external images
+      remotePatterns: [
+        { protocol: 'https', hostname: 'heylina.ai' },
+        { protocol: 'https', hostname: '**.heylina.ai' },
+        { protocol: 'https', hostname: 'media.licdn.com' },
+      ],
+      formats: ['image/avif', 'image/webp'],
     },
 
     // Ignore ESLint during builds for deterministic builds

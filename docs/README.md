@@ -83,4 +83,4 @@ This folder is for cross-cutting, project-wide documentation only.
 - **Start here:** [`vision.md`](./vision.md), [`architecture.md`](./architecture.md)
 - **Work in flight:** [`implementation-plan.md`](./implementation-plan.md), [`backlog.json`](./backlog.json)
 - **Guides & runbooks:** [`guides/README.md`](./guides/README.md)
-- **Decisions & history:** [`adr/`](./adr/) (ADRs 0001–0030)
+- **Decisions & history:** [`adr/`](./adr/) (ADRs 0001–0033)
