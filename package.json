@@ -19,7 +19,7 @@
     "test:coverage": "vitest run --coverage",
     "fix-nextjs": "node scripts/fix-nextjs-build-errors.js",
     "fix-nextjs:clean": "node scripts/fix-nextjs-build-errors.js --clean-deps",
-    "compress-images": "node scripts/compress-images.mjs",
+    "optimize-images": "node scripts/optimize-images.mjs",
     "clean:node": "bash scripts/clean-node.sh",
     "clean:next": "bash scripts/clean-next.sh",
     "clean:ports": "node scripts/clean-ports.js"
@@ -70,12 +70,6 @@
     "jsdom": "^24.0.0",
     "kill-port": "^2.0.1",
     "vitest": "^1.2.1"
-  },
-  "optionalDependencies": {
-    "imagemin": "^9.0.1",
-    "imagemin-mozjpeg": "^10.0.0",
-    "imagemin-pngquant": "^10.0.0",
-    "pngquant-bin": "^7.0.0"
   },
   "overrides": {
     "react": "19.1.0",

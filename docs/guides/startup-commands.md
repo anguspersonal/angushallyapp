@@ -24,7 +24,7 @@ angushallyapp mono-repo, which now consists of:
 | `npm run client`            | Next dev server only | 3000 | Frontend focus |
 | `npm run build`             | Production build (sync env → Next build) | — | Local prod test |
 | `npm start`                 | **Server** in prod mode (serves built Next) | 5000 | Local prod run / Heroku dyno |
-| `npm run compress-images`   | Auto-compress `/web/public` images | — | Keep slug small |
+| `npm run optimize-images`   | Resize + re-encode `public/` images (long edge 2400px, sharp-based) | — | Keep payload small; see ADR 0033 |
 
 ---
 
@@ -62,7 +62,7 @@ npm run dev
 | **Debug API**             | `npm run server` (separate tab)                         |
 | **UI feature**            | `npm run client` only (+ tests)                         |
 | **Pre-deploy smoke test** | `npm run build` → `NODE_ENV=production npm start`       |
-| **Image hygiene**         | `npm run compress-images` after adding big JPG/PNG      |
+| **Image hygiene**         | `npm run optimize-images` after adding big JPG/PNG      |
 
 When you **upgrade major deps** (e.g. React 19), wipe modules:
 
@@ -166,7 +166,7 @@ npx tsc --noEmit   # TypeScript check
 | **Port conflict**        | `npm run kill-ports` or `lsof -i :3000` / `kill <PID>`                  |
 | **Env not syncing**      | `npm run sync-env:dev`                                                  |
 | **Node tree corruption** | Delete `node_modules` + `package-lock.json` → `npm install`             |
-| **Slug > 300 MB**        | Run `npm run compress-images`; review `.slugignore`; purge Heroku cache |
+| **Slug > 300 MB**        | Run `npm run optimize-images`; review `.slugignore`; purge Heroku cache |
 | **Next build errors**    | `node scripts/fix-nextjs-build-errors.js --clean-deps`                  |
 | **DB reset (dev only)**  | `npm run migrate:rollback --all && npm run migrate`                     |
 

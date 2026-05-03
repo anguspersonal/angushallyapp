@@ -188,7 +188,7 @@ export default function HomePageClient({ og }: HomePageClientProps) {
               variants={reduceMotion ? reducedMotionPhotoEntrance : heroPhotoEntrance}
             >
               <NextImage
-                src="/20230208_AH_Profile_Professional_Balcony.original.jpg"
+                src="/20230208_AH_Profile_Professional_Balcony.jpg"
                 alt="Angus Hally professional portrait on a balcony"
                 width={440}
                 height={440}
