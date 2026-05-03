@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import {
-  Container,
   TextInput,
   Button,
   Paper,
@@ -11,6 +10,7 @@ import {
   Box,
   LoadingOverlay,
 } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { analyzeText } from './ai';
 
 export default function TextAnalysisAIPage() {
@@ -38,8 +38,7 @@ export default function TextAnalysisAIPage() {
   };
 
   return (
-    <Box>
-      <Container py="xl">
+    <Section padY="default">
         <Title order={1} ta="center" mb="xl">
           AI Text Analysis
         </Title>
@@ -74,7 +73,6 @@ export default function TextAnalysisAIPage() {
             </a>
           </div>
         </Paper>
-      </Container>
-    </Box>
+    </Section>
   );
 } 

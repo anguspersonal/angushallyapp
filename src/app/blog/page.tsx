@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Container, Title, SimpleGrid, Anchor, Loader, Alert } from '@mantine/core';
+import { Title, SimpleGrid, Anchor, Loader, Alert } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import BlogSnippet from '../../components/blog/BlogSnippet';
@@ -33,7 +34,7 @@ export default function Blog() {
     const { data: posts, isLoading, error } = usePosts({ sortBy: 'createdAt', order: 'desc' });
 
     return (
-        <Container py="xl">
+        <Section padY="default">
             <Title
                 order={1}
                 ta="center"
@@ -80,6 +81,6 @@ export default function Blog() {
                     ))}
                 </SimpleGrid>
             </motion.div>
-        </Container>
+        </Section>
     );
 } 

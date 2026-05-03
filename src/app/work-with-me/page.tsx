@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Container, Title, Text, SimpleGrid, Stack } from '@mantine/core';
+import { Title, Text, SimpleGrid, Stack } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { GlassContent } from '@/components/design/Glass';
 
 const services = [
@@ -25,7 +26,7 @@ const services = [
 
 export default function WorkWithMeIndex() {
   return (
-    <Container size="md" py="xl">
+    <Section padY="default">
       <Stack gap="lg" mb="xl">
         <Title
           order={1}
@@ -58,6 +59,6 @@ export default function WorkWithMeIndex() {
           </GlassContent>
         ))}
       </SimpleGrid>
-    </Container>
+    </Section>
   );
 }

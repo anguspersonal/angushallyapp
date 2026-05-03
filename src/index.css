@@ -63,7 +63,7 @@ Styles set on :root apply globally to the entire document. */
 
 
 /* Responsive Screen width ----------------------------------------*/
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .nav-link {
     visibility: hidden;
   }

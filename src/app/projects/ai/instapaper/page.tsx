@@ -1,12 +1,13 @@
 'use client';
 
 import React from "react";
-import { Container, Title, Text, Paper, Badge, Group, Stack } from '@mantine/core';
+import { Title, Text, Paper, Badge, Group, Stack } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { IconAlertTriangle } from '@tabler/icons-react';
 
 export default function InstapaperPage() {
   return (
-    <Container size="sm" py="xl">
+    <Section width="narrow" padY="default">
       <Stack gap="lg">
         <Title order={1} ta="center">Instapaper Reader</Title>
 
@@ -20,6 +21,6 @@ export default function InstapaperPage() {
           </Text>
         </Paper>
       </Stack>
-    </Container>
+    </Section>
   );
 }

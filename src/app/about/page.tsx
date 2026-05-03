@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import {
-  Container,
   Title,
   Text,
   Anchor,
@@ -15,12 +14,13 @@ import NextImage from 'next/image';
 import { motion } from 'framer-motion';
 import CareerTimeline from '@/components/timeline/CareerTimeline';
 import { careerMilestones } from '@/data/careerMilestones';
+import { Section } from '@/components/layout';
 import styles from './about.module.css';
 
 export default function About() {
   return (
-    <Box>
-      <Container size="sm" py="xl">
+    <>
+      <Section width="narrow" padY="default">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Title
             order={1}
@@ -103,7 +103,7 @@ export default function About() {
             <Text fw={700}>Thanks for stopping by. I appreciate it.</Text>
           </Stack>
         </motion.div>
-      </Container>
+      </Section>
 
       <Divider my={0} opacity={0.2} />
 
@@ -113,7 +113,7 @@ export default function About() {
         heading={"What I've been up to"}
       />
 
-      <Container size="sm" py="xl">
+      <Section width="narrow" padY="default">
         <Box className={styles.pullquote} my="xl">
           <span className={styles.pullquoteMark} aria-hidden>
             &ldquo;
@@ -131,7 +131,7 @@ export default function About() {
           </Anchor>{' '}
           (sign-in required).
         </Text>
-      </Container>
-    </Box>
+      </Section>
+    </>
   );
 }

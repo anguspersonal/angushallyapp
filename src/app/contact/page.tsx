@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Container,
   Title,
   TextInput,
   Textarea,
@@ -12,6 +11,7 @@ import {
   Group,
   Stack,
 } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { useForm } from '@mantine/form';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { motion } from 'framer-motion';
@@ -82,7 +82,7 @@ export default function ContactPage() {
   };
 
   return (
-    <Container size="sm" py="xl">
+    <Section width="narrow" padY="default">
       <motion.div initial="hidden" animate="visible">
         <motion.div custom={0} variants={formElementVariants}>
           <Title
@@ -194,6 +194,6 @@ export default function ContactPage() {
           </Box>
         </GlassContent>
       </motion.div>
-    </Container>
+    </Section>
   );
 }

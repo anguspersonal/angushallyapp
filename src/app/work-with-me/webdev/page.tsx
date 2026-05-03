@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Container, Title, Text, Stack } from '@mantine/core';
+import { Title, Text, Stack } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { GlassContent } from '@/components/design/Glass';
 import { SayHelloPill } from '@/components/design/SayHelloPill';
 
 export default function WebDevPage() {
   return (
-    <Container size="sm" py="xl">
+    <Section width="narrow" padY="default">
       <GlassContent p="xl">
         <Stack gap="md">
           <Title
@@ -28,6 +29,6 @@ export default function WebDevPage() {
           <SayHelloPill />
         </Stack>
       </GlassContent>
-    </Container>
+    </Section>
   );
 }

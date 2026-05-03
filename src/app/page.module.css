@@ -16,7 +16,7 @@
   padding-inline: max(1rem, env(safe-area-inset-left, 0px)) max(1rem, env(safe-area-inset-right, 0px));
 }
 
-@media (max-width: 480px) {
+@media (max-width: 30em) {
   .hero {
     padding-inline: max(1.125rem, env(safe-area-inset-left, 0px)) max(1.125rem, env(safe-area-inset-right, 0px));
   }
@@ -81,7 +81,7 @@
   hyphens: manual;
 }
 
-@media (max-width: 380px) {
+@media (max-width: 23.75em) {
   .headline {
     font-size: clamp(3.25rem, 14vw, 10rem);
   }

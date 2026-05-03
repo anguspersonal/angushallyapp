@@ -1,11 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Container, Title, SimpleGrid } from '@mantine/core';
+import { Title, SimpleGrid } from '@mantine/core';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import projectList from '@/data/projectList';
 import ProjectSnippet from '@/components/ProjectSnippet';
+import { Section } from '@/components/layout';
 
 // Animation variants
 const containerVariants = {
@@ -32,7 +33,7 @@ export default function ProjectsPage() {
     const projects = projectList;
 
     return (
-        <Container py="xl">
+        <Section padY="default">
             <Title
                 order={1}
                 ta="center"
@@ -53,7 +54,7 @@ export default function ProjectsPage() {
                 animate="visible"
             >
                 <SimpleGrid
-                    cols={{ base: 1, sm: 2, md: 3 }} // Responsive columns
+                    cols={{ base: 1, sm: 2, md: 3 }}
                     spacing="lg"
                 >
                     {projects.map((project, index) => (
@@ -63,6 +64,6 @@ export default function ProjectsPage() {
                     ))}
                 </SimpleGrid>
             </motion.div>
-        </Container>
+        </Section>
     );
 } 

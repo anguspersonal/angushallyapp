@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { Box, Container, Text, Title, useMantineTheme } from '@mantine/core';
+import { Box, Text, Title, useMantineTheme } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { motionTransitions } from '@/lib/theme';
 import { GlassContent } from '@/components/design/Glass';
@@ -67,8 +68,7 @@ function CareerTimeline({
   const cardVariants = reducedMotion ? fadeIn : fadeUp;
 
   return (
-    <Box className={styles.section} style={{ color: 'var(--site-ink)' }}>
-      <Container size="lg">
+    <Section width="wide" padY="none" className={styles.section} style={{ color: 'var(--site-ink)' }}>
         {(eyebrow || heading) && (
           <motion.div
             initial="hidden"
@@ -176,8 +176,7 @@ function CareerTimeline({
             );
           })}
         </div>
-      </Container>
-    </Box>
+    </Section>
   );
 }
 

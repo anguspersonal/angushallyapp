@@ -18,7 +18,7 @@
   overflow: hidden;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .inner {
     flex-direction: row;
     align-items: stretch;
@@ -35,7 +35,7 @@
   overflow: hidden;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .media {
     width: 40%;
     flex: 0 0 40%;
