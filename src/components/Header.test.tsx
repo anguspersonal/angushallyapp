@@ -37,7 +37,7 @@ describe('Header', () => {
 
     renderWithProviders(<Header />);
 
-    expect(screen.getByText('AH')).toBeInTheDocument();
+    expect(screen.getByLabelText('Angus Hally — home')).toBeInTheDocument();
 
     // Check navigation links exist (both desktop and mobile versions)
     expect(screen.getAllByText('Home').length).toBeGreaterThan(0);
