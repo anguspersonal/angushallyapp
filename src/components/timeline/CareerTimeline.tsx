@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { Box, Text, Title, useMantineTheme } from '@mantine/core';
+import { Text, Title, useMantineTheme } from '@mantine/core';
 import { Section } from '@/components/layout';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { motionTransitions } from '@/lib/theme';
