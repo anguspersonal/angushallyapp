@@ -9,6 +9,7 @@ import {
   SimpleGrid,
   Group,
 } from '@mantine/core';
+import { Section, Stack } from '@/components/layout';
 import NextImage from 'next/image';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import ProjectSnippet from '../components/ProjectSnippet';
@@ -236,13 +237,18 @@ export default function HomePageClient({ og }: HomePageClientProps) {
         </div>
       </section>
 
-      <Box component="section" id="now" ref={nowSectionRef} className={styles.nowSection}>
-        <Container size="lg">
-          <ScrollReveal>
-            <Title order={2} className={styles.sectionDisplay} mb="xl">
+      <Section
+        id="now"
+        outerRef={nowSectionRef}
+        className={styles.nowSection}
+        ariaLabel="What I'm working on now"
+      >
+        <ScrollReveal>
+          <Stack gap="intra">
+            <Title order={2} className={styles.sectionDisplay}>
               What I&apos;m working on now
             </Title>
-            <div className={styles.nowHero}>
+            <Stack gap="intra" className={styles.nowHero}>
               <RichLinkCard
                 href={HEYLINA_URL}
                 title={cardTitle}
@@ -265,10 +271,10 @@ export default function HomePageClient({ og }: HomePageClientProps) {
                   COO. I look after operations, hiring, fundraising, and partnerships, while our team builds the product itself. It&apos;s the most exciting thing I&apos;ve ever worked on.
                 </Text>
               </div>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Box>
+            </Stack>
+          </Stack>
+        </ScrollReveal>
+      </Section>
 
       <CareerTimeline
         milestones={careerMilestones}
@@ -276,30 +282,30 @@ export default function HomePageClient({ og }: HomePageClientProps) {
         heading="From classroom to startup"
       />
 
-      <Box className={styles.featuredSection}>
-        <Container size="md">
-          <ScrollReveal>
+      <Section width="default" padY="default">
+        <ScrollReveal>
+          <Stack gap="content">
             <Text className={styles.sectionEyebrow} tt="uppercase" size="xs" fw={600} style={{ letterSpacing: '0.08em' }} c="dimmed">
               What I&apos;m working on
             </Text>
-            <Title order={2} className={styles.sectionDisplay} mb="xl">
+            <Title order={2} className={styles.sectionDisplay}>
               Latest work
             </Title>
-          </ScrollReveal>
+          </Stack>
+        </ScrollReveal>
 
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
-            {featuredProjects.map((project) => (
-              <ScrollReveal key={project.id}>
-                <ProjectSnippet project={project} />
-              </ScrollReveal>
-            ))}
-          </SimpleGrid>
-        </Container>
-      </Box>
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
+          {featuredProjects.map((project) => (
+            <ScrollReveal key={project.id}>
+              <ProjectSnippet project={project} />
+            </ScrollReveal>
+          ))}
+        </SimpleGrid>
+      </Section>
 
-      <Box className={styles.ctaSection}>
-        <Container size="sm">
-          <ScrollReveal>
+      <Section width="narrow" padY="loose">
+        <ScrollReveal>
+          <Stack gap="intra" style={{ alignItems: 'center', textAlign: 'center' }}>
             <Title order={2} className={styles.ctaTitle} c="var(--site-ink)">
               Let&apos;s connect.
             </Title>
@@ -307,9 +313,9 @@ export default function HomePageClient({ og }: HomePageClientProps) {
               Whether you want to talk startups, data strategy, or just say hello, I&apos;d love to hear from you.
             </Text>
             <SayHelloPill />
-          </ScrollReveal>
-        </Container>
-      </Box>
+          </Stack>
+        </ScrollReveal>
+      </Section>
     </Box>
   );
 }

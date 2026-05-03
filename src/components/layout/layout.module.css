@@ -1,0 +1,110 @@
+/* Layout primitives (ADR 0032). Column-first; horizontal opt-in. */
+
+/* ——— Stack ——— Universal flex column. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap, var(--content-gap));
+  min-width: 0; /* defeat flex-item intrinsic-min overflow trap */
+}
+
+/* ——— Section ——— Stack + Container + token vertical padding. */
+.section {
+  display: block;
+  width: 100%;
+  padding-block: var(--section-pad-y, var(--section-pad-y-default));
+}
+
+.sectionInner {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--section-max-w, var(--container-default));
+  padding-inline: var(--container-px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap, var(--intra-section-gap));
+  /* Establish a containment context so Switcher / Cluster can opt into
+     container queries without each consumer doing it. */
+  container-type: inline-size;
+}
+
+/* ——— Cluster ——— Inline row that wraps to next line. */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cluster-gap, var(--content-gap));
+  align-items: var(--cluster-align, center);
+  justify-content: var(--cluster-justify, flex-start);
+}
+
+/* ——— Switcher ——— Row above content threshold, column below.
+   Implemented with the Every Layout flex-basis trick so it works
+   without container query support and is component-relative (not
+   viewport-relative). */
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--switcher-gap, var(--intra-section-gap));
+  align-items: var(--switcher-align, flex-start);
+}
+
+.switcher > * {
+  flex-grow: 1;
+  flex-basis: calc((var(--switcher-threshold, 480px) - 100%) * 999);
+  /* Above threshold: basis is large negative -> shrinks to 0, items lay
+     side by side. Below: basis is huge positive -> each item takes the
+     full row. */
+  min-width: 0;
+}
+
+/* ——— Sidebar ——— Content + side rail with explicit collapse. */
+.sidebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sidebar-gap, var(--intra-section-gap));
+}
+
+.sidebarSide {
+  flex-basis: var(--sidebar-side-width, 18rem);
+  flex-grow: 1;
+}
+
+.sidebarMain {
+  flex-basis: 0;
+  flex-grow: 999;
+  min-width: var(--sidebar-main-min, 50%);
+}
+
+/* Reverse order so the side rail can sit on either side without
+   reordering the DOM. */
+.sidebarRight {
+  flex-direction: row-reverse;
+}
+
+/* ——— Gap utility classes (compose with any primitive) ——— */
+.gapContent { --stack-gap: var(--content-gap); --cluster-gap: var(--content-gap); --switcher-gap: var(--content-gap); --sidebar-gap: var(--content-gap); }
+.gapIntra { --stack-gap: var(--intra-section-gap); --cluster-gap: var(--intra-section-gap); --switcher-gap: var(--intra-section-gap); --sidebar-gap: var(--intra-section-gap); }
+.gapSection { --stack-gap: var(--section-gap); }
+.gapNone { --stack-gap: 0; --cluster-gap: 0; --switcher-gap: 0; --sidebar-gap: 0; }
+
+/* ——— Width utility classes for Section ——— */
+.widthNarrow { --section-max-w: var(--container-narrow); }
+.widthDefault { --section-max-w: var(--container-default); }
+.widthWide { --section-max-w: var(--container-wide); }
+
+/* ——— Vertical padding utility classes for Section ——— */
+.padTight { --section-pad-y: var(--section-pad-y-tight); }
+.padDefault { --section-pad-y: var(--section-pad-y-default); }
+.padLoose { --section-pad-y: var(--section-pad-y-loose); }
+.padNone { --section-pad-y: 0; }
+
+/* ——— Cluster alignment utility classes ——— */
+.clusterAlignStart { --cluster-align: flex-start; }
+.clusterAlignCenter { --cluster-align: center; }
+.clusterAlignEnd { --cluster-align: flex-end; }
+.clusterAlignBaseline { --cluster-align: baseline; }
+
+.clusterJustifyStart { --cluster-justify: flex-start; }
+.clusterJustifyCenter { --cluster-justify: center; }
+.clusterJustifyEnd { --cluster-justify: flex-end; }
+.clusterJustifyBetween { --cluster-justify: space-between; }

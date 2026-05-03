@@ -31,6 +31,34 @@
 :root {
   --header-height: 80px;
   --font-heading-letter-spacing: normal;
+
+  /* Layout tokens (ADR 0032) ----------------------------------------- */
+
+  /* Vertical rhythm */
+  --section-gap: clamp(3rem, 6vw, 6rem);
+  --intra-section-gap: clamp(1rem, 2vw, 2rem);
+  --content-gap: clamp(0.75rem, 1.5vw, 1.25rem);
+
+  /* Section vertical padding (Section component) */
+  --section-pad-y-tight: clamp(2rem, 4vw, 3rem);
+  --section-pad-y-default: clamp(3rem, 6vw, 5rem);
+  --section-pad-y-loose: clamp(4rem, 8vw, 7rem);
+
+  /* Horizontal max-widths (canonical only) */
+  --container-narrow: 720px;
+  --container-default: 960px;
+  --container-wide: 1200px;
+
+  /* Container side gutter */
+  --container-px: clamp(1rem, 4vw, 1.5rem);
+
+  /* Breakpoints (mirror Mantine theme; consumers should reference these
+     vars instead of raw px in CSS modules) */
+  --bp-xs: 36em; /* 576px */
+  --bp-sm: 48em; /* 768px */
+  --bp-md: 62em; /* 992px */
+  --bp-lg: 75em; /* 1200px */
+  --bp-xl: 88em; /* 1408px */
 }
 
 html,
