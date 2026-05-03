@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, Badge, Text, Group, Stack, Image, Box, Transition, Avatar, Tooltip } from '@mantine/core';
+import { Card, Badge, Text, Group, Stack, Box, Transition, Avatar, Tooltip } from '@mantine/core';
+import NextImage from 'next/image';
 import { IconExternalLink, IconClock, IconBookmark, IconBrain, IconTrendingUp } from '@tabler/icons-react';
 import type { 
   BookmarkCardProps, 
@@ -101,13 +102,14 @@ const BookmarkCard: React.FC<BookmarkCardProps> = ({
       {/* Image or Header Section */}
       {hasImage ? (
         <Box pos="relative" h={180} style={{ overflow: 'hidden' }}>
-          <Image
-            src={bookmark.image_url}
-            height={180}
+          <NextImage
+            src={bookmark.image_url!}
             alt={bookmark.title}
-            fit="cover"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={handleImageError}
             style={{
+              objectFit: 'cover',
               transition: 'transform 0.3s ease',
               transform: isHovered ? 'scale(1.05)' : 'scale(1)',
             }}

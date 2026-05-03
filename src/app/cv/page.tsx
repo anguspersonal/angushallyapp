@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Container, Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Image, Box } from '@mantine/core';
+import { Container, Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Box } from '@mantine/core';
+import NextImage from 'next/image';
 import { IconDatabase, IconServer, IconTools, IconBrandReact, IconExternalLink, IconMapPin, IconBrain, IconBookmark, IconRun } from '@tabler/icons-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import type { Variants } from 'framer-motion';
@@ -349,13 +350,16 @@ const SoftwareCV = () => {
                                                                     pointerEvents: 'none'
                                                                 }}
                                                             />
-                                                            <Image
-                                                                src={imageErrors[index] ? '/20250418_3BY2_Default_Image_Placeholder.png' : project.image}
-                                                                height={200}
-                                                                fit="cover"
-                                                                onError={() => handleImageError(index)}
-                                                                alt={project.alt || 'Project visualization'}
-                                                            />
+                                                            <Box pos="relative" w="100%" h={200} style={{ overflow: 'hidden' }}>
+                                                                <NextImage
+                                                                    src={imageErrors[index] ? '/20250418_3BY2_Default_Image_Placeholder.png' : project.image}
+                                                                    alt={project.alt || 'Project visualization'}
+                                                                    fill
+                                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                                    onError={() => handleImageError(index)}
+                                                                    style={{ objectFit: 'cover' }}
+                                                                />
+                                                            </Box>
                                                         </Box>
                                                         <Group justify="space-between" mb="md" p="md">
                                                             <Title order={3} size="h4">{project.title}</Title>

@@ -8,10 +8,11 @@ const nextConfig = {
     // unoptimized: true was a holdover from the static-export era (ADR 0023).
     // See ADR 0033 for the current image standards.
     images: {
+      // Blog covers and bookmark images come from arbitrary CMS / OG hosts.
+      // Wildcard is acceptable for a personal site on Vercel; the optimizer
+      // is not a meaningful DoS surface at this scale.
       remotePatterns: [
-        { protocol: 'https', hostname: 'heylina.ai' },
-        { protocol: 'https', hostname: '**.heylina.ai' },
-        { protocol: 'https', hostname: 'media.licdn.com' },
+        { protocol: 'https', hostname: '**' },
       ],
       formats: ['image/avif', 'image/webp'],
     },

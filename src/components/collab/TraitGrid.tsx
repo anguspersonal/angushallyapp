@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Box, Center, Text, Image, HoverCard, useMantineTheme } from '@mantine/core';
+import { Box, Center, Text, HoverCard, useMantineTheme } from '@mantine/core';
+import NextImage from 'next/image';
 import { useMediaQuery } from '@mantine/hooks';
 import { motion, LazyMotion, domAnimation } from 'framer-motion';
 
@@ -137,11 +138,13 @@ export default function TraitGrid() {
                 zIndex: 10
               }}
             >
-              <Image 
-                src="/AH-logo-no-background.ico" 
+              <NextImage
+                src="/AH_Logo.png"
                 alt="AH Logo"
-                fit="contain"
-                style={{ display: 'block', width: '100%', height: '100%' }}
+                width={67}
+                height={57}
+                sizes="120px"
+                style={{ display: 'block', width: '100%', height: '100%', objectFit: 'contain' }}
               />
             </Center>
 

@@ -6,14 +6,13 @@ import {
   Container,
   Title,
   Text,
-  Image,
   Anchor,
   Box,
   Stack,
   Divider,
 } from '@mantine/core';
+import NextImage from 'next/image';
 import { motion } from 'framer-motion';
-import { assets } from '../../lib/theme';
 import CareerTimeline from '@/components/timeline/CareerTimeline';
 import { careerMilestones } from '@/data/careerMilestones';
 import styles from './about.module.css';
@@ -38,16 +37,16 @@ export default function About() {
           </Title>
 
           <Box mb="xl" className={styles.portraitWrap}>
-            <Image
+            <NextImage
               src="/20230208_AH_Profile_Poser.jpg"
               alt="Angus Hally"
-              fallbackSrc={assets.placeholderImage.square}
-              w={360}
-              h={360}
-              radius="50%"
-              fit="cover"
-              mx="auto"
+              width={360}
+              height={360}
+              priority
+              fetchPriority="high"
+              sizes="(max-width: 480px) 80vw, 360px"
               className={styles.portrait}
+              style={{ borderRadius: '50%', objectFit: 'cover', display: 'block', margin: '0 auto' }}
             />
           </Box>
 

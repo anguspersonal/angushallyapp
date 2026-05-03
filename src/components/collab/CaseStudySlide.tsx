@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Card, Text, Group, Image, Badge, ActionIcon, Box, Button, Anchor } from '@mantine/core';
+import { Card, Text, Group, Badge, ActionIcon, Box, Button, Anchor } from '@mantine/core';
+import NextImage from 'next/image';
 import { IconX, IconArrowRight } from '@tabler/icons-react';
 import Link from 'next/link';
 import type { CaseStudy } from '@/data/collab/caseStudies';
@@ -54,12 +55,15 @@ export default function CaseStudySlide({ data, isExpanded, onExpand, onClose }: 
             )}
 
             <Card.Section style={{ flex: '0 0 auto', position: 'relative' }}>
-                <Image
-                    src={data.image.src}
-                    height={160}
-                    alt={data.image.alt}
-                    fit="cover"
-                />
+                <Box pos="relative" w="100%" h={160}>
+                    <NextImage
+                        src={data.image.src}
+                        alt={data.image.alt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 400px"
+                        style={{ objectFit: 'cover' }}
+                    />
+                </Box>
                 {isExpanded && data.image.attribution && (
                     <Text 
                         size="xs" 

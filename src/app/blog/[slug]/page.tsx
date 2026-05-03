@@ -3,7 +3,8 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { notFound } from 'next/navigation';
-import { Image, Text, Box, Anchor, Container, Title } from '@mantine/core';
+import NextImage from 'next/image';
+import { Text, Box, Anchor, Container, Title } from '@mantine/core';
 import { getBlogPostDetail } from '@/lib/content/blogRepository';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import '../blog.css';
@@ -40,12 +41,17 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {post.coverImage && (
           <Box mb="md">
-            <Image
-              src={post.coverImage}
-              alt={post.altText || `Cover image for ${post.title}`}
-              fit="cover"
-              style={{ maxHeight: '400px', width: '100%', objectFit: 'cover', borderRadius: 12 }}
-            />
+            <Box pos="relative" w="100%" h={400} style={{ borderRadius: 12, overflow: 'hidden' }}>
+              <NextImage
+                src={post.coverImage}
+                alt={post.altText || `Cover image for ${post.title}`}
+                fill
+                priority
+                fetchPriority="high"
+                sizes="(max-width: 768px) 100vw, 800px"
+                style={{ objectFit: 'cover' }}
+              />
+            </Box>
             {post.attribution && (
               <Text size="sm" opacity={0.7} ta="right" mt="xs">
                 {post.attributionLink ? (

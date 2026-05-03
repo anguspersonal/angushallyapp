@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Image, Text, Title, Box } from '@mantine/core';
+import NextImage from 'next/image';
+import { Text, Title, Box } from '@mantine/core';
 import type { ContentPostSummary } from '@/lib/content/contracts';
 import { GlassContent } from '@/components/design/Glass';
 
@@ -21,12 +22,15 @@ export default function BlogSnippet({ post }: BlogSnippetProps) {
     <GlassContent p={0} style={{ overflow: 'hidden', height: '100%' }}>
       {post.coverImage && (
         <Box>
-          <Image
-            src={post.coverImage}
-            height={160}
-            alt={post.altText || `Cover image for ${post.title}`}
-            fit="cover"
-          />
+          <Box pos="relative" h={160}>
+            <NextImage
+              src={post.coverImage}
+              alt={post.altText || `Cover image for ${post.title}`}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ objectFit: 'cover' }}
+            />
+          </Box>
           {post.attribution && (
             <Text size="xs" opacity={0.7} ta="right" px="md" py="xs">
               {post.attributionLink ? (
