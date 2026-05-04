@@ -12,7 +12,7 @@ import { fontClassNames } from '@/lib/fonts';
 export const metadata: Metadata = {
   title: 'Angus Hally App',
   description:
-    'Personal website of Angus Hally - COO of HeyLina, building emotionally intelligent AI. Projects, blog, and more.',
+    'Personal website of Angus Hally - COO and co-founder of HeyLina, building emotionally intelligent AI. Projects, blog, and more.',
   icons: {
     icon: '/AH-logo-no-background.ico',
     shortcut: '/AH-logo-no-background.ico',

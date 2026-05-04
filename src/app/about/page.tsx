@@ -30,8 +30,8 @@ export default function About() {
               fontFamily: 'var(--font-display), League Gothic, sans-serif',
               textTransform: 'uppercase',
               fontWeight: 400,
+              color: 'var(--site-ink)',
             }}
-            c="var(--site-ink)"
           >
             Hi, I&apos;m Angus
           </Title>
@@ -57,11 +57,11 @@ export default function About() {
             </Text>
 
             <Text>
-              Currently, I&apos;m COO of{' '}
+              I am COO and co-founder of{' '}
               <Anchor href="https://heylina.com" target="_blank" rel="noopener noreferrer">
                 HeyLina
               </Anchor>
-              , where we&apos;re building emotionally intelligent AI. It&apos;s the most exciting thing I&apos;ve ever worked on.
+              . The shorthand is a data strategist with a builder&apos;s bias and an operator&apos;s discipline. A decade across Accenture and Anmut gives me the framework behind our longitudinal emotional data play. I built our marketing site, our internal operating system, and the engineering process around our mobile developer. I run app store launch operations, the interim raise, our clinical advisor relationships, compliance, and pricing. Bri makes the company exist; I make sure it compounds. It is the most exciting thing I have ever worked on.
             </Text>
 
             <Text>
@@ -124,7 +124,7 @@ export default function About() {
           </Text>
         </Box>
 
-        <Text c="dimmed" ta="center" mt="xl">
+        <Text ta="center" mt="xl" style={{ color: 'var(--mantine-color-dimmed)' }}>
           If you want the fuller story, the full timeline lives{' '}
           <Anchor component={Link} href="/projects/timeline">
             here
