@@ -42,6 +42,10 @@ function postErrorState(error: Error): PostState {
 export function usePosts(params?: ContentListParams) {
   const [state, setState] = useState<ListState>({ data: [], isLoading: true, pagination: undefined });
 
+  // Stable string key so callers can pass fresh object literals without retriggering the effect.
+  // (`params` itself is a new reference every render in most call sites; comparing by value avoids the loop.)
+  const paramsKey = JSON.stringify(params ?? {});
+
   useEffect(() => {
     let isActive = true;
     setState((prev) => ({ ...prev, isLoading: true, error: undefined }));
@@ -60,7 +64,9 @@ export function usePosts(params?: ContentListParams) {
     return () => {
       isActive = false;
     };
-  }, [params]);
+    // params is intentionally excluded — paramsKey is the value-based dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsKey]);
 
   const reload = useCallback(() => {
     setState((prev) => ({ ...prev, isLoading: true }));
@@ -68,7 +74,9 @@ export function usePosts(params?: ContentListParams) {
       .getPosts(params)
       .then((result) => setState(listLoadedState(result)))
       .catch((error: Error & { code?: string }) => setState(listErrorState(error)));
-  }, [params]);
+    // params is intentionally excluded — paramsKey is the value-based dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsKey]);
 
   return { ...state, reload };
 }
