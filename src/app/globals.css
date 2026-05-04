@@ -28,6 +28,70 @@
   --button-border-color: #1f4a44;
 }
 
+/* === Surface: blog ===
+   Surface is orthogonal to colour-scheme. The data-surface="blog" attribute
+   is set on a layout wrapper for /blog routes; both colour schemes can apply
+   on top, giving us blog-light (cream stock + black ink + red accent) and
+   blog-dark (warm dark stock + off-white ink + brighter coral accent).
+
+   These blocks override the site tokens so chrome (Header, Footer,
+   GradientRoot) repaints automatically, AND expose --blog-* tokens for
+   blog-specific components (Glass blog variant, blog.module.css). */
+
+[data-mantine-color-scheme='light'] [data-surface='blog'] {
+  /* Site tokens — override so chrome flips */
+  --site-ink: #0f0f10;
+  --site-ink-muted: rgba(15, 15, 16, 0.75);
+  --site-ink-caption: rgba(15, 15, 16, 0.55);
+  --site-accent: #c9402a;
+  --site-bg-0: #f4f1ea;
+  --site-bg-1: #ebe6db;
+  --button-background-color: #0f0f10;
+  --button-text-color: #f4f1ea;
+  --button-border-color: #0f0f10;
+
+  /* Blog tokens — consumed by blog page and Glass blog variant */
+  --blog-bg: #f4f1ea;
+  --blog-bg-deep: #ebe6db;
+  --blog-ink: #0f0f10;
+  --blog-ink-soft: #2a2a2c;
+  --blog-muted: #6b6a64;
+  --blog-rule: #1a1a1b;
+  --blog-rule-soft: rgba(15, 15, 16, 0.18);
+  --blog-accent: #c9402a;
+  --blog-accent-soft: #d97a64;
+  --blog-grain: rgba(0, 0, 0, 0.025);
+  --blog-intro-paper: #fdf8ec;
+  --blog-fold-shadow: rgba(0, 0, 0, 0.06);
+}
+
+[data-mantine-color-scheme='dark'] [data-surface='blog'] {
+  /* Site tokens — override so chrome flips */
+  --site-ink: #e8e3d4;
+  --site-ink-muted: rgba(232, 227, 212, 0.75);
+  --site-ink-caption: rgba(232, 227, 212, 0.55);
+  --site-accent: #e07359;
+  --site-bg-0: #161412;
+  --site-bg-1: #1f1c19;
+  --button-background-color: #e07359;
+  --button-text-color: #161412;
+  --button-border-color: #e07359;
+
+  /* Blog tokens — ink-bath broadsheet */
+  --blog-bg: #161412;
+  --blog-bg-deep: #1f1c19;
+  --blog-ink: #e8e3d4;
+  --blog-ink-soft: #c9c2b1;
+  --blog-muted: #8a8378;
+  --blog-rule: rgba(232, 227, 212, 0.32);
+  --blog-rule-soft: rgba(232, 227, 212, 0.18);
+  --blog-accent: #e07359;
+  --blog-accent-soft: #c9594a;
+  --blog-grain: rgba(232, 227, 212, 0.04);
+  --blog-intro-paper: #1f1c19;
+  --blog-fold-shadow: rgba(0, 0, 0, 0.4);
+}
+
 :root {
   --header-height: 80px;
   --font-heading-letter-spacing: normal;

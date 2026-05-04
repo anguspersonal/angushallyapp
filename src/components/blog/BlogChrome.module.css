@@ -1,0 +1,262 @@
+/* Bespoke chrome for the blog surface — flat editorial topbar + footer.
+   Consumes --blog-* tokens (defined in globals.css under [data-surface='blog'])
+   so it flips with the user's day/night preference. */
+
+/* ===== Topbar ===== */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--blog-bg);
+  border-bottom: 1px solid var(--blog-rule);
+  padding: 14px clamp(1rem, 4vw, 3rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-family: var(--font-editorial), Fraunces, Georgia, serif;
+  font-variation-settings: 'opsz' 14;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--blog-ink);
+}
+
+.dots {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blog-ink);
+  display: inline-block;
+}
+
+.tagline {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-editorial), Fraunces, Georgia, serif;
+  font-style: italic;
+  font-variation-settings: 'opsz' 14;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0.65;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-shrink: 0;
+}
+
+.navLink {
+  text-decoration: none;
+  color: var(--blog-ink);
+  opacity: 0.7;
+  position: relative;
+  font-family: var(--font-editorial), Fraunces, Georgia, serif;
+  font-variation-settings: 'opsz' 14;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 0;
+  transition: opacity 180ms ease, color 180ms ease;
+}
+
+.navLink:hover {
+  opacity: 1;
+}
+
+.navLinkCurrent {
+  opacity: 1;
+  color: var(--blog-accent);
+}
+
+.navLinkCurrent::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -18px;
+  height: 1px;
+  background: var(--blog-accent);
+}
+
+.navContact {
+  composes: navLink;
+  color: var(--blog-accent);
+  opacity: 1;
+}
+
+.navContact::after {
+  content: ' →';
+  display: inline;
+}
+
+.navTools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 6px;
+  padding-left: 18px;
+  border-left: 1px solid var(--blog-rule-soft);
+}
+
+/* The ModeToggle is a Mantine ActionIcon; force it to inherit ink colour */
+.navTools :global(.mantine-ActionIcon-root) {
+  color: var(--blog-ink);
+  background: transparent;
+  border: none;
+}
+
+.navTools :global(.mantine-ActionIcon-root:hover) {
+  background: var(--blog-bg-deep);
+}
+
+.authButton {
+  font: inherit;
+  font-family: var(--font-editorial), Fraunces, Georgia, serif;
+  font-variation-settings: 'opsz' 14;
+  background: transparent;
+  border: 0;
+  padding: 4px 0;
+  color: var(--blog-ink);
+  opacity: 0.7;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 180ms ease;
+}
+
+.authButton:hover {
+  opacity: 1;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--blog-ink);
+  flex-shrink: 0;
+}
+
+@media (max-width: 45em) {
+  .topbar {
+    padding: 12px 1rem;
+    flex-wrap: wrap;
+  }
+  .tagline {
+    display: none;
+  }
+  .nav {
+    gap: 14px;
+  }
+  .navTools {
+    margin-left: 0;
+    padding-left: 12px;
+  }
+}
+
+@media (max-width: 30em) {
+  .navLink:not(.navLinkCurrent):not(.navContact) {
+    display: none;
+  }
+}
+
+/* ===== Footer ===== */
+
+.footer {
+  border-top: 1px solid var(--blog-rule);
+  padding: 3.5rem clamp(1rem, 4vw, 3rem) 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2.5rem;
+  font-family: var(--font-editorial), Fraunces, Georgia, serif;
+  font-variation-settings: 'opsz' 24;
+  font-size: 14px;
+  color: var(--blog-ink);
+  background: var(--blog-bg);
+}
+
+.footerHeading {
+  font-family: var(--font-editorial), Fraunces, Georgia, serif;
+  font-variation-settings: 'opsz' 14;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+
+.footerLink {
+  display: block;
+  padding: 3px 0;
+  color: var(--blog-ink);
+  opacity: 0.85;
+  text-decoration: none;
+  font-family: var(--font-editorial), Fraunces, Georgia, serif;
+  font-variation-settings: 'opsz' 24;
+  font-size: 14px;
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+.footerLink:hover {
+  color: var(--blog-accent);
+  opacity: 1;
+}
+
+.colophon {
+  font-family: var(--font-editorial), Fraunces, Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.55;
+  opacity: 0.78;
+}
+
+.colophon p {
+  margin: 0 0 0.6rem;
+}
+
+.bottomRule {
+  border-top: 1px solid var(--blog-rule);
+  padding: 16px clamp(1rem, 4vw, 3rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-editorial), Fraunces, Georgia, serif;
+  font-variation-settings: 'opsz' 14;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blog-ink);
+  opacity: 0.55;
+  background: var(--blog-bg);
+}
+
+@media (max-width: 45em) {
+  .footer {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .bottomRule {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

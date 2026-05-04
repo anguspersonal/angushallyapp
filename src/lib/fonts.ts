@@ -1,4 +1,4 @@
-import { League_Gothic, Newsreader, Ubuntu } from 'next/font/google';
+import { Fraunces, League_Gothic, Newsreader, Ubuntu } from 'next/font/google';
 
 /** Display: nav brand, hero name, section headings (amendment). */
 export const leagueGothic = League_Gothic({
@@ -26,4 +26,14 @@ export const ubuntu = Ubuntu({
   display: 'swap',
 });
 
-export const fontClassNames = `${leagueGothic.variable} ${newsreader.variable} ${ubuntu.variable}`.trim();
+/** Editorial serif with optical-size axis — used on the blog ("The Hally Herald"). */
+export const fraunces = Fraunces({
+  subsets: ['latin'],
+  axes: ['opsz'],
+  style: ['normal', 'italic'],
+  variable: '--font-editorial',
+  display: 'swap',
+});
+
+export const fontClassNames =
+  `${leagueGothic.variable} ${newsreader.variable} ${ubuntu.variable} ${fraunces.variable}`.trim();
