@@ -63,7 +63,7 @@
 .milestoneGlass {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   gap: 3rem;
 }
 
@@ -83,11 +83,11 @@
 .milestoneDot {
   position: absolute;
   left: 50%;
-  top: 0.5rem;
+  top: 50%;
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   z-index: 2;
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
 }
@@ -108,6 +108,7 @@
 .milestoneRight {
   flex: 1;
   min-width: 0;
+  text-align: left;
   padding-left: 2rem;
 }
 
@@ -171,7 +172,7 @@
 
 .milestoneImageSequence {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 180px;
 }
 
 .milestoneImageStackLeft,
