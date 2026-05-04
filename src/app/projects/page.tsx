@@ -42,8 +42,8 @@ export default function ProjectsPage() {
                     fontFamily: 'var(--font-display), League Gothic, sans-serif',
                     textTransform: 'uppercase',
                     fontWeight: 400,
+                    color: 'var(--site-ink)',
                 }}
-                c="var(--site-ink)"
             >
                 My Projects
             </Title>

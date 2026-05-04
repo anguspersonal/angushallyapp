@@ -34,29 +34,29 @@ export default function WorkWithMeIndex() {
             fontFamily: 'var(--font-display), League Gothic, sans-serif',
             textTransform: 'uppercase',
             fontWeight: 400,
+            color: 'var(--site-ink)',
           }}
-          c="var(--site-ink)"
         >
           Work with me
         </Title>
-        <Text c="dimmed">Three ways to get in touch. Pick whichever fits, and I&apos;ll follow up.</Text>
+        <Text style={{ color: 'var(--mantine-color-dimmed)' }}>Three ways to get in touch. Pick whichever fits, and I&apos;ll follow up.</Text>
       </Stack>
       <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="lg">
         {services.map((service) => (
-          <GlassContent
+          <Link
             key={service.href}
-            component={Link}
             href={service.href}
-            p="lg"
-            style={{ textDecoration: 'none', color: 'inherit' }}
+            style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
           >
-            <Title order={3} size="h4" mb="xs" c="var(--site-ink)">
-              {service.title}
-            </Title>
-            <Text size="sm" c="dimmed">
-              {service.blurb}
-            </Text>
-          </GlassContent>
+            <GlassContent p="lg">
+              <Title order={3} size="h4" mb="xs" style={{ color: 'var(--site-ink)' }}>
+                {service.title}
+              </Title>
+              <Text size="sm" style={{ color: 'var(--mantine-color-dimmed)' }}>
+                {service.blurb}
+              </Text>
+            </GlassContent>
+          </Link>
         ))}
       </SimpleGrid>
     </Section>

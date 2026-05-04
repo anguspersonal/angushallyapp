@@ -57,26 +57,26 @@ export default function BlogSnippet({ post }: BlogSnippetProps) {
         <Title
           order={3}
           mb="xs"
-          c="var(--site-ink)"
           style={{
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+            color: 'var(--site-ink)',
           }}
         >
           {post.title}
         </Title>
         <Text
           size="sm"
-          c="dimmed"
           style={{
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+            color: 'var(--mantine-color-dimmed)',
           }}
         >
           {post.excerpt}

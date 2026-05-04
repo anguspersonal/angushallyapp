@@ -17,13 +17,13 @@ export default function ConsultingPage() {
               fontFamily: 'var(--font-display), League Gothic, sans-serif',
               textTransform: 'uppercase',
               fontWeight: 400,
+              color: 'var(--site-ink)',
             }}
-            c="var(--site-ink)"
           >
             Consulting
           </Title>
-          <Text c="dimmed">Strategy, data, and product advisory. Full copy coming soon.</Text>
-          <Text c="var(--site-ink)">
+          <Text style={{ color: 'var(--mantine-color-dimmed)' }}>Strategy, data, and product advisory. Full copy coming soon.</Text>
+          <Text style={{ color: 'var(--site-ink)' }}>
             Looking to start a conversation? Drop me a line via the contact page and mention consulting.
           </Text>
           <SayHelloPill />

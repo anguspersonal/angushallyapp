@@ -36,7 +36,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <Section width="narrow" padY="default" className="blog-post">
       <GlassContent p="lg" mb="xl">
-        <Title order={1} mb="md" c="var(--site-ink)" style={{ fontWeight: 600 }}>
+        <Title order={1} mb="md" style={{ fontWeight: 600, color: 'var(--site-ink)' }}>
           {post.title}
         </Title>
 

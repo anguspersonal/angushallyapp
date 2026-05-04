@@ -6,6 +6,7 @@ import styles from './Glass.module.css';
 
 type GlassBaseProps = Omit<BoxProps, 'className'> & {
   className?: string;
+  children?: React.ReactNode;
 };
 
 export function GlassContent({ className, ...props }: GlassBaseProps) {
