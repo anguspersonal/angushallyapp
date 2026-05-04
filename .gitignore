@@ -33,6 +33,7 @@ dist-ssr
 .cursor/
 .claude/
 .kiro/
+.agents/
 *.swp
 *.swo
 *~
