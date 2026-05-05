@@ -1,0 +1,119 @@
+/* IconTile — glass-tile primitive for the macOS desktop redesign of /projects.
+   Mirrors the existing GlassContent material (20px radius, blur 24, saturation
+   1.1-1.2) so that dock icons / desktop icons / monogram all share the site's
+   established glass language. */
+
+.tile {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  /* Default size = dock size. Consumers override --tile-size for larger renders. */
+  width: var(--tile-size, 64px);
+  height: var(--tile-size, 64px);
+  flex: 0 0 auto;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 200ms ease,
+    background 200ms ease;
+}
+
+[data-mantine-color-scheme='dark'] .tile {
+  background: rgba(250, 247, 240, 0.06);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 0.5px solid rgba(250, 247, 240, 0.14);
+  box-shadow:
+    inset 0 1px 0 0 rgba(250, 247, 240, 0.08),
+    0 1px 0 0 rgba(13, 31, 30, 0.2);
+}
+
+[data-mantine-color-scheme='light'] .tile {
+  background: rgba(13, 31, 30, 0.03);
+  backdrop-filter: blur(24px) saturate(1.1);
+  -webkit-backdrop-filter: blur(24px) saturate(1.1);
+  border: 0.5px solid rgba(13, 31, 30, 0.08);
+  box-shadow:
+    inset 0 1px 0 0 rgba(250, 247, 240, 0.6),
+    0 1px 0 0 rgba(13, 31, 30, 0.04);
+}
+
+/* Subtle tint wash inside the tile — adds the project hue without making the
+   tile read as a flat colour fill. Opacity intentionally low (~10%). */
+.tintWash {
+  position: absolute;
+  inset: 0;
+  background: var(--tile-tint, transparent);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The glyph slot — content is centred and sized relative to the tile. */
+.glyph {
+  position: relative;
+  z-index: 1;
+  width: 50%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tile-tint, currentColor);
+}
+
+.glyph svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.5;
+}
+
+/* Monogram variant — tight typographic glyph instead of a Tabler icon. */
+.monogram {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display), 'League Gothic', sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--site-ink);
+  /* Size scales with tile: roughly 60% of tile height. */
+  font-size: calc(var(--tile-size, 64px) * 0.62);
+}
+
+/* Folder + document SVG variants — shape fills more of the tile than a glyph. */
+.shape {
+  position: relative;
+  z-index: 1;
+  width: 60%;
+  height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shape svg {
+  width: 100%;
+  height: 100%;
+}
+
+@supports not (backdrop-filter: blur(24px)) {
+  [data-mantine-color-scheme='dark'] .tile {
+    background: rgba(250, 247, 240, 0.1);
+    border-color: rgba(250, 247, 240, 0.18);
+  }
+
+  [data-mantine-color-scheme='light'] .tile {
+    background: rgba(250, 247, 240, 0.7);
+    border-color: rgba(13, 31, 30, 0.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    transition: none;
+  }
+}

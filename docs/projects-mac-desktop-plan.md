@@ -10,22 +10,28 @@ Locked design decisions in `<concept>` block at end. This doc is the **tactical*
 
 ### Phase 0 — Design assets (can start any time, parallelise with Phase 1+)
 
-- [ ] **Wallpaper** — Big-Sur-style abstract gradient mesh **in your palette** (cream/ink + coral/teal accents). Day + night variants. CSS-generated via `radial-gradient` + filters or one SVG with stops. Avoid Apple's blues/purples.
-- [ ] **AH monogram** — small glass-tile glyph for menu-bar apple-corner. Reusable across boot intro and menu bar.
-- [ ] **Per-project glyph + tint mapping** — pick one Lucide icon + one palette tint for each:
-  - Data Value Game → `LayoutGrid` + (tint TBD)
-  - Strava → `Activity` + (tint TBD)
-  - Timeline → `Clock` + (tint TBD)
-  - AI Text Analysis → `Sparkles` + (tint TBD)
-  - Eat Safe UK → `Map` + (tint TBD)
-  - Habit Tracker → `Repeat` + (tint TBD)
-  - Instapaper → `Newspaper` + (tint TBD)
-  - Bookmarks → `Bookmark` + (tint TBD)
-- [ ] **Folder icon** — same glass frame, folder silhouette inside (visually distinct from app icons)
-- [ ] **Document icon** — same glass frame, document shape inside (for `Resume.pdf`)
-- [ ] **4 active-project hero screenshots** — clean, full-bleed captures for window main panes (~720×360 area)
-- [ ] **4 active-project write-ups** — 100-200 words each. Structure: what it does / why I built it / what I learned / tech stack as chips
-- [ ] **5 archived-project "Archived because…" notes** — 1 line each explaining why it stopped
+> **Errata** (logged during Phase 0 implementation):
+> - Icon library is `@tabler/icons-react`, not Lucide. Plan now reflects this throughout.
+> - `GlassContent` uses `border-radius: 20px` (not iOS's 22%). The desktop primitives match for material consistency.
+> - Codebase already uses a `data-surface` pattern (`data-surface='blog'`) for per-route token overrides. Phase 1 should adopt the same convention with `data-surface='projects'` rather than inventing a new mechanism.
+> - Original plan said "5 archived-project notes". Actual count is 4 (Blog is `in-progress`, not archived).
+
+- [x] **Wallpaper** — Big-Sur-style abstract gradient mesh in your palette. Day + night variants. Built as `<Wallpaper>` in `src/components/projects-desktop/Wallpaper.tsx` (radial-gradient mesh + grain layer + faded title overlay).
+- [x] **AH monogram** — small glass-tile glyph reusable across menu bar and boot intro. Built as `<AHMonogram>` in `src/components/projects-desktop/IconTile.tsx` (League Gothic "AH" inside the shared glass tile).
+- [x] **Per-project glyph + tint mapping** — locked in `src/components/projects-desktop/iconMapping.ts`:
+  - Data Value Game → `IconLayoutGrid` + mustard `#c8a951`
+  - Eat Safe UK → `IconMap` + sage `#7a9c83`
+  - Strava → `IconActivity` + coral `#f0997b` (site accent)
+  - Habit Tracker → `IconRepeat` + brick `#b4654a`
+  - AI Text Analysis → `IconSparkles` + plum `#8b6a90`
+  - Instapaper → `IconNews` + slate `#576366`
+  - Bookmarks → `IconBookmark` + site-teal `#1f4a44`
+  - Timeline → `IconClock` + periwinkle `#7898b5`
+- [x] **Folder icon** — `<FolderIcon>` in `IconTile.tsx`. Glass frame + custom SVG folder silhouette in tint.
+- [x] **Document icon** — `<DocumentIcon>` in `IconTile.tsx`. Glass frame + SVG document shape with `PDF` badge.
+- [ ] **4 active-project hero screenshots** — *(user-blocked)* needs captures from running apps. `screenshot` field added to `ProjectItem` in `src/data/projectList.ts`.
+- [ ] **4 active-project write-ups** — *(user-blocked)* needs your authentic voice. `writeUp` and `builtWith` fields added to `ProjectItem`. `builtWith` populated with draft tech-stack guesses for the 4 active projects (refine before launch).
+- [x] **4 archived-project "Archived because…" notes** — populated for all 4 archived projects in `src/data/projectList.ts` (`archivedReason` field). Note: count is 4, not 5 — the original plan miscounted (Blog is in-progress, not archived).
 
 ### Phase 1 — Route shell
 
@@ -48,7 +54,7 @@ Locked design decisions in `<concept>` block at end. This doc is the **tactical*
 ### Phase 3 — Dock + icons (static visual first)
 
 - [ ] `<Dock>` component, glass material, anchored bottom-centre, fixed-width with rounded corners
-- [ ] `<DockIcon>` component: glass tile (~64px), 22% radius, project tint overlay, Lucide glyph centred
+- [ ] `<DockIcon>` component: glass tile (~64px), 22% radius, project tint overlay, Tabler glyph centred
 - [ ] Dock layout: `[DVG] [Timeline•🔒] [Strava] [AI Text 🔒]   ｜   [📁 Archive]`
   - Vertical divider rule between active apps and Archive folder
 - [ ] In-progress dot indicator (6px solid, accent colour, ~8px below icon) — visible on Timeline only
