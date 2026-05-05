@@ -381,16 +381,7 @@ export default function HomePageClient({ og }: HomePageClientProps) {
                         timeline?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                       }}
                     >
-                      How I got here{' '}
-                      <motion.span
-                        initial={{ rotate: 0 }}
-                        whileInView={{ rotate: [0, 20, -10, 20, -10, 0] }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.8, delay: 0.5 }}
-                        style={{ display: 'inline-block' }}
-                      >
-                        👋
-                      </motion.span>
+                      How I got here
                     </Text>
                     <motion.div
                       animate={{ y: [0, -7, 0] }}
@@ -434,7 +425,7 @@ export default function HomePageClient({ og }: HomePageClientProps) {
         <ScrollReveal>
           <Stack gap="intra" style={{ alignItems: 'center', textAlign: 'center' }}>
             <Title order={2} className={styles.ctaTitle} style={{ color: 'var(--site-ink)' }}>
-              Let&apos;s connect.
+              Let&apos;s connect{' '}
             </Title>
             <Text className={styles.ctaSubtitle} style={{ color: 'var(--mantine-color-dimmed)' }}>
               Whether you want to talk startups, data strategy, or just say hello, I&apos;d love to hear from you.
