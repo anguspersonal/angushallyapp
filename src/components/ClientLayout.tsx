@@ -27,13 +27,21 @@ function isBlogPath(pathname: string | null): boolean {
   return pathname === '/blog' || pathname.startsWith('/blog/');
 }
 
+function isProjectsDesktopPath(pathname: string | null): boolean {
+  // Only the `/projects` index gets the macOS desktop shell. Sub-routes like
+  // `/projects/strava` or `/projects/data-value-game` keep the default site
+  // chrome so deep links continue to work as standalone pages.
+  return pathname === '/projects';
+}
+
 /**
  * Maps a route to a surface attribute. Surface is orthogonal to colour-scheme:
  * components that care about it (Glass, GradientRoot) read it independently.
  * Add new surfaces here when introducing route-level visual systems.
  */
-function surfaceForPath(pathname: string | null): 'blog' | undefined {
+function surfaceForPath(pathname: string | null): 'blog' | 'projects' | undefined {
   if (isBlogPath(pathname)) return 'blog';
+  if (isProjectsDesktopPath(pathname)) return 'projects';
   return undefined;
 }
 
@@ -101,6 +109,17 @@ function SurfaceShell({ children }: { children: React.ReactNode }) {
         <BlogHeader />
         <main style={{ minHeight: 'calc(100vh - 60px)' }}>{children}</main>
         <BlogFooter />
+      </div>
+    );
+  }
+
+  // Surface "projects" is a full-bleed macOS desktop. Site Header, Footer,
+  // AppShell, and GradientRoot are all suppressed — the page owns the entire
+  // viewport and renders its own wallpaper, menu bar, and dock.
+  if (surface === 'projects') {
+    return (
+      <div data-surface="projects">
+        <main>{children}</main>
       </div>
     );
   }

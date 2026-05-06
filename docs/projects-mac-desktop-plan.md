@@ -35,12 +35,12 @@ Locked design decisions in `<concept>` block at end. This doc is the **tactical*
 
 ### Phase 1 — Route shell
 
-- [ ] Update `/projects/page.tsx`: replace `SimpleGrid` of `ProjectSnippet` with new `MacDesktop` component
-- [ ] Hide global site header on `/projects` route (mirror the per-route header pattern blog already uses)
-- [ ] Add `<MacDesktop>` shell: full-viewport, no scroll, no site footer until you scroll past
-- [ ] Wallpaper component renders behind everything; reads day/night from existing Mantine color scheme
-- [ ] Title `MY PROJECTS` (League Gothic ~280px, ~10% opacity) and help text `Click an app to get started` (~25% opacity) on wallpaper
-- [ ] No client-side data fetching — `projectList.ts` is the source of truth (already exists)
+- [x] Update `/projects/page.tsx`: replace `SimpleGrid` of `ProjectSnippet` with new `MacDesktop` component (now `<MacDesktop />` only — see `src/app/projects/page.tsx`).
+- [x] Hide global site header on `/projects` route — added `'projects'` surface to `ClientLayout.tsx`, mirroring the blog pattern. Site Header, Footer, AppShell, and GradientRoot all suppressed for `/projects` exact match. Sub-routes (`/projects/strava` etc.) intentionally keep default site chrome so direct links remain standalone pages.
+- [x] Add `<MacDesktop>` shell: full-viewport, no scroll. Built in `src/components/projects-desktop/MacDesktop.tsx` — `position: relative; height: 100dvh; overflow: hidden` (dvh chosen over vh to avoid mobile browser-chrome scroll jitter). Site footer is suppressed entirely for this surface (the "scroll past" behaviour from the original plan was dropped — full-viewport with no scroll is cleaner).
+- [x] Wallpaper component renders behind everything; reads day/night from existing Mantine color scheme — already wired in Phase 0, now activated by `<MacDesktop>` mounting it as its first child.
+- [x] Title `MY PROJECTS` (League Gothic ~280px, ~10% opacity) and help text `Click an app to get started` (~25% opacity) on wallpaper — already present in `<Wallpaper>` from Phase 0; default props match this spec.
+- [x] No client-side data fetching — `projectList.ts` is the source of truth (already exists).
 
 ### Phase 2 — Menu bar
 

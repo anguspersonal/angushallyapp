@@ -16,6 +16,8 @@ export {
 
 export { Wallpaper } from './Wallpaper';
 
+export { MacDesktop } from './MacDesktop';
+
 export {
   PROJECT_ICONS,
   getProjectIcon,
