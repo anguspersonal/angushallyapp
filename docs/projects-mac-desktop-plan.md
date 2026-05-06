@@ -29,8 +29,8 @@ Locked design decisions in `<concept>` block at end. This doc is the **tactical*
   - Timeline → `IconClock` + periwinkle `#7898b5`
 - [x] **Folder icon** — `<FolderIcon>` in `IconTile.tsx`. Glass frame + custom SVG folder silhouette in tint.
 - [x] **Document icon** — `<DocumentIcon>` in `IconTile.tsx`. Glass frame + SVG document shape with `PDF` badge.
-- [ ] **4 active-project hero screenshots** — *(user-blocked)* needs captures from running apps. `screenshot` field added to `ProjectItem` in `src/data/projectList.ts`.
-- [ ] **4 active-project write-ups** — *(user-blocked)* needs your authentic voice. `writeUp` and `builtWith` fields added to `ProjectItem`. `builtWith` populated with draft tech-stack guesses for the 4 active projects (refine before launch).
+- [x] **2 hero screenshots** — DVG (`/data_value_game_screenshot.png`) + Timeline (`/timeline_screenshot.png`) wired into `src/data/projectList.ts`. Strava + AI Text are gated/private and ship as write-up-only windows. Blog has its own screenshot via the blog surface (not consumed here).
+- [x] **4 active-project write-ups** — DVG (~155w), Timeline (~95w), Strava (~85w), AI Text (~95w) wired into `src/data/projectList.ts`. Bonus: Eat Safe UK got a long-form writeUp too (~140w) because the human story behind it earned the length. `writeUp` JSDoc broadened from "rich (active)" to "any project window". Habit Tracker, Instapaper, and Bookmarks `desc` fields tightened from corporate-speak to plain language. `builtWith` chips confirmed accurate during review.
 - [x] **4 archived-project "Archived because…" notes** — populated for all 4 archived projects in `src/data/projectList.ts` (`archivedReason` field). Note: count is 4, not 5 — the original plan miscounted (Blog is in-progress, not archived).
 
 ### Phase 1 — Route shell
@@ -78,10 +78,11 @@ Locked design decisions in `<concept>` block at end. This doc is the **tactical*
 
 ### Phase 5 — Window types
 
-- [ ] **`<RichProjectWindow>`** — 720×540, two-pane:
+- [ ] **`<RichProjectWindow>`** — 720×540, two-pane. Used for **DVG + Timeline** only (the two with hero screenshots).
   - Left sidebar (~30%): title, status badge, tags, "Built with" chips, `Visit project →` button
   - Right main (~70%): hero screenshot + write-up
   - CTA opens `/projects/{slug}` in same tab
+- [ ] **`<WriteUpWindow>`** — narrower (~580×440), single-pane. Used for **Strava + AI Text** (active but no hero — gated/private surfaces). Title, status badge, tags, "Built with" chips, write-up, `Visit project →` button. Sits between `<RichProjectWindow>` and `<TerseArchivedWindow>` in fidelity so the dock doesn't visually demote them to "archived".
 - [ ] **`<TerseArchivedWindow>`** — smaller (~520×360), single-pane:
   - Title, status, 1-line description, tags, "Archived because…" note, CTA
 - [ ] **`<FinderWindow>`** — Archive folder behaviour:
@@ -132,7 +133,7 @@ Locked design decisions in `<concept>` block at end. This doc is the **tactical*
 
 ### Phase 9 — Content wire-up + QA
 
-- [ ] Wire 4 active-project write-ups + hero screenshots into rich windows
+- [ ] Wire 4 active-project write-ups into windows (DVG + Timeline get rich+hero, Strava + AI Text get write-up-only)
 - [ ] Wire 5 archived "Archived because…" lines into terse windows
 - [ ] Verify on actual screen sizes: 1920px, 1440px, 1024px, 768px, 414px (iPhone), 390px
 - [ ] Verify iOS path on actual phone (touch targets, sheet animation)
