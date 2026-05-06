@@ -18,6 +18,10 @@ export { Wallpaper } from './Wallpaper';
 
 export { MacDesktop } from './MacDesktop';
 
+export { MenuBar } from './MenuBar';
+
+export { LiveClock } from './LiveClock';
+
 export {
   PROJECT_ICONS,
   getProjectIcon,

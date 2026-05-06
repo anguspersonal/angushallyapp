@@ -1,0 +1,165 @@
+/* MenuBar — top glass strip for the macOS desktop redesign of /projects.
+   Mirrors the IconTile glass material (blur 24, saturation 1.1-1.2) so the
+   bar reads as part of the same chrome family as dock + icons. Edge-to-edge
+   so it doesn't conflict with the wallpaper title-stack underneath. */
+
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 12px;
+  font-family: var(--font-sans), Ubuntu, system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--site-ink);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+[data-mantine-color-scheme='dark'] .bar {
+  background: rgba(13, 31, 30, 0.55);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border-bottom: 0.5px solid rgba(250, 247, 240, 0.08);
+}
+
+[data-mantine-color-scheme='light'] .bar {
+  background: rgba(250, 247, 240, 0.65);
+  backdrop-filter: blur(24px) saturate(1.1);
+  -webkit-backdrop-filter: blur(24px) saturate(1.1);
+  border-bottom: 0.5px solid rgba(13, 31, 30, 0.08);
+}
+
+@supports not (backdrop-filter: blur(24px)) {
+  [data-mantine-color-scheme='dark'] .bar {
+    background: rgba(13, 31, 30, 0.92);
+  }
+
+  [data-mantine-color-scheme='light'] .bar {
+    background: rgba(250, 247, 240, 0.95);
+  }
+}
+
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.right {
+  gap: 12px;
+}
+
+.navGroup {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+/* AH monogram — clickable button that hosts the existing <AHMonogram> tile.
+   Reset the button chrome so the tile reads cleanly inside the menu bar. */
+.brandButton {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0 4px;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: background 150ms ease;
+}
+
+.brandButton:hover {
+  background: rgba(127, 127, 127, 0.12);
+}
+
+.brandButton:focus-visible {
+  outline: 2px solid var(--site-coral, #f0997b);
+  outline-offset: 2px;
+}
+
+/* Decorative app-menu labels — File / Edit / View / Help. Look-and-feel of a
+   real macOS menu bar item: padded label, hover wash, opens to a stub menu. */
+.appMenu {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 4px 9px;
+  font: inherit;
+  color: inherit;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: default;
+  line-height: 1;
+  transition: background 120ms ease;
+}
+
+.appMenu:hover,
+.appMenu[data-expanded='true'] {
+  background: rgba(127, 127, 127, 0.18);
+}
+
+.appMenu:focus-visible {
+  outline: 2px solid var(--site-coral, #f0997b);
+  outline-offset: 1px;
+}
+
+/* Site nav links on the right-hand side. Slightly lighter weight than the
+   app-menu labels so the eye reads "links" not "menus". */
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 5px;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+  line-height: 1;
+  transition: background 120ms ease;
+}
+
+.navLink:hover {
+  background: rgba(127, 127, 127, 0.18);
+}
+
+.navLink:focus-visible {
+  outline: 2px solid var(--site-coral, #f0997b);
+  outline-offset: 1px;
+}
+
+.clock {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  padding-left: 4px;
+  white-space: nowrap;
+}
+
+@media (max-width: 48em) {
+  /* Compress on narrow widths — drop the decorative menus so the right zone
+     stays legible. Phase 7 (mobile) replaces the menu bar wholesale; this is
+     just a graceful degradation for tablet-ish widths in the meantime. */
+  .appMenu {
+    display: none;
+  }
+
+  .bar {
+    font-size: 12px;
+    padding: 0 8px;
+    gap: 8px;
+  }
+
+  .right {
+    gap: 6px;
+  }
+}

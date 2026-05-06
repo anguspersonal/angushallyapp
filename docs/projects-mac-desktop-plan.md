@@ -44,12 +44,12 @@ Locked design decisions in `<concept>` block at end. This doc is the **tactical*
 
 ### Phase 2 — Menu bar
 
-- [ ] `<MenuBar>` component anchored to top, full width, ~28px tall, glass material
-- [ ] Left zone: AH monogram (clickable) + decorative labels `File / Edit / View / Help`
-- [ ] Right zone: site nav (`Home / Blog / About / Contact`) + `<LiveClock>` (auto-updating, your locale)
-- [ ] AH monogram → opens About window
-- [ ] App-menu labels: dropdowns either don't open or show a single greyed-out stub (`Nothing to see here`). Real items deferred to v2.
-- [ ] Right-side links route normally (standard `<Link>`)
+- [x] `<MenuBar>` component anchored to top, full width, ~28px tall, glass material — built in `src/components/projects-desktop/MenuBar.tsx`. Mounted by `<MacDesktop>` so the page surface is `<MacDesktop />` only. Glass material mirrors `IconTile` (blur 24, saturation 1.1–1.2) for chrome-family consistency, with a `@supports not (backdrop-filter)` fallback.
+- [x] Left zone: AH monogram (clickable) + decorative labels `File / Edit / View / Help` — monogram rendered via the existing `<AHMonogram>` primitive at `size={22}`.
+- [x] Right zone: site nav (`Home / Blog / About / Contact`) + `<LiveClock>` (auto-updating, your locale) — built in `src/components/projects-desktop/LiveClock.tsx`. Aligns its tick to the next minute boundary so the displayed value flips with the wall clock; SSR renders a hidden placeholder of the right approximate width to avoid hydration reflow. Note: `Projects` deliberately omitted from the nav — visitors are already on the projects desktop.
+- [x] AH monogram → opens About window — wired as a `<button>` with a no-op `onClick` for now. Phase 4 connects it to `WindowContext.openAbout()` without restructuring; a comment in `MenuBar.tsx` flags the wire-up site.
+- [x] App-menu labels: dropdowns either don't open or show a single greyed-out stub (`Nothing to see here`). Real items deferred to v2 — implemented with Mantine `Menu` + a single disabled `Menu.Item`. Picked the stub option (over "don't open") because it's the more delightful version of the metaphor.
+- [x] Right-side links route normally (standard `<Link>`) — uses `next/link`. They remain functional even before the window manager exists, which is the right behaviour: menu bar is system chrome, not part of the playful desktop metaphor.
 
 ### Phase 3 — Dock + icons (static visual first)
 
