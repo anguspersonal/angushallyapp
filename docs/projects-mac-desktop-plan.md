@@ -53,14 +53,13 @@ Locked design decisions in `<concept>` block at end. This doc is the **tactical*
 
 ### Phase 3 — Dock + icons (static visual first)
 
-- [ ] `<Dock>` component, glass material, anchored bottom-centre, fixed-width with rounded corners
-- [ ] `<DockIcon>` component: glass tile (~64px), 22% radius, project tint overlay, Tabler glyph centred
-- [ ] Dock layout: `[DVG] [Timeline•🔒] [Strava] [AI Text 🔒]   ｜   [📁 Archive]`
-  - Vertical divider rule between active apps and Archive folder
-- [ ] In-progress dot indicator (6px solid, accent colour, ~8px below icon) — visible on Timeline only
-- [ ] Lock badge (16-18px glass circle with `Lock` glyph, top-right corner) — visible on Timeline + AI Text
-- [ ] Tooltips on hover: `Project name · Status · Sign-in note (if gated)`
-- [ ] `<DesktopIcon>` for `Resume.pdf` — single icon on the desktop area, label below
+- [x] `<Dock>` component, glass material, anchored bottom-centre, fixed-width with rounded corners — built in `src/components/projects-desktop/Dock.tsx`. Glass material mirrors MenuBar + IconTile (blur 24, saturation 1.1–1.2) for chrome-family consistency, with an `@supports not (backdrop-filter)` fallback. `z-index: 90` (sits below the menu bar at 100). Click handlers are deliberately no-ops — Phase 4 will swap them for `WindowContext.openProject(id)` / `openFinder('archive')` without restructuring the JSX.
+- [x] `<DockIcon>` component: glass tile (~64px), 22% radius, project tint overlay, Tabler glyph centred — built in `src/components/projects-desktop/DockIcon.tsx`. Composes the existing `<ProjectAppIcon>` primitive so the tile shares its 20px-radius glass material (errata: actual radius is 20px, not 22%). Hover/focus lifts via `translateY(-4px) scale(1.06)` with a `cubic-bezier(0.22, 1, 0.36, 1)` curve; reduced-motion users get no transform.
+- [x] Dock layout: `[DVG] [Timeline•🔒] [Strava] [AI Text 🔒]   ｜   [📁 Archive]` — order is hard-coded (`DOCK_PROJECT_IDS = [0, 8, 3, 5]`) per the plan's curated reading order rather than derived from `status`. Vertical divider implemented as a `1px` low-opacity bar with theme-aware colour.
+- [x] In-progress dot indicator (6px solid, accent colour, ~8px below icon) — visible on Timeline only. Rendered as `.statusDot` (6×6, `var(--site-coral, #f0997b)`, soft glow). Non-in-progress icons render an invisible `.statusDotPlaceholder` of the same size so the icon row's vertical baseline doesn't shift.
+- [x] Lock badge (16-18px glass circle with `Lock` glyph, top-right corner) — visible on Timeline + AI Text. 18px circle with its own miniature glass material (blur 12), positioned at `top: -4px; right: -4px` so it overhangs the tile corner like an applied indicator rather than feeling "inside" the tile.
+- [x] Tooltips on hover: `Project name · Status · Sign-in note (if gated)` — Mantine `<Tooltip>`, `position="top"`, `offset={14}`, `openDelay={250}`, with arrow. Tooltip label is also the button's `aria-label`, so the same string is announced to screen readers.
+- [x] `<DesktopIcon>` for `Resume.pdf` — single icon on the desktop area, label below. Built in `src/components/projects-desktop/DesktopIcon.tsx` as a generic primitive (label + children + onClick + className) so later phases can drop additional desktop icons in without a new component. The Resume slot is positioned via the exported `desktopSlot.resume` class (top-right, clear of the menu bar). Label uses theme-aware text-shadow for legibility on both day and night wallpapers — chosen over a pill background because it keeps the desktop visually quieter.
 
 ### Phase 4 — Window manager (engine)
 

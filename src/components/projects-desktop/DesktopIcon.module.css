@@ -1,0 +1,93 @@
+/* DesktopIcon — single icon-with-label sitting on the desktop surface.
+   Used initially for Resume.pdf in the top-right; structure is generic so
+   later phases can place additional desktop icons without new components. */
+
+.icon {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 6px 4px;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  transition: background 150ms ease;
+}
+
+.icon:hover {
+  background: rgba(127, 127, 127, 0.12);
+}
+
+.icon:focus-visible {
+  outline: 2px solid var(--site-coral, #f0997b);
+  outline-offset: 2px;
+}
+
+.iconWrap {
+  display: inline-flex;
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.icon:hover .iconWrap,
+.icon:focus-visible .iconWrap {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.icon:active .iconWrap {
+  transform: translateY(0) scale(1);
+  transition-duration: 80ms;
+}
+
+/* Label — small, centred, with a soft text-shadow so it reads on both day
+   and night wallpapers without an explicit pill background. */
+.label {
+  font-family: var(--font-sans), Ubuntu, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--site-ink);
+  text-align: center;
+  max-width: 88px;
+  word-break: break-word;
+}
+
+[data-mantine-color-scheme='dark'] .label {
+  color: rgba(250, 247, 240, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+[data-mantine-color-scheme='light'] .label {
+  color: rgba(13, 31, 30, 0.92);
+  text-shadow: 0 1px 2px rgba(250, 247, 240, 0.6);
+}
+
+/* Default desktop slot for the Resume document — top-right, clear of the
+   28px menu bar. Consumers can override with their own className for other
+   desktop icons in future phases. */
+.slotResume {
+  position: absolute;
+  top: 56px;
+  right: 28px;
+  z-index: 10;
+}
+
+@media (max-width: 48em) {
+  .slotResume {
+    top: 44px;
+    right: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iconWrap,
+  .icon:hover .iconWrap,
+  .icon:focus-visible .iconWrap,
+  .icon:active .iconWrap {
+    transform: none;
+    transition: none;
+  }
+}

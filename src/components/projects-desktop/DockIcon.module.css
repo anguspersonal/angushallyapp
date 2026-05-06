@@ -1,0 +1,124 @@
+/* DockIcon — single button wrapping a project tile in the dock.
+   Composes the IconTile primitive (glass material + glyph) and adds the two
+   status overlays unique to dock context: a lock badge (top-right, for gated
+   projects) and an "in-progress" dot below the tile. Phase 8 will add the
+   cursor-distance magnification curve; Phase 3 keeps the hover lift simple. */
+
+.button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  /* Reserve the dot's space so absent dots don't shift the icon row. */
+  padding-bottom: 4px;
+}
+
+/* iconWrap is the positioning context for the lock badge — sized to the
+   tile so the badge can hang off its corner without extra plumbing. */
+.iconWrap {
+  position: relative;
+  display: inline-flex;
+  transition:
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 200ms ease;
+  will-change: transform;
+}
+
+.button:hover .iconWrap,
+.button:focus-visible .iconWrap {
+  transform: translateY(-4px) scale(1.06);
+  filter: drop-shadow(0 8px 18px rgba(13, 31, 30, 0.25));
+}
+
+.button:active .iconWrap {
+  transform: translateY(-2px) scale(1.02);
+  transition-duration: 80ms;
+}
+
+.button:focus-visible {
+  outline: none;
+}
+
+.button:focus-visible .iconWrap {
+  /* Focus ring is rendered as a synthetic outline via box-shadow on the tile
+     wrapper so it follows the rounded shape rather than the square button. */
+  box-shadow:
+    0 0 0 2px rgba(240, 153, 123, 0.9),
+    0 8px 18px rgba(13, 31, 30, 0.25);
+  border-radius: 20px;
+}
+
+/* Lock badge — small glass circle in the top-right corner, overhanging the
+   tile by ~25% so it reads as an applied indicator rather than part of the
+   tile itself. Mirrors IconTile's glass material at smaller scale. */
+.lockBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+[data-mantine-color-scheme='dark'] .lockBadge {
+  background: rgba(13, 31, 30, 0.7);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border: 0.5px solid rgba(250, 247, 240, 0.18);
+  color: rgba(250, 247, 240, 0.85);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-mantine-color-scheme='light'] .lockBadge {
+  background: rgba(250, 247, 240, 0.85);
+  backdrop-filter: blur(12px) saturate(1.1);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  border: 0.5px solid rgba(13, 31, 30, 0.12);
+  color: rgba(13, 31, 30, 0.75);
+  box-shadow: 0 2px 4px rgba(13, 31, 30, 0.1);
+}
+
+.lockBadge svg {
+  width: 11px;
+  height: 11px;
+  stroke-width: 2.25;
+}
+
+/* In-progress indicator — small filled dot 8px below the tile, accent colour. */
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--site-coral, #f0997b);
+  margin-top: 4px;
+  box-shadow: 0 0 6px rgba(240, 153, 123, 0.5);
+}
+
+/* Slot reserved when there is no dot, so icon vertical centres line up. */
+.statusDotPlaceholder {
+  width: 6px;
+  height: 6px;
+  margin-top: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iconWrap,
+  .button:hover .iconWrap,
+  .button:focus-visible .iconWrap,
+  .button:active .iconWrap {
+    transform: none;
+    transition: none;
+    filter: none;
+  }
+}
