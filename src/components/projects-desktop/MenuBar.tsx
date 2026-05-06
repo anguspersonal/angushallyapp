@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu } from '@mantine/core';
 import { AHMonogram } from './IconTile';
 import { LiveClock } from './LiveClock';
+import { useWindow } from './WindowContext';
 import styles from './MenuBar.module.css';
 
 /**
@@ -55,22 +56,26 @@ function AppMenu({ label }: AppMenuProps) {
  *
  * Layout: [AH] File Edit View Help  ......  Home Blog About Contact  Wed 6 May 10:23
  *
- * The AH monogram is wired as a button now so Phase 4 can connect it to the
- * window manager (clicking opens the About window) without restructuring. Site
- * nav links route normally as standard `<Link>`s — they remain functional even
- * before the window manager exists, which is the right behaviour: the menu bar
- * is "system chrome", not part of the playful desktop metaphor.
+ * The AH monogram is wired to `useWindow().openAbout()` (Phase 4). Site nav
+ * links route normally as standard `<Link>`s — they remain functional even if
+ * the window manager hasn't loaded yet, which is the right behaviour: the menu
+ * bar is "system chrome", not part of the playful desktop metaphor.
  */
 export function MenuBar() {
+  const { openAbout } = useWindow();
+
+  const handleBrandClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    openAbout({ x: rect.x, y: rect.y, w: rect.width, h: rect.height });
+  };
+
   return (
     <header className={styles.bar} aria-label="Menu bar">
       <div className={styles.left}>
         <button
           type="button"
           className={styles.brandButton}
-          // Phase 4 wires this to WindowContext.openAbout(). Until the window
-          // engine exists the click is intentionally a no-op.
-          onClick={() => {}}
+          onClick={handleBrandClick}
           aria-label="Open About window"
         >
           <AHMonogram size={22} label="Angus Hally" />

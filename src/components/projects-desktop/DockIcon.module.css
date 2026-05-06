@@ -24,20 +24,23 @@
 .iconWrap {
   position: relative;
   display: inline-flex;
+  /* Phase 8: Apply cursor-distance magnification via CSS custom property */
+  transform: scale(var(--dock-scale, 1));
   transition:
-    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
     filter 200ms ease;
   will-change: transform;
 }
 
+/* Combine dock magnification with hover lift effect */
 .button:hover .iconWrap,
 .button:focus-visible .iconWrap {
-  transform: translateY(-4px) scale(1.06);
+  transform: scale(var(--dock-scale, 1)) translateY(-4px);
   filter: drop-shadow(0 8px 18px rgba(13, 31, 30, 0.25));
 }
 
 .button:active .iconWrap {
-  transform: translateY(-2px) scale(1.02);
+  transform: scale(calc(var(--dock-scale, 1) * 0.98)) translateY(-2px);
   transition-duration: 80ms;
 }
 
@@ -117,6 +120,7 @@
   .button:hover .iconWrap,
   .button:focus-visible .iconWrap,
   .button:active .iconWrap {
+    /* Phase 8: Disable dock magnification and hover effects for reduced motion */
     transform: none;
     transition: none;
     filter: none;

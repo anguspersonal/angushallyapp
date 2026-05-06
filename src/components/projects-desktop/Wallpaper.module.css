@@ -18,6 +18,8 @@
 .base {
   position: absolute;
   inset: 0;
+  /* Phase 8: Crossfade transition when theme toggles */
+  transition: background-color 500ms ease, background-image 500ms ease;
 }
 
 [data-mantine-color-scheme='light'] .base {

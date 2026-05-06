@@ -1,0 +1,250 @@
+/* RichProjectWindow — two-pane layout for projects with hero screenshots.
+   Left sidebar: metadata, right main: screenshot + write-up. */
+
+.root {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---------- Sidebar (~30%) ---------- */
+
+.sidebar {
+  flex: 0 0 32%;
+  max-width: 240px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-right: 0.5px solid;
+  overflow-y: auto;
+}
+
+[data-mantine-color-scheme='dark'] .sidebar {
+  border-right-color: rgba(250, 247, 240, 0.08);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+[data-mantine-color-scheme='light'] .sidebar {
+  border-right-color: rgba(13, 31, 30, 0.06);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.iconSection {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.title {
+  font-family: var(--font-display), League Gothic, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.metaSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.statusBadge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+.statusInProgress {
+  background: var(--site-accent, #f0997b);
+  color: var(--site-cta-on-coral, #4a1b0c);
+}
+
+.statusDone {
+  background: rgba(122, 156, 131, 0.25);
+  color: inherit;
+}
+
+.statusArchived {
+  background: rgba(87, 99, 102, 0.25);
+  color: inherit;
+}
+
+.gatedBadge {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.tagsSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.tag {
+  text-transform: lowercase;
+}
+
+.builtWithSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.sectionLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  text-align: center;
+}
+
+.chipsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.techChip {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(127, 127, 127, 0.15);
+  white-space: nowrap;
+}
+
+.ctaSection {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.ctaButton {
+  width: 100%;
+}
+
+/* ---------- Main pane (~70%) ---------- */
+
+.main {
+  flex: 1 1 auto;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.screenshotWrap {
+  flex: 0 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 0.5px solid;
+}
+
+[data-mantine-color-scheme='dark'] .screenshotWrap {
+  border-color: rgba(250, 247, 240, 0.1);
+}
+
+[data-mantine-color-scheme='light'] .screenshotWrap {
+  border-color: rgba(13, 31, 30, 0.08);
+}
+
+.screenshot {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.writeUp {
+  flex: 1 1 auto;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.paragraph {
+  margin: 0 0 12px;
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    scrollbar-width: auto;
+  }
+}
+
+/* ---------- Small window adaptation ---------- */
+
+@media (max-width: 37.5em) {
+  .root {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    flex: 0 0 auto;
+    max-width: none;
+    border-right: none;
+    border-bottom: 0.5px solid;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 12px 16px;
+  }
+
+  [data-mantine-color-scheme='dark'] .sidebar {
+    border-bottom-color: rgba(250, 247, 240, 0.08);
+  }
+
+  [data-mantine-color-scheme='light'] .sidebar {
+    border-bottom-color: rgba(13, 31, 30, 0.06);
+  }
+
+  .iconSection {
+    padding: 0;
+  }
+
+  .title {
+    font-size: 18px;
+    flex: 1 1 auto;
+    text-align: left;
+  }
+
+  .metaSection {
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .tagsSection,
+  .builtWithSection {
+    display: none;
+  }
+
+  .ctaSection {
+    margin-top: 0;
+    padding-top: 0;
+    width: auto;
+  }
+
+  .ctaButton {
+    width: auto;
+  }
+}

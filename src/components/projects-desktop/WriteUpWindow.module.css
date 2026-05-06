@@ -1,0 +1,133 @@
+/* WriteUpWindow — narrower single-pane layout for projects without hero screenshots.
+   Used for Strava and AI Text (active but no hero image). */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  overflow-y: auto;
+  gap: 16px;
+}
+
+/* ---------- Header ---------- */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-display), League Gothic, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusBadge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+
+.statusInProgress {
+  background: var(--site-accent, #f0997b);
+  color: var(--site-cta-on-coral, #4a1b0c);
+}
+
+.statusDone {
+  background: rgba(122, 156, 131, 0.25);
+  color: inherit;
+}
+
+.statusArchived {
+  background: rgba(87, 99, 102, 0.25);
+  color: inherit;
+}
+
+.gatedBadge {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* ---------- Chips row ---------- */
+
+.chipsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.tag {
+  text-transform: lowercase;
+}
+
+.techChip {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(127, 127, 127, 0.15);
+  white-space: nowrap;
+}
+
+/* ---------- Write-up ---------- */
+
+.writeUp {
+  flex: 1 1 auto;
+  font-size: 13px;
+  line-height: 1.65;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.paragraph {
+  margin: 0 0 12px;
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- CTA ---------- */
+
+.ctaSection {
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.ctaButton {
+  width: 100%;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    scrollbar-width: auto;
+  }
+}

@@ -44,12 +44,14 @@ export function LiveClock({ className }: LiveClockProps) {
     );
   }
 
+  // Phase 8: Use locale-based 12h/24h format (hour12: undefined lets locale decide)
   const formatted = now.toLocaleString(undefined, {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
     minute: '2-digit',
+    hour12: undefined, // Locale decides 12h vs 24h
   });
 
   return (

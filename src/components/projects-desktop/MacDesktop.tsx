@@ -6,14 +6,23 @@ import { MenuBar } from './MenuBar';
 import { Dock } from './Dock';
 import { DesktopIcon, desktopSlot } from './DesktopIcon';
 import { DocumentIcon } from './IconTile';
+import { WindowProvider, useWindow } from './WindowContext';
+import { WindowManager } from './WindowManager';
+import { MacBootIntro } from './MacBootIntro';
+import { MobileBootIntro } from './MobileBootIntro';
+import { MobileHomeScreen } from './MobileHomeScreen';
+import { MobileProjectSheet } from './MobileProjectSheet';
+import { MobileArchiveFolder } from './MobileArchiveFolder';
+import { useMobileBreakpoint } from './useMobileBreakpoint';
+import { projectList } from '@/data/projectList';
 import styles from './MacDesktop.module.css';
+import mobileStyles from './MacDesktopMobile.module.css';
 
 interface MacDesktopProps {
   /**
-   * Optional extra content rendered on the desktop surface (e.g. floating
-   * windows from the Phase 4 window manager). The wallpaper, menu bar, dock,
-   * and Resume.pdf desktop icon are mounted internally so the page surface
-   * stays a single `<MacDesktop />`.
+   * Optional extra content rendered on the desktop surface. Most chrome
+   * (wallpaper, menu bar, dock, Resume.pdf icon, window manager) is mounted
+   * internally so the page surface stays a single `<MacDesktop />`.
    */
   children?: React.ReactNode;
 }
@@ -22,32 +31,128 @@ interface MacDesktopProps {
  * Full-viewport macOS desktop shell for `/projects`.
  *
  * Layering (z-axis, bottom → top):
- *   Wallpaper → DesktopIcon(s) → Dock (z=90) → MenuBar (z=100) → children
+ *   Wallpaper → DesktopIcon(s) → Windows (z=31..) → Dock (z=90) → MenuBar (z=100)
  *
- * Phase 4 will add the window manager, which mounts windows via `children`
- * rendered by the WindowContext provider — keeping that responsibility outside
- * MacDesktop preserves the "MacDesktop describes static chrome" contract.
+ * Windows live below both the dock and the menu bar so the chrome stays
+ * persistent (matches macOS conceptually — the menu bar is always on top, and
+ * here the dock joins it as system chrome rather than a clickable overlay).
+ *
+ * The component is split into a thin outer that mounts `<WindowProvider>` and
+ * an inner that consumes `useWindow()`. That lets the Resume desktop icon's
+ * `onClick` call into the same context used by the dock and menu bar.
  */
 export function MacDesktop({ children }: MacDesktopProps) {
   return (
+    <WindowProvider>
+      <MacDesktopInner>{children}</MacDesktopInner>
+    </WindowProvider>
+  );
+}
+
+/**
+ * Desktop layout (macOS) - full window manager with drag, multi-window, etc.
+ */
+function DesktopLayout({ children }: MacDesktopProps) {
+  const { openResume } = useWindow();
+
+  return (
     <div className={styles.root}>
+      {/* Desktop boot intro */}
+      <MacBootIntro />
+
       <Wallpaper />
       <MenuBar />
 
       <DesktopIcon
         label="Resume.pdf"
         className={desktopSlot.resume}
-        // Phase 4 wires this to WindowContext.openResume().
-        onClick={() => {}}
+        onClick={(origin) => openResume(origin)}
       >
         <DocumentIcon size={64} label="Resume.pdf" badge="PDF" />
       </DesktopIcon>
 
       <Dock />
 
+      <WindowManager />
+
       {children}
     </div>
   );
+}
+
+/**
+ * Mobile layout (iOS Home Screen) - single sheet UI, no drag, no multi-window.
+ */
+function MobileLayout() {
+  const [selectedProjectId, setSelectedProjectId] = React.useState<number | null>(null);
+  const [isArchiveOpen, setIsArchiveOpen] = React.useState(false);
+
+  const selectedProject = React.useMemo(() => {
+    if (selectedProjectId === null) return null;
+    return projectList.find((p) => p.id === selectedProjectId) ?? null;
+  }, [selectedProjectId]);
+
+  const handleOpenProject = (projectId: number) => {
+    setSelectedProjectId(projectId);
+  };
+
+  const handleCloseProject = () => {
+    setSelectedProjectId(null);
+  };
+
+  const handleOpenArchive = () => {
+    setIsArchiveOpen(true);
+  };
+
+  const handleCloseArchive = () => {
+    setIsArchiveOpen(false);
+  };
+
+  return (
+    <div className={mobileStyles.root}>
+      {/* Mobile boot intro */}
+      <MobileBootIntro />
+
+      <Wallpaper />
+
+      {/* Mobile menu bar - simplified */}
+      <div className={mobileStyles.mobileHeader}>
+        <span className={mobileStyles.mobileTitle}>Projects</span>
+      </div>
+
+      {/* iOS Home Screen grid */}
+      <div className={mobileStyles.homeScreen}>
+        <MobileHomeScreen
+          onOpenProject={handleOpenProject}
+          onOpenArchive={handleOpenArchive}
+        />
+      </div>
+
+      {/* Project sheet (opens when project tapped) */}
+      <MobileProjectSheet
+        project={selectedProject}
+        isOpen={selectedProjectId !== null}
+        onClose={handleCloseProject}
+      />
+
+      {/* Archive folder (iOS folder pattern) */}
+      <MobileArchiveFolder
+        isOpen={isArchiveOpen}
+        onClose={handleCloseArchive}
+        onOpenProject={handleOpenProject}
+      />
+    </div>
+  );
+}
+
+function MacDesktopInner({ children }: MacDesktopProps) {
+  const isMobile = useMobileBreakpoint();
+
+  if (isMobile) {
+    return <MobileLayout />;
+  }
+
+  return <DesktopLayout>{children}</DesktopLayout>;
 }
 
 export default MacDesktop;

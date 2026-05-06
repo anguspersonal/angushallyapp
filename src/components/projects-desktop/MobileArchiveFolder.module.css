@@ -1,0 +1,182 @@
+/* MobileArchiveFolder — iOS-style folder overlay for archived projects.
+   Centered modal with blurred backdrop, 3-4 column grid of icons. */
+
+/* Backdrop */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 150;
+  backdrop-filter: blur(20px);
+}
+
+/* Folder container */
+.folder {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(320px, 90vw);
+  max-height: 80vh;
+  z-index: 160;
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+[data-mantine-color-scheme='dark'] .folder {
+  background: rgba(30, 45, 44, 0.95);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 0.5px rgba(250, 247, 240, 0.1);
+}
+
+[data-mantine-color-scheme='light'] .folder {
+  background: rgba(250, 247, 240, 0.95);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 20px 60px rgba(13, 31, 30, 0.2),
+    0 0 0 0.5px rgba(13, 31, 30, 0.08);
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 0.5px solid;
+  flex-shrink: 0;
+}
+
+[data-mantine-color-scheme='dark'] .header {
+  border-bottom-color: rgba(250, 247, 240, 0.1);
+}
+
+[data-mantine-color-scheme='light'] .header {
+  border-bottom-color: rgba(13, 31, 30, 0.08);
+}
+
+.title {
+  font-family: var(--font-display), League Gothic, sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(127, 127, 127, 0.2);
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.closeButton:hover {
+  background: rgba(127, 127, 127, 0.3);
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--site-accent, #f0997b);
+  outline-offset: 2px;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 12px;
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+/* Icon button */
+.iconButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+
+.iconButton:active {
+  opacity: 0.7;
+  transform: scale(0.96);
+}
+
+.iconButton:focus-visible {
+  outline: 2px solid var(--site-accent, #f0997b);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconLabel {
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.3;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+[data-mantine-color-scheme='light'] .iconLabel {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Footer */
+.footer {
+  padding: 12px 20px;
+  text-align: center;
+  border-top: 0.5px solid;
+  flex-shrink: 0;
+}
+
+[data-mantine-color-scheme='dark'] .footer {
+  border-top-color: rgba(250, 247, 240, 0.1);
+}
+
+[data-mantine-color-scheme='light'] .footer {
+  border-top-color: rgba(13, 31, 30, 0.08);
+}
+
+.count {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .folder {
+    transition: none !important;
+  }
+
+  .iconButton:active {
+    transform: none;
+  }
+}

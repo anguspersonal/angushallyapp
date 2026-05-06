@@ -1,13 +1,17 @@
 'use client';
 
 import * as React from 'react';
+import type { OriginRect } from './WindowContext';
 import styles from './DesktopIcon.module.css';
 
 interface DesktopIconProps {
   /** Visible label rendered beneath the tile. */
   label: string;
-  /** Click handler. Phase 4 wires this to the window manager. */
-  onClick?: () => void;
+  /**
+   * Click handler. Receives the icon's bounding rect in viewport coords so the
+   * window manager can animate the open transition from icon → window.
+   */
+  onClick?: (origin: OriginRect) => void;
   /** The IconTile element to render — DocumentIcon, FolderIcon, AppIcon, etc. */
   children: React.ReactNode;
   /**
@@ -25,11 +29,17 @@ interface DesktopIconProps {
  * be added in later phases without a new component.
  */
 export function DesktopIcon({ label, onClick, children, className }: DesktopIconProps) {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!onClick) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    onClick({ x: rect.x, y: rect.y, w: rect.width, h: rect.height });
+  };
+
   return (
     <button
       type="button"
       className={`${styles.icon} ${className ?? ''}`.trim()}
-      onClick={onClick}
+      onClick={handleClick}
       aria-label={`Open ${label}`}
     >
       <span className={styles.iconWrap}>{children}</span>

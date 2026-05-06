@@ -1,0 +1,86 @@
+/* MobileBootIntro — scaled macOS-style boot animation for mobile.
+   Same 5-phase timeline as desktop, adjusted for smaller viewports. */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* Dark background layer */
+.darkBg {
+  position: absolute;
+  inset: 0;
+  background: #0d1f1e;
+  z-index: 0;
+}
+
+/* Center content */
+.centerContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Monogram - smaller than desktop (64px vs 96px) */
+.monogramWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.monogram {
+  --tile-size: 64px !important;
+  color: #faf7f0;
+}
+
+/* Progress bar - narrower for mobile */
+.progressTrack {
+  width: 120px;
+  height: 3px;
+  background: rgba(250, 247, 240, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  width: 100%;
+  height: 100%;
+  background: var(--site-accent, #f0997b);
+  border-radius: 2px;
+}
+
+/* Skip hint */
+.skipHint {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: rgba(250, 247, 240, 0.5);
+  letter-spacing: 0.02em;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .darkBg,
+  .monogramWrap,
+  .progressTrack,
+  .skipHint {
+    animation: none !important;
+    transition: none !important;
+  }
+}
