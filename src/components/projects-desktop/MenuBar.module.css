@@ -61,7 +61,7 @@
 .navGroup {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 4px;
 }
 
 /* AH monogram — clickable button that hosts the existing <AHMonogram> tile.
@@ -88,54 +88,146 @@
   outline-offset: 2px;
 }
 
-/* Decorative app-menu labels — File / Edit / View / Help. Look-and-feel of a
-   real macOS menu bar item: padded label, hover wash, opens to a stub menu. */
-.appMenu {
+/* Decorative app-menu labels (File / Edit / View / Help) and right-side
+   site nav (Home / Blog / About / Contact) share the same look-and-feel
+   of a real macOS menu bar item: padded label, hover wash, focus ring,
+   pressed state. Behaviour differs (the AppMenus open dropdowns, the
+   NavLinks redirect) but the chrome is identical.
+
+   src/general.css ships legacy globals that style raw `<a>` and
+   `<button>` site-wide (color: var(--accent-color) on hover, and a
+   `outline: 4px auto` blue focus ring on buttons). These selectors are
+   low-specificity (0,1,1) so our class rules (0,2,0) win — but ONLY for
+   the properties we explicitly set. Hence the explicit `color: inherit`
+   on every interactive state, and explicit `outline` on :focus (not just
+   :focus-visible) to suppress the global blue auto-outline on mouse focus. */
+.appMenu,
+.navLink {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
   background: transparent;
   border: 0;
   margin: 0;
   padding: 4px 9px;
   font: inherit;
   color: inherit;
+  text-decoration: none;
   font-weight: 600;
+  line-height: 1;
   border-radius: 5px;
   cursor: default;
-  line-height: 1;
+  outline: none;
   transition: background 120ms ease;
 }
 
 .appMenu:hover,
-.appMenu[data-expanded='true'] {
+.appMenu[data-expanded='true'],
+.appMenu:focus,
+.navLink:hover,
+.navLink:focus {
   background: rgba(127, 127, 127, 0.18);
-}
-
-.appMenu:focus-visible {
-  outline: 2px solid var(--site-coral, #f0997b);
-  outline-offset: 1px;
-}
-
-/* Site nav links on the right-hand side. Slightly lighter weight than the
-   app-menu labels so the eye reads "links" not "menus". */
-.navLink {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 8px;
-  border-radius: 5px;
-  text-decoration: none;
   color: inherit;
-  font-weight: 500;
-  line-height: 1;
-  transition: background 120ms ease;
+  outline: none;
 }
 
-.navLink:hover {
-  background: rgba(127, 127, 127, 0.18);
+.appMenu:active,
+.navLink:active {
+  background: rgba(127, 127, 127, 0.28);
+  color: inherit;
 }
 
+.appMenu:focus-visible,
 .navLink:focus-visible {
   outline: 2px solid var(--site-coral, #f0997b);
   outline-offset: 1px;
+}
+
+/* Reserved width so menu items with and without a check share the same
+   left edge — the check icon is 14px, this matches it visually. */
+.menuItemCheckPlaceholder {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+}
+
+/* ---------------------------------------------------------------------------
+   Native-Mac dropdown styling
+   ---------------------------------------------------------------------------
+   Mantine's defaults render Menu.Item as a button-ish chip (rounded, padded,
+   tinted hover background). Native macOS menus are flat rows: plain text on
+   the dropdown's translucent material, full-width accent fill on hover, no
+   per-item rounding.
+
+   Mantine v7+ wraps its own styles in `@layer mantine`, so the rules in
+   this (unlayered) module beat them on cascade automatically — no
+   !important needed. The classes are passed to Mantine via the
+   `classNames` prop on <Menu> so accessibility behaviour is preserved. */
+
+.dropdown {
+  padding: 4px 0;
+  min-width: 200px;
+  border-radius: 6px;
+  border-width: 0.5px;
+}
+
+[data-mantine-color-scheme='light'] .dropdown {
+  background: rgba(250, 247, 240, 0.94);
+  backdrop-filter: blur(24px) saturate(1.1);
+  -webkit-backdrop-filter: blur(24px) saturate(1.1);
+  border-color: rgba(13, 31, 30, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+[data-mantine-color-scheme='dark'] .dropdown {
+  background: rgba(13, 31, 30, 0.88);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border-color: rgba(250, 247, 240, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+@supports not (backdrop-filter: blur(24px)) {
+  [data-mantine-color-scheme='light'] .dropdown {
+    background: rgba(250, 247, 240, 0.98);
+  }
+  [data-mantine-color-scheme='dark'] .dropdown {
+    background: rgba(13, 31, 30, 0.96);
+  }
+}
+
+/* Item — flat row, no per-item rounding, no own background. */
+.item {
+  padding: 4px 14px;
+  border-radius: 0;
+  background: transparent;
+  color: var(--site-ink);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  cursor: default;
+}
+
+/* Full-width accent fill — covers mouse hover (`:hover`), keyboard Tab focus
+   (`:focus-visible`), and Mantine's keyboard arrow-nav (`[data-hovered]`).
+   Specificity (0,2,0) thanks to `:not([data-disabled])` — beats Mantine's
+   own (0,1,0) selectors cleanly. */
+.item:where(:hover, :focus-visible, [data-hovered]):not([data-disabled]) {
+  background: var(--site-accent, #f0997b);
+  color: #faf7f0;
+}
+
+.item[data-disabled] {
+  opacity: 0.45;
+  background: transparent;
+  color: var(--site-ink);
+  cursor: default;
+}
+
+/* Hairline section separator. */
+.divider {
+  margin: 4px 0;
+  border-top: 0.5px solid rgba(127, 127, 127, 0.22);
 }
 
 .clock {
