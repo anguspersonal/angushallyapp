@@ -1,0 +1,27 @@
+/* ConfirmHomeWindow body — small dialog asking the visitor to confirm
+   they want to leave the projects desktop and go to the site home. */
+
+.root {
+  padding: 20px 24px 20px;
+  font-family: var(--font-sans), Ubuntu, system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--site-ink);
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message {
+  margin: 0;
+  line-height: 1.5;
+  opacity: 0.92;
+}
+
+.actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
