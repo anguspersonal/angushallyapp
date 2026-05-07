@@ -3,6 +3,13 @@
    saturation 1.1-1.2). Sits below the menu bar in z-order. */
 
 .dock {
+  /* Layout rhythm scales from a single knob. Keep --dock-icon-size in sync
+     with the `size` prop passed to DockIcon / FolderIcon (default 64). */
+  --dock-icon-size: 64px;
+  --dock-gap: calc(var(--dock-icon-size) * 0.47);   /* ~30px @ 64px */
+  --dock-pad-x: calc(var(--dock-icon-size) * 0.34); /* ~22px @ 64px */
+  --dock-pad-y: calc(var(--dock-icon-size) * 0.16); /* ~10px @ 64px */
+
   position: fixed;
   bottom: 16px;
   left: 50%;
@@ -10,8 +17,8 @@
   z-index: 90;
   display: flex;
   align-items: flex-end;
-  gap: 8px;
-  padding: 10px 14px;
+  gap: var(--dock-gap);
+  padding: var(--dock-pad-y) var(--dock-pad-x);
   border-radius: 22px;
   pointer-events: auto;
   user-select: none;
@@ -52,7 +59,7 @@
 .group {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
+  gap: var(--dock-gap);
 }
 
 /* Vertical divider rule between active apps and the Archive folder.
@@ -73,7 +80,7 @@
 }
 
 /* Archive folder button — same hover-lift pattern as DockIcon, but the tile
-   is the FolderIcon primitive and there's no status-row beneath. */
+   is the FolderIcon primitive. */
 .folderButton {
   appearance: none;
   background: transparent;
@@ -82,10 +89,7 @@
   margin: 0;
   cursor: pointer;
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
-  /* Match DockIcon vertical rhythm so folder + apps share a baseline. */
-  padding-bottom: 4px;
 }
 
 .folderIconWrap {
@@ -102,7 +106,7 @@
 .folderButton:hover .folderIconWrap,
 .folderButton:focus-visible .folderIconWrap {
   transform: scale(var(--dock-scale, 1)) translateY(-4px);
-  filter: drop-shadow(0 8px 18px rgba(13, 31, 30, 0.25));
+  filter: brightness(0) invert(1) drop-shadow(0 8px 22px rgba(0, 0, 0, 0.4));
 }
 
 .folderButton:active .folderIconWrap {
@@ -114,30 +118,27 @@
   outline: none;
 }
 
-.folderButton:focus-visible .folderIconWrap {
-  box-shadow:
-    0 0 0 2px rgba(240, 153, 123, 0.9),
-    0 8px 18px rgba(13, 31, 30, 0.25);
-  border-radius: 20px;
-}
-
-/* Reserve the same vertical slot DockIcon uses for its dot, so the folder
-   tile baseline matches the project tiles. */
-.folderSpacer {
-  width: 6px;
-  height: 6px;
-  margin-top: 4px;
+/* Strip the tile's resting border + inset highlight on hover so the inverted
+   white silhouette reads as a clean solid shape rather than a hollow ring. */
+.folderButton:hover .dockTile,
+.folderButton:focus .dockTile,
+.folderButton:focus-visible .dockTile,
+.folderButton:active .dockTile {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 @media (max-width: 48em) {
   .dock {
     bottom: 12px;
-    padding: 8px 10px;
-    gap: 6px;
-  }
-
-  .group {
-    gap: 6px;
+    /* Tighter rhythm on small screens — icons stay 64px but the platter
+       gets denser. Override the ratios, not the resolved values. */
+    --dock-gap: calc(var(--dock-icon-size) * 0.28);
+    --dock-pad-x: calc(var(--dock-icon-size) * 0.22);
+    --dock-pad-y: calc(var(--dock-icon-size) * 0.13);
   }
 }
 

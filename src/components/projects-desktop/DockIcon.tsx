@@ -2,17 +2,10 @@
 
 import * as React from 'react';
 import { Tooltip } from '@mantine/core';
-import { IconLock } from '@tabler/icons-react';
 import { ProjectAppIcon } from './IconTile';
-import type { ProjectItem, ProjectStatus } from '@/data/projectList';
+import type { ProjectItem } from '@/data/projectList';
 import type { OriginRect } from './WindowContext';
 import styles from './DockIcon.module.css';
-
-const STATUS_LABEL: Record<ProjectStatus, string> = {
-  'in-progress': 'In progress',
-  done: 'Done',
-  archived: 'Archived',
-};
 
 interface DockIconProps {
   project: ProjectItem;
@@ -32,18 +25,15 @@ interface DockIconProps {
  *
  * Layered structure:
  *   button.button  ← hover/focus target, owns lift transform
- *     span.iconWrap (positioning context for badge)
+ *     span.iconWrap
  *       <ProjectAppIcon /> (glass tile + tinted glyph)
- *       span.lockBadge (gated only)
  *     span.statusDot (in-progress only)
  *
  * Phase 8 adds cursor-distance magnification via the `scale` prop.
  */
 export const DockIcon = React.forwardRef<HTMLButtonElement, DockIconProps>(
   function DockIcon({ project, onClick, size = 64, scale = 1 }, ref) {
-    const tooltipParts: string[] = [project.name, STATUS_LABEL[project.status]];
-    if (project.gated) tooltipParts.push('Sign-in required');
-    const tooltipLabel = tooltipParts.join(' · ');
+    const tooltipLabel = project.name;
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (!onClick) return;
@@ -70,18 +60,13 @@ export const DockIcon = React.forwardRef<HTMLButtonElement, DockIconProps>(
           style={{ '--dock-scale': scale } as React.CSSProperties}
         >
           <span className={styles.iconWrap}>
-            <ProjectAppIcon projectId={project.id} size={size} label={project.name} />
-            {project.gated && (
-              <span className={styles.lockBadge} aria-hidden>
-                <IconLock />
-              </span>
-            )}
+            <ProjectAppIcon
+              projectId={project.id}
+              size={size}
+              label={project.name}
+              className={styles.dockTile}
+            />
           </span>
-          {project.status === 'in-progress' ? (
-            <span className={styles.statusDot} aria-hidden />
-          ) : (
-            <span className={styles.statusDotPlaceholder} aria-hidden />
-          )}
         </button>
       </Tooltip>
     );

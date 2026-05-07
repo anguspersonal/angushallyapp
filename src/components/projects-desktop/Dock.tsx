@@ -170,9 +170,8 @@ export function Dock() {
           } as React.CSSProperties}
         >
           <span className={styles.folderIconWrap}>
-            <FolderIcon size={64} label="Archive" />
+            <FolderIcon size={64} label="Archive" className={styles.dockTile} />
           </span>
-          <span className={styles.folderSpacer} aria-hidden />
         </button>
       </Tooltip>
     </div>
