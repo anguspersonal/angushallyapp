@@ -2,21 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import { HttpError } from './httpError';
 
-/**
- * Thrown by handlers (or by Repository functions deeper in the call stack) to
- * signal a non-200 response. Caught by the route wrapper and mapped to JSON.
- */
-export class HttpError extends Error {
-  constructor(
-    public readonly status: number,
-    message: string,
-    public readonly code?: string,
-  ) {
-    super(message);
-    this.name = 'HttpError';
-  }
-}
+export { HttpError };
 
 export type ValidatorFailure =
   | { ok: false; error: string; status?: number }

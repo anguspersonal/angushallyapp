@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { HttpError } from '@/lib/api/httpError';
 import type { HabitMetric, HabitPeriod, HabitStats } from '@/lib/habit/contracts';
 const HABIT_PERIODS = ['day', 'week', 'month', 'year', 'all'] as const;
 const HABIT_METRICS = ['sum', 'avg', 'min', 'max', 'stddev'] as const;
@@ -42,14 +43,14 @@ export async function computeHabitStats(
   userId: string,
   period: string,
   metrics: HabitMetric[] = [...HABIT_METRICS],
-): Promise<{ ok: true; stats: HabitStats } | { ok: false; code: string; status: number }> {
+): Promise<HabitStats> {
   if (!(HABIT_PERIODS as readonly string[]).includes(period)) {
-    return { ok: false, code: 'HABIT_INVALID_PERIOD', status: 400 };
+    throw new HttpError(400, 'Invalid stats period', 'HABIT_INVALID_PERIOD');
   }
   const p = period as HabitPeriod;
   const invalidMetrics = metrics.filter((m) => !(HABIT_METRICS as readonly string[]).includes(m));
   if (invalidMetrics.length > 0) {
-    return { ok: false, code: 'HABIT_INVALID_METRIC', status: 400 };
+    throw new HttpError(400, 'Invalid stats metric', 'HABIT_INVALID_METRIC');
   }
 
   const start = startOfPeriodUtc(p);
@@ -65,29 +66,19 @@ export async function computeHabitStats(
   const { data, error } = await q;
   if (error) {
     console.error('[habit] computeHabitStats', error);
-    return { ok: false, code: 'HABIT_STATS_FETCH_FAILED', status: 500 };
+    throw new HttpError(500, 'Failed to compute habit stats', 'HABIT_STATS_FETCH_FAILED');
   }
 
   const values = (data ?? [])
     .map((row) => Number(row.value))
     .filter((n) => Number.isFinite(n));
 
-  const raw = {
-    sum: values.reduce((a, b) => a + b, 0),
-    avg: mean(values),
-    min: values.length ? Math.min(...values) : 0,
-    max: values.length ? Math.max(...values) : 0,
-    stddev: stddev(values),
-  };
-
-  const shaped: HabitStats = {
+  return {
     period: p,
-    totalCompleted: raw.sum,
-    averagePerEntry: raw.avg,
-    minimumPerEntry: raw.min,
-    maximumPerEntry: raw.max,
-    standardDeviation: raw.stddev,
+    totalCompleted: values.reduce((a, b) => a + b, 0),
+    averagePerEntry: mean(values),
+    minimumPerEntry: values.length ? Math.min(...values) : 0,
+    maximumPerEntry: values.length ? Math.max(...values) : 0,
+    standardDeviation: stddev(values),
   };
-
-  return { ok: true, stats: shaped };
 }

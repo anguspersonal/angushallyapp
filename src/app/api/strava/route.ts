@@ -1,37 +1,13 @@
-import { migrationInProgressResponse } from '@/lib/api/migrationUnavailable';
-import { listStravaActivitiesForUser, userHasStravaTokens } from '@/lib/strava/stravaRepository';
-import { getSupabaseAdmin } from '@/lib/supabase/admin';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { NextResponse } from 'next/server';
+import { HttpError, authedHandler } from '@/lib/api/handler';
+import {
+  listStravaActivitiesForUser,
+  userHasStravaTokens,
+} from '@/lib/strava/stravaRepository';
 
-export async function GET() {
-  const userClient = await createSupabaseServerClient();
-  if (!userClient) {
-    return migrationInProgressResponse('strava');
-  }
-
-  const {
-    data: { user },
-    error: authError,
-  } = await userClient.auth.getUser();
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-  }
-
-  const admin = getSupabaseAdmin();
-  if (!admin) {
-    return migrationInProgressResponse('strava');
-  }
-
-  const linked = await userHasStravaTokens(admin, user.id);
+export const GET = authedHandler(async ({ admin, userId }) => {
+  const linked = await userHasStravaTokens(admin, userId);
   if (!linked) {
-    return NextResponse.json({ error: 'Strava account not connected' }, { status: 403 });
+    throw new HttpError(403, 'Strava account not connected');
   }
-
-  const activities = await listStravaActivitiesForUser(admin, user.id);
-  if (activities === null) {
-    return migrationInProgressResponse('strava');
-  }
-
-  return NextResponse.json(activities);
-}
+  return listStravaActivitiesForUser(admin, userId);
+});

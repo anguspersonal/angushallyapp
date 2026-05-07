@@ -1,4 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { HttpError } from '@/lib/api/httpError';
+import { listPaginated } from '@/lib/api/listQuery';
 import type {
   ContentListParams,
   ContentListResult,
@@ -6,31 +8,12 @@ import type {
   ContentPostSummary,
 } from '@/lib/content/contracts';
 
-const DEFAULT_PAGE_SIZE = 10;
-const MAX_PAGE_SIZE = 50;
-const DEFAULT_PAGE = 1;
-
 const SORT_COLUMN_MAP: Record<string, string> = {
   createdAt: 'created_at',
   updatedAt: 'updated_at',
   title: 'title',
   id: 'id',
 };
-
-function normalizeSort(sortBy?: string): string {
-  return SORT_COLUMN_MAP[sortBy ?? ''] ?? 'created_at';
-}
-
-function clampPageSize(value?: number): number {
-  const parsed = parseInt(String(value), 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) return DEFAULT_PAGE_SIZE;
-  return Math.min(parsed, MAX_PAGE_SIZE);
-}
-
-function parsePositiveInt(value: number | undefined, fallback: number): number {
-  const parsed = parseInt(String(value), 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
-}
 
 function normalizeAuthorId(value: unknown): string | number | null {
   if (value == null) return null;
@@ -95,53 +78,39 @@ async function loadAuthorNames(
 export async function listBlogPosts(
   admin: SupabaseClient,
   params: ContentListParams = {},
-): Promise<ContentListResult | null> {
-  const page = parsePositiveInt(params.page, DEFAULT_PAGE);
-  const pageSize = clampPageSize(params.pageSize);
-  const offset = (page - 1) * pageSize;
-  const sortColumn = normalizeSort(params.sortBy);
-  const ascending = params.order === 'asc';
-
-  const q = admin
+): Promise<ContentListResult> {
+  const base = admin
     .schema('content')
     .from('posts')
-    .select('*', { count: 'exact' })
-    .order(sortColumn, { ascending })
-    .range(offset, offset + pageSize - 1);
+    .select('*', { count: 'exact' });
 
-  const { data: rows, error, count } = await q;
-  if (error) {
-    console.error('[content] listBlogPosts', error);
-    return null;
-  }
+  const { rows, pagination } = await listPaginated(base as never, params, {
+    sortAllowlist: SORT_COLUMN_MAP,
+    defaultSortColumn: 'created_at',
+    defaultAscending: false,
+    errorContext: 'posts',
+  });
 
   const authorIds = [
     ...new Set(
-      (rows ?? [])
-        .map((r) => r.author_id)
+      rows
+        .map((row) => (row as { author_id?: unknown }).author_id)
         .filter((id): id is string => id != null && String(id).length > 0)
         .map(String),
     ),
   ];
   const authors = await loadAuthorNames(admin, authorIds);
 
-  const items: ContentPostSummary[] = (rows ?? []).map((row) =>
-    mapPostRow(row, row.author_id ? authors.get(String(row.author_id)) ?? null : null),
-  );
+  const items: ContentPostSummary[] = rows.map((row) => {
+    const typed = row as Record<string, unknown>;
+    const authorId = typed.author_id;
+    return mapPostRow(
+      typed,
+      authorId ? (authors.get(String(authorId)) ?? null) : null,
+    );
+  });
 
-  const total = typeof count === 'number' ? count : items.length;
-  const totalPages = Math.ceil(total / pageSize) || 0;
-
-  return {
-    items,
-    pagination: {
-      totalItems: total,
-      page,
-      pageSize,
-      totalPages,
-      hasMore: page * pageSize < total,
-    },
-  };
+  return { items, pagination };
 }
 
 export async function getBlogPostDetail(
@@ -156,7 +125,7 @@ export async function getBlogPostDetail(
   const { data: row, error } = await query.maybeSingle();
   if (error) {
     console.error('[content] getBlogPostDetail', error);
-    return null;
+    throw new HttpError(500, 'Failed to fetch post');
   }
   if (!row) return null;
 
