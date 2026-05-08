@@ -139,6 +139,20 @@ body {
   }
 }
 
+/* Session-level reduce-motion override for the /projects desktop. The
+   attribute lives on the <MacDesktop> root, so the rule only affects that
+   subtree — other surfaces remain unaffected. Mirrors the rule pattern that
+   `prefers-reduced-motion` would apply system-wide. */
+[data-reduce-motion='true'],
+[data-reduce-motion='true'] *,
+[data-reduce-motion='true'] *::before,
+[data-reduce-motion='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
 body {
   background: transparent;
   color: var(--site-ink);

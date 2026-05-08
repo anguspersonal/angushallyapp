@@ -113,7 +113,10 @@ type DocumentIconProps = CommonProps & {
 };
 
 /**
- * Document shape inside a glass tile — used for Resume.pdf on the desktop.
+ * Document shape — used for Resume.pdf on the desktop. Renders bare (no
+ * glass tile / border / background) so it sits directly on the wallpaper,
+ * matching macOS desktop documents. Apps in the dock get the glass tile;
+ * documents on the desktop don't.
  */
 export function DocumentIcon({
   tint = '#576366',
@@ -124,18 +127,17 @@ export function DocumentIcon({
 }: DocumentIconProps) {
   return (
     <div
-      className={`${styles.tile} ${className ?? ''}`.trim()}
-      style={{ ['--tile-size' as string]: `${size}px`, ['--tile-tint' as string]: tint }}
+      className={`${styles.bareDoc} ${className ?? ''}`.trim()}
+      style={{ ['--tile-size' as string]: `${size}px` }}
       role="img"
       aria-label={label}
     >
-      <span className={styles.tintWash} aria-hidden />
-      <span className={styles.shape} aria-hidden>
+      <span className={styles.bareDocShape} aria-hidden>
         <svg viewBox="0 0 48 60" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M4 4c0-2.2 1.8-4 4-4h24l12 12v44c0 2.2-1.8 4-4 4H8c-2.2 0-4-1.8-4-4V4z"
             fill={tint}
-            fillOpacity="0.18"
+            fillOpacity="0.32"
             stroke={tint}
             strokeWidth="2"
             strokeLinejoin="round"

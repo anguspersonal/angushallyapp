@@ -23,7 +23,9 @@ export type WindowKind =
   | { type: 'project'; projectId: number }
   | { type: 'archive-folder' }
   | { type: 'about' }
-  | { type: 'resume' };
+  | { type: 'resume' }
+  | { type: 'keyboard-shortcuts' }
+  | { type: 'confirm-home' };
 
 export type WindowId = string;
 
@@ -50,6 +52,7 @@ export interface WindowContextValue {
   focusedId: WindowId | null;
   openWindow(kind: WindowKind, origin?: OriginRect): void;
   closeWindow(id: WindowId): void;
+  closeAllWindows(): void;
   focusWindow(id: WindowId): void;
   setPosition(id: WindowId, position: { x: number; y: number }): void;
   // Convenience wrappers — call sites use these; switching window kinds at
@@ -58,6 +61,11 @@ export interface WindowContextValue {
   openArchiveFolder(origin?: OriginRect): void;
   openAbout(origin?: OriginRect): void;
   openResume(origin?: OriginRect): void;
+  openKeyboardShortcuts(origin?: OriginRect): void;
+  openConfirmHome(origin?: OriginRect): void;
+  /** Session-level override of `prefers-reduced-motion` for this surface. */
+  reduceMotion: boolean;
+  toggleReduceMotion(): void;
 }
 
 // -----------------------------------------------------------------------------
@@ -74,6 +82,10 @@ export function windowIdFor(kind: WindowKind): WindowId {
       return 'about';
     case 'resume':
       return 'resume';
+    case 'keyboard-shortcuts':
+      return 'keyboard-shortcuts';
+    case 'confirm-home':
+      return 'confirm-home';
   }
 }
 
@@ -110,7 +122,11 @@ function defaultSizeFor(kind: WindowKind): { w: number; h: number } {
     case 'about':
       return { w: 640, h: 480 };
     case 'resume':
-      return { w: 720, h: 540 };
+      return { w: 720, h: 720 };
+    case 'keyboard-shortcuts':
+      return { w: 520, h: 460 };
+    case 'confirm-home':
+      return { w: 380, h: 200 };
   }
 }
 
@@ -133,13 +149,17 @@ interface ProviderState {
   openCount: number;
   /** Highest z-index in use; new windows + focus bump this. */
   topZ: number;
+  /** Session-level override of `prefers-reduced-motion` for this surface. */
+  reduceMotion: boolean;
 }
 
 type ProviderAction =
   | { type: 'open'; kind: WindowKind; origin?: OriginRect; viewport: { w: number; h: number } }
   | { type: 'close'; id: WindowId }
+  | { type: 'close-all' }
   | { type: 'focus'; id: WindowId }
-  | { type: 'setPosition'; id: WindowId; position: { x: number; y: number } };
+  | { type: 'setPosition'; id: WindowId; position: { x: number; y: number } }
+  | { type: 'toggle-reduce-motion' };
 
 function reducer(state: ProviderState, action: ProviderAction): ProviderState {
   switch (action.type) {
@@ -174,6 +194,7 @@ function reducer(state: ProviderState, action: ProviderAction): ProviderState {
         origin: action.origin,
       });
       return {
+        ...state,
         windows: next,
         openCount: state.openCount + 1,
         topZ: z,
@@ -185,6 +206,15 @@ function reducer(state: ProviderState, action: ProviderAction): ProviderState {
       const next = new Map(state.windows);
       next.delete(action.id);
       return { ...state, windows: next };
+    }
+
+    case 'close-all': {
+      if (state.windows.size === 0) return state;
+      return { ...state, windows: new Map() };
+    }
+
+    case 'toggle-reduce-motion': {
+      return { ...state, reduceMotion: !state.reduceMotion };
     }
 
     case 'focus': {
@@ -230,6 +260,7 @@ export function WindowProvider({ children }: WindowProviderProps) {
     windows: new Map<WindowId, WindowState>(),
     openCount: 0,
     topZ: BASE_Z,
+    reduceMotion: false,
   }));
 
   const openWindow = React.useCallback((kind: WindowKind, origin?: OriginRect) => {
@@ -240,6 +271,14 @@ export function WindowProvider({ children }: WindowProviderProps) {
     // The reducer removes the window immediately. <AnimatePresence> in
     // <WindowManager> keeps the DOM node alive for the exit transition.
     dispatch({ type: 'close', id });
+  }, []);
+
+  const closeAllWindows = React.useCallback(() => {
+    dispatch({ type: 'close-all' });
+  }, []);
+
+  const toggleReduceMotion = React.useCallback(() => {
+    dispatch({ type: 'toggle-reduce-motion' });
   }, []);
 
   const focusWindow = React.useCallback((id: WindowId) => {
@@ -281,6 +320,20 @@ export function WindowProvider({ children }: WindowProviderProps) {
     [openWindow],
   );
 
+  const openKeyboardShortcuts = React.useCallback(
+    (origin?: OriginRect) => {
+      openWindow({ type: 'keyboard-shortcuts' }, origin);
+    },
+    [openWindow],
+  );
+
+  const openConfirmHome = React.useCallback(
+    (origin?: OriginRect) => {
+      openWindow({ type: 'confirm-home' }, origin);
+    },
+    [openWindow],
+  );
+
   // Sorted by z so render order matches stacking; focused window is last.
   const windows = React.useMemo(
     () => Array.from(state.windows.values()).sort((a, b) => a.z - b.z),
@@ -311,24 +364,34 @@ export function WindowProvider({ children }: WindowProviderProps) {
       focusedId,
       openWindow,
       closeWindow,
+      closeAllWindows,
       focusWindow,
       setPosition,
       openProject,
       openArchiveFolder,
       openAbout,
       openResume,
+      openKeyboardShortcuts,
+      openConfirmHome,
+      reduceMotion: state.reduceMotion,
+      toggleReduceMotion,
     }),
     [
       windows,
       focusedId,
       openWindow,
       closeWindow,
+      closeAllWindows,
       focusWindow,
       setPosition,
       openProject,
       openArchiveFolder,
       openAbout,
       openResume,
+      openKeyboardShortcuts,
+      openConfirmHome,
+      state.reduceMotion,
+      toggleReduceMotion,
     ],
   );
 

@@ -43,9 +43,12 @@ export function RichProjectWindow({ project }: RichProjectWindowProps) {
         <h2 className={styles.title}>{project.name}</h2>
 
         <div className={styles.metaSection}>
-          <span className={`${styles.statusBadge} ${styles[STATUS_VARIANT[project.status]]}`}>
-            {STATUS_LABEL[project.status]}
-          </span>
+          <div className={styles.statusRow}>
+            <span className={styles.metaKey}>Status:</span>
+            <span className={`${styles.statusBadge} ${styles[STATUS_VARIANT[project.status]]}`}>
+              {STATUS_LABEL[project.status]}
+            </span>
+          </div>
 
           {project.gated && (
             <span className={styles.gatedBadge}>Sign-in required</span>

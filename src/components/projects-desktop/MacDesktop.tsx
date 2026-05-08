@@ -5,7 +5,7 @@ import { Wallpaper } from './Wallpaper';
 import { MenuBar } from './MenuBar';
 import { Dock } from './Dock';
 import { DesktopIcon, desktopSlot } from './DesktopIcon';
-import { DocumentIcon } from './IconTile';
+import { DocumentIcon, ProjectAppIcon } from './IconTile';
 import { WindowProvider, useWindow } from './WindowContext';
 import { WindowManager } from './WindowManager';
 import { MacBootIntro } from './MacBootIntro';
@@ -53,10 +53,13 @@ export function MacDesktop({ children }: MacDesktopProps) {
  * Desktop layout (macOS) - full window manager with drag, multi-window, etc.
  */
 function DesktopLayout({ children }: MacDesktopProps) {
-  const { openResume } = useWindow();
+  const { openResume, openProject, reduceMotion } = useWindow();
 
   return (
-    <div className={styles.root}>
+    <div
+      className={styles.root}
+      data-reduce-motion={reduceMotion ? 'true' : 'false'}
+    >
       {/* Desktop boot intro */}
       <MacBootIntro />
 
@@ -66,9 +69,19 @@ function DesktopLayout({ children }: MacDesktopProps) {
       <DesktopIcon
         label="Resume.pdf"
         className={desktopSlot.resume}
+        storageKey="projects-desktop:resume-position"
         onClick={(origin) => openResume(origin)}
       >
         <DocumentIcon size={64} label="Resume.pdf" badge="PDF" />
+      </DesktopIcon>
+
+      <DesktopIcon
+        label="Data Value Game"
+        className={desktopSlot.dvg}
+        storageKey="projects-desktop:dvg-position"
+        onClick={(origin) => openProject(0, origin)}
+      >
+        <ProjectAppIcon projectId={0} size={64} label="Data Value Game" />
       </DesktopIcon>
 
       <Dock />

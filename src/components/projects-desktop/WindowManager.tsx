@@ -10,6 +10,9 @@ import { WriteUpWindow } from './WriteUpWindow';
 import { TerseArchivedWindow } from './TerseArchivedWindow';
 import { FinderWindow } from './FinderWindow';
 import { SystemWindow } from './SystemWindow';
+import { ResumeWindow } from './ResumeWindow';
+import { KeyboardShortcutsWindow } from './KeyboardShortcutsWindow';
+import { ConfirmHomeWindow } from './ConfirmHomeWindow';
 
 function getTitle(win: WindowState): string {
   const { kind } = win;
@@ -24,6 +27,10 @@ function getTitle(win: WindowState): string {
       return 'About';
     case 'resume':
       return 'Resume.pdf';
+    case 'keyboard-shortcuts':
+      return 'Keyboard Shortcuts';
+    case 'confirm-home':
+      return 'Go to Home?';
   }
 }
 
@@ -63,8 +70,16 @@ function WindowBody({ win }: { win: WindowState }): React.ReactNode {
       return <FinderWindow />;
 
     case 'about':
-    case 'resume':
       return <SystemWindow kind={kind} />;
+
+    case 'resume':
+      return <ResumeWindow />;
+
+    case 'keyboard-shortcuts':
+      return <KeyboardShortcutsWindow />;
+
+    case 'confirm-home':
+      return <ConfirmHomeWindow />;
 
     default:
       return <p className="window-error">Unknown window type</p>;

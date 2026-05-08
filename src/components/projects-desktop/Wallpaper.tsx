@@ -25,7 +25,7 @@ interface WallpaperProps {
  */
 export function Wallpaper({
   title = 'My Projects',
-  helpText = 'Click an app to get started',
+  helpText = 'Click an app below to get started',
   hideTitle = false,
 }: WallpaperProps) {
   return (

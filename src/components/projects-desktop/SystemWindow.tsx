@@ -9,26 +9,16 @@ interface SystemWindowProps {
 }
 
 /**
- * System window — single-pane layout for About and Resume.
+ * System window — single-pane layout for the About surface.
  *
- * About: embeds /about page content via iframe
- * Resume: embeds /cv page content via iframe
+ * Embeds the `/about` page in an iframe so its content stays the source of
+ * truth for both the standalone route and the in-desktop window.
  *
- * No internal CTA — content is right there.
+ * Resume previously routed through here too; it now has its own
+ * `<ResumeWindow>` with PDF embed and a download action.
  */
 export function SystemWindow({ kind }: SystemWindowProps) {
-  const src = React.useMemo(() => {
-    switch (kind.type) {
-      case 'about':
-        return '/about';
-      case 'resume':
-        return '/cv';
-      default:
-        return null;
-    }
-  }, [kind]);
-
-  if (!src) {
+  if (kind.type !== 'about') {
     return (
       <div className={styles.root}>
         <p className={styles.error}>Unknown system window type</p>
@@ -39,9 +29,9 @@ export function SystemWindow({ kind }: SystemWindowProps) {
   return (
     <div className={styles.root}>
       <iframe
-        src={src}
+        src="/about"
         className={styles.iframe}
-        title={kind.type === 'about' ? 'About' : 'Resume'}
+        title="About"
         sandbox="allow-same-origin allow-scripts"
         loading="lazy"
       />

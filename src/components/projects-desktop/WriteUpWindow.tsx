@@ -41,6 +41,7 @@ export function WriteUpWindow({ project }: WriteUpWindowProps) {
         <div className={styles.headerText}>
           <h2 className={styles.title}>{project.name}</h2>
           <div className={styles.headerMeta}>
+            <span className={styles.metaKey}>Status:</span>
             <span className={`${styles.statusBadge} ${styles[STATUS_VARIANT[project.status]]}`}>
               {STATUS_LABEL[project.status]}
             </span>

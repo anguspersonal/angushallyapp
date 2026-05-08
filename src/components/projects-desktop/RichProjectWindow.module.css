@@ -32,7 +32,7 @@
 
 .iconSection {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 8px 0;
 }
 
@@ -42,14 +42,29 @@
   font-weight: 500;
   margin: 0;
   line-height: 1.2;
-  text-align: center;
+  text-align: left;
 }
 
 .metaSection {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
+}
+
+/* Inline "Status: [badge]" pattern — Finder Get-Info-style key/value row. */
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metaKey {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
 }
 
 .statusBadge {
@@ -85,7 +100,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  justify-content: center;
+  justify-content: flex-start;
   padding-top: 4px;
 }
 
@@ -106,14 +121,14 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.6;
-  text-align: center;
+  text-align: left;
 }
 
 .chipsRow {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .techChip {
@@ -128,7 +143,7 @@
   margin-top: auto;
   padding-top: 16px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .ctaButton {

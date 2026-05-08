@@ -26,7 +26,10 @@ export function TerseArchivedWindow({ project }: TerseArchivedWindowProps) {
         <ProjectAppIcon projectId={project.id} size={40} label={project.name} />
         <div className={styles.headerText}>
           <h2 className={styles.title}>{project.name}</h2>
-          <span className={styles.statusBadge}>Archived</span>
+          <div className={styles.statusRow}>
+            <span className={styles.metaKey}>Status:</span>
+            <span className={styles.statusBadge}>Archived</span>
+          </div>
         </div>
       </header>
 
