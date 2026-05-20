@@ -60,6 +60,19 @@ export async function sendEmail({ subject, text, html, to, replyTo }: SendEmailO
 }
 
 /**
+ * Escapes the five HTML-significant characters so user-submitted text
+ * can be safely interpolated into an HTML email body.
+ */
+export function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
  * Sends an email to the app owner with the user's inquiry.
  */
 export async function sendInquiryToOwner({
@@ -72,9 +85,12 @@ export async function sendInquiryToOwner({
   message: string;
 }) {
   const ownerEmail = process.env.RECIPIENT_EMAIL;
+  if (!ownerEmail) {
+    throw new Error('RECIPIENT_EMAIL is not configured');
+  }
   const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
   const subject = `New Inquiry from ${name}`;
-  await sendEmail({ subject, text: body, to: ownerEmail });
+  await sendEmail({ subject, text: body, to: ownerEmail, replyTo: email });
 }
 
 /**
@@ -87,12 +103,21 @@ export async function sendAcknowledgmentToUser(name: string, email: string, mess
 
 /**
  * Sends a contact form submission notification to the owner.
+ *
+ * @remarks
+ * Kept for backwards compatibility with older callers; the contact route
+ * itself uses `sendInquiryToOwner` (plain-text, single email per submission).
+ * The HTML body escapes all user-submitted fields to defend against
+ * HTML/script injection into the owner's inbox.
  */
 export async function sendContactFormEmail(formData: {
   name: string;
   email: string;
   message: string;
 }) {
+  const safeName = escapeHtml(formData.name);
+  const safeEmail = escapeHtml(formData.email);
+  const safeMessage = escapeHtml(formData.message).replace(/\n/g, '<br>');
   const subject = `New Contact Form Submission from ${formData.name}`;
   const text = `
         Name: ${formData.name}
@@ -103,10 +128,10 @@ export async function sendContactFormEmail(formData: {
     `;
   const html = `
         <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${formData.name}</p>
-        <p><strong>Email:</strong> ${formData.email}</p>
+        <p><strong>Name:</strong> ${safeName}</p>
+        <p><strong>Email:</strong> ${safeEmail}</p>
         <h3>Message:</h3>
-        <p>${formData.message.replace(/\n/g, '<br>')}</p>
+        <p>${safeMessage}</p>
     `;
 
   return sendEmail({ subject, text, html, replyTo: formData.email });

@@ -11,7 +11,6 @@ vi.mock('@/lib/recaptcha/siteVerify', async (importOriginal) => {
 vi.mock('@/lib/email', () => ({
   sendInquiryToOwner: vi.fn(),
   sendAcknowledgmentToUser: vi.fn(),
-  sendContactFormEmail: vi.fn(),
 }));
 
 import type { NextRequest } from 'next/server';
@@ -19,7 +18,6 @@ import { POST } from './route';
 import { verifyRecaptchaSite } from '@/lib/recaptcha/siteVerify';
 import {
   sendAcknowledgmentToUser,
-  sendContactFormEmail,
   sendInquiryToOwner,
 } from '@/lib/email';
 
@@ -54,7 +52,6 @@ describe('POST /api/contact', () => {
     // Sensible defaults; individual tests override
     vi.mocked(sendInquiryToOwner).mockResolvedValue(undefined as never);
     vi.mocked(sendAcknowledgmentToUser).mockResolvedValue(undefined as never);
-    vi.mocked(sendContactFormEmail).mockResolvedValue(undefined as never);
   });
 
   it('returns 400 when JSON body is malformed', async () => {
@@ -125,7 +122,7 @@ describe('POST /api/contact', () => {
     });
   });
 
-  it('happy path: verifies reCAPTCHA, sends three emails with trimmed/lowercased data, returns 200', async () => {
+  it('happy path: verifies reCAPTCHA, sends one owner + one user email with trimmed/lowercased data, returns 200', async () => {
     vi.mocked(verifyRecaptchaSite).mockResolvedValue({ success: true });
 
     const response = await POST(makeRequest(validBody));
@@ -138,12 +135,13 @@ describe('POST /api/contact', () => {
     expect(verifyRecaptchaSite).toHaveBeenCalledTimes(1);
     expect(verifyRecaptchaSite).toHaveBeenCalledWith('token-123');
 
+    expect(sendInquiryToOwner).toHaveBeenCalledTimes(1);
     expect(sendInquiryToOwner).toHaveBeenCalledWith(trimmedFields);
+    expect(sendAcknowledgmentToUser).toHaveBeenCalledTimes(1);
     expect(sendAcknowledgmentToUser).toHaveBeenCalledWith(
       trimmedFields.name,
       trimmedFields.email,
       trimmedFields.message,
     );
-    expect(sendContactFormEmail).toHaveBeenCalledWith(trimmedFields);
   });
 });

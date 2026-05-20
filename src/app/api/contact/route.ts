@@ -1,6 +1,6 @@
 import { HttpError, publicHandler } from '@/lib/api/handler';
 import { validateContactFormBody } from '@/lib/contact/validateContactForm';
-import { sendAcknowledgmentToUser, sendContactFormEmail, sendInquiryToOwner } from '@/lib/email';
+import { sendAcknowledgmentToUser, sendInquiryToOwner } from '@/lib/email';
 import { nextResponseIfRecaptchaInvalid } from '@/lib/recaptcha/nextResponseForRecaptchaResult';
 import { verifyRecaptchaSite } from '@/lib/recaptcha/siteVerify';
 
@@ -22,9 +22,11 @@ export const POST = publicHandler(
     }
 
     try {
+      // One owner notification + one user acknowledgment per submission.
+      // `sendContactFormEmail` was previously also called here, producing
+      // a duplicate owner email — removed in QA round 1.
       await sendInquiryToOwner({ name, email, message });
       await sendAcknowledgmentToUser(name, email, message);
-      await sendContactFormEmail({ name, email, message });
     } catch (error) {
       console.error('Contact form submission error:', error);
       throw new HttpError(500, 'Failed to process contact form submission');
