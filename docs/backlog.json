@@ -271,6 +271,7 @@
       "area": "database",
       "priority": "medium",
       "status": "not-started",
+      "issue": 58,
       "notes": "DBML is significantly stale: calls content schema 'public_data', missing bookmarks/raindrop/strava_* schemas entirely, missing 7 of the 9 indexes landed in db-indexes. Surfaced by QA review on PR #56."
     },
     {
@@ -280,6 +281,7 @@
       "area": "database",
       "priority": "low",
       "status": "not-started",
+      "issue": 59,
       "notes": "Single-col user_id index is now shadowed by the composite (user_id, created_at DESC) for read paths. Verify no insert/duplicate-check path benefits from the single-col before dropping. Surfaced by QA review on PR #56."
     },
     {
