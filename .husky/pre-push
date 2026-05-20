@@ -1,0 +1,14 @@
+# Cheap checks gate for feature → dev pushes.
+# Codified in docs/agents/branching.md. Bypass with --no-verify only if you
+# know what you're doing (e.g. pushing a WIP backup to a feature branch).
+
+set -e
+
+echo "→ lint"
+npm run lint
+
+echo "→ typecheck"
+npm run typecheck
+
+echo "→ unit tests"
+npm test
