@@ -280,9 +280,9 @@
       "type": "tech-debt",
       "area": "database",
       "priority": "low",
-      "status": "not-started",
+      "status": "done",
       "issue": 59,
-      "notes": "Single-col user_id index is now shadowed by the composite (user_id, created_at DESC) for read paths. Verify no insert/duplicate-check path benefits from the single-col before dropping. Surfaced by QA review on PR #56."
+      "notes": "Dropped via supabase/migrations/20260520204500_drop_ix_bookmarks_user_id.sql and applied to Supabase 2026-05-20. Composite (user_id, created_at DESC) serves all single-col user_id read paths via its leading column. Surfaced by QA review on PR #56."
     },
     {
       "id": "db-connection-pool-tuning",

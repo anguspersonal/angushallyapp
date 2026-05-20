@@ -256,7 +256,7 @@ Table bookmarks.bookmarks {
   updated_at timestamptz [not null, default: `now()`]
 
   Indexes {
-    (user_id) [name: 'ix_bookmarks_user_id']
+    (user_id, created_at) [name: 'idx_bookmarks_user_created_desc']
     (url) [name: 'ix_bookmarks_url']
     (tags) [name: 'ix_bookmarks_tags', type: 'gin']
     (source_type, source_id) [unique, name: 'uq_bookmarks_source']
