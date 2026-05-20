@@ -108,6 +108,11 @@ Table habit.habit_log {
   metric string [nullable, note: 'Unit of measurement for the value, e.g., ml, units, km']
   extra_data jsonb [nullable, note: 'Additional JSON data specific to the habit type']
   created_at timestamptz [default: `now()`]
+
+  Indexes {
+    (user_id, created_at) [name: 'idx_habit_log_user_created_desc', note: 'created_at DESC; supports paginated list by user']
+    (user_id, habit_type, created_at) [name: 'idx_habit_log_user_type_created_desc', note: 'created_at DESC; supports listHabitLogsByType + computeHabitStats range scan']
+  }
 }
 
 Table habit.alcohol { // Example, add other habit-specific tables as needed

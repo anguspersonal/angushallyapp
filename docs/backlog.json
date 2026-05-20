@@ -261,7 +261,8 @@
       "type": "tech-debt",
       "area": "database",
       "priority": "high",
-      "status": "not-started"
+      "status": "done",
+      "notes": "Initial pass landed via supabase/migrations/20260520154800_add_hot_path_indexes.sql and applied to Supabase 2026-05-20. Composites on habit.habit_log, habit.strava_activities, content.posts, bookmarks.bookmarks; single-column on content.posts.{author_id,slug,created_at,updated_at}."
     },
     {
       "id": "db-connection-pool-tuning",
