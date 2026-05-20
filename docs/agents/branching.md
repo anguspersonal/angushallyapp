@@ -19,6 +19,19 @@ Every branch starts with a type prefix matching the kind of change. The prefix M
 
 After the prefix, use a short kebab-case description of the intent — not a commit message, not the file you changed.
 
+### Local vs remote
+
+Agent tooling often auto-generates branch names like `claude/<random-words>`, `codex/<topic>`, `cursor/<task-id>`. **That's fine locally.** The CI gate validates remote branch names only.
+
+Before pushing, rename to a canonical prefix:
+
+```
+git branch -m feat/<short-description>
+git push -u origin feat/<short-description>
+```
+
+Same applies to humans on auto-named scratch branches. The prefix convention is what review/history/automation reads — what you call the branch on your laptop is your business.
+
 ## Flow
 
 ```
@@ -83,6 +96,7 @@ The split exists because feature-branch PRs land often (multiple per day during 
 
 - **Pick a branch type honestly.** A "fix" that adds a new code path is a `feat/`. A `chore/` that introduces user-visible behavior is a `feat/`. If unsure, default to the higher-stakes label.
 - **Branch off `dev`** unless the change is a `hotfix/`. The repo's default branch (`main`) is the wrong base for normal work.
+- **Rename auto-generated local branches before pushing.** If your tooling spun up `claude/foo`, `codex/bar`, or `cursor/baz`, run `git branch -m <prefix>/<desc>` first. The CI gate only checks the remote name — local naming is your business.
 - **Run the cheap checks before pushing.** Don't push code that fails `lint`, `tsc --noEmit`, or `npm test`.
 - **Never push directly to `dev` or `main`.** Always go through a PR.
 - **Never merge `dev → main` autonomously.** That step requires a human (manual visual check is part of the bar).
