@@ -60,7 +60,7 @@ Run before pushing and re-verify in the PR:
 | Typecheck   | `npx tsc --noEmit`       | Flags new TS errors (pre-existing ones are tracked separately — see `next.config.mjs`) |
 | Unit tests  | `npm test`               | Vitest run; must be green (no `--no-verify`) |
 
-These are cheap enough that they should be enforced via Husky pre-commit / pre-push hooks. If hooks aren't installed locally, the agent or human is still expected to run them manually.
+These are enforced automatically via a Husky `pre-push` hook (installed by `npm install` via the `prepare` script). Bypassing with `git push --no-verify` is allowed only for WIP backup pushes to a feature branch you don't intend to PR yet — never when opening or updating a PR.
 
 ### `dev → main` (expensive, slower)
 
