@@ -640,6 +640,26 @@
     },
 
     {
+      "id": "cleanup-collab-directory",
+      "title": "Remove orphaned src/components/collab/ (FounderJourney, TraitGrid) — /collab route is a redirect stub",
+      "type": "tech-debt",
+      "area": "frontend",
+      "priority": "low",
+      "status": "not-started",
+      "issue": 60,
+      "notes": "After PR #57 dropped the carousel, the remaining two files have no consumers and src/app/collab/page.tsx is `redirect('/')`. Delete the directory and the route together. Surfaced by QA review on PR #57."
+    },
+    {
+      "id": "local-build-supabase-env",
+      "title": "Document SUPABASE_URL requirement for local `next build` (or auto-skip prerender)",
+      "type": "tech-debt",
+      "area": "devops",
+      "priority": "low",
+      "status": "not-started",
+      "issue": 61,
+      "notes": "Local `npm run build` fails prerendering /contact without SUPABASE_URL set. Either add a .env.example, document the requirement, or skip prerender for routes that need server data when env is absent. Surfaced by QA review on PR #57."
+    },
+    {
       "id": "component-standardization",
       "title": "Standardize component APIs (shared component library)",
       "type": "tech-debt",
