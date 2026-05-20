@@ -15,3 +15,7 @@ Five canonical labels with default names (`needs-triage`, `needs-info`, `ready-f
 ### Domain docs
 
 Single-context: `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Branching & flow
+
+Type-prefixed branches (`feat/`, `fix/`, `chore/`, `docs/`, `perf/`, `test/`, `refactor/`) flow through `dev` (manual testing) before promotion to `main`. `hotfix/*` is the only exception that targets `main` directly. Cheap checks (lint, typecheck, unit tests) gate feature → dev; E2E + manual visual gate dev → main. See `docs/agents/branching.md`.
