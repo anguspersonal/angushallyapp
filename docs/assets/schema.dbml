@@ -1,113 +1,113 @@
 // Full Canonical Database Schema (DBML)
 // This file represents the detailed truth of the database schema, including named constraints and specific index types.
-// It is used for internal documentation and understanding the precise database structure as created by Knex migrations.
+// It is used for internal documentation and understanding the precise database structure as it exists in the live Supabase database.
 // Some syntax used here (e.g., named unique constraints inline) might not be fully rendered or might cause parsing issues in all DBML visualizers (like dbdiagram.io).
 // For a version specifically tailored for dbdiagram.io, see schema-dbdiagram.dbml.
+//
+// Source of truth: live Supabase database (project ref kqowtjjhhjceghkohzda).
+// Last refreshed against information_schema + pg_catalog: 2026-05-20.
+// Schemas covered: identity, habit, content, crm, fsa, raindrop, bookmarks.
 
-// --- Project Wide Settings (Optional, but good for context) ---
+// --- Project Wide Settings ---
 Project angushally_app {
   database_type: 'PostgreSQL'
-  Note: 'Application database for various personal projects and utilities, featuring a unified identity system.'
+  Note: 'Application database for various personal projects and utilities, featuring a unified identity system. The identity schema owns all canonical user accounts; every other schema links back via user_id (uuid) referencing identity.users.id.'
 }
 
-// --- Schema: identity ---
-// Manages all user identities, roles, and access control for the entire application.
+// ============================================================================
+// Schema: identity
+// Manages all user identities, roles, and access control for the entire app.
+// ============================================================================
 
 Table identity.users {
   id uuid [pk, default: `gen_random_uuid()`, note: 'Primary key for users']
-  email string [not null, note: 'User\'s primary email, used for login and communication']
-  password_hash string [nullable, note: 'Hashed password for local authentication']
-  auth_provider string [not null, default: 'local', note: 'Authentication method used, e.g., local, google']
-  google_sub string [unique: 'uq_users_google_sub', nullable, note: 'Google\'s unique subject identifier']
-  first_name string [nullable]
-  last_name string [nullable]
-  is_active boolean [not null, default: false, note: 'Indicates if user account is active and can log in']
+  email text [not null, note: 'User\'s primary email, used for login and communication']
+  password_hash text [nullable, note: 'Hashed password for local authentication']
+  google_sub text [nullable, note: 'Google\'s unique subject identifier; UNIQUE via uq_users_google_sub and users_google_sub_key']
+  name text [nullable, note: 'Legacy display-name column; first_name + last_name preferred']
+  picture_url text [nullable]
+  is_active boolean [default: false, note: 'Indicates if user account is active and can log in']
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+  auth_provider varchar(255) [not null, default: 'local', note: 'Authentication method used, e.g., local, google']
+  first_name varchar(255) [nullable]
+  last_name varchar(255) [nullable]
   email_verified_at timestamptz [nullable, note: 'Timestamp of email verification']
   last_login_at timestamptz [nullable, note: 'Timestamp of last successful login']
   metadata jsonb [not null, default: '{}', note: 'Flexible JSONB field for additional user data, e.g., legacy IDs, preferences']
-  created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`]
 
   Indexes {
-    (email) [name: 'ix_users_email']
     (auth_provider) [name: 'ix_users_auth_provider']
-    (is_active) [name: 'ix_users_is_active']
-    (last_login_at) [name: 'ix_users_last_login_at']
     (google_sub) [name: 'ix_users_google_sub']
+    (last_login_at) [name: 'ix_users_last_login_at']
+    (google_sub) [unique, name: 'uq_users_google_sub']
+    (google_sub) [unique, name: 'users_google_sub_key', note: 'Duplicate of uq_users_google_sub; both currently present in live DB']
     (email, auth_provider) [unique, name: 'uq_users_email_auth_provider']
   }
 }
 
 Table identity.roles {
   id uuid [pk, default: `gen_random_uuid()`]
-  name string [not null, unique: 'uq_roles_name']
-  description string [nullable]
-  created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`]
+  name text [not null, unique: 'uq_roles_name']
 }
 
 Table identity.user_roles {
   user_id uuid [not null]
   role_id uuid [not null]
-  created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 
   Indexes {
     (role_id, user_id) [name: 'ix_user_roles_role_user']
+    (user_id, role_id) [pk, name: 'pk_user_roles']
   }
-  Note: 'Composite primary key on (user_id, role_id)'
+  Note: 'Composite primary key on (user_id, role_id). Note: role_id has an FK to identity.roles with ON DELETE CASCADE; user_id currently has no enforced FK to identity.users in the live DB.'
 }
 
 Table identity.access_requests {
   id uuid [pk, default: `gen_random_uuid()`]
-  user_id uuid [not null]
-  requested_at timestamptz [not null, default: `now()`]
-  status string [not null, default: 'pending'] // ENUM type: ['pending', 'approved', 'rejected']
+  user_id uuid [nullable]
+  requested_at timestamptz [default: `now()`]
+  status text [default: 'pending', note: 'CHECK constraint: status IN (\'pending\', \'approved\', \'rejected\')']
   handled_by uuid [nullable]
   handled_at timestamptz [nullable]
-  rejection_reason string [nullable]
-  created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`]
-
-  Indexes {
-    (user_id) [name: 'ix_access_requests_user_id']
-    (status) [name: 'ix_access_requests_status']
-    (requested_at) [name: 'ix_access_requests_requested_at']
-    (handled_at) [name: 'ix_access_requests_handled_at']
-    (user_id) [unique, name: 'uq_access_requests_pending_user', note: 'Partial index WHERE status = \'pending\'']
-  }
 }
 
 // Relationships for identity schema
-Ref: identity.user_roles.user_id > identity.users.id [delete: cascade]
 Ref: identity.user_roles.role_id > identity.roles.id [delete: cascade]
-Ref: identity.access_requests.user_id > identity.users.id [delete: 'set null']
-Ref: identity.access_requests.handled_by > identity.users.id [delete: 'set null']
+Ref: identity.access_requests.user_id > identity.users.id
+Ref: identity.access_requests.handled_by > identity.users.id
 
 
+// ============================================================================
 // Schema: habit
-// Note: This schema will contain the _deprecated_users table and tables like habit_log, alcohol, exercise etc.
-// These will need their user foreign keys updated to point to identity.users.id
+// Habit tracking (alcohol, exercise, Strava integration) keyed off identity.users.
+// ============================================================================
 
-Table habit._deprecated_users { // Example structure - confirm actual legacy columns
-  user_id integer [pk] // Assuming this was the old PK
-  email string
-  fname string
-  lname string
-  google_user_id string // This was used to populate identity.users.google_sub
-  created_at timestamptz
-  last_updated timestamptz
-  // ... other legacy columns ...
+Table habit._deprecated_users {
+  user_id integer [pk, increment, note: 'Legacy integer PK (sequence habit.users_id_seq). Replaced by identity.users.']
+  email text [not null, unique: 'users_email_key', note: 'CHECK: email LIKE \'%@%\'']
+  fname text [nullable]
+  lname text [nullable]
+  name varchar(255) [nullable]
+  role text [nullable, note: 'CHECK: role IN (\'owner\', \'admin\', \'standard\', \'guest\')']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  last_updated timestamp [default: `CURRENT_TIMESTAMP`]
+  google_user_id varchar(255) [nullable, note: 'Used to populate identity.users.google_sub during migration']
 }
 
 Table habit.habit_log {
   id integer [pk, increment, note: 'Primary key for habit log entries']
-  user_id uuid [ref: > identity.users.id, not null, note: 'Link to the unified user ID'] // TARGET STATE
-  habit_type string [not null, note: 'Type of habit, e.g., alcohol, exercise']
-  value real [note: 'Numerical value of the habit entry, e.g., units of alcohol, km run']
-  metric string [nullable, note: 'Unit of measurement for the value, e.g., ml, units, km']
-  extra_data jsonb [nullable, note: 'Additional JSON data specific to the habit type']
-  created_at timestamptz [default: `now()`]
+  created_at timestamp [default: `now()`]
+  duration_sec integer [nullable, note: 'CHECK: duration_sec >= 0']
+  habit_source text [default: 'manual']
+  location text [nullable]
+  context text [nullable]
+  habit_type text [nullable, note: 'Type of habit, e.g., alcohol, exercise']
+  value double [nullable, note: 'Numerical value of the habit entry; CHECK: value >= 0']
+  metric text [nullable, note: 'Unit of measurement for the value, e.g., ml, units, km']
+  extra_data jsonb [nullable]
+  user_id uuid [nullable, note: 'FK to identity.users.id ON DELETE CASCADE']
 
   Indexes {
     (user_id, created_at) [name: 'idx_habit_log_user_created_desc', note: 'created_at DESC; supports paginated list by user']
@@ -115,108 +115,506 @@ Table habit.habit_log {
   }
 }
 
-Table habit.alcohol { // Example, add other habit-specific tables as needed
+Table habit.alcohol {
   id integer [pk, increment]
-  habit_log_id integer [ref: > habit.habit_log.id]
-  user_id uuid [ref: > identity.users.id] // TARGET STATE: Needs to point to identity.users
-  drink_id integer
-  volume_ml real
-  abv_percent real
-  created_at timestamptz [default: `now()`]
-}
-
-Table habit.exercise { // Example
-  id integer [pk, increment]
-  habit_log_id integer [ref: > habit.habit_log.id]
-  user_id uuid [ref: > identity.users.id] // TARGET STATE: Needs to point to identity.users
-  activity_type string
-  duration_minutes integer
-  distance_km real
-  created_at timestamptz [default: `now()`]
+  log_id integer [nullable, note: 'FK to habit.habit_log.id ON DELETE CASCADE']
+  drink_id integer [nullable, note: 'FK to habit.drink_catalog.id']
+  drink_name text [nullable]
+  volume_ml double [nullable, note: 'CHECK: volume_ml > 0']
+  abv_percent double [nullable, note: 'CHECK: 0 <= abv_percent <= 100']
+  assigned_time timestamp [default: `now()`]
+  created_at timestamp [default: `now()`]
+  count integer [not null, default: 1]
+  units double [nullable]
+  user_id uuid [nullable, note: 'FK to identity.users.id ON DELETE CASCADE']
 }
 
 Table habit.drink_catalog {
   id integer [pk, increment]
-  name string [not null]
-  volume_ml real
-  abv_percent real
-  created_at timestamptz [default: `now()`]
+  name text [not null, unique: 'drink_catalog_name_key']
+  default_volume_ml double [nullable]
+  default_abv_percent double [nullable]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  count integer [default: 0]
+  last_updated timestamp [default: `now()`]
+  catalog_type text [default: 'user-created']
+  archived boolean [default: false]
+  icon text [nullable]
+  drink_type text [nullable]
+  user_id uuid [nullable, note: 'FK to identity.users.id ON DELETE SET NULL']
 }
 
-Table habit.exercises { // Catalog of exercise types
+Table habit.exercise {
   id integer [pk, increment]
-  name string [not null]
-  category string [nullable]
-  created_at timestamptz [default: `now()`]
+  log_id integer [nullable, note: 'FK to habit.habit_log.id ON DELETE CASCADE']
+  duration_sec integer [nullable, note: 'CHECK: duration_sec >= 0']
+  distance_km double [nullable, note: 'CHECK: distance_km >= 0']
+  calories_burned integer [nullable, note: 'CHECK: calories_burned >= 0']
+  heart_rate_avg integer [nullable, note: 'CHECK: heart_rate_avg >= 0']
+  user_id uuid [nullable, note: 'FK to identity.users.id ON DELETE CASCADE']
 }
 
-// --- Schema: crm ---
-Table crm.inquiries {
+Table habit.exercises {
+  id integer [pk, increment, note: 'Sequence is habit.workout_sessions_id_seq (table was renamed)']
+  log_id integer [nullable, note: 'FK to habit.habit_log.id ON DELETE CASCADE']
+  exercise_type text [not null, note: 'CHECK: exercise_type IN (\'Running\', \'Cycling\', \'Gym\', \'Swimming\', \'Yoga\', \'Other\')']
+  duration_sec integer [nullable, note: 'CHECK: duration_sec >= 0']
+  distance_km double [nullable, note: 'CHECK: distance_km >= 0']
+  calories_burned integer [nullable, note: 'CHECK: calories_burned >= 0']
+  heart_rate_avg integer [nullable, note: 'CHECK: heart_rate_avg >= 0']
+  source_specific_id text [nullable]
+  user_id uuid [nullable, note: 'FK to identity.users.id ON DELETE SET NULL']
+}
+
+Table habit.strength_sets {
   id integer [pk, increment]
-  name string [not null]
-  email string [not null]
-  message string
-  status string [default: 'new']
-  user_id uuid [nullable, ref: > identity.users.id] // TARGET STATE: if inquiries can be linked to unified users
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
+  session_id integer [nullable, note: 'FK to habit.exercises.id ON DELETE CASCADE']
+  exercise_name text [not null]
+  sets integer [nullable, note: 'CHECK: sets > 0']
+  reps integer [nullable, note: 'CHECK: reps > 0']
+  weight_kg double [nullable, note: 'CHECK: weight_kg >= 0']
+  time_per_set_sec integer [nullable, note: 'CHECK: time_per_set_sec >= 0']
+  rest_between_sets_sec integer [nullable, note: 'CHECK: rest_between_sets_sec >= 0']
+  user_id uuid [nullable, note: 'FK to identity.users.id ON DELETE SET NULL']
 }
 
-// --- Schema: fsa ---
-Table fsa.local_authorities {
-  local_authority_id integer [pk]
-  name string [not null]
-  friendly_name string [nullable]
-  url string [nullable]
+Table habit.strava_activities {
+  id bigint [pk, note: 'Strava activity ID (externally assigned, not auto-generated)']
+  name text [not null]
+  distance double [not null]
+  moving_time integer [not null]
+  elapsed_time integer [not null]
+  total_elevation_gain double [not null]
+  type text [not null]
+  sport_type text [not null]
+  start_date timestamp [not null]
+  start_date_local timestamp [not null]
+  timezone text [not null]
+  average_speed double [not null]
+  max_speed double [not null]
+  elev_high double [nullable]
+  elev_low double [nullable]
+  map_id text [nullable]
+  summary_polyline text [nullable]
+  workout_type integer [nullable]
+  utc_offset double [nullable]
+  location_city text [nullable]
+  location_state text [nullable]
+  location_country text [nullable]
+  achievement_count integer [nullable]
+  kudos_count integer [nullable]
+  comment_count integer [nullable]
+  athlete_count integer [nullable]
+  photo_count integer [nullable]
+  trainer boolean [nullable]
+  commute boolean [nullable]
+  manual boolean [nullable]
+  private boolean [nullable]
+  visibility text [nullable]
+  flagged boolean [nullable]
+  gear_id text [nullable]
+  start_lat double [nullable]
+  start_lng double [nullable]
+  end_lat double [nullable]
+  end_lng double [nullable]
+  upload_id bigint [nullable]
+  external_id text [nullable]
+  from_accepted_tag boolean [nullable]
+  pr_count integer [nullable]
+  total_photo_count integer [nullable]
+  has_kudoed boolean [nullable]
+  user_id uuid [not null, note: 'FK to identity.users.id ON DELETE CASCADE']
+
+  Indexes {
+    (user_id, start_date) [name: 'idx_strava_activities_user_start_desc', note: 'start_date DESC; supports per-user activity feed sorted by UTC start']
+    (user_id, start_date_local) [name: 'idx_strava_activities_user_start_local_desc', note: 'start_date_local DESC; supports per-user activity feed sorted by local start']
+  }
+}
+
+Table habit.strava_sync_log {
+  id integer [pk, increment]
+  last_updated timestamp [not null, default: `now()`]
+  user_id uuid [not null, note: 'FK to identity.users.id ON DELETE CASCADE']
+}
+
+Table habit.strava_tokens {
+  id integer [pk, increment]
+  access_token text [not null]
+  refresh_token text [not null]
+  expires_at bigint [not null, note: 'Unix epoch seconds']
+  user_id uuid [not null, unique: 'uq_strava_tokens_user_id', note: 'FK to identity.users.id ON DELETE CASCADE; one token row per user']
+}
+
+// Relationships for habit schema
+Ref: habit.habit_log.user_id > identity.users.id [delete: cascade]
+Ref: habit.alcohol.log_id > habit.habit_log.id [delete: cascade]
+Ref: habit.alcohol.drink_id > habit.drink_catalog.id
+Ref: habit.alcohol.user_id > identity.users.id [delete: cascade]
+Ref: habit.drink_catalog.user_id > identity.users.id [delete: 'set null']
+Ref: habit.exercise.log_id > habit.habit_log.id [delete: cascade]
+Ref: habit.exercise.user_id > identity.users.id [delete: cascade]
+Ref: habit.exercises.log_id > habit.habit_log.id [delete: cascade]
+Ref: habit.exercises.user_id > identity.users.id [delete: 'set null']
+Ref: habit.strength_sets.session_id > habit.exercises.id [delete: cascade]
+Ref: habit.strength_sets.user_id > identity.users.id [delete: 'set null']
+Ref: habit.strava_activities.user_id > identity.users.id [delete: cascade]
+Ref: habit.strava_sync_log.user_id > identity.users.id [delete: cascade]
+Ref: habit.strava_tokens.user_id > identity.users.id [delete: cascade]
+
+
+// ============================================================================
+// Schema: content
+// Blog authors and posts. (Previously referred to as public_data; renamed.)
+// ============================================================================
+
+Table content.authors {
+  id uuid [pk, note: 'Shares id with identity.users.id (FK ON DELETE CASCADE) — authors are users']
+  name varchar(255) [not null]
+  created_at timestamptz [not null]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table content.posts {
+  id integer [pk, increment]
+  title varchar(255) [not null]
+  created_at timestamptz [not null]
+  excerpt text [not null]
+  content text [nullable]
+  slug text [nullable]
+  content_md text [nullable]
+  tags text [nullable]
   metadata jsonb [nullable]
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
+  cover_image varchar(255) [nullable]
+  alt_text text [nullable]
+  attribution text [nullable]
+  attribution_link text [nullable]
+  author_id uuid [not null, note: 'FK to identity.users.id ON DELETE CASCADE']
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (author_id) [name: 'idx_posts_author_id']
+    (created_at) [name: 'idx_posts_created_desc', note: 'created_at DESC']
+    (slug) [name: 'idx_posts_slug']
+    (updated_at) [name: 'idx_posts_updated_desc', note: 'updated_at DESC']
+  }
+}
+
+// Relationships for content schema
+Ref: content.authors.id > identity.users.id [delete: cascade]
+Ref: content.posts.author_id > identity.users.id [delete: cascade]
+
+
+// ============================================================================
+// Schema: crm
+// Contact-form inquiries.
+// ============================================================================
+
+Table crm.inquiries {
+  id uuid [pk, default: `gen_random_uuid()`]
+  submitter_user_id uuid [nullable, note: 'FK to identity.users.id ON DELETE SET NULL; null for anonymous submitters']
+  name varchar(255) [not null]
+  email varchar(255) [not null]
+  subject varchar(255) [nullable]
+  message text [nullable]
+  status text [not null, default: 'new', note: 'CHECK: status IN (\'new\', \'open\', \'assigned\', \'pending_customer_reply\', \'pending_agent_reply\', \'resolved\', \'closed\', \'spam\')']
+  assigned_to_user_id uuid [nullable, default: `'95288f22-6049-4651-85ae-4932ededb5ab'::uuid`, note: 'FK to identity.users.id ON DELETE SET NULL; defaults to Angus']
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  captcha_token text [nullable]
+
+  Indexes {
+    (assigned_to_user_id) [name: 'idx_inquiries_assigned_to_user_id']
+    (email) [name: 'idx_inquiries_email']
+    (status) [name: 'idx_inquiries_status']
+    (submitter_user_id) [name: 'idx_inquiries_submitter_user_id']
+  }
+}
+
+// Relationships for crm schema
+Ref: crm.inquiries.submitter_user_id > identity.users.id [delete: 'set null']
+Ref: crm.inquiries.assigned_to_user_id > identity.users.id [delete: 'set null']
+
+
+// ============================================================================
+// Schema: fsa
+// UK Food Standards Agency hygiene ratings ingest.
+// ============================================================================
+
+Table fsa.local_authorities {
+  local_authority_id integer [pk, note: 'Externally assigned by FSA; not auto-generated']
+  name text [nullable]
+  friendly_name text [nullable]
+  url text [nullable]
+  metadata jsonb [nullable]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  estab_success_count integer [nullable]
+  estab_skipped_count integer [nullable]
+  estab_error_count integer [nullable]
+  processing_duration double [nullable]
+  process_successful boolean [nullable]
+  processing_status text [default: 'Pending']
+  process_message text [nullable]
 }
 
 Table fsa.establishments {
-  fhrs_id integer [pk]
-  business_name string [nullable]
-  business_type string [nullable]
-  address_line_1 string [nullable]
-  address_line_2 string [nullable]
-  address_line_4 string [nullable]
-  post_code string [nullable]
-  rating_value string [nullable]
+  id integer [pk, increment]
+  fhrs_id integer [nullable, unique: 'establishments_fhrs_id_key']
+  local_authority_business_id text [nullable]
+  business_name text [nullable]
+  business_type text [nullable]
+  business_type_id integer [nullable]
+  address_line_1 text [nullable]
+  address_line_2 text [nullable]
+  address_line_4 text [nullable]
+  post_code text [nullable]
+  rating_value_str text [nullable]
+  rating_key text [nullable]
   rating_date date [nullable]
-  latitude float [nullable]
-  longitude float [nullable]
-  local_authority_id integer [ref: > fsa.local_authorities.local_authority_id]
-  metadata jsonb [nullable]
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
+  local_authority_code text [nullable]
+  local_authority_name text [nullable]
+  local_authority_website text [nullable]
+  local_authority_email_address text [nullable]
+  hygiene_score integer [nullable]
+  structural_score integer [nullable]
+  confidence_in_management integer [nullable]
+  scheme_type text [nullable]
+  new_rating_pending boolean [nullable]
+  longitude double [nullable]
+  latitude double [nullable]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+  rating_value_num integer [nullable]
+  rating_status_id integer [nullable, note: 'FK to fsa.ratings.id']
+  postcode_id integer [nullable, note: 'FK to fsa.postcodes.postcode_id']
+  address text [nullable]
+
+  Indexes {
+    (postcode_id) [name: 'idx_establishments_postcode_id']
+    (rating_value_num) [name: 'idx_rating_value_num']
+  }
 }
 
-// --- Schema: public_data ---
-// Assuming 'public_data' is the schema name for blog posts, authors, and legacy customers
-
-Table public_data._deprecated_customers { // Example structure - confirm actual legacy columns
-  id integer [pk] // Assuming this was the old PK
-  name string
-  email string
-  phone string
-  created_at timestamptz
-  // updated_at timestamptz // You mentioned this didn't exist for customers
-  // ... other legacy columns ...
+Table fsa.numeric_ratings {
+  id integer [nullable, note: 'Materialised/staging table; has no primary key in the live DB']
+  fhrs_id integer [nullable]
+  local_authority_business_id text [nullable]
+  business_name text [nullable]
+  business_type text [nullable]
+  business_type_id integer [nullable]
+  address_line_1 text [nullable]
+  address_line_2 text [nullable]
+  address_line_4 text [nullable]
+  post_code text [nullable]
+  rating_value_str text [nullable]
+  rating_key text [nullable]
+  rating_date date [nullable]
+  local_authority_code text [nullable]
+  local_authority_name text [nullable]
+  local_authority_website text [nullable]
+  local_authority_email_address text [nullable]
+  hygiene_score integer [nullable]
+  structural_score integer [nullable]
+  confidence_in_management integer [nullable]
+  scheme_type text [nullable]
+  new_rating_pending boolean [nullable]
+  longitude double [nullable]
+  latitude double [nullable]
+  created_at timestamp [nullable]
+  updated_at timestamp [nullable]
+  rating_value_num integer [nullable]
 }
 
-Table public_data.authors {
+Table fsa.postcodes {
+  postcode_id integer [pk, increment]
+  postcode varchar(10) [not null, unique: 'postcodes_postcode_key']
+
+  Indexes {
+    (postcode) [name: 'idx_postcodes_postcode']
+  }
+}
+
+Table fsa.ratings {
   id integer [pk, increment]
-  name string [not null]
-  email string [unique, nullable] // Or should this link to identity.users if authors are users?
-  // user_id uuid [ref: > identity.users.id, nullable] // Optional: if authors can be system users
-  bio string [nullable]
-  created_at timestamptz [default: `now()`]
+  rating_value_str text [nullable, unique: 'ratings_rating_value_str_key']
 }
 
-Table public_data.posts {
-  id integer [pk, increment]
-  title string [not null]
-  content string [nullable]
-  author_id integer [ref: > public_data.authors.id] // Or ref: > identity.users.id if authors are users
-  created_at timestamptz [default: `now()`]
+Table fsa.scheduled_jobs {
+  job_id integer [pk, increment]
+  job_name text [not null]
+  start_time timestamp [not null]
+  end_time timestamp [nullable]
+  status text [not null]
+  remarks text [nullable]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
 }
+
+// Relationships for fsa schema
+Ref: fsa.establishments.postcode_id > fsa.postcodes.postcode_id
+Ref: fsa.establishments.rating_status_id > fsa.ratings.id
+
+
+// ============================================================================
+// Schema: raindrop
+// Raindrop.io OAuth integration: tokens, collections, bookmarks, sync logs.
+// ============================================================================
+
+Table raindrop.tokens {
+  user_id uuid [pk, note: 'PK and FK to identity.users.id ON DELETE CASCADE; one token row per user']
+  access_token text [not null]
+  refresh_token text [not null]
+  expires_at timestamptz [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table raindrop.collections {
+  id integer [pk, increment]
+  user_id uuid [not null, note: 'FK to identity.users.id ON DELETE CASCADE']
+  raindrop_id varchar(255) [not null]
+  title varchar(255) [not null]
+  count integer [default: 0]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (user_id) [name: 'collections_user_id_index']
+    (user_id, raindrop_id) [unique, name: 'collections_user_id_raindrop_id_unique']
+  }
+}
+
+Table raindrop.bookmarks {
+  id integer [pk, increment]
+  user_id uuid [not null, note: 'FK to identity.users.id ON DELETE CASCADE']
+  raindrop_id varchar(255) [not null]
+  title text [not null]
+  link text [not null]
+  tags text[] [nullable]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  description text [nullable]
+  is_organized boolean [not null, default: false]
+
+  Indexes {
+    (created_at) [name: 'bookmarks_created_at_index']
+    (user_id) [name: 'bookmarks_user_id_index']
+    (user_id, raindrop_id) [unique, name: 'bookmarks_user_id_raindrop_id_unique']
+  }
+}
+
+Table raindrop.sync_logs {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, note: 'FK to identity.users.id ON DELETE CASCADE']
+  status text [not null]
+  item_count integer [not null]
+  error_message text [nullable]
+  started_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  finished_at timestamptz [nullable]
+
+  Indexes {
+    (started_at) [name: 'ix_raindrop_sync_logs_started_at']
+    (status) [name: 'ix_raindrop_sync_logs_status']
+    (user_id) [name: 'ix_raindrop_sync_logs_user_id']
+  }
+}
+
+// Relationships for raindrop schema
+Ref: raindrop.tokens.user_id > identity.users.id [delete: cascade]
+Ref: raindrop.collections.user_id > identity.users.id [delete: cascade]
+Ref: raindrop.bookmarks.user_id > identity.users.id [delete: cascade]
+Ref: raindrop.sync_logs.user_id > identity.users.id [delete: cascade]
+
+
+// ============================================================================
+// Schema: bookmarks
+// Unified bookmarks store (sits above raindrop, Instagram, etc.) with user-defined categories.
+// ============================================================================
+
+Table bookmarks.bookmarks {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, note: 'FK to identity.users.id ON DELETE CASCADE']
+  title text [not null]
+  url text [not null]
+  resolved_url text [nullable]
+  description text [nullable]
+  image_url text [nullable]
+  image_alt text [nullable]
+  site_name text [nullable]
+  tags text[] [nullable]
+  source_type varchar(255) [not null, note: 'e.g., raindrop, instagram, manual']
+  source_id varchar(255) [not null, note: 'Identifier within the source system']
+  source_metadata jsonb [nullable]
+  is_organized boolean [not null, default: false]
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  intelligence_level integer [default: 1]
+  confidence_scores jsonb [nullable]
+  platform_metadata jsonb [nullable]
+  processing_status text [default: 'pending']
+
+  Indexes {
+    (intelligence_level) [name: 'idx_bookmarks_intelligence_level']
+    (processing_status) [name: 'idx_bookmarks_processing_status']
+    (user_id, created_at) [name: 'idx_bookmarks_user_created_desc', note: 'created_at DESC; supports paginated bookmark feed per user']
+    (user_id, intelligence_level) [name: 'idx_bookmarks_user_intelligence']
+    (tags) [type: gin, name: 'ix_bookmarks_tags', note: 'GIN index for tag array lookups']
+    (url) [name: 'ix_bookmarks_url']
+    (user_id) [name: 'ix_bookmarks_user_id']
+    (source_type, source_id) [unique, name: 'uq_bookmarks_source', note: 'Prevents duplicate imports from the same source row']
+  }
+}
+
+Table bookmarks.categories {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, note: 'FK to identity.users.id ON DELETE CASCADE']
+  name varchar(255) [not null]
+  description text [nullable]
+  parent_id uuid [nullable, note: 'FK to bookmarks.categories.id ON DELETE CASCADE; self-referential for nested categories']
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (parent_id) [name: 'ix_categories_parent_id']
+    (user_id) [name: 'ix_categories_user_id']
+  }
+}
+
+Table bookmarks.bookmark_categories {
+  bookmark_id uuid [not null]
+  category_id uuid [not null]
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (bookmark_id, category_id) [unique, name: 'uq_bookmark_categories']
+  }
+  Note: 'Many-to-many join table. No declared primary key in the live DB; uniqueness enforced by uq_bookmark_categories.'
+}
+
+Table bookmarks.instagram_analyses {
+  id integer [pk, increment]
+  user_id uuid [not null, note: 'FK to identity.users.id ON DELETE CASCADE']
+  instagram_url text [not null]
+  thread_id text [not null]
+  run_id text [not null]
+  metadata jsonb [not null]
+  analysis_result jsonb [not null]
+  analyzed_at timestamptz [not null, default: `now()`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (analyzed_at) [name: 'idx_instagram_analyses_analyzed_at', note: 'analyzed_at DESC']
+    (run_id) [name: 'idx_instagram_analyses_run_id']
+    (thread_id) [name: 'idx_instagram_analyses_thread_id']
+    (user_id) [name: 'idx_instagram_analyses_user_id']
+    (user_id, instagram_url) [unique, name: 'idx_instagram_analyses_user_url_unique']
+  }
+}
+
+// Relationships for bookmarks schema
+Ref: bookmarks.bookmarks.user_id > identity.users.id [delete: cascade]
+Ref: bookmarks.categories.user_id > identity.users.id [delete: cascade]
+Ref: bookmarks.categories.parent_id > bookmarks.categories.id [delete: cascade]
+Ref: bookmarks.bookmark_categories.bookmark_id > bookmarks.bookmarks.id [delete: cascade]
+Ref: bookmarks.bookmark_categories.category_id > bookmarks.categories.id [delete: cascade]
+Ref: bookmarks.instagram_analyses.user_id > identity.users.id [delete: cascade]
