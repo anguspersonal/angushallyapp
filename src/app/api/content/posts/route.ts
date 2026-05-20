@@ -1,26 +1,17 @@
-import type { ContentListParams } from '@/lib/content/contracts';
+import { HttpError, publicHandler } from '@/lib/api/handler';
 import { listBlogPosts } from '@/lib/content/blogRepository';
-import { migrationInProgressResponse } from '@/lib/api/migrationUnavailable';
-import { getSupabaseAdmin } from '@/lib/supabase/admin';
-import { NextResponse } from 'next/server';
+import type { ContentListParams } from '@/lib/content/contracts';
 
-export async function GET(request: Request) {
-  const admin = getSupabaseAdmin();
+export const GET = publicHandler(async ({ admin, req }) => {
   if (!admin) {
-    return migrationInProgressResponse('blog');
+    throw new HttpError(503, 'Supabase not configured');
   }
-
-  const { searchParams } = new URL(request.url);
+  const { searchParams } = new URL(req.url);
   const params: ContentListParams = {
     page: searchParams.get('page') ? Number(searchParams.get('page')) : undefined,
     pageSize: searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : undefined,
     sortBy: (searchParams.get('sortBy') as ContentListParams['sortBy']) ?? undefined,
     order: (searchParams.get('order') as ContentListParams['order']) ?? undefined,
   };
-
-  const result = await listBlogPosts(admin, params);
-  if (!result) {
-    return migrationInProgressResponse('blog');
-  }
-  return NextResponse.json(result);
-}
+  return listBlogPosts(admin, params);
+});

@@ -5,22 +5,24 @@ import type {
   ContentPostSummary,
 } from '@/lib/content/contracts';
 import { API_BASE } from '@/lib/api/client';
+import { readApiJson } from '@/lib/api/readApiJson';
 import { buildPostsQueryString } from './buildPostsQueryString';
-import { readContentJson } from './readContentJson';
 
 export function createContentClient(baseUrl = API_BASE) {
   const base = baseUrl.replace(/\/$/, '');
 
   async function fetchPostDetail(encodedSegment: string): Promise<ContentPostDetail | null> {
-    const response = await fetch(`${base}/content/posts/${encodedSegment}`, { credentials: 'include' });
+    const response = await fetch(`${base}/content/posts/${encodedSegment}`, {
+      credentials: 'include',
+    });
     if (response.status === 404) return null;
-    return readContentJson<ContentPostDetail>(response);
+    return readApiJson<ContentPostDetail>(response);
   }
 
   const getPosts = async (params?: ContentListParams): Promise<ContentListResult> => {
     const query = buildPostsQueryString(params);
     const response = await fetch(`${base}/content/posts${query}`, { credentials: 'include' });
-    return readContentJson<ContentListResult>(response);
+    return readApiJson<ContentListResult>(response);
   };
 
   const getPostBySlug = async (slug: string): Promise<ContentPostDetail | null> => {

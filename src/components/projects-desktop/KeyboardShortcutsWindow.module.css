@@ -1,0 +1,97 @@
+/* Keyboard Shortcuts window body — system window content (single-pane).
+   Glass body inherits from WindowFrame; this file styles the interior only. */
+
+.root {
+  padding: 20px 24px 24px;
+  font-family: var(--font-sans), Ubuntu, system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--site-ink);
+  overflow-y: auto;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.intro {
+  margin: 0 0 16px;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+.section + .section {
+  margin-top: 18px;
+}
+
+.sectionTitle {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.keys {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 2px 8px;
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  border-radius: 4px;
+  border: 0.5px solid rgba(127, 127, 127, 0.4);
+  background: rgba(127, 127, 127, 0.1);
+  color: var(--site-ink);
+  white-space: nowrap;
+}
+
+.plus {
+  opacity: 0.45;
+  font-size: 11px;
+}
+
+.action {
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+.footnote {
+  margin: 20px 0 0;
+  padding-top: 14px;
+  border-top: 0.5px solid rgba(127, 127, 127, 0.18);
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.7;
+}
+
+.footnote .kbd {
+  font-size: 10px;
+  min-width: 24px;
+  padding: 1px 6px;
+}

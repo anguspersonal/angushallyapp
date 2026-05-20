@@ -18,7 +18,11 @@
   overflow: hidden;
 }
 
-@media (min-width: 768px) {
+/* Switch to side-by-side when the card's container (Section inner) has
+   enough room for both image and text to read well. Container query, not
+   media query: the card responds to its actual available width, not the
+   viewport. Section provides the container-type: inline-size context. */
+@container (min-width: 36rem) {
   .inner {
     flex-direction: row;
     align-items: stretch;
@@ -35,7 +39,7 @@
   overflow: hidden;
 }
 
-@media (min-width: 768px) {
+@container (min-width: 36rem) {
   .media {
     width: 40%;
     flex: 0 0 40%;

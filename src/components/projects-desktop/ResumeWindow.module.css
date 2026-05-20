@@ -1,0 +1,51 @@
+/* ResumeWindow — toolbar + PDF iframe inside a system-window body. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Top strip — filename on the left, Download button on the right. */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  flex: 0 0 auto;
+  border-bottom: 0.5px solid;
+  font-size: 12px;
+}
+
+[data-mantine-color-scheme='light'] .toolbar {
+  border-bottom-color: rgba(13, 31, 30, 0.1);
+  background: rgba(13, 31, 30, 0.03);
+}
+
+[data-mantine-color-scheme='dark'] .toolbar {
+  border-bottom-color: rgba(250, 247, 240, 0.1);
+  background: rgba(250, 247, 240, 0.03);
+}
+
+.filename {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  opacity: 0.78;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.downloadButton {
+  flex: 0 0 auto;
+}
+
+/* PDF embed — browsers natively render application/pdf in an <iframe>. */
+.viewer {
+  flex: 1 1 auto;
+  width: 100%;
+  border: 0;
+  background: rgba(127, 127, 127, 0.08);
+}

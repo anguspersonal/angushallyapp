@@ -1,0 +1,14 @@
+/* MacDesktop — full-viewport positioning context for the macOS desktop redesign of /projects.
+
+   Acts as the stage for the wallpaper plus, in later phases, the menu bar
+   (top), dock (bottom), and floating window manager. Sized in dvh so the
+   mobile browser chrome (collapsing URL bar) does not introduce scroll
+   jitter or trigger an unwanted vertical scrollbar. */
+
+.root {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+}

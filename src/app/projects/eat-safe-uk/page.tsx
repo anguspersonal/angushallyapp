@@ -1,12 +1,13 @@
 'use client';
 
 import React from "react";
-import { Container, Title, Text, List, Anchor, Paper, Badge, Group, Stack } from '@mantine/core';
+import { Title, Text, List, Anchor, Paper, Badge, Group, Stack } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { IconAlertTriangle } from '@tabler/icons-react';
 
 export default function EatSafeUK() {
   return (
-    <Container size="sm" py="xl">
+    <Section width="narrow" padY="default">
       <Stack gap="lg">
         <Title order={1} ta="center">Eat Safe UK</Title>
 
@@ -41,6 +42,6 @@ export default function EatSafeUK() {
           </List>
         </Paper>
       </Stack>
-    </Container>
+    </Section>
   );
 }

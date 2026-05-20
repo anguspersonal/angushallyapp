@@ -22,6 +22,8 @@ declare module '@mantine/core' {
       dark: MantineColorsTuple;
       gray: MantineColorsTuple;
       red: MantineColorsTuple;
+      teal: MantineColorsTuple;
+      coral: MantineColorsTuple;
     };
   }
 }

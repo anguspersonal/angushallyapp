@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Container, Title, Text, Stack } from '@mantine/core';
+import { Title, Text, Stack } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { GlassContent } from '@/components/design/Glass';
 import { SayHelloPill } from '@/components/design/SayHelloPill';
 
 export default function WebDevPage() {
   return (
-    <Container size="sm" py="xl">
+    <Section width="narrow" padY="default">
       <GlassContent p="xl">
         <Stack gap="md">
           <Title
@@ -16,18 +17,18 @@ export default function WebDevPage() {
               fontFamily: 'var(--font-display), League Gothic, sans-serif',
               textTransform: 'uppercase',
               fontWeight: 400,
+              color: 'var(--site-ink)',
             }}
-            c="var(--site-ink)"
           >
             Web Development
           </Title>
-          <Text c="dimmed">Custom web apps and sites, built to ship. Full copy coming soon.</Text>
-          <Text c="var(--site-ink)">
+          <Text style={{ color: 'var(--mantine-color-dimmed)' }}>Custom web apps and sites, built to ship. Full copy coming soon.</Text>
+          <Text style={{ color: 'var(--site-ink)' }}>
             If you&apos;ve got a project in mind, drop me a line via the contact page and mention web dev.
           </Text>
           <SayHelloPill />
         </Stack>
       </GlassContent>
-    </Container>
+    </Section>
   );
 }

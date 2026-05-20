@@ -1,0 +1,105 @@
+/* Wallpaper — Big-Sur-style abstract gradient mesh in the site palette.
+   Day variant: cream base + soft teal + soft coral radial blobs.
+   Night variant: deep teal base + mid-teal + coral radial blobs.
+   No Apple blues/purples — palette stays "yours".
+
+   Implemented as a fixed-position layer behind everything, mirroring the
+   GradientRoot pattern so the desktop wallpaper composes naturally with the
+   site's existing chrome model. */
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.base {
+  position: absolute;
+  inset: 0;
+  /* Phase 8: Crossfade transition when theme toggles */
+  transition: background-color 500ms ease, background-image 500ms ease;
+}
+
+[data-mantine-color-scheme='light'] .base {
+  background:
+    radial-gradient(60% 50% at 22% 30%, rgba(31, 74, 68, 0.18) 0%, transparent 60%),
+    radial-gradient(70% 60% at 78% 70%, rgba(240, 153, 123, 0.22) 0%, transparent 65%),
+    radial-gradient(120% 100% at 50% 50%, #faf7f0 0%, #f0ece0 100%);
+  background-color: #faf7f0;
+}
+
+[data-mantine-color-scheme='dark'] .base {
+  background:
+    radial-gradient(60% 55% at 18% 28%, color-mix(in srgb, #1f4a44 70%, #14302d) 0%, transparent 62%),
+    radial-gradient(70% 60% at 82% 72%, rgba(240, 153, 123, 0.18) 0%, transparent 65%),
+    radial-gradient(60% 60% at 60% 50%, color-mix(in srgb, #14302d 60%, #0d1f1e) 0%, transparent 70%),
+    linear-gradient(135deg, #0d1f1e 0%, #14302d 60%, #1a3f3a 100%);
+  background-color: #0d1f1e;
+}
+
+/* Faint grain layer — keeps the mesh from looking digitally flat. */
+.grain {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 3px 3px;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+[data-mantine-color-scheme='dark'] .grain {
+  background-image: radial-gradient(rgba(250, 247, 240, 0.04) 1px, transparent 1px);
+  mix-blend-mode: screen;
+}
+
+/* Title + help text — large faded League Gothic sitting on the wallpaper as
+   part of the wallpaper itself, not as floating UI. Centred-upper so it does
+   not clash with the dock at the bottom edge. */
+.titleStack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding-top: 6vh;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.title {
+  font-family: var(--font-display), 'League Gothic', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(6rem, 18vw, 18rem);
+  line-height: 0.85;
+  color: var(--site-ink);
+  opacity: 0.1;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.help {
+  font-family: var(--font-sans), Ubuntu, system-ui, sans-serif;
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--site-ink);
+  opacity: 0.25;
+  margin: 0;
+}
+
+@media (max-width: 48em) {
+  .titleStack {
+    padding-top: 12vh;
+  }
+
+  .title {
+    font-size: clamp(4rem, 22vw, 8rem);
+  }
+}

@@ -45,7 +45,7 @@ export const careerMilestones: CareerMilestone[] = [
   },
   {
     year: '2020',
-    role: 'COO',
+    role: 'Head of Product',
     org: 'Teamvine (Future Factory Ltd)',
     desc: 'Oversaw product, customer services, sales, marketing, compliance, governance, content, ops, IP. Led agile dev teams. Shipped 4 digital products in 6 months. Secured £100k UKRI grant.',
     image: {
@@ -75,9 +75,9 @@ export const careerMilestones: CareerMilestone[] = [
   },
   {
     year: '2025',
-    role: 'COO',
+    role: 'COO & Co-founder',
     org: 'HeyLina',
-    desc: "Building emotionally intelligent AI. The most exciting thing I've ever worked on.",
+    desc: "Data strategist with a builder's bias and an operator's discipline. Built the marketing site, internal OS, and engineering process. Run launches, the interim raise, compliance, and pricing.",
     images: [
       {
         src: '/20250927_heylina_Strategy_day.jpg',

@@ -1,0 +1,163 @@
+/* MobileProjectSheet — fullscreen bottom sheet for mobile project view.
+   iOS-style sheet that slides up from bottom, draggable to dismiss. */
+
+/* Backdrop overlay */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 150;
+  backdrop-filter: blur(4px);
+}
+
+/* Sheet container */
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 5vh; /* Leave a bit of backdrop visible at top */
+  z-index: 160;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+[data-mantine-color-scheme='dark'] .sheet {
+  background: rgba(13, 31, 30, 0.95);
+  backdrop-filter: blur(24px);
+}
+
+[data-mantine-color-scheme='light'] .sheet {
+  background: rgba(250, 247, 240, 0.95);
+  backdrop-filter: blur(24px);
+}
+
+/* Handle bar */
+.handleBar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 8px;
+  cursor: grab;
+}
+
+.handleBar:active {
+  cursor: grabbing;
+}
+
+.handle {
+  width: 36px;
+  height: 5px;
+  border-radius: 3px;
+  background: currentColor;
+  opacity: 0.3;
+}
+
+/* Close button */
+.closeButton {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(127, 127, 127, 0.2);
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 120ms ease;
+}
+
+.closeButton:hover {
+  background: rgba(127, 127, 127, 0.3);
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--site-accent, #f0997b);
+  outline-offset: 2px;
+}
+
+/* Content area */
+.content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px 24px;
+  gap: 16px;
+}
+
+/* Mobile header (icon + title + status) */
+.mobileHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0 16px;
+  border-bottom: 0.5px solid;
+  flex-shrink: 0;
+}
+
+[data-mantine-color-scheme='dark'] .mobileHeader {
+  border-bottom-color: rgba(250, 247, 240, 0.1);
+}
+
+[data-mantine-color-scheme='light'] .mobileHeader {
+  border-bottom-color: rgba(13, 31, 30, 0.08);
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-display), League Gothic, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.gated {
+  font-size: 11px;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* Project content area (window component renders here) */
+.projectContent {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* Override window component styles for mobile single-pane */
+}
+
+.projectContent > div {
+  height: 100%;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet {
+    transition: none !important;
+  }
+}

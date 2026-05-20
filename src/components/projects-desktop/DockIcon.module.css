@@ -1,0 +1,70 @@
+/* DockIcon — single button wrapping a project tile in the dock.
+   Composes the IconTile primitive (glass material + glyph). The cursor-
+   distance magnification curve is wired in Phase 8; the hover lift is
+   handled here. */
+
+.button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.button:focus-visible {
+  outline: none;
+}
+
+.iconWrap {
+  display: inline-flex;
+  /* Phase 8: Apply cursor-distance magnification via CSS custom property */
+  transform: scale(var(--dock-scale, 1));
+  transition:
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 200ms ease;
+  will-change: transform;
+}
+
+/* Combine dock magnification with hover lift effect */
+.button:hover .iconWrap,
+.button:focus-visible .iconWrap {
+  transform: scale(var(--dock-scale, 1)) translateY(-4px);
+  filter: brightness(0) invert(1) drop-shadow(0 8px 22px rgba(0, 0, 0, 0.4));
+}
+
+.button:active .iconWrap {
+  transform: scale(calc(var(--dock-scale, 1) * 0.98)) translateY(-2px);
+  transition-duration: 80ms;
+}
+
+/* On hover/focus the iconWrap gets brightness(0)+invert(1) to render a pure
+   white silhouette. The tile's resting border + inset highlight would invert
+   too and read as a hollow ring around the silhouette — strip them in this
+   state so the tile reads as a clean solid shape. !important is needed
+   because IconTile's theme-scoped rules ([data-mantine-color-scheme] .tile)
+   tie on specificity weight. */
+.button:hover .dockTile,
+.button:focus .dockTile,
+.button:focus-visible .dockTile,
+.button:active .dockTile {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iconWrap,
+  .button:hover .iconWrap,
+  .button:focus-visible .iconWrap,
+  .button:active .iconWrap {
+    /* Phase 8: Disable dock magnification and hover effects for reduced motion */
+    transform: none;
+    transition: none;
+    filter: none;
+  }
+}

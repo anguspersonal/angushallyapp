@@ -1,0 +1,143 @@
+/* TerseArchivedWindow — smaller single-pane layout for archived projects.
+   Minimal but complete: title, status, desc, tags, "Archived because…", CTA. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px 20px 20px;
+  overflow-y: auto;
+  gap: 12px;
+}
+
+/* ---------- Header ---------- */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-display), League Gothic, sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metaKey {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.statusBadge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: rgba(87, 99, 102, 0.25);
+  color: inherit;
+}
+
+/* ---------- Description ---------- */
+
+.description {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* ---------- Tags ---------- */
+
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.tag {
+  text-transform: lowercase;
+}
+
+/* ---------- Archived note ---------- */
+
+.archivedNote {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border-left: 3px solid;
+  min-height: 0;
+}
+
+[data-mantine-color-scheme='dark'] .archivedNote {
+  background: rgba(0, 0, 0, 0.2);
+  border-left-color: rgba(250, 247, 240, 0.2);
+}
+
+[data-mantine-color-scheme='light'] .archivedNote {
+  background: rgba(255, 255, 255, 0.5);
+  border-left-color: rgba(13, 31, 30, 0.15);
+}
+
+.noteLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.noteText {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0.85;
+}
+
+/* ---------- CTA ---------- */
+
+.ctaSection {
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.ctaButton {
+  width: 100%;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    scrollbar-width: auto;
+  }
+}

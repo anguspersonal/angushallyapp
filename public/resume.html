@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Angus Hally Resume</title>
+    <meta name="robots" content="noindex" />
+    <!--
+      Resume. Single-source HTML.
+
+      Edit content directly in this file. To produce the PDF that the
+      /projects desktop serves:
+
+        1. Open http://localhost:3000/resume.html in your browser.
+        2. Cmd+P (or Ctrl+P).
+        3. Destination: "Save as PDF".
+        4. Save into:  public/resume.pdf
+        5. The Resume.pdf icon on /projects already points at /resume.pdf,
+           so the Download button will grab the latest export.
+
+      The print stylesheet below sets A4 page geometry, removes the on-screen
+      paper / shadow, and uses high-contrast ink. The on-screen view shows a
+      "paper card" so the layout matches what print will produce.
+    -->
+    <style>
+      /* ----- Tokens (kept inline so the file is self-contained) ----- */
+      :root {
+        --ink: #1a1a1a;
+        --ink-muted: rgba(26, 26, 26, 0.62);
+        --rule: #d8d3c7;
+        --accent: #1f4a44;
+        --paper: #ffffff;
+        --paper-tinted: #faf7f0;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--paper-tinted);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+          system-ui, sans-serif;
+        line-height: 1.5;
+        font-size: 14px;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* ----- Paper card (screen only) ----- */
+      .resume {
+        max-width: 720px;
+        margin: 32px auto;
+        padding: 40px 48px;
+        background: var(--paper);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      }
+
+      /* ----- Header ----- */
+      .name {
+        font-size: 30px;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+
+      .tagline {
+        margin: 4px 0 0;
+        font-size: 15px;
+        color: var(--ink-muted);
+      }
+
+      .contact {
+        margin: 10px 0 0;
+        font-size: 13px;
+        color: var(--ink-muted);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 14px;
+      }
+
+      .contact span:not(:first-child)::before {
+        content: "·";
+        margin-right: 14px;
+        opacity: 0.5;
+      }
+
+      /* ----- Section heading ----- */
+      h2 {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent);
+        margin: 28px 0 10px;
+        padding-bottom: 4px;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      /* ----- Roles / projects ----- */
+      .role {
+        margin: 14px 0 0;
+      }
+
+      .role:first-of-type {
+        margin-top: 0;
+      }
+
+      .role-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .role-title {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .role-company {
+        color: var(--ink-muted);
+        font-style: italic;
+      }
+
+      /* Visual separator between role title and company / description.
+         Driven by CSS so the markup stays clean (no in-line em-dashes). */
+      .role-company::before {
+        content: "·\00a0";
+        margin-left: 4px;
+        opacity: 0.55;
+        font-style: normal;
+      }
+
+      .role-dates {
+        font-size: 12px;
+        color: var(--ink-muted);
+        white-space: nowrap;
+      }
+
+      ul.bullets {
+        margin: 6px 0 0;
+        padding-left: 18px;
+      }
+
+      ul.bullets li {
+        margin: 3px 0;
+        font-size: 13px;
+      }
+
+      /* ----- Skills grid (key/value rows) ----- */
+      .skills {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 6px 16px;
+        font-size: 13px;
+        margin: 0;
+      }
+
+      .skills dt {
+        font-weight: 600;
+      }
+
+      .skills dd {
+        margin: 0;
+      }
+
+      /* ----- Print rules ----- */
+      @page {
+        size: A4;
+        margin: 18mm;
+      }
+
+      @media print {
+        html,
+        body {
+          background: white;
+          color: black;
+          font-size: 11pt;
+          line-height: 1.4;
+        }
+
+        .resume {
+          margin: 0;
+          padding: 0;
+          max-width: none;
+          box-shadow: none;
+          background: transparent;
+        }
+
+        .name {
+          font-size: 22pt;
+        }
+
+        .tagline {
+          font-size: 12pt;
+        }
+
+        h2 {
+          font-size: 9pt;
+          margin-top: 18pt;
+          break-after: avoid-page;
+        }
+
+        .role,
+        .skills {
+          break-inside: avoid;
+        }
+
+        a {
+          color: black;
+          text-decoration: none;
+        }
+
+        /* Browsers may strip backgrounds in print; guard against it. */
+        * {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="resume" aria-label="Resume">
+      <header>
+        <h1 class="name">Angus Hally</h1>
+        <p class="tagline">Data strategist with a builder&rsquo;s bias and an operator&rsquo;s discipline.</p>
+        <p class="contact">
+          <span>angus.hally@gmail.com</span>
+          <span>London, United Kingdom</span>
+          <span><a href="https://angushally.com">angushally.com</a></span>
+          <span><a href="https://github.com/angushally">github.com/angushally</a></span>
+          <span><a href="https://www.linkedin.com/in/angus-hally-9ab66a87/">linkedin.com/in/angus-hally-9ab66a87</a></span>
+        </p>
+      </header>
+
+      <section>
+        <h2>Summary</h2>
+        <p>
+          Startup operator and builder. A decade across Accenture and
+          Anmut at the intersection of business strategy, software, and
+          data. Now COO and co-founder at HeyLina, where I own GTM,
+          fundraising, compliance, and the engineering process while
+          shipping the product alongside our developer.
+        </p>
+      </section>
+
+      <section>
+        <h2>Experience</h2>
+
+        <article class="role">
+          <header class="role-head">
+            <div>
+              <span class="role-title">COO &amp; Co-founder</span>
+              <span class="role-company">HeyLina</span>
+            </div>
+            <span class="role-dates">2025 &ndash; Present</span>
+          </header>
+          <ul class="bullets">
+            <li>Building a longitudinal emotional-data product; my decade in data strategy is the framework underneath it.</li>
+            <li>Built the marketing site, internal operating system, and the engineering process around our mobile developer.</li>
+            <li>Run app-store launch operations, the interim raise, clinical advisor relationships, compliance, and pricing.</li>
+          </ul>
+        </article>
+
+        <article class="role">
+          <header class="role-head">
+            <div>
+              <span class="role-title">Data Strategy Manager</span>
+              <span class="role-company">Anmut</span>
+            </div>
+            <span class="role-dates">2022 &ndash; 2025</span>
+          </header>
+          <ul class="bullets">
+            <li>Led data-valuation and data-maturity engagements helping enterprise clients price what their data is actually worth.</li>
+            <li>Contributor on Grace, Anmut&rsquo;s data-maturity tool, and on the FTSE-100 sector-by-sector data-value research.</li>
+            <li>Worked client-side at organisations including JLR; reported into senior data leaders on strategy and prioritisation.</li>
+          </ul>
+        </article>
+
+        <article class="role">
+          <header class="role-head">
+            <div>
+              <span class="role-title">Head of Product</span>
+              <span class="role-company">Teamvine (Future Factory Ltd)</span>
+            </div>
+            <span class="role-dates">2020 &ndash; 2022</span>
+          </header>
+          <ul class="bullets">
+            <li>Shipped four digital products in six months while leading agile development teams.</li>
+            <li>Secured a &pound;100k UKRI grant.</li>
+            <li>Owned product, customer services, sales, marketing, compliance, governance, content, ops, and IP. Effectively the operator function for the business.</li>
+          </ul>
+        </article>
+
+        <article class="role">
+          <header class="role-head">
+            <div>
+              <span class="role-title">Analyst, then Strategy Consultant</span>
+              <span class="role-company">Accenture</span>
+            </div>
+            <span class="role-dates">2018 &ndash; 2020</span>
+          </header>
+          <ul class="bullets">
+            <li>Cut my teeth as an analyst on digital-transformation programmes across the Royal Navy, the Police, and the Courts &amp; Tribunals Judiciary.</li>
+            <li>Moved into Accenture Strategy: pricing, GDPR, and data-driven insight engagements at large telecoms and insurance clients.</li>
+          </ul>
+        </article>
+
+        <article class="role">
+          <header class="role-head">
+            <div>
+              <span class="role-title">Mathematics Teacher</span>
+              <span class="role-company">TeachFirst &middot; Burnt Mill Academy, Harlow</span>
+            </div>
+            <span class="role-dates">2016 &ndash; 2018</span>
+          </header>
+          <ul class="bullets">
+            <li>Two-year leadership-development placement teaching GCSE and A-Level mathematics. To this day, the hardest thing I&rsquo;ve done.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section>
+        <h2>Education</h2>
+
+        <article class="role">
+          <header class="role-head">
+            <div>
+              <span class="role-title">BSc Philosophy &amp; Economics, First Class Honours</span>
+              <span class="role-company">London School of Economics</span>
+            </div>
+            <span class="role-dates">2013 &ndash; 2016</span>
+          </header>
+        </article>
+      </section>
+
+      <section>
+        <h2>Skills</h2>
+        <dl class="skills">
+          <dt>Operating</dt>
+          <dd>GTM, fundraising, pricing, compliance, hiring, product/engineering process</dd>
+          <dt>Data &amp; strategy</dt>
+          <dd>Data valuation, data maturity, executive advisory, market research</dd>
+          <dt>Engineering</dt>
+          <dd>TypeScript, Next.js / React, Node, SQL, Supabase / Postgres, Git</dd>
+          <dt>Tooling</dt>
+          <dd>Vercel, Mantine, Framer Motion, Vitest, Bun, OAuth integrations (Strava, Raindrop, OpenAI)</dd>
+        </dl>
+      </section>
+    </main>
+  </body>
+</html>

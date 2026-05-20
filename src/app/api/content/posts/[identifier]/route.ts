@@ -1,20 +1,15 @@
+import { HttpError, publicHandler } from '@/lib/api/handler';
 import { getBlogPostDetail } from '@/lib/content/blogRepository';
-import { migrationInProgressResponse } from '@/lib/api/migrationUnavailable';
-import { getSupabaseAdmin } from '@/lib/supabase/admin';
-import { NextResponse } from 'next/server';
 
 type Params = { identifier: string };
 
-export async function GET(_request: Request, context: { params: Promise<Params> }) {
-  const admin = getSupabaseAdmin();
+export const GET = publicHandler<Params>(async ({ admin, params }) => {
   if (!admin) {
-    return migrationInProgressResponse('blog');
+    throw new HttpError(503, 'Supabase not configured');
   }
-
-  const { identifier } = await context.params;
-  const post = await getBlogPostDetail(admin, decodeURIComponent(identifier));
+  const post = await getBlogPostDetail(admin, decodeURIComponent(params.identifier));
   if (!post) {
-    return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    throw new HttpError(404, 'Post not found');
   }
-  return NextResponse.json(post);
-}
+  return post;
+});

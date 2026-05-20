@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Container, Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Box } from '@mantine/core';
+import { Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Box } from '@mantine/core';
+import { Section } from '@/components/layout';
 import NextImage from 'next/image';
 import { IconDatabase, IconServer, IconTools, IconBrandReact, IconExternalLink, IconMapPin, IconBrain, IconBookmark, IconRun } from '@tabler/icons-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -169,7 +170,7 @@ const SoftwareCV = () => {
     };
 
     return (
-        <Container size="lg" py="xl">
+        <Section width="wide" padY="default">
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -410,7 +411,7 @@ const SoftwareCV = () => {
                     </motion.div>
                 </Stack>
             </motion.div>
-        </Container>
+        </Section>
     );
 };
 

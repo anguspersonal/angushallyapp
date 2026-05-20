@@ -1,0 +1,47 @@
+# Rejects PRs whose head branch doesn't start with a canonical type prefix.
+# Source of truth for the prefix list: docs/agents/branching.md.
+# Keep the regex below in sync with that doc.
+
+name: branch-name-gate
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate head branch prefix
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          # Allowed prefixes per docs/agents/branching.md.
+          allowed='^(feat|fix|chore|docs|perf|test|refactor|hotfix)/'
+
+          # `dev` is the integration branch — its own promotion PR to main is exempt.
+          if [ "$HEAD_REF" = "dev" ]; then
+            echo "Head is dev (integration branch); skipping prefix check."
+            exit 0
+          fi
+
+          if echo "$HEAD_REF" | grep -Eq "$allowed"; then
+            echo "Branch '$HEAD_REF' matches an allowed prefix."
+            exit 0
+          fi
+
+          echo "::error::Branch '$HEAD_REF' does not start with an allowed prefix."
+          echo ""
+          echo "Allowed prefixes (see docs/agents/branching.md):"
+          echo "  feat/      — new user-facing capability"
+          echo "  fix/       — bug fix on existing capability"
+          echo "  chore/     — maintenance: deps, configs, internal refactors"
+          echo "  docs/      — documentation only"
+          echo "  perf/      — performance-only change with no behavior diff"
+          echo "  test/      — test-only additions or harness changes"
+          echo "  refactor/  — internal restructuring with no behavior or perf claim"
+          echo "  hotfix/    — urgent production fix targeting main directly"
+          echo ""
+          echo "Rename your branch with: git branch -m <new-name> && git push -u origin <new-name>"
+          echo "Then re-target this PR's head branch or close + reopen."
+          exit 1

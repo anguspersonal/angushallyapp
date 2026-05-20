@@ -73,7 +73,7 @@
   );
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .centralLine {
     left: 1.5rem;
   }
@@ -87,7 +87,7 @@
   margin-bottom: 3.5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .entry {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -115,7 +115,7 @@
   box-shadow: 0 0 0 3px rgba(13, 31, 30, 0.08);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .dot {
     left: 1.5rem;
   }
@@ -140,7 +140,7 @@
   text-align: left;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .cardLeft,
   .cardRight {
     grid-column: 1;
@@ -151,7 +151,7 @@
 .emptyCell {
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .emptyCell {
     display: none;
   }
@@ -194,7 +194,7 @@
   justify-content: flex-end;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
   .cardLeft .badgeRow {
     justify-content: flex-start;
   }

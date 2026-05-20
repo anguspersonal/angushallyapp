@@ -1,19 +1,12 @@
+import { HttpError, authedHandler } from '@/lib/api/handler';
 import { getHabitLogById } from '@/lib/habit/habitRepository';
-import { requireHabitUserAndAdmin } from '@/lib/habit/routeContext';
-import { NextResponse } from 'next/server';
 
 type Params = { id: string };
 
-export async function GET(_request: Request, context: { params: Promise<Params> }) {
-  const ctx = await requireHabitUserAndAdmin();
-  if (!ctx.ok) {
-    return ctx.response;
-  }
-
-  const { id } = await context.params;
-  const habit = await getHabitLogById(ctx.admin, ctx.userId, id);
+export const GET = authedHandler<Params>(async ({ admin, userId, params }) => {
+  const habit = await getHabitLogById(admin, userId, params.id);
   if (!habit) {
-    return NextResponse.json({ error: 'Habit not found' }, { status: 404 });
+    throw new HttpError(404, 'Habit not found');
   }
-  return NextResponse.json(habit);
-}
+  return habit;
+});

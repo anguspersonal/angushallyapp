@@ -1,0 +1,143 @@
+/* FinderWindow — archive folder with sidebar + icon grid.
+   Classic Finder two-pane layout adapted for the desktop chrome. */
+
+.root {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+  flex: 0 0 140px;
+  padding: 12px 8px;
+  border-right: 0.5px solid;
+  overflow-y: auto;
+}
+
+[data-mantine-color-scheme='dark'] .sidebar {
+  border-right-color: rgba(250, 247, 240, 0.08);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+[data-mantine-color-scheme='light'] .sidebar {
+  border-right-color: rgba(13, 31, 30, 0.06);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.sidebarSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.folderItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: default;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 120ms ease;
+}
+
+[data-mantine-color-scheme='dark'] .folderItem[data-active='true'] {
+  background: rgba(250, 247, 240, 0.12);
+}
+
+[data-mantine-color-scheme='light'] .folderItem[data-active='true'] {
+  background: rgba(13, 31, 30, 0.08);
+}
+
+.folderIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.folderLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Main pane ---------- */
+
+.main {
+  flex: 1 1 auto;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 20px 16px;
+  align-content: start;
+}
+
+/* ---------- Archive icons ---------- */
+
+.archiveIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 120ms ease;
+  text-align: center;
+}
+
+.archiveIcon:hover {
+  background: rgba(127, 127, 127, 0.12);
+}
+
+.archiveIcon:focus-visible {
+  outline: 2px solid var(--site-accent, #f0997b);
+  outline-offset: 2px;
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconLabel {
+  font-size: 11px;
+  line-height: 1.3;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+[data-mantine-color-scheme='light'] .iconLabel {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .main {
+    scrollbar-width: auto;
+  }
+
+  .folderItem,
+  .archiveIcon {
+    transition: none;
+  }
+}

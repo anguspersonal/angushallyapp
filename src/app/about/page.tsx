@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import {
-  Container,
   Title,
   Text,
   Anchor,
@@ -15,12 +14,13 @@ import NextImage from 'next/image';
 import { motion } from 'framer-motion';
 import CareerTimeline from '@/components/timeline/CareerTimeline';
 import { careerMilestones } from '@/data/careerMilestones';
+import { Section } from '@/components/layout';
 import styles from './about.module.css';
 
 export default function About() {
   return (
-    <Box>
-      <Container size="sm" py="xl">
+    <>
+      <Section width="narrow" padY="default">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Title
             order={1}
@@ -30,8 +30,8 @@ export default function About() {
               fontFamily: 'var(--font-display), League Gothic, sans-serif',
               textTransform: 'uppercase',
               fontWeight: 400,
+              color: 'var(--site-ink)',
             }}
-            c="var(--site-ink)"
           >
             Hi, I&apos;m Angus
           </Title>
@@ -57,11 +57,11 @@ export default function About() {
             </Text>
 
             <Text>
-              Currently, I&apos;m COO of{' '}
+              I am COO and co-founder of{' '}
               <Anchor href="https://heylina.com" target="_blank" rel="noopener noreferrer">
                 HeyLina
               </Anchor>
-              , where we&apos;re building emotionally intelligent AI. It&apos;s the most exciting thing I&apos;ve ever worked on.
+              . The shorthand is a data strategist with a builder&apos;s bias and an operator&apos;s discipline. A decade across Accenture and Anmut gives me the framework behind our longitudinal emotional data play. I built our marketing site, our internal operating system, and the engineering process around our mobile developer. I run app store launch operations, the interim raise, our clinical advisor relationships, compliance, and pricing. Bri makes the company exist; I make sure it compounds. It is the most exciting thing I have ever worked on.
             </Text>
 
             <Text>
@@ -103,7 +103,7 @@ export default function About() {
             <Text fw={700}>Thanks for stopping by. I appreciate it.</Text>
           </Stack>
         </motion.div>
-      </Container>
+      </Section>
 
       <Divider my={0} opacity={0.2} />
 
@@ -113,7 +113,7 @@ export default function About() {
         heading={"What I've been up to"}
       />
 
-      <Container size="sm" py="xl">
+      <Section width="narrow" padY="default">
         <Box className={styles.pullquote} my="xl">
           <span className={styles.pullquoteMark} aria-hidden>
             &ldquo;
@@ -124,14 +124,14 @@ export default function About() {
           </Text>
         </Box>
 
-        <Text c="dimmed" ta="center" mt="xl">
+        <Text ta="center" mt="xl" style={{ color: 'var(--mantine-color-dimmed)' }}>
           If you want the fuller story, the full timeline lives{' '}
           <Anchor component={Link} href="/projects/timeline">
             here
           </Anchor>{' '}
           (sign-in required).
         </Text>
-      </Container>
-    </Box>
+      </Section>
+    </>
   );
 }

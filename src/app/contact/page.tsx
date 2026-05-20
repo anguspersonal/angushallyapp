@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Container,
   Title,
   TextInput,
   Textarea,
@@ -12,6 +11,7 @@ import {
   Group,
   Stack,
 } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { useForm } from '@mantine/form';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { motion } from 'framer-motion';
@@ -82,7 +82,7 @@ export default function ContactPage() {
   };
 
   return (
-    <Container size="sm" py="xl">
+    <Section width="narrow" padY="default">
       <motion.div initial="hidden" animate="visible">
         <motion.div custom={0} variants={formElementVariants}>
           <Title
@@ -93,8 +93,8 @@ export default function ContactPage() {
               fontFamily: 'var(--font-display), League Gothic, sans-serif',
               textTransform: 'uppercase',
               fontWeight: 400,
+              color: 'var(--site-ink)',
             }}
-            c="var(--site-ink)"
           >
             Get In Touch
           </Title>
@@ -152,7 +152,7 @@ export default function ContactPage() {
                       onChange={(value: string | null) => setCaptchaValue(value)}
                     />
                   ) : (
-                    <Text size="sm" c="dimmed" ta="center">
+                    <Text size="sm" ta="center" style={{ color: 'var(--mantine-color-dimmed)' }}>
                       Contact form verification is temporarily unavailable. Please email me directly at{' '}
                       <Anchor href="mailto:angus.hally@gmail.com">angus.hally@gmail.com</Anchor>.
                     </Text>
@@ -178,13 +178,13 @@ export default function ContactPage() {
                   <Text
                     ta="center"
                     mt="md"
-                    c={
-                      status.includes('successfully')
-                        ? 'teal'
+                    style={{
+                      color: status.includes('successfully')
+                        ? 'var(--mantine-color-teal-6)'
                         : status.includes('Failed') || status.includes('error') || status.includes('Please complete')
-                          ? 'red'
-                          : 'dimmed'
-                    }
+                          ? 'var(--mantine-color-red-6)'
+                          : 'var(--mantine-color-dimmed)',
+                    }}
                   >
                     {status}
                   </Text>
@@ -194,6 +194,6 @@ export default function ContactPage() {
           </Box>
         </GlassContent>
       </motion.div>
-    </Container>
+    </Section>
   );
 }

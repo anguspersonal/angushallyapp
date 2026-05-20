@@ -1,0 +1,85 @@
+/* MacBootIntro — macOS-style boot animation overlay for /projects.
+   5-phase timeline: monogram fade → progress fill → fade to desktop. */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Dark background layer that fades out to reveal wallpaper */
+.darkBg {
+  position: absolute;
+  inset: 0;
+  background: #0d1f1e;
+  z-index: 0;
+}
+
+/* Center content container */
+.centerContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Monogram styling */
+.monogramWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.monogram {
+  --tile-size: 96px !important;
+  color: #faf7f0;
+}
+
+/* Progress bar */
+.progressTrack {
+  width: 160px;
+  height: 3px;
+  background: rgba(250, 247, 240, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  width: 100%;
+  height: 100%;
+  background: var(--site-accent, #f0997b);
+  border-radius: 2px;
+}
+
+/* Skip hint */
+.skipHint {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: rgba(250, 247, 240, 0.5);
+  letter-spacing: 0.02em;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .darkBg,
+  .monogramWrap,
+  .progressTrack,
+  .skipHint {
+    animation: none !important;
+    transition: none !important;
+  }
+}

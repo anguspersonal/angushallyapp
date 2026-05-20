@@ -142,7 +142,7 @@
 }
 
 /* When screen is less than 575px wide, make element with id planet invisible. */
-@media screen and (max-width: 575px) {
+@media screen and (max-width: 36em) {
     .dvg #planet {
         display: none;
     }

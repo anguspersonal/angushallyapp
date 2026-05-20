@@ -170,7 +170,7 @@ Condensed career arc. Public. No personal content.
 |------|------|--------------|-------------|
 | 2015 | Mathematics Teacher | TeachFirst / Burnt Mill Academy | Teaching in London schools through TeachFirst. |
 | 2017 | Analyst then Strategist | Accenture | Digital transformation across the Royal Navy, Police, and Courts. Then pricing strategy and GDPR in telecom and insurance. |
-| 2020 | COO | Teamvine (Future Factory Ltd) | Oversaw product, customer services, sales, marketing, compliance, governance, content, ops, IP. Led agile dev teams. Shipped 4 digital products in 6 months. Secured £100k UKRI grant. |
+| 2020 | Head of Product | Teamvine (Future Factory Ltd) | Oversaw product, customer services, sales, marketing, compliance, governance, content, ops, IP. Led agile dev teams. Shipped 4 digital products in 6 months. Secured £100k UKRI grant. |
 | 2022 | Data Strategy Manager | Anmut | Data valuation and data maturity. Helping organisations understand what their data is actually worth. |
 | 2025 | COO | HeyLina | Building emotionally intelligent AI. The most exciting thing I've ever worked on. |
 
@@ -328,7 +328,7 @@ This is what has been captured so far in chat. Entries marked `[STUB]` are ones 
   category: career
 
 - date: November 2020 to November 2022
-  title: COO, Teamvine (Future Factory Ltd)
+  title: Head of Product, Teamvine (Future Factory Ltd)
   body: >
     Oversaw product, customer services, sales, marketing, compliance,
     governance, content, ops, IP. Led agile dev teams. Shipped 4 digital

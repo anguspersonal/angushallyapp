@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { Badge, Container } from '@mantine/core';
+import { Badge } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import timelineData from '@/data/personalTimeline.json';
 import styles from './TimelinePage.module.css';
@@ -99,7 +100,7 @@ export default function TimelinePage() {
   const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <Container size="lg" className={styles.page}>
+    <Section width="wide" padY="none" className={styles.page}>
       <div className={styles.header}>
         <h1 className={styles.title}>Timeline</h1>
         <p className={styles.subtitle}>
@@ -148,6 +149,6 @@ export default function TimelinePage() {
           );
         })}
       </div>
-    </Container>
+    </Section>
   );
 }

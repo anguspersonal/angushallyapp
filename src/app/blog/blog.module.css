@@ -1,0 +1,430 @@
+/* Blog page layout. Newsprint colour tokens (--blog-*) are defined in
+   globals.css under [data-mantine-color-scheme='X'] [data-surface='blog']
+   so chrome (header, footer, GradientRoot, Glass) flips alongside the page
+   itself when the user toggles day/night. */
+
+.page {
+  background: var(--blog-bg);
+  color: var(--blog-ink);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(var(--blog-grain) 1px, transparent 1px);
+  background-size: 3px 3px;
+  font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
+  padding: 0 0 6rem;
+}
+
+/* Selection highlight in red ink */
+.page ::selection {
+  background: var(--blog-accent);
+  color: var(--blog-bg);
+}
+
+/* ===== Masthead ===== */
+
+.masthead {
+  text-align: center;
+  border-bottom: 1px solid var(--blog-rule);
+  padding: 3rem clamp(1rem, 4vw, 3rem) 1.4rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: 1.25rem;
+}
+
+.mastheadEyebrow {
+  font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blog-muted);
+  line-height: 1.6;
+  text-align: left;
+}
+
+.mastheadEyebrowRight {
+  composes: mastheadEyebrow;
+  text-align: right;
+}
+
+.mastheadTitle {
+  font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(3rem, 9vw, 7rem);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  font-variation-settings: 'opsz' 144;
+  text-align: center;
+  color: var(--blog-ink);
+  margin: 0;
+}
+
+.mastheadTitle em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--blog-accent);
+}
+
+/* Sub-mast: dateline strip */
+.submast {
+  border-bottom: 1px solid var(--blog-rule);
+  padding: 0.75rem clamp(1rem, 4vw, 3rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blog-muted);
+  font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
+}
+
+.submastLeft {
+  font-style: italic;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+/* ===== Section divider ===== */
+
+.sectionRule {
+  border-bottom: 1px solid var(--blog-rule);
+  padding: 0.875rem clamp(1rem, 4vw, 3rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--blog-ink);
+}
+
+.sectionRuleLabel {
+  display: flex;
+  gap: 0.875rem;
+  align-items: center;
+}
+
+.sectionRuleNote {
+  font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--blog-accent);
+}
+
+.sectionRuleRight {
+  opacity: 0.6;
+}
+
+/* ===== Masonry columns ===== */
+
+.masonry {
+  column-count: 1;
+  column-gap: 2.5rem;
+  column-rule: 1px solid var(--blog-rule-soft);
+  padding: 3rem clamp(1rem, 4vw, 3rem) 0;
+}
+
+@media (min-width: 36em) {
+  .masonry {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 60em) {
+  .masonry {
+    column-count: 3;
+  }
+}
+
+/* ===== Card ===== */
+
+.card {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  margin: 0 0 2.75rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--blog-rule-soft);
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.card:last-child {
+  border-bottom: none;
+}
+
+/* Photograph + Fig caption */
+.cardImageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--blog-rule-soft);
+  background: var(--blog-bg-deep);
+  overflow: hidden;
+}
+
+.cardImage {
+  filter: contrast(1.05) saturate(0.85);
+  display: block;
+}
+
+.cardCaption {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--blog-muted);
+  margin: 0 0 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cardCaptionFig {
+  font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.cardCaptionLink {
+  color: inherit;
+  text-decoration: underline dotted;
+  cursor: pointer;
+}
+
+/* "Filing No. 042 · Strategy" */
+.cardKicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blog-accent);
+  font-weight: 500;
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardKickerDivider {
+  opacity: 0.5;
+  color: var(--blog-ink);
+}
+
+.cardKickerCategory {
+  color: var(--blog-muted);
+  font-weight: 400;
+}
+
+/* Headline — Fraunces, italic em styled in red */
+.cardTitle {
+  font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+  font-variation-settings: 'opsz' 96;
+  color: var(--blog-ink);
+  margin: 0 0 0.75rem;
+  text-wrap: balance;
+}
+
+.cardTitle em {
+  font-style: italic;
+  color: var(--blog-accent);
+}
+
+/* Italic-light variant — used every fourth card for visual rhythm */
+.cardTitleQuiet {
+  composes: cardTitle;
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* Body */
+.cardExcerpt {
+  font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
+  font-weight: 300;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--blog-ink);
+  margin: 0;
+  letter-spacing: -0.003em;
+  text-wrap: pretty;
+}
+
+/* Drop cap in Fraunces, accent red, with optical sizing for poster scale */
+.cardExcerpt::first-letter {
+  font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 144;
+  font-size: 3.6em;
+  line-height: 0.85;
+  float: left;
+  padding: 0.08em 0.18em 0 0;
+  color: var(--blog-accent);
+}
+
+.cardByline {
+  margin-top: 0.875rem;
+  border-top: 1px solid var(--blog-rule-soft);
+  padding-top: 0.6rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--blog-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardBylineMore {
+  color: var(--blog-accent);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cardBylineMore::after {
+  content: '→';
+}
+
+/* ===== Intro overlay (kept from before, repalette only) ===== */
+
+.introOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--blog-bg);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.introHint {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blog-muted);
+  font-family: var(--font-editorial), Georgia, serif;
+  font-style: italic;
+}
+
+.introPaper {
+  position: relative;
+  width: min(70vw, 480px);
+  aspect-ratio: 3 / 4;
+  background: var(--blog-intro-paper);
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transform-origin: center;
+  overflow: hidden;
+}
+
+.introMasthead {
+  font-family: var(--font-editorial), 'Fraunces', serif;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  text-align: center;
+  border-top: 3px double var(--blog-rule);
+  border-bottom: 3px double var(--blog-rule);
+  padding: 0.4rem 0;
+  color: var(--blog-ink);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 96;
+}
+
+.introMasthead em {
+  font-style: italic;
+  color: var(--blog-accent);
+}
+
+.introHeadline {
+  font-family: var(--font-editorial), 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  line-height: 1.15;
+  color: var(--blog-ink-soft);
+  margin: 0.3rem 0;
+  text-align: center;
+}
+
+.introBody {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--blog-ink-soft);
+  text-align: justify;
+  flex: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--blog-ink-soft) 0,
+    var(--blog-ink-soft) 1px,
+    transparent 1px,
+    transparent 6px
+  );
+  opacity: 0.55;
+}
+
+.introFold {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: linear-gradient(to right, transparent 0%, var(--blog-fold-shadow) 100%);
+  pointer-events: none;
+}
+
+.introFoldLeft {
+  left: 0;
+}
+
+.introFoldRight {
+  right: 0;
+  background: linear-gradient(to left, transparent 0%, var(--blog-fold-shadow) 100%);
+}
+
+/* ===== Loading / error states ===== */
+
+.statusBlock {
+  text-align: center;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-style: italic;
+  color: var(--blog-muted);
+  padding: 3rem 1rem;
+}
+
+/* ===== Responsive masthead ===== */
+
+@media (max-width: 36em) {
+  .masthead {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .mastheadEyebrow,
+  .mastheadEyebrowRight {
+    text-align: center;
+  }
+}

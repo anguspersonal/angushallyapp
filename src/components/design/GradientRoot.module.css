@@ -32,6 +32,12 @@
   background: linear-gradient(180deg, #faf7f0 0%, #f0ece0 100%);
 }
 
+/* Blog surface — flat solid stock, no gradient. Single rule covers both
+   schemes because --blog-bg is itself scheme-aware. */
+[data-surface='blog'] .base {
+  background: var(--blog-bg);
+}
+
 .glowLayer {
   position: absolute;
   inset: 0;

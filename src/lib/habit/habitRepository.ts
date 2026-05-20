@@ -1,25 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { HttpError } from '@/lib/api/httpError';
+import { listPaginated } from '@/lib/api/listQuery';
 import type {
   HabitDetail,
   HabitListParams,
   HabitListResult,
   HabitSummary,
 } from '@/lib/habit/contracts';
-
-const DEFAULT_PAGE = 1;
-const DEFAULT_PAGE_SIZE = 10;
-const MAX_PAGE_SIZE = 50;
-
-function clampPageSize(value?: number): number {
-  const parsed = parseInt(String(value), 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) return DEFAULT_PAGE_SIZE;
-  return Math.min(parsed, MAX_PAGE_SIZE);
-}
-
-function parsePage(value?: number): number {
-  const parsed = parseInt(String(value), 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_PAGE;
-}
 
 function mapHabitLog(log: Record<string, unknown>): HabitSummary {
   return {
@@ -36,38 +23,22 @@ export async function listHabitLogs(
   admin: SupabaseClient,
   userId: string,
   params: HabitListParams = {},
-): Promise<HabitListResult | null> {
-  const page = parsePage(params.page);
-  const pageSize = clampPageSize(params.pageSize);
-  const offset = (page - 1) * pageSize;
-
+): Promise<HabitListResult> {
   const base = admin
     .schema('habit')
     .from('habit_log')
     .select('*', { count: 'exact' })
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
+    .eq('user_id', userId);
 
-  const { data: rows, error, count } = await base.range(offset, offset + pageSize - 1);
-  if (error) {
-    console.error('[habit] listHabitLogs', error);
-    return null;
-  }
-
-  const items = (rows ?? []).map((r) => mapHabitLog(r as Record<string, unknown>));
-  const total = typeof count === 'number' ? count : items.length;
-  const totalPages = Math.max(Math.ceil(total / pageSize), 1);
-  const hasMore = page < totalPages;
+  const { rows, pagination } = await listPaginated(base as never, params, {
+    defaultSortColumn: 'created_at',
+    defaultAscending: false,
+    errorContext: 'habits',
+  });
 
   return {
-    items,
-    pagination: {
-      page,
-      pageSize,
-      totalItems: total,
-      totalPages,
-      hasMore,
-    },
+    items: rows.map((row) => mapHabitLog(row as Record<string, unknown>)),
+    pagination,
   };
 }
 
@@ -86,7 +57,7 @@ export async function getHabitLogById(
 
   if (error) {
     console.error('[habit] getHabitLogById', error);
-    return null;
+    throw new HttpError(500, 'Failed to fetch habit');
   }
   if (!log) return null;
 
@@ -106,7 +77,7 @@ export async function insertHabitLog(
   value: number | null,
   metric: string | null,
   extraData: Record<string, unknown>,
-): Promise<string | number | null> {
+): Promise<string | number> {
   const { data, error } = await admin
     .schema('habit')
     .from('habit_log')
@@ -122,16 +93,19 @@ export async function insertHabitLog(
 
   if (error) {
     console.error('[habit] insertHabitLog', error);
-    return null;
+    throw new HttpError(500, 'Failed to log habit');
   }
-  return data?.id ?? null;
+  if (data?.id == null) {
+    throw new HttpError(500, 'Failed to log habit');
+  }
+  return data.id;
 }
 
 export async function listHabitLogsByType(
   admin: SupabaseClient,
   userId: string,
   habitType: string,
-): Promise<Record<string, unknown>[] | null> {
+): Promise<Record<string, unknown>[]> {
   const { data, error } = await admin
     .schema('habit')
     .from('habit_log')
@@ -142,12 +116,12 @@ export async function listHabitLogsByType(
 
   if (error) {
     console.error('[habit] listHabitLogsByType', error);
-    return null;
+    throw new HttpError(500, 'Failed to fetch habit logs');
   }
   return data ?? [];
 }
 
-export async function listDrinkCatalog(admin: SupabaseClient): Promise<Record<string, unknown>[] | null> {
+export async function listDrinkCatalog(admin: SupabaseClient): Promise<Record<string, unknown>[]> {
   const { data, error } = await admin
     .schema('habit')
     .from('drink_catalog')
@@ -156,7 +130,7 @@ export async function listDrinkCatalog(admin: SupabaseClient): Promise<Record<st
 
   if (error) {
     console.error('[habit] listDrinkCatalog', error);
-    return null;
+    throw new HttpError(500, 'Failed to fetch drink catalog');
   }
   return data ?? [];
 }

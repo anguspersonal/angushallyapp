@@ -3,7 +3,8 @@
 import { useAuth } from '@/providers/AuthProvider';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
-import { Button, Container, Title, Text, Stack, Alert } from '@mantine/core';
+import { Button, Title, Text, Stack, Alert } from '@mantine/core';
+import { Section } from '@/components/layout';
 
 function LoginContent() {
   const { user, login, isLoading } = useAuth();
@@ -22,16 +23,16 @@ function LoginContent() {
 
   if (isLoading) {
     return (
-      <Container size="xs" py="xl">
+      <Section width="narrow" padY="default">
         <Text ta="center">Loading...</Text>
-      </Container>
+      </Section>
     );
   }
 
   if (user) return null;
 
   return (
-    <Container size="xs" py="xl">
+    <Section width="narrow" padY="default">
       <Stack gap="lg" align="center">
         <Title order={2}>Sign In</Title>
         <Text c="gray" ta="center" opacity={0.65}>
@@ -52,13 +53,13 @@ function LoginContent() {
           Sign in with Google
         </Button>
       </Stack>
-    </Container>
+    </Section>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<Container size="xs" py="xl"><Text ta="center">Loading...</Text></Container>}>
+    <Suspense fallback={<div style={{ padding: 'var(--section-pad-y-default) var(--container-px)', textAlign: 'center' }}>Loading...</div>}>
       <LoginContent />
     </Suspense>
   );

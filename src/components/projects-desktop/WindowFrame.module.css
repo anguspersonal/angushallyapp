@@ -1,0 +1,202 @@
+/* WindowFrame — base macOS window for the /projects desktop redesign.
+   Glass material follows the chrome family (blur 24, sat 1.1-1.2). Header
+   is the drag handle; traffic lights live in the top-left, close fully
+   wired in Phase 4 (min/max are visual stubs until later). */
+
+.window {
+  position: absolute;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  font-family: var(--font-sans), Ubuntu, system-ui, sans-serif;
+  /* Smooth shadow change when focus shifts, but not when dragging. */
+  transition: box-shadow 150ms ease;
+}
+
+[data-mantine-color-scheme='dark'] .window {
+  background: rgba(13, 31, 30, 0.78);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 0.5px solid rgba(250, 247, 240, 0.1);
+  color: rgba(250, 247, 240, 0.92);
+  box-shadow:
+    0 1px 0 0 rgba(13, 31, 30, 0.3),
+    0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+[data-mantine-color-scheme='light'] .window {
+  background: rgba(250, 247, 240, 0.86);
+  backdrop-filter: blur(24px) saturate(1.1);
+  -webkit-backdrop-filter: blur(24px) saturate(1.1);
+  border: 0.5px solid rgba(13, 31, 30, 0.08);
+  color: rgba(13, 31, 30, 0.92);
+  box-shadow:
+    0 1px 0 0 rgba(13, 31, 30, 0.06),
+    0 12px 30px rgba(13, 31, 30, 0.18);
+}
+
+/* Focused state — denser, deeper shadow so the topmost window reads as
+   "raised" relative to the rest of the stack. */
+[data-mantine-color-scheme='dark'] .window[data-focused='true'] {
+  box-shadow:
+    0 1px 0 0 rgba(13, 31, 30, 0.3),
+    0 30px 60px rgba(0, 0, 0, 0.55),
+    0 12px 24px rgba(0, 0, 0, 0.35);
+}
+
+[data-mantine-color-scheme='light'] .window[data-focused='true'] {
+  box-shadow:
+    0 1px 0 0 rgba(13, 31, 30, 0.06),
+    0 30px 60px rgba(13, 31, 30, 0.32),
+    0 12px 24px rgba(13, 31, 30, 0.22);
+}
+
+@supports not (backdrop-filter: blur(24px)) {
+  [data-mantine-color-scheme='dark'] .window {
+    background: rgba(13, 31, 30, 0.94);
+  }
+  [data-mantine-color-scheme='light'] .window {
+    background: rgba(250, 247, 240, 0.96);
+  }
+}
+
+/* During an active drag the window picks up a 1° tilt and drops the smooth
+   shadow transition so the motion feels physical, not animated. */
+.window[data-dragging='true'] {
+  cursor: grabbing;
+  transform: rotate(0.5deg);
+  transition: none;
+}
+
+/* ---------- Header (drag handle) ---------- */
+
+.header {
+  height: 32px;
+  flex: 0 0 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  position: relative;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  border-bottom: 0.5px solid;
+  /* Touch dragging: don't let the browser steal the gesture. */
+  touch-action: none;
+}
+
+[data-mantine-color-scheme='dark'] .header {
+  border-bottom-color: rgba(250, 247, 240, 0.08);
+}
+
+[data-mantine-color-scheme='light'] .header {
+  border-bottom-color: rgba(13, 31, 30, 0.06);
+}
+
+.header:active {
+  cursor: grabbing;
+}
+
+/* ---------- Traffic lights ---------- */
+
+.trafficLights {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+}
+
+.light {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(127, 127, 127, 0.3);
+  transition: background 120ms ease;
+}
+
+/* Lights only get colour when the user hovers the window itself — matches
+   the macOS pattern of unfocused windows showing greyed-out lights. */
+.window:hover .lightClose,
+.window[data-focused='true'] .lightClose {
+  background: #ff5f57;
+}
+
+.window:hover .lightMin,
+.window[data-focused='true'] .lightMin {
+  background: #febc2e;
+}
+
+.window:hover .lightMax,
+.window[data-focused='true'] .lightMax {
+  background: #28c840;
+}
+
+.light svg {
+  width: 8px;
+  height: 8px;
+  opacity: 0;
+  color: rgba(13, 31, 30, 0.6);
+  transition: opacity 100ms ease;
+}
+
+/* Glyph (×, −, +) appears only on hover of the lights cluster, matching
+   real macOS chrome. */
+.trafficLights:hover .light svg {
+  opacity: 1;
+}
+
+.light:focus-visible {
+  outline: 2px solid var(--site-coral, #f0997b);
+  outline-offset: 2px;
+}
+
+.light:disabled {
+  cursor: not-allowed;
+}
+
+/* ---------- Title ---------- */
+
+.title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  pointer-events: none;
+  line-height: 32px;
+  /* Avoid overlapping the traffic-lights cluster on narrow windows. */
+  padding: 0 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Body ---------- */
+
+.body {
+  flex: 1 1 auto;
+  overflow: auto;
+  position: relative;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .window {
+    transition: none;
+  }
+  .window[data-dragging='true'] {
+    transform: none;
+  }
+}

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Container, Title, Text, Button, TextInput, Textarea, Paper, Stack } from '@mantine/core';
+import { Title, Text, Button, TextInput, Textarea, Paper, Stack } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { IconShare } from '@tabler/icons-react';
 
 export default function ShareTestPage() {
@@ -38,7 +39,7 @@ export default function ShareTestPage() {
   };
 
   return (
-    <Container size="sm" py="xl">
+    <Section width="narrow" padY="default">
       <Title order={1} mb="xl">Share Target Test</Title>
       
       <Paper p="xl" withBorder>
@@ -91,6 +92,6 @@ export default function ShareTestPage() {
           <Text size="sm">6. The content should be saved to your bookmarks</Text>
         </Stack>
       </Paper>
-    </Container>
+    </Section>
   );
 } 

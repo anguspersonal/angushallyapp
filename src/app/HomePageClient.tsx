@@ -3,17 +3,15 @@
 import React from 'react';
 import {
   Box,
-  Container,
   Title,
   Text,
-  SimpleGrid,
   Group,
 } from '@mantine/core';
+import { Section, Stack } from '@/components/layout';
 import NextImage from 'next/image';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
-import ProjectSnippet from '../components/ProjectSnippet';
+import { IconChevronDown } from '@tabler/icons-react';
 import CareerTimeline from '../components/timeline/CareerTimeline';
-import projectList from '../data/projectList';
 import { careerMilestones } from '@/data/careerMilestones';
 import type { OpenGraphData } from '@/lib/og-fetch';
 import styles from './page.module.css';
@@ -162,15 +160,54 @@ export type HomePageClientProps = {
 export default function HomePageClient({ og }: HomePageClientProps) {
   const reduceMotion = useReducedMotion();
   const nowSectionRef = React.useRef<HTMLElement | null>(null);
+  const heyLinaCardRef = React.useRef<HTMLDivElement | null>(null);
+  const [heyLinaCardHeight, setHeyLinaCardHeight] = React.useState(0);
+  const whatIDoThereRef = React.useRef<HTMLDivElement | null>(null);
 
   const { scrollYProgress, scrollY } = useScroll();
   const heroImageY = useTransform(scrollYProgress, [0, 0.3], [0, -60]);
   const nameY = useTransform(scrollY, [0, 600], [0, -90]);
 
-  const featuredProjects = projectList
-    .filter((p) => p.status === 'done')
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .slice(0, 3);
+  const { scrollYProgress: nowEntry } = useScroll({
+    target: nowSectionRef,
+    offset: ['start end', 'start 35%'],
+  });
+  const nowPullY = useTransform(nowEntry, [0, 1], [-140, 0]);
+  const nowOpacity = useTransform(nowEntry, [0, 0.4, 1], [0, 0.6, 1]);
+
+  // HeyLina card scroll-driven scale: grows large as it crosses centre, shrinks again on exit.
+  // Origin is top-centre so it only grows downward (heading above stays put);
+  // marginBottom is animated to match the scaled-up height so following content gets pushed down.
+  const { scrollYProgress: heyLinaScroll } = useScroll({
+    target: heyLinaCardRef,
+    offset: ['start end', 'end start'],
+  });
+  const heyLinaScale = useTransform(heyLinaScroll, [0, 0.5, 1], [1, 1.8, 1.8]);
+  const heyLinaSpacer = useTransform(
+    heyLinaScale,
+    (s) => `${Math.max(0, (s - 1) * heyLinaCardHeight)}px`,
+  );
+
+  // "WHAT I DO THERE" reveal: bound to its own viewport-entry progress so it only
+  // appears once the block is genuinely visible (not just technically in the document flow).
+  const { scrollYProgress: whatIDoThereScroll } = useScroll({
+    target: whatIDoThereRef,
+    offset: ['start 85%', 'start 55%'],
+  });
+  const whatIDoThereOpacity = useTransform(whatIDoThereScroll, [0, 1], [0, 1]);
+  const whatIDoThereY = useTransform(whatIDoThereScroll, [0, 1], [24, 0]);
+
+  // Track the card's natural (unscaled) height so the spacer below scales 1:1.
+  React.useEffect(() => {
+    const node = heyLinaCardRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) setHeyLinaCardHeight(entry.contentRect.height);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   const cardTitle = (og?.title?.trim() || 'HeyLina');
   const cardDescription =
@@ -208,7 +245,7 @@ export default function HomePageClient({ og }: HomePageClientProps) {
               animate="visible"
               variants={reduceMotion ? heroHeadlineEntranceReduced : heroHeadlineEntrance}
             >
-              <Title order={1} className={styles.headline} c="var(--site-ink)">
+              <Title order={1} className={styles.headline} style={{ color: 'var(--site-ink)' }}>
                 Angus Hally
               </Title>
             </motion.div>
@@ -219,7 +256,7 @@ export default function HomePageClient({ og }: HomePageClientProps) {
             animate="visible"
             variants={reduceMotion ? heroSubtitleEntranceReduced : heroSubtitleEntrance}
           >
-            <Text className={styles.subtitleText} c="dimmed">
+            <Text className={styles.subtitleText} style={{ color: 'var(--mantine-color-dimmed)' }}>
               Building HeyLina, emotionally intelligent AI.
             </Text>
           </motion.div>
@@ -236,80 +273,167 @@ export default function HomePageClient({ og }: HomePageClientProps) {
         </div>
       </section>
 
-      <Box component="section" id="now" ref={nowSectionRef} className={styles.nowSection}>
-        <Container size="lg">
-          <ScrollReveal>
-            <Title order={2} className={styles.sectionDisplay} mb="xl">
+      <Section
+        id="now"
+        outerRef={nowSectionRef}
+        className={styles.nowSection}
+        ariaLabel="What I'm working on now"
+      >
+        <motion.div
+          style={
+            reduceMotion
+              ? undefined
+              : { y: nowPullY, opacity: nowOpacity, willChange: 'transform' }
+          }
+        >
+          <Stack gap="intra">
+            <Title order={2} className={styles.sectionDisplay}>
               What I&apos;m working on now
             </Title>
-            <div className={styles.nowHero}>
-              <RichLinkCard
-                href={HEYLINA_URL}
-                title={cardTitle}
-                description={cardDescription}
-                imageUrl={og?.image ?? null}
-                domainLabel="heylina.ai"
-              />
-              <div className={styles.whatIDoThere}>
-                <Text
-                  className={styles.nowKicker}
-                  tt="uppercase"
-                  size="xs"
-                  fw={600}
-                  style={{ letterSpacing: '0.08em' }}
-                  c="dimmed"
-                >
-                  WHAT I DO THERE
-                </Text>
-                <Text className={styles.whatIDoThereBody} c="var(--site-ink)">
-                  COO. I look after operations, hiring, fundraising, and partnerships, while our team builds the product itself. It&apos;s the most exciting thing I&apos;ve ever worked on.
-                </Text>
-              </div>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Box>
+            <Stack gap="intra" className={styles.nowHero}>
+              <motion.div
+                ref={heyLinaCardRef}
+                style={
+                  reduceMotion
+                    ? undefined
+                    : {
+                        scale: heyLinaScale,
+                        transformOrigin: 'top center',
+                        marginBottom: heyLinaSpacer,
+                        position: 'relative',
+                        zIndex: 5,
+                        willChange: 'transform',
+                      }
+                }
+              >
+                <RichLinkCard
+                  href={HEYLINA_URL}
+                  title={cardTitle}
+                  description={cardDescription}
+                  imageUrl={og?.image ?? null}
+                  domainLabel="heylina.ai"
+                />
+              </motion.div>
+              <motion.div
+                ref={whatIDoThereRef}
+                style={
+                  reduceMotion
+                    ? undefined
+                    : {
+                        opacity: whatIDoThereOpacity,
+                        y: whatIDoThereY,
+                      }
+                }
+              >
+                <div className={styles.whatIDoThere}>
+                  <Text
+                    className={styles.nowKicker}
+                    tt="uppercase"
+                    size="xs"
+                    fw={600}
+                    style={{ letterSpacing: '0.08em', color: 'var(--mantine-color-dimmed)' }}
+                  >
+                    WHAT I DO THERE
+                  </Text>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                  >
+                    <Text className={styles.whatIDoThereBody} style={{ marginBottom: '1em', color: 'var(--site-ink)' }}>
+                      I am <strong>COO and co-founder</strong> of HeyLina. The shorthand is I'm a <strong>data strategist</strong> with a builder&apos;s bias and an <strong>operator&apos;s discipline</strong>. A decade across Accenture and Anmut gives me the framework behind our longitudinal emotional data play.
+                    </Text>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                  >
+                    <Text className={styles.whatIDoThereBody} style={{ marginBottom: '1em', color: 'var(--site-ink)' }}>
+                      I built our marketing site, our internal operating system, and the engineering process around our mobile developer. I run <strong>app store launch operations</strong>, the interim raise, our clinical advisor relationships, compliance, and pricing.
+                    </Text>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                  >
+                    <Text className={styles.whatIDoThereBody} style={{ color: 'var(--site-ink)' }}>
+                      Bri makes the company exist; I make sure it compounds. It is the <strong>most exciting thing</strong> I have ever worked on.
+                    </Text>
+                  </motion.div>
+                  
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    style={{ textAlign: 'center', marginTop: '2em' }}
+                  >
+                    <Text
+                      className={styles.whatIDoThereBody}
+                      style={{ marginBottom: '1em', cursor: 'pointer', color: 'var(--site-ink)' }}
+                      onClick={() => {
+                        const timeline = document.getElementById('career-timeline');
+                        timeline?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }}
+                    >
+                      How I got here
+                    </Text>
+                    <motion.div
+                      animate={{ y: [0, -7, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                      whileHover={{ y: 0, scale: 1.05 }}
+                      style={{ 
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '44px',
+                        height: '44px',
+                        color: 'var(--site-ink-muted)',
+                        border: '0.5px solid var(--site-ink-muted)',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        background: 'transparent'
+                      }}
+                      onClick={() => {
+                        const timeline = document.getElementById('career-timeline');
+                        timeline?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }}
+                    >
+                      <IconChevronDown size={20} stroke={1.5} />
+                    </motion.div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </Stack>
+          </Stack>
+        </motion.div>
+      </Section>
 
-      <CareerTimeline
-        milestones={careerMilestones}
-        eyebrow="The path here"
-        heading="From classroom to startup"
-      />
+      <div id="career-timeline">
+        <CareerTimeline
+          milestones={careerMilestones}
+          heading="From classroom to startup"
+        />
+      </div>
 
-      <Box className={styles.featuredSection}>
-        <Container size="md">
-          <ScrollReveal>
-            <Text className={styles.sectionEyebrow} tt="uppercase" size="xs" fw={600} style={{ letterSpacing: '0.08em' }} c="dimmed">
-              What I&apos;m working on
-            </Text>
-            <Title order={2} className={styles.sectionDisplay} mb="xl">
-              Latest work
+      <Section width="narrow" padY="loose">
+        <ScrollReveal>
+          <Stack gap="intra" style={{ alignItems: 'center', textAlign: 'center' }}>
+            <Title order={2} className={styles.ctaTitle} style={{ color: 'var(--site-ink)' }}>
+              Let&apos;s connect{' '}
             </Title>
-          </ScrollReveal>
-
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
-            {featuredProjects.map((project) => (
-              <ScrollReveal key={project.id}>
-                <ProjectSnippet project={project} />
-              </ScrollReveal>
-            ))}
-          </SimpleGrid>
-        </Container>
-      </Box>
-
-      <Box className={styles.ctaSection}>
-        <Container size="sm">
-          <ScrollReveal>
-            <Title order={2} className={styles.ctaTitle} c="var(--site-ink)">
-              Let&apos;s connect.
-            </Title>
-            <Text className={styles.ctaSubtitle} c="dimmed">
+            <Text className={styles.ctaSubtitle} style={{ color: 'var(--mantine-color-dimmed)' }}>
               Whether you want to talk startups, data strategy, or just say hello, I&apos;d love to hear from you.
             </Text>
             <SayHelloPill />
-          </ScrollReveal>
-        </Container>
-      </Box>
+          </Stack>
+        </ScrollReveal>
+      </Section>
     </Box>
   );
 }

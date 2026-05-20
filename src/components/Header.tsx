@@ -44,7 +44,7 @@ function Header() {
           variant="subtle"
           leftSection={<IconLogout size={18} />}
           onClick={handleLogout}
-          c="var(--site-ink)"
+          style={{ color: 'var(--site-ink)' }}
         >
           Logout
         </Button>
@@ -52,7 +52,7 @@ function Header() {
     }
     return (
       <Link href="/login" style={{ textDecoration: 'none' }}>
-        <Button variant="subtle" c="var(--site-ink)">
+        <Button variant="subtle" style={{ color: 'var(--site-ink)' }}>
           Login
         </Button>
       </Link>

@@ -4,7 +4,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { notFound } from 'next/navigation';
 import NextImage from 'next/image';
-import { Text, Box, Anchor, Container, Title } from '@mantine/core';
+import { Text, Box, Anchor, Title } from '@mantine/core';
+import { Section } from '@/components/layout';
 import { getBlogPostDetail } from '@/lib/content/blogRepository';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import '../blog.css';
@@ -33,9 +34,9 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   return (
-    <Container py="xl" className="blog-post">
+    <Section width="narrow" padY="default" className="blog-post">
       <GlassContent p="lg" mb="xl">
-        <Title order={1} mb="md" c="var(--site-ink)" style={{ fontWeight: 600 }}>
+        <Title order={1} mb="md" style={{ fontWeight: 600, color: 'var(--site-ink)' }}>
           {post.title}
         </Title>
 
@@ -85,6 +86,6 @@ export default async function BlogPostPage({ params }: PageProps) {
           ← Back to Blog
         </Anchor>
       </Box>
-    </Container>
+    </Section>
   );
 } 

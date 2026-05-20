@@ -75,7 +75,6 @@ function ProjectSnippet({ project }: ProjectSnippetProps) {
             <Title
               order={3}
               size="h4"
-              c="var(--site-ink)"
               style={{
                 display: '-webkit-box',
                 WebkitLineClamp: 2,
@@ -86,6 +85,7 @@ function ProjectSnippet({ project }: ProjectSnippetProps) {
                 maxHeight: '2.8em',
                 flex: '1 1 12rem',
                 minWidth: 0,
+                color: 'var(--site-ink)',
               }}
             >
               {name}
@@ -102,9 +102,9 @@ function ProjectSnippet({ project }: ProjectSnippetProps) {
           <Text
             size="sm"
             mb="md"
-            c="dimmed"
             style={{
               display: '-webkit-box',
+              color: 'var(--mantine-color-dimmed)',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',

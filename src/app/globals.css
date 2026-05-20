@@ -28,9 +28,101 @@
   --button-border-color: #1f4a44;
 }
 
+/* === Surface: blog ===
+   Surface is orthogonal to colour-scheme. The data-surface="blog" attribute
+   is set on a layout wrapper for /blog routes; both colour schemes can apply
+   on top, giving us blog-light (cream stock + black ink + red accent) and
+   blog-dark (warm dark stock + off-white ink + brighter coral accent).
+
+   These blocks override the site tokens so chrome (Header, Footer,
+   GradientRoot) repaints automatically, AND expose --blog-* tokens for
+   blog-specific components (Glass blog variant, blog.module.css). */
+
+[data-mantine-color-scheme='light'] [data-surface='blog'] {
+  /* Site tokens — override so chrome flips */
+  --site-ink: #0f0f10;
+  --site-ink-muted: rgba(15, 15, 16, 0.75);
+  --site-ink-caption: rgba(15, 15, 16, 0.55);
+  --site-accent: #c9402a;
+  --site-bg-0: #f4f1ea;
+  --site-bg-1: #ebe6db;
+  --button-background-color: #0f0f10;
+  --button-text-color: #f4f1ea;
+  --button-border-color: #0f0f10;
+
+  /* Blog tokens — consumed by blog page and Glass blog variant */
+  --blog-bg: #f4f1ea;
+  --blog-bg-deep: #ebe6db;
+  --blog-ink: #0f0f10;
+  --blog-ink-soft: #2a2a2c;
+  --blog-muted: #6b6a64;
+  --blog-rule: #1a1a1b;
+  --blog-rule-soft: rgba(15, 15, 16, 0.18);
+  --blog-accent: #c9402a;
+  --blog-accent-soft: #d97a64;
+  --blog-grain: rgba(0, 0, 0, 0.025);
+  --blog-intro-paper: #fdf8ec;
+  --blog-fold-shadow: rgba(0, 0, 0, 0.06);
+}
+
+[data-mantine-color-scheme='dark'] [data-surface='blog'] {
+  /* Site tokens — override so chrome flips */
+  --site-ink: #e8e3d4;
+  --site-ink-muted: rgba(232, 227, 212, 0.75);
+  --site-ink-caption: rgba(232, 227, 212, 0.55);
+  --site-accent: #e07359;
+  --site-bg-0: #161412;
+  --site-bg-1: #1f1c19;
+  --button-background-color: #e07359;
+  --button-text-color: #161412;
+  --button-border-color: #e07359;
+
+  /* Blog tokens — ink-bath broadsheet */
+  --blog-bg: #161412;
+  --blog-bg-deep: #1f1c19;
+  --blog-ink: #e8e3d4;
+  --blog-ink-soft: #c9c2b1;
+  --blog-muted: #8a8378;
+  --blog-rule: rgba(232, 227, 212, 0.32);
+  --blog-rule-soft: rgba(232, 227, 212, 0.18);
+  --blog-accent: #e07359;
+  --blog-accent-soft: #c9594a;
+  --blog-grain: rgba(232, 227, 212, 0.04);
+  --blog-intro-paper: #1f1c19;
+  --blog-fold-shadow: rgba(0, 0, 0, 0.4);
+}
+
 :root {
   --header-height: 80px;
   --font-heading-letter-spacing: normal;
+
+  /* Layout tokens (ADR 0032) ----------------------------------------- */
+
+  /* Vertical rhythm */
+  --section-gap: clamp(3rem, 6vw, 6rem);
+  --intra-section-gap: clamp(1rem, 2vw, 2rem);
+  --content-gap: clamp(0.75rem, 1.5vw, 1.25rem);
+
+  /* Section vertical padding (Section component) */
+  --section-pad-y-tight: clamp(2rem, 4vw, 3rem);
+  --section-pad-y-default: clamp(3rem, 6vw, 5rem);
+  --section-pad-y-loose: clamp(4rem, 8vw, 7rem);
+
+  /* Horizontal max-widths (canonical only) */
+  --container-narrow: 720px;
+  --container-default: 960px;
+  --container-wide: 1200px;
+
+  /* Container side gutter */
+  --container-px: clamp(1rem, 4vw, 1.5rem);
+
+  /* Breakpoints (mirror Mantine theme; consumers should reference these
+     vars instead of raw px in CSS modules) */
+  --bp-xs: 36em; /* 576px */
+  --bp-sm: 48em; /* 768px */
+  --bp-md: 62em; /* 992px */
+  --bp-lg: 75em; /* 1200px */
+  --bp-xl: 88em; /* 1408px */
 }
 
 html,
@@ -45,6 +137,20 @@ body {
   body {
     transition: none;
   }
+}
+
+/* Session-level reduce-motion override for the /projects desktop. The
+   attribute lives on the <MacDesktop> root, so the rule only affects that
+   subtree — other surfaces remain unaffected. Mirrors the rule pattern that
+   `prefers-reduced-motion` would apply system-wide. */
+[data-reduce-motion='true'],
+[data-reduce-motion='true'] *,
+[data-reduce-motion='true'] *::before,
+[data-reduce-motion='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 body {
