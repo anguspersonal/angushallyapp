@@ -265,6 +265,24 @@
       "notes": "Initial pass landed via supabase/migrations/20260520154800_add_hot_path_indexes.sql and applied to Supabase 2026-05-20. Composites on habit.habit_log, habit.strava_activities, content.posts, bookmarks.bookmarks; single-column on content.posts.{author_id,slug,created_at,updated_at}."
     },
     {
+      "id": "db-dbml-refresh",
+      "title": "Refresh docs/assets/schema.dbml to current Supabase reality",
+      "type": "tech-debt",
+      "area": "database",
+      "priority": "medium",
+      "status": "not-started",
+      "notes": "DBML is significantly stale: calls content schema 'public_data', missing bookmarks/raindrop/strava_* schemas entirely, missing 7 of the 9 indexes landed in db-indexes. Surfaced by QA review on PR #56."
+    },
+    {
+      "id": "db-drop-ix-bookmarks-user-id",
+      "title": "Drop bookmarks.ix_bookmarks_user_id (shadowed by idx_bookmarks_user_created_desc)",
+      "type": "tech-debt",
+      "area": "database",
+      "priority": "low",
+      "status": "not-started",
+      "notes": "Single-col user_id index is now shadowed by the composite (user_id, created_at DESC) for read paths. Verify no insert/duplicate-check path benefits from the single-col before dropping. Surfaced by QA review on PR #56."
+    },
+    {
       "id": "db-connection-pool-tuning",
       "title": "Tune Postgres connection pool for production",
       "type": "tech-debt",

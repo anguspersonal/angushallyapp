@@ -11,9 +11,11 @@
 BEGIN;
 
 -- habit.habit_log
---   listHabitLogs:        WHERE user_id = $1 ORDER BY created_at DESC LIMIT/OFFSET
---   listHabitLogsByType:  WHERE user_id = $1 AND habit_type = $2 ORDER BY created_at DESC
---   computeHabitStats:    WHERE user_id = $1 AND created_at >= $2
+--   2-col composite serves:
+--     listHabitLogs      — WHERE user_id = $1 ORDER BY created_at DESC LIMIT/OFFSET
+--     computeHabitStats  — WHERE user_id = $1 AND created_at >= $2 (range scan)
+--   3-col composite serves:
+--     listHabitLogsByType — WHERE user_id = $1 AND habit_type = $2 ORDER BY created_at DESC
 CREATE INDEX IF NOT EXISTS idx_habit_log_user_created_desc
   ON habit.habit_log (user_id, created_at DESC);
 
@@ -30,9 +32,14 @@ CREATE INDEX IF NOT EXISTS idx_strava_activities_user_start_desc
   ON habit.strava_activities (user_id, start_date DESC);
 
 -- content.posts
---   listBlogPosts:    ORDER BY {created_at|updated_at|title|id} {asc|desc} LIMIT/OFFSET
+--   listBlogPosts:     ORDER BY {created_at|updated_at|title|id} {asc|desc} LIMIT/OFFSET
 --   getBlogPostDetail: WHERE slug = $1
---   loadAuthorNames:   identity.users.id IN (post.author_id, ...)  -- FK join needs an index
+--
+-- idx_posts_author_id: FK best practice. Postgres does NOT auto-index FK
+-- columns — without this, ON DELETE / ON UPDATE cascades and any future
+-- "posts by author" reverse lookup hit a sequential scan. The current
+-- loadAuthorNames join is satisfied by identity.users PK; this index
+-- protects future query shapes that filter posts by author_id directly.
 CREATE INDEX IF NOT EXISTS idx_posts_author_id
   ON content.posts (author_id);
 
