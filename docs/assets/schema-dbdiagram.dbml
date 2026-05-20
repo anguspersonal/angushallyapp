@@ -1,222 +1,581 @@
 // DBML for dbdiagram.io Visualization
 // This file is a simplified version of schema.dbml, tailored for optimal rendering and compatibility with dbdiagram.io.
 // It omits some detailed constraint names and uses syntax preferred by dbdiagram.io (e.g., [nullable] is removed, inline [unique] for simple cases).
-// The canonical source of truth for the precise schema, including all named constraints and specific index types, is schema.dbml and the Knex migration files.
+// The canonical source of truth for the precise schema, including all named constraints and specific index types, is schema.dbml (which mirrors the live Supabase DB).
 // Purpose: Primarily for generating visual ERDs.
+//
+// Last refreshed: 2026-05-20.
 
-// --- Simplifications for dbdiagram.io ---
-// 1. `[nullable]` attribute: Removed from all columns. dbdiagram.io infers nullability if `[not null]` is absent.
-// 2. Inline `[unique]`: Used for simple single-column unique constraints (e.g., `google_sub string [unique]`).
-//    The actual named unique constraint (e.g., `uq_users_google_sub`) is defined in the Knex migration and detailed in `schema.dbml`.
-// 3. Composite `[unique]` in `Indexes` block: For multi-column unique constraints (e.g., `(email, auth_provider) [unique]`), this is standard DBML.
-//    The constraint name (e.g., `uq_users_email_auth_provider`) is omitted here for brevity but exists in the database.
-// 4. Index Names: Specific index names (e.g., `ix_users_email`) are removed from the `Indexes{}` blocks for this visual version.
-//    The `Indexes` block still declares which columns are indexed for performance.
-// 5. Partial Unique Indexes: dbdiagram.io doesn't visually represent the `WHERE` clause of a partial unique index.
-//    These are noted in the `Indexes` block (e.g., for `access_requests.user_id WHERE status = 'pending'`) but the `unique` keyword is omitted from the index definition here to avoid implying a full unique index on the column(s) alone.
-// 6. `Ref` delete actions: Corrected to use syntax like `[delete: set null]` (without single quotes around `set null`).
-// 7. ENUM types: Represented as `string` with a comment, as DBML has limited native ENUM support for direct visualization in some tools.
-
-// --- Project Wide Settings (Optional, but good for context) ---
+// --- Project Wide Settings ---
 Project angushally_app {
   database_type: 'PostgreSQL'
   Note: 'Application database for various personal projects and utilities, featuring a unified identity system.'
 }
 
 // --- Schema: identity ---
-// Manages all user identities, roles, and access control for the entire application.
-
 Table identity.users {
   id uuid [pk, default: `gen_random_uuid()`]
-  email string [not null]
-  password_hash string
-  auth_provider string [not null, default: 'local']
-  google_sub string [unique] // Simple unique for diagram
-  first_name string
-  last_name string
-  is_active boolean [not null, default: false]
+  email text [not null]
+  password_hash text
+  google_sub text [unique]
+  name text
+  picture_url text
+  is_active boolean [default: false]
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+  auth_provider varchar [not null, default: 'local']
+  first_name varchar
+  last_name varchar
   email_verified_at timestamptz
   last_login_at timestamptz
   metadata jsonb [not null, default: '{}']
-  created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`]
 
   Indexes {
-    (email)
     (auth_provider)
-    (is_active)
-    (last_login_at)
     (google_sub)
-    (email, auth_provider) [unique] // Composite unique
+    (last_login_at)
+    (email, auth_provider) [unique]
   }
 }
 
 Table identity.roles {
   id uuid [pk, default: `gen_random_uuid()`]
-  name string [not null, unique] // Simple unique for diagram
-  description string
-  created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`]
+  name text [not null, unique]
 }
 
 Table identity.user_roles {
   user_id uuid [not null]
   role_id uuid [not null]
-  created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
 
   Indexes {
-    (role_id, user_id) // Index for join performance
+    (role_id, user_id)
   }
-  Note: 'Composite primary key on (user_id, role_id)'
+  Note: 'Composite PK on (user_id, role_id). Live DB enforces FK only on role_id.'
 }
 
 Table identity.access_requests {
   id uuid [pk, default: `gen_random_uuid()`]
-  user_id uuid [not null]
-  requested_at timestamptz [not null, default: `now()`]
-  status string [not null, default: 'pending'] // ENUM: ['pending', 'approved', 'rejected']
+  user_id uuid
+  requested_at timestamptz [default: `now()`]
+  status text [default: 'pending'] // CHECK: pending|approved|rejected
   handled_by uuid
   handled_at timestamptz
-  rejection_reason string
-  created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`]
-
-  Indexes {
-    (user_id)
-    (status)
-    (requested_at)
-    (handled_at)
-    (user_id) [note: 'DB has PARTIAL UNIQUE index for (user_id) WHERE status = \'pending\' named uq_access_requests_pending_user']
-  }
 }
 
-// Relationships for identity schema
-Ref: identity.user_roles.user_id > identity.users.id [delete: cascade]
 Ref: identity.user_roles.role_id > identity.roles.id [delete: cascade]
-Ref: identity.access_requests.user_id > identity.users.id [delete: set null]
-Ref: identity.access_requests.handled_by > identity.users.id [delete: set null]
+Ref: identity.access_requests.user_id > identity.users.id
+Ref: identity.access_requests.handled_by > identity.users.id
 
 
-// Schema: habit
-Table habit._deprecated_users { 
-  user_id integer [pk] 
-  email string
-  fname string
-  lname string
-  google_user_id string 
-  created_at timestamptz
-  last_updated timestamptz
+// --- Schema: habit ---
+Table habit._deprecated_users {
+  user_id integer [pk, increment]
+  email text [not null, unique]
+  fname text
+  lname text
+  name varchar
+  role text // CHECK: owner|admin|standard|guest
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  last_updated timestamp [default: `CURRENT_TIMESTAMP`]
+  google_user_id varchar
 }
 
 Table habit.habit_log {
   id integer [pk, increment]
-  user_id uuid [ref: > identity.users.id, not null] // TARGET STATE
-  habit_type string [not null]
-  value real 
-  metric string 
-  extra_data jsonb 
-  created_at timestamptz [default: `now()`]
+  created_at timestamp [default: `now()`]
+  duration_sec integer
+  habit_source text [default: 'manual']
+  location text
+  context text
+  habit_type text
+  value double
+  metric text
+  extra_data jsonb
+  user_id uuid
+
+  Indexes {
+    (user_id, created_at)
+    (user_id, habit_type, created_at)
+  }
 }
 
-Table habit.alcohol { 
+Table habit.alcohol {
   id integer [pk, increment]
-  habit_log_id integer [ref: > habit.habit_log.id]
-  user_id uuid [ref: > identity.users.id] 
+  log_id integer
   drink_id integer
-  volume_ml real
-  abv_percent real
-  created_at timestamptz [default: `now()`]
-}
-
-Table habit.exercise { 
-  id integer [pk, increment]
-  habit_log_id integer [ref: > habit.habit_log.id]
-  user_id uuid [ref: > identity.users.id] 
-  activity_type string
-  duration_minutes integer
-  distance_km real
-  created_at timestamptz [default: `now()`]
+  drink_name text
+  volume_ml double
+  abv_percent double
+  assigned_time timestamp [default: `now()`]
+  created_at timestamp [default: `now()`]
+  count integer [not null, default: 1]
+  units double
+  user_id uuid
 }
 
 Table habit.drink_catalog {
   id integer [pk, increment]
-  name string [not null]
-  volume_ml real
-  abv_percent real
-  created_at timestamptz [default: `now()`]
+  name text [not null, unique]
+  default_volume_ml double
+  default_abv_percent double
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  count integer [default: 0]
+  last_updated timestamp [default: `now()`]
+  catalog_type text [default: 'user-created']
+  archived boolean [default: false]
+  icon text
+  drink_type text
+  user_id uuid
 }
 
-Table habit.exercises { 
+Table habit.exercise {
   id integer [pk, increment]
-  name string [not null]
-  category string
-  created_at timestamptz [default: `now()`]
+  log_id integer
+  duration_sec integer
+  distance_km double
+  calories_burned integer
+  heart_rate_avg integer
+  user_id uuid
 }
+
+Table habit.exercises {
+  id integer [pk, increment]
+  log_id integer
+  exercise_type text [not null] // CHECK: Running|Cycling|Gym|Swimming|Yoga|Other
+  duration_sec integer
+  distance_km double
+  calories_burned integer
+  heart_rate_avg integer
+  source_specific_id text
+  user_id uuid
+}
+
+Table habit.strength_sets {
+  id integer [pk, increment]
+  session_id integer
+  exercise_name text [not null]
+  sets integer
+  reps integer
+  weight_kg double
+  time_per_set_sec integer
+  rest_between_sets_sec integer
+  user_id uuid
+}
+
+Table habit.strava_activities {
+  id bigint [pk]
+  name text [not null]
+  distance double [not null]
+  moving_time integer [not null]
+  elapsed_time integer [not null]
+  total_elevation_gain double [not null]
+  type text [not null]
+  sport_type text [not null]
+  start_date timestamp [not null]
+  start_date_local timestamp [not null]
+  timezone text [not null]
+  average_speed double [not null]
+  max_speed double [not null]
+  elev_high double
+  elev_low double
+  map_id text
+  summary_polyline text
+  workout_type integer
+  utc_offset double
+  location_city text
+  location_state text
+  location_country text
+  achievement_count integer
+  kudos_count integer
+  comment_count integer
+  athlete_count integer
+  photo_count integer
+  trainer boolean
+  commute boolean
+  manual boolean
+  private boolean
+  visibility text
+  flagged boolean
+  gear_id text
+  start_lat double
+  start_lng double
+  end_lat double
+  end_lng double
+  upload_id bigint
+  external_id text
+  from_accepted_tag boolean
+  pr_count integer
+  total_photo_count integer
+  has_kudoed boolean
+  user_id uuid [not null]
+
+  Indexes {
+    (user_id, start_date)
+    (user_id, start_date_local)
+  }
+}
+
+Table habit.strava_sync_log {
+  id integer [pk, increment]
+  last_updated timestamp [not null, default: `now()`]
+  user_id uuid [not null]
+}
+
+Table habit.strava_tokens {
+  id integer [pk, increment]
+  access_token text [not null]
+  refresh_token text [not null]
+  expires_at bigint [not null]
+  user_id uuid [not null, unique]
+}
+
+Ref: habit.habit_log.user_id > identity.users.id [delete: cascade]
+Ref: habit.alcohol.log_id > habit.habit_log.id [delete: cascade]
+Ref: habit.alcohol.drink_id > habit.drink_catalog.id
+Ref: habit.alcohol.user_id > identity.users.id [delete: cascade]
+Ref: habit.drink_catalog.user_id > identity.users.id [delete: set null]
+Ref: habit.exercise.log_id > habit.habit_log.id [delete: cascade]
+Ref: habit.exercise.user_id > identity.users.id [delete: cascade]
+Ref: habit.exercises.log_id > habit.habit_log.id [delete: cascade]
+Ref: habit.exercises.user_id > identity.users.id [delete: set null]
+Ref: habit.strength_sets.session_id > habit.exercises.id [delete: cascade]
+Ref: habit.strength_sets.user_id > identity.users.id [delete: set null]
+Ref: habit.strava_activities.user_id > identity.users.id [delete: cascade]
+Ref: habit.strava_sync_log.user_id > identity.users.id [delete: cascade]
+Ref: habit.strava_tokens.user_id > identity.users.id [delete: cascade]
+
+
+// --- Schema: content ---
+Table content.authors {
+  id uuid [pk]
+  name varchar [not null]
+  created_at timestamptz [not null]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table content.posts {
+  id integer [pk, increment]
+  title varchar [not null]
+  created_at timestamptz [not null]
+  excerpt text [not null]
+  content text
+  slug text
+  content_md text
+  tags text
+  metadata jsonb
+  cover_image varchar
+  alt_text text
+  attribution text
+  attribution_link text
+  author_id uuid [not null]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (author_id)
+    (created_at)
+    (slug)
+    (updated_at)
+  }
+}
+
+Ref: content.authors.id > identity.users.id [delete: cascade]
+Ref: content.posts.author_id > identity.users.id [delete: cascade]
+
 
 // --- Schema: crm ---
 Table crm.inquiries {
-  id integer [pk, increment]
-  name string [not null]
-  email string [not null]
-  message string
-  status string [default: 'new']
-  user_id uuid [ref: > identity.users.id] 
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
+  id uuid [pk, default: `gen_random_uuid()`]
+  submitter_user_id uuid
+  name varchar [not null]
+  email varchar [not null]
+  subject varchar
+  message text
+  status text [not null, default: 'new'] // CHECK: new|open|assigned|pending_customer_reply|pending_agent_reply|resolved|closed|spam
+  assigned_to_user_id uuid
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  captcha_token text
+
+  Indexes {
+    (assigned_to_user_id)
+    (email)
+    (status)
+    (submitter_user_id)
+  }
 }
+
+Ref: crm.inquiries.submitter_user_id > identity.users.id [delete: set null]
+Ref: crm.inquiries.assigned_to_user_id > identity.users.id [delete: set null]
+
 
 // --- Schema: fsa ---
 Table fsa.local_authorities {
   local_authority_id integer [pk]
-  name string [not null]
-  friendly_name string
-  url string
+  name text
+  friendly_name text
+  url text
   metadata jsonb
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  estab_success_count integer
+  estab_skipped_count integer
+  estab_error_count integer
+  processing_duration double
+  process_successful boolean
+  processing_status text [default: 'Pending']
+  process_message text
 }
 
 Table fsa.establishments {
-  fhrs_id integer [pk]
-  business_name string
-  business_type string
-  address_line_1 string
-  address_line_2 string
-  address_line_4 string
-  post_code string
-  rating_value string
+  id integer [pk, increment]
+  fhrs_id integer [unique]
+  local_authority_business_id text
+  business_name text
+  business_type text
+  business_type_id integer
+  address_line_1 text
+  address_line_2 text
+  address_line_4 text
+  post_code text
+  rating_value_str text
+  rating_key text
   rating_date date
-  latitude float
-  longitude float
-  local_authority_id integer [ref: > fsa.local_authorities.local_authority_id]
-  metadata jsonb
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
+  local_authority_code text
+  local_authority_name text
+  local_authority_website text
+  local_authority_email_address text
+  hygiene_score integer
+  structural_score integer
+  confidence_in_management integer
+  scheme_type text
+  new_rating_pending boolean
+  longitude double
+  latitude double
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+  rating_value_num integer
+  rating_status_id integer
+  postcode_id integer
+  address text
+
+  Indexes {
+    (postcode_id)
+    (rating_value_num)
+  }
 }
 
-// --- Schema: public_data ---
-Table public_data._deprecated_customers { 
-  id integer [pk] 
-  name string
-  email string
-  phone string
-  created_at timestamptz
+Table fsa.numeric_ratings {
+  id integer
+  fhrs_id integer
+  local_authority_business_id text
+  business_name text
+  business_type text
+  business_type_id integer
+  address_line_1 text
+  address_line_2 text
+  address_line_4 text
+  post_code text
+  rating_value_str text
+  rating_key text
+  rating_date date
+  local_authority_code text
+  local_authority_name text
+  local_authority_website text
+  local_authority_email_address text
+  hygiene_score integer
+  structural_score integer
+  confidence_in_management integer
+  scheme_type text
+  new_rating_pending boolean
+  longitude double
+  latitude double
+  created_at timestamp
+  updated_at timestamp
+  rating_value_num integer
+  Note: 'Staging table with no PK in the live DB.'
 }
 
-Table public_data.authors {
+Table fsa.postcodes {
+  postcode_id integer [pk, increment]
+  postcode varchar [not null, unique]
+
+  Indexes {
+    (postcode)
+  }
+}
+
+Table fsa.ratings {
   id integer [pk, increment]
-  name string [not null]
-  email string [unique] 
-  bio string
-  created_at timestamptz [default: `now()`]
+  rating_value_str text [unique]
 }
 
-Table public_data.posts {
-  id integer [pk, increment]
-  title string [not null]
-  content string
-  author_id integer [ref: > public_data.authors.id] 
-  created_at timestamptz [default: `now()`]
-  updated_at timestamptz [default: `now()`]
+Table fsa.scheduled_jobs {
+  job_id integer [pk, increment]
+  job_name text [not null]
+  start_time timestamp [not null]
+  end_time timestamp
+  status text [not null]
+  remarks text
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
 }
+
+Ref: fsa.establishments.postcode_id > fsa.postcodes.postcode_id
+Ref: fsa.establishments.rating_status_id > fsa.ratings.id
+
+
+// --- Schema: raindrop ---
+Table raindrop.tokens {
+  user_id uuid [pk]
+  access_token text [not null]
+  refresh_token text [not null]
+  expires_at timestamptz [not null]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+}
+
+Table raindrop.collections {
+  id integer [pk, increment]
+  user_id uuid [not null]
+  raindrop_id varchar [not null]
+  title varchar [not null]
+  count integer [default: 0]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (user_id)
+    (user_id, raindrop_id) [unique]
+  }
+}
+
+Table raindrop.bookmarks {
+  id integer [pk, increment]
+  user_id uuid [not null]
+  raindrop_id varchar [not null]
+  title text [not null]
+  link text [not null]
+  tags text[]
+  created_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [default: `CURRENT_TIMESTAMP`]
+  description text
+  is_organized boolean [not null, default: false]
+
+  Indexes {
+    (created_at)
+    (user_id)
+    (user_id, raindrop_id) [unique]
+  }
+}
+
+Table raindrop.sync_logs {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null]
+  status text [not null]
+  item_count integer [not null]
+  error_message text
+  started_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  finished_at timestamptz
+
+  Indexes {
+    (started_at)
+    (status)
+    (user_id)
+  }
+}
+
+Ref: raindrop.tokens.user_id > identity.users.id [delete: cascade]
+Ref: raindrop.collections.user_id > identity.users.id [delete: cascade]
+Ref: raindrop.bookmarks.user_id > identity.users.id [delete: cascade]
+Ref: raindrop.sync_logs.user_id > identity.users.id [delete: cascade]
+
+
+// --- Schema: bookmarks ---
+Table bookmarks.bookmarks {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null]
+  title text [not null]
+  url text [not null]
+  resolved_url text
+  description text
+  image_url text
+  image_alt text
+  site_name text
+  tags text[]
+  source_type varchar [not null]
+  source_id varchar [not null]
+  source_metadata jsonb
+  is_organized boolean [not null, default: false]
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  intelligence_level integer [default: 1]
+  confidence_scores jsonb
+  platform_metadata jsonb
+  processing_status text [default: 'pending']
+
+  Indexes {
+    (intelligence_level)
+    (processing_status)
+    (user_id, created_at)
+    (user_id, intelligence_level)
+    (tags) // GIN in live DB
+    (url)
+    (user_id)
+    (source_type, source_id) [unique]
+  }
+}
+
+Table bookmarks.categories {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null]
+  name varchar [not null]
+  description text
+  parent_id uuid
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (parent_id)
+    (user_id)
+  }
+}
+
+Table bookmarks.bookmark_categories {
+  bookmark_id uuid [not null]
+  category_id uuid [not null]
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (bookmark_id, category_id) [unique]
+  }
+  Note: 'Join table; uniqueness via uq_bookmark_categories. No declared PK in live DB.'
+}
+
+Table bookmarks.instagram_analyses {
+  id integer [pk, increment]
+  user_id uuid [not null]
+  instagram_url text [not null]
+  thread_id text [not null]
+  run_id text [not null]
+  metadata jsonb [not null]
+  analysis_result jsonb [not null]
+  analyzed_at timestamptz [not null, default: `now()`]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  Indexes {
+    (analyzed_at)
+    (run_id)
+    (thread_id)
+    (user_id)
+    (user_id, instagram_url) [unique]
+  }
+}
+
+Ref: bookmarks.bookmarks.user_id > identity.users.id [delete: cascade]
+Ref: bookmarks.categories.user_id > identity.users.id [delete: cascade]
+Ref: bookmarks.categories.parent_id > bookmarks.categories.id [delete: cascade]
+Ref: bookmarks.bookmark_categories.bookmark_id > bookmarks.bookmarks.id [delete: cascade]
+Ref: bookmarks.bookmark_categories.category_id > bookmarks.categories.id [delete: cascade]
+Ref: bookmarks.instagram_analyses.user_id > identity.users.id [delete: cascade]
