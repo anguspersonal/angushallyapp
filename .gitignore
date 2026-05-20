@@ -61,6 +61,9 @@ db_backups/
 pg_dump/
 database_backups/
 
+# Supabase migration files are version-controlled (override *.sql above)
+!supabase/migrations/*.sql
+
 # Build outputs
 /.next/
 /out/
