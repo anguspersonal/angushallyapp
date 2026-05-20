@@ -15,6 +15,7 @@ How-to guides, runbooks, and onboarding material. All non-ADR, non-vision, non-a
 - [`service-incidents.md`](./service-incidents.md) — incident response runbook
 - [`vercel-cron-and-webhooks.md`](./vercel-cron-and-webhooks.md) — cron jobs + webhooks on Vercel
 - [`env-management.md`](./env-management.md) — managing environment variables (Next.js / Vercel)
+- [`local-build.md`](./local-build.md) — making `npm run build` succeed locally (Supabase env requirement)
 
 ### Migration guides
 - [`heroku-to-vercel-migration.md`](./heroku-to-vercel-migration.md) — Heroku → Vercel migration steps

@@ -655,9 +655,9 @@
       "type": "tech-debt",
       "area": "devops",
       "priority": "low",
-      "status": "not-started",
+      "status": "done",
       "issue": 61,
-      "notes": "Local `npm run build` fails prerendering /contact without SUPABASE_URL set. Either add a .env.example, document the requirement, or skip prerender for routes that need server data when env is absent. Surfaced by QA review on PR #57."
+      "notes": "Docs landed: .env.example flags the build requirement and docs/guides/local-build.md explains the error, fix, and where to source values. Option-2 (auto-skip prerender when env missing) deferred — revisit if friction persists. Surfaced by QA review on PR #57."
     },
     {
       "id": "component-standardization",
