@@ -66,7 +66,7 @@ export default function AnnouncementsPage() {
             {items.map((item) => (
               <li key={item.slug} className={styles.item}>
                 <div className={styles.itemKicker}>
-                  <span>{formatDateline(item.date)}</span>
+                  <time dateTime={item.date}>{formatDateline(item.date)}</time>
                   {item.category && (
                     <>
                       <span className={styles.itemKickerDivider}>·</span>
