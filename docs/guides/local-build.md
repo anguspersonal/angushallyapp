@@ -36,8 +36,8 @@ At minimum, `next build` needs:
 | Variable                                          | Notes |
 | ------------------------------------------------- | ----- |
 | `NEXT_PUBLIC_SUPABASE_URL`                        | Public project URL |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`    | Public anon/publishable key. `NEXT_PUBLIC_SUPABASE_ANON_KEY` is accepted as a legacy fallback |
-| `SUPABASE_SECRET_KEY`                             | Server-only service-role key. `SUPABASE_SERVICE_ROLE_KEY` is accepted as a legacy fallback |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`                   | Public anon/publishable key. `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` is accepted as a fallback (code reads `ANON_KEY` first) |
+| `SUPABASE_SECRET_KEY`                             | Server-only service-role key. `SUPABASE_SERVICE_ROLE_KEY` is accepted as a fallback (code reads `SECRET_KEY` first) |
 
 `SUPABASE_URL` (no `NEXT_PUBLIC_` prefix) is also read as a fallback by the
 admin client (`src/lib/supabase/admin.ts`).
