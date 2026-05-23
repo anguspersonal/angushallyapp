@@ -264,10 +264,27 @@
   gap: 0.5rem;
   align-items: flex-end;
   padding: 0.75rem 1rem;
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
+  /*
+   * Combines the safe-area inset (iOS home indicator) with the visual-
+   * viewport keyboard inset set by ChatPanel's VisualViewport effect
+   * (FR-RES-16). When no keyboard is up, --chat-keyboard-inset is unset
+   * and the fallback (0px) wins.
+   */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--chat-keyboard-inset, 0px) + 0.75rem);
   background: var(--mantine-color-body);
   border-top: 1px solid var(--mantine-color-default-border);
   flex-shrink: 0;
+}
+
+/* Inline error banner (rate_limited, session_cap_reached, etc). Shown
+ * in the message list when status === 'error'. */
+.errorBanner {
+  align-self: stretch;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--mantine-radius-sm);
+  background: var(--mantine-color-default-hover);
+  color: var(--mantine-color-text);
+  font-size: 0.85rem;
 }
 
 .composerInput {

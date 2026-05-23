@@ -2,11 +2,26 @@
 
 import * as React from 'react';
 import { renderMarkdown } from '@/lib/chat/renderMarkdown';
+import { ROUTE_ALLOWLIST } from '@/lib/chat/tools.allowlist.generated';
+import type { ToolUseRecord } from '@/lib/chat/types';
+import { ContactDraftCard } from './ContactDraftCard';
+import { NavSuggestionButton } from './NavSuggestionButton';
 import type { ChatMessage as ChatMessageType } from './useChat';
 import styles from './chat.module.css';
 
 type Props = {
   message: ChatMessageType;
+  /**
+   * Tool-use proposals emitted in this assistant turn. Each renders inline
+   * after the message content. Only set on assistant messages.
+   */
+  toolUses?: readonly ToolUseRecord[];
+  /**
+   * Called before the user follows any in-message link or tool button.
+   * Used to close the panel on mobile so the destination isn't obscured
+   * (FR-RES-26).
+   */
+  onBeforeNavigate?: () => void;
 };
 
 /**
@@ -14,11 +29,13 @@ type Props = {
  *
  *  - User turns render as plain text (FR-UI-9).
  *  - Assistant turns render through `renderMarkdown` — a minimal markdown
- *    parser that supports links, bold, and unordered lists, and that
- *    refuses unsafe URL schemes. No `dangerouslySetInnerHTML` is used
- *    anywhere (FR-SAFE-7).
+ *    parser that refuses unsafe URL schemes; no `dangerouslySetInnerHTML`
+ *    is used (FR-SAFE-7).
+ *  - Tool-use proposals render inline AFTER the markdown content. Each
+ *    proposal is its own clickable card; the user must click to commit
+ *    (FR-AGENT-3 / FR-AGENT-7).
  */
-export function ChatMessage({ message }: Props) {
+export function ChatMessage({ message, toolUses, onBeforeNavigate }: Props) {
   const isUser = message.role === 'user';
   return (
     <div
@@ -29,6 +46,37 @@ export function ChatMessage({ message }: Props) {
         <p className={styles.messageContent}>{message.content}</p>
       ) : (
         <div className={styles.messageMarkdown}>{renderMarkdown(message.content)}</div>
+      )}
+      {!isUser && toolUses && toolUses.length > 0 && (
+        <div className={styles.toolUseStack}>
+          {toolUses.map((tu, i) => {
+            if (tu.name === 'navigate') {
+              if (!(ROUTE_ALLOWLIST as readonly string[]).includes(tu.input.path)) {
+                // Defense-in-depth — server should have already filtered,
+                // but never trust input.
+                return null;
+              }
+              return (
+                <NavSuggestionButton
+                  key={`nav-${i}`}
+                  path={tu.input.path}
+                  label={tu.input.label}
+                  onBeforeNavigate={onBeforeNavigate}
+                />
+              );
+            }
+            if (tu.name === 'draft_contact_message') {
+              return (
+                <ContactDraftCard
+                  key={`contact-${i}`}
+                  draft={tu.input}
+                  onBeforeNavigate={onBeforeNavigate}
+                />
+              );
+            }
+            return null;
+          })}
+        </div>
       )}
     </div>
   );
