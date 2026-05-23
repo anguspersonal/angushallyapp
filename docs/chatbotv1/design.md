@@ -498,8 +498,8 @@ export async function getDailySpendUsd(): Promise<number> {
   if (cachedSpend && Date.now() - cachedSpend.cachedAt < CACHE_TTL_MS) {
     return cachedSpend.totalUsd;
   }
-  const inPrice  = Number(process.env.CHAT_INPUT_PRICE_PER_MTOK);   // e.g. 0.80
-  const outPrice = Number(process.env.CHAT_OUTPUT_PRICE_PER_MTOK);  // e.g. 4.00
+  const inPrice  = Number(process.env.CHAT_INPUT_PRICE_USD_PER_MILLION_TOKENS);   // e.g. 0.80
+  const outPrice = Number(process.env.CHAT_OUTPUT_PRICE_USD_PER_MILLION_TOKENS);  // e.g. 4.00
   const admin = getSupabaseAdmin();
   const { data } = await admin
     .schema('chat')
@@ -630,8 +630,8 @@ ANTHROPIC_API_KEY=
 
 # Chat — spend cap
 CHAT_DAILY_SPEND_CAP_USD=5
-CHAT_INPUT_PRICE_PER_MTOK=0.80
-CHAT_OUTPUT_PRICE_PER_MTOK=4.00
+CHAT_INPUT_PRICE_USD_PER_MILLION_TOKENS=0.80
+CHAT_OUTPUT_PRICE_USD_PER_MILLION_TOKENS=4.00
 
 # Chat — privacy
 CHAT_IP_HASH_PEPPER=

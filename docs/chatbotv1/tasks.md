@@ -23,7 +23,7 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
   - [ ] 1.3 Apply the migration and verify the schema
     - Run `supabase db reset` (or the project's equivalent migration runner).
     - Inspect via `supabase studio` or `psql` that `chat.sessions`, `chat.messages`, the six indexes, and the `chat-retention` cron entry all exist.
-    - _Requirements: AC8, FR-PERS-1_
+    - _Requirements: AC-8, FR-PERS-1_
 
   - [ ] 1.4 Implement IP hashing helper at `src/lib/chat/ipHash.ts`
     - Export `hashIp(ip: string): string` using `node:crypto` `createHash('sha256').update(\`${ip}|${pepper}\`)`.
@@ -151,7 +151,7 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
 - [ ] 6. Spend-cap and abuse protection
   - [ ] 6.1 Implement `src/lib/chat/spendCap.ts`
     - Export `getDailySpendUsd()` with the in-memory 60s cache from design §10.
-    - Read `CHAT_INPUT_PRICE_PER_MTOK`, `CHAT_OUTPUT_PRICE_PER_MTOK`, `CHAT_DAILY_SPEND_CAP_USD` from env.
+    - Read `CHAT_INPUT_PRICE_USD_PER_MILLION_TOKENS`, `CHAT_OUTPUT_PRICE_USD_PER_MILLION_TOKENS`, `CHAT_DAILY_SPEND_CAP_USD` from env.
     - Aggregate `chat.messages` rows where `created_at >= startOfDayUtc()` and `tokens_in IS NOT NULL`.
     - Export `isOverCap(spendUsd: number): boolean`.
     - _Requirements: FR-RATE-4_
@@ -197,7 +197,7 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
     - **Property 8: Bot never echoes system-prompt content under attack**
     - At `src/lib/chat/__tests__/injection.test.ts`, run a curated list of ≥ 20 injection prompts through the route handler with a realistic mocked model (one that uses the system prompt to decide what to "say").
     - Assert: no response contains literal system-prompt strings; no `navigate` to off-allowlist paths; deflection responses < 400 chars (no lecturing).
-    - **Validates: Requirements FR-SAFE-1, FR-SAFE-2, FR-SAFE-3, FR-SAFE-4, AC5**
+    - **Validates: Requirements FR-SAFE-1, FR-SAFE-2, FR-SAFE-3, FR-SAFE-4, AC-5**
 
 - [ ] 8. Chat UI shell (launcher, panel, message list, composer)
   - [ ] 8.1 Add `ChatLauncher` at `src/components/chat/ChatLauncher.tsx`
@@ -215,7 +215,7 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
     - Full-viewport sheet `< --bp-sm` using `100dvw × 100dvh` + body scroll lock; anchored card `≥ --bp-sm` (420×640) up to 480×720 from `--bp-lg`.
     - Sticky header + sticky composer; only the message list scrolls (FR-RES-8).
     - Empty state with 3 suggested prompts + privacy one-liner about Supabase retention (NFR Privacy).
-    - All CSS in `chat.module.css` using `var(--bp-*)` — no raw px (TC-7, AC12).
+    - All CSS in `chat.module.css` using `var(--bp-*)` — no raw px (TC-7, AC-12).
     - _Requirements: FR-UI-2, FR-UI-3, FR-UI-5, FR-UI-6, FR-UI-7, FR-UI-8, FR-RES-5..15, FR-RES-21..23_
 
   - [ ] 8.4 Add `ChatMessage` at `src/components/chat/ChatMessage.tsx`
@@ -272,7 +272,7 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
   - [ ]* 9.5 Property test: contact-draft round-trip preserves field mapping
     - **Property 9: `body` maps to form `message`; fields survive sessionStorage**
     - Render `<ContactPage />` after setting `chat:contact-draft` in sessionStorage with `{ subject, body, name, email }`; assert form values match; assert key is cleared after mount.
-    - **Validates: Requirements FR-AGENT-8, FR-AGENT-9, AC14**
+    - **Validates: Requirements FR-AGENT-8, FR-AGENT-9, AC-14**
 
 - [ ] 10. Resting-state + error UI
   - [ ] 10.1 Add `ChatRestingState` at `src/components/chat/ChatRestingState.tsx`
@@ -288,12 +288,12 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
     - _Requirements: FR-RATE-1, FR-RATE-2, NFR Availability_
 
   - [ ] 10.3 Static-FAQ fallback when chat is hidden by visibility config
-    - Not required for v1; verify no fallback bubble appears on `/login`, `/auth/**` (AC13).
+    - Not required for v1; verify no fallback bubble appears on `/login`, `/auth/**` (AC-13).
     - _Requirements: FR-VIS-4_
 
 - [ ] 11. Documentation, env, and final QA
   - [ ] 11.1 Update `.env.example`
-    - Add: `ANTHROPIC_API_KEY=`, `CHAT_DAILY_SPEND_CAP_USD=5`, `CHAT_INPUT_PRICE_PER_MTOK=0.80`, `CHAT_OUTPUT_PRICE_PER_MTOK=4.00`, `CHAT_IP_HASH_PEPPER=`.
+    - Add: `ANTHROPIC_API_KEY=`, `CHAT_DAILY_SPEND_CAP_USD=5`, `CHAT_INPUT_PRICE_USD_PER_MILLION_TOKENS=0.80`, `CHAT_OUTPUT_PRICE_USD_PER_MILLION_TOKENS=4.00`, `CHAT_IP_HASH_PEPPER=`.
     - Group under a `# Chat (v1)` header for discoverability.
     - **human input required**
     - On the deploy target (Vercel project settings), populate all five env vars with real values. Generate `CHAT_IP_HASH_PEPPER` with `openssl rand -hex 32`. Obtain `ANTHROPIC_API_KEY` from console.anthropic.com.
@@ -305,7 +305,7 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
     - How to change visibility (edit `src/lib/chat/visibility.config.ts`).
     - Retention policy: 90 days, hashed IP only; pepper rotation procedure.
     - Spend-cap behaviour and the resting state.
-    - _Requirements: AC10, FR-PERS-6, FR-PERS-7_
+    - _Requirements: AC-10, FR-PERS-6, FR-PERS-7_
 
   - [ ] 11.3 Add `npm install @anthropic-ai/sdk` and any tokenizer helper
     - Justify in the PR description per TC-5 ("No new top-level dependency unless it materially reduces complexity"). Anthropic SDK clearly qualifies.
@@ -314,26 +314,26 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
   - [ ] 11.4 Responsive manual walkthrough
     - On the Vercel preview build, exercise the chat on the five canonical viewports (375×667, 390×844, 768×1024, 1280×800, 2560×1440).
     - Verify launcher visible, panel opens correctly, composer stays above iOS Safari + Android Chrome soft keyboards, no horizontal scroll, no overlap with `/contact` submit button or `/work-with-me` CTAs.
-    - _Requirements: AC11, FR-RES-24_
+    - _Requirements: AC-11, FR-RES-24_
 
   - [ ] 11.5 Run `npm run check:breakpoints`
     - Verify zero raw px breakpoints in chat CSS modules (ADR-0032 §4 compliance).
-    - _Requirements: AC12, TC-7_
+    - _Requirements: AC-12, TC-7_
 
   - [ ] 11.6 Persistence + spend-cap smoke verification
     - Hit `/api/chat` 5 times with different messages; verify in Supabase Studio that `chat.sessions` has one row and `chat.messages` has 10 rows (5 user + 5 assistant) with hashed IPs.
     - Set `CHAT_DAILY_SPEND_CAP_USD=0.0001` locally; verify the panel flips to `<ChatRestingState />` on next message.
     - Confirm anon client cannot SELECT from `chat.sessions` or `chat.messages` (RLS check).
-    - _Requirements: AC15, AC16, FR-PERS-4, FR-RATE-4_
+    - _Requirements: AC-15, AC-16, FR-PERS-4, FR-RATE-4_
 
   - [ ] 11.7 Visibility config end-to-end check
     - Edit `visibility.config.ts` locally to add `/blog/**` to `deny`; verify the bubble disappears on a blog post; revert.
     - Add a path to `forceShow` and verify it overrides a denied path.
-    - _Requirements: AC13, FR-VIS-2, FR-VIS-7_
+    - _Requirements: AC-13, FR-VIS-2, FR-VIS-7_
 
   - [ ] 11.8 Final acceptance walkthrough against `requirements.md` §8
     - Walk acceptance criteria 1–16; tick each off in the PR description; flag any deferred items.
-    - _Requirements: AC1..AC16_
+    - _Requirements: AC-1..AC16_
 
 ---
 
