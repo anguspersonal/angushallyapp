@@ -25,23 +25,28 @@ const MOCK_REPLY_DELAY_MS = 600;
 const CANNED_REPLIES: Array<{ keywords: RegExp; reply: string }> = [
   {
     keywords: /\b(habit|tracker|streak)\b/i,
-    reply: 'Sounds like you want the habit tracker — that lives at /projects/habit. Real navigation suggestions land in a later task.',
+    reply:
+      'You\'re looking for the **habit tracker** — see [habit tracker](/projects/habit). Real navigation suggestions arrive when the route handler ships.',
   },
   {
     keywords: /\b(contact|email|message|reach)\b/i,
-    reply: 'The contact form is at /contact. In v1 I will be able to draft a message for you and pre-fill it.',
+    reply:
+      'The contact form lives at [/contact](/contact). In v1 I\'ll be able to:\n\n- draft a message for you\n- pre-fill the form\n- hand off via sessionStorage so you can edit before sending',
   },
   {
     keywords: /\b(who|angus|about|you)\b/i,
-    reply: 'I am a mock chat assistant for Angus Hally\'s personal site. Once the real backend lands I will answer with grounded info from the site.',
+    reply:
+      'I\'m a mock chat assistant for **Angus Hally\'s** personal site. Once the real backend lands I\'ll answer with grounded info from pages like [about](/about) and [cv](/cv).',
   },
   {
-    keywords: /\b(ignore|previous|instructions|system prompt|jailbreak)\b/i,
-    reply: 'Nice try — prompt-injection resistance is one of the v1 acceptance criteria. The production bot will deflect and pivot back to what it can help with.',
+    keywords: /\b(ignore|previous|instructions|system prompt|jailbreak|dan)\b/i,
+    reply:
+      'Nice try — prompt-injection resistance is one of the v1 acceptance criteria. The production bot will deflect and pivot back to what it can actually help with.',
   },
   {
     keywords: /\b(hi|hello|hey)\b/i,
-    reply: 'Hello. Ask me about Angus, the projects on this site, or how to get in touch.',
+    reply:
+      'Hello. Ask me about Angus, the projects on this site, or how to get in touch via [/contact](/contact).',
   },
 ];
 

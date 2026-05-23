@@ -148,6 +148,42 @@
   white-space: pre-wrap;
 }
 
+/* Assistant markdown — same baseline as plain content, but with
+ * tight defaults for paragraphs and lists rendered by renderMarkdown.tsx. */
+.messageMarkdown {
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.messageMarkdown :global(p) {
+  margin: 0;
+}
+
+.messageMarkdown :global(p + p),
+.messageMarkdown :global(p + ul),
+.messageMarkdown :global(ul + p) {
+  margin-top: 0.5rem;
+}
+
+.messageMarkdown :global(ul) {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.messageMarkdown :global(li + li) {
+  margin-top: 0.15rem;
+}
+
+.messageMarkdown :global(a) {
+  color: var(--mantine-primary-color-filled);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.messageMarkdown :global(strong) {
+  font-weight: 600;
+}
+
 /* ---------------------------------------------------------------------------
  * Empty state
  * ------------------------------------------------------------------------ */
