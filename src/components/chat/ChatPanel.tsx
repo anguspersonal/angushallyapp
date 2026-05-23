@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { ActionIcon, Loader, ScrollArea, Text } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
+import { usePathname } from 'next/navigation';
 import { ChatComposer } from './ChatComposer';
 import { ChatMessage } from './ChatMessage';
 import { ChatRestingState } from './ChatRestingState';
@@ -58,8 +59,9 @@ export function ChatPanel({ onClose }: Props) {
   }, [onClose]);
 
   // Body scroll lock on mobile while the panel is open (FR-RES-10).
-  // Released on unmount (panel close) and on route change so an in-message
-  // link click doesn't leave the body locked (FR-RES-11).
+  // Re-runs on pathname change so an in-message link click releases the
+  // lock even before the unmount fires (FR-RES-11).
+  const pathname = usePathname();
   React.useEffect(() => {
     const original = document.body.style.overflow;
     const isMobile = window.matchMedia('(max-width: 47.99em)').matches;
@@ -69,7 +71,7 @@ export function ChatPanel({ onClose }: Props) {
     return () => {
       document.body.style.overflow = original;
     };
-  }, []);
+  }, [pathname]);
 
   // VisualViewport API to pin the composer above the soft keyboard
   // (FR-RES-16). Falls back gracefully on browsers without support.
