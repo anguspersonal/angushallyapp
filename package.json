@@ -10,7 +10,9 @@
   "scripts": {
     "dev": "next dev",
     "dev:turbopack": "next dev --turbopack",
+    "prebuild": "node scripts/build-chat-knowledge.mjs",
     "build": "next build",
+    "build:chat": "node scripts/build-chat-knowledge.mjs",
     "start": "next start",
     "lint": "next lint && node scripts/check-breakpoints.mjs --quiet",
     "check:breakpoints": "node scripts/check-breakpoints.mjs",
