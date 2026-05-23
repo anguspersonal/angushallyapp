@@ -1,0 +1,273 @@
+/** @vitest-environment node */
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { NextRequest } from 'next/server';
+
+/**
+ * Route-handler smoke + property tests (tasks 5.6, 5.8).
+ *
+ * The Anthropic SDK is mocked at module level so the test owns the
+ * stream timing: emit two text deltas, optionally a tool_use block, and
+ * then resolve `finalMessage()`. The persistence module is mocked so
+ * we can assert that the route handler:
+ *
+ *   - persists user + assistant turns ONLY after the SSE `done` (FR-PERS-3)
+ *   - drops off-allowlist `navigate` paths before they reach the client (FR-AGENT-2)
+ *   - returns 400 (not an SSE error) for malformed request bodies
+ */
+
+// ----- mocks ----------------------------------------------------------------
+
+type MockTextHandler = (delta: string) => void;
+type MockMessage = {
+  content: Array<
+    | { type: 'text'; text: string }
+    | { type: 'tool_use'; name: string; input: Record<string, unknown> }
+  >;
+  usage?: { input_tokens?: number; output_tokens?: number };
+};
+
+const mockStream = {
+  textHandler: null as MockTextHandler | null,
+  deltas: [] as string[],
+  finalMessage: { content: [], usage: { input_tokens: 0, output_tokens: 0 } } as MockMessage,
+  abortCalls: 0,
+};
+
+function resetMockStream(): void {
+  mockStream.textHandler = null;
+  mockStream.deltas = [];
+  mockStream.finalMessage = { content: [], usage: { input_tokens: 0, output_tokens: 0 } };
+  mockStream.abortCalls = 0;
+}
+
+vi.mock('@anthropic-ai/sdk', () => {
+  return {
+    default: class MockAnthropic {
+      messages = {
+        stream: () => {
+          const stream = {
+            on: (_event: string, handler: MockTextHandler) => {
+              mockStream.textHandler = handler;
+              return stream;
+            },
+            finalMessage: async () => {
+              // Flush deltas through the registered handler.
+              for (const delta of mockStream.deltas) {
+                mockStream.textHandler?.(delta);
+              }
+              return mockStream.finalMessage;
+            },
+            abort: () => {
+              mockStream.abortCalls += 1;
+            },
+          };
+          return stream;
+        },
+      };
+    },
+  };
+});
+
+type AnyArgs = unknown[];
+const upsertSession = vi.fn<AnyArgs, Promise<void>>(async () => undefined);
+const writeTurn = vi.fn<AnyArgs, Promise<void>>(async () => undefined);
+
+vi.mock('@/lib/chat/persistence', () => ({
+  upsertSession: (...args: Parameters<typeof upsertSession>) => upsertSession(...args),
+  writeTurn: (...args: Parameters<typeof writeTurn>) => writeTurn(...args),
+}));
+
+vi.mock('@/lib/supabase/admin', () => ({
+  getSupabaseAdmin: () => null, // no DB in unit tests
+}));
+
+vi.mock('@/lib/chat/ipHash', () => ({
+  hashIp: (ip: string) => `hashed:${ip}`,
+}));
+
+// ----- helpers --------------------------------------------------------------
+
+function makeRequest(body: unknown): NextRequest {
+  return new NextRequest('http://localhost/api/chat', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-forwarded-for': '203.0.113.42',
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+const VALID_UUID = '11111111-2222-4222-9222-333333333333';
+
+function makeValidBody(overrides: Partial<{ sessionId: string; message: string; route: string; history: unknown[] }> = {}) {
+  return {
+    sessionId: VALID_UUID,
+    message: 'Hello, what is this site about?',
+    history: [],
+    route: '/',
+    ...overrides,
+  };
+}
+
+async function readSseFrames(res: Response): Promise<Array<{ event: string; data: unknown }>> {
+  const reader = res.body!.getReader();
+  const decoder = new TextDecoder();
+  const frames: Array<{ event: string; data: unknown }> = [];
+  let buffer = '';
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let sep = buffer.indexOf('\n\n');
+    while (sep !== -1) {
+      const block = buffer.slice(0, sep);
+      buffer = buffer.slice(sep + 2);
+      let eventName: string | null = null;
+      const dataLines: string[] = [];
+      for (const line of block.split('\n')) {
+        if (line.startsWith('event:')) eventName = line.slice(6).trim();
+        else if (line.startsWith('data:')) dataLines.push(line.slice(5).trim());
+      }
+      if (eventName && dataLines.length > 0) {
+        frames.push({ event: eventName, data: JSON.parse(dataLines.join('\n')) });
+      }
+      sep = buffer.indexOf('\n\n');
+    }
+  }
+  return frames;
+}
+
+// ----- tests ----------------------------------------------------------------
+
+describe('POST /api/chat', () => {
+  beforeEach(() => {
+    resetMockStream();
+    upsertSession.mockClear();
+    writeTurn.mockClear();
+    process.env.ANTHROPIC_API_KEY = 'test-key';
+    process.env.CHAT_IP_HASH_PEPPER = 'test-pepper';
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('golden path — streams deltas, tool_use, then done; persists after done', async () => {
+    mockStream.deltas = ['Hello ', 'world.'];
+    mockStream.finalMessage = {
+      content: [
+        { type: 'text', text: 'Hello world.' },
+        { type: 'tool_use', name: 'navigate', input: { path: '/about', label: 'About Angus' } },
+      ],
+      usage: { input_tokens: 12, output_tokens: 7 },
+    };
+
+    const { POST } = await import('./route');
+    const res = await POST(makeRequest(makeValidBody()));
+    expect(res.headers.get('content-type')).toContain('text/event-stream');
+
+    const frames = await readSseFrames(res);
+    const names = frames.map((f) => f.event);
+    expect(names[0]).toBe('ready');
+    expect(names.filter((n) => n === 'delta')).toHaveLength(2);
+    expect(names).toContain('tool_use');
+    expect(names[names.length - 1]).toBe('done');
+
+    const toolUseFrame = frames.find((f) => f.event === 'tool_use')!;
+    expect(toolUseFrame.data).toMatchObject({
+      name: 'navigate',
+      input: { path: '/about', label: 'About Angus' },
+    });
+
+    // Persistence: both turns written, after `done` was sent.
+    expect(upsertSession).toHaveBeenCalledTimes(1);
+    expect(writeTurn).toHaveBeenCalledTimes(2);
+    const [userCall, assistantCall] = writeTurn.mock.calls;
+    expect(userCall[0]).toMatchObject({ role: 'user', content: 'Hello, what is this site about?' });
+    expect(assistantCall[0]).toMatchObject({
+      role: 'assistant',
+      tokensIn: 12,
+      tokensOut: 7,
+      toolName: 'navigate',
+    });
+  });
+
+  it('drops off-allowlist navigate paths server-side (FR-AGENT-2)', async () => {
+    mockStream.deltas = ['Sure.'];
+    mockStream.finalMessage = {
+      content: [
+        { type: 'text', text: 'Sure.' },
+        { type: 'tool_use', name: 'navigate', input: { path: '/not-a-page', label: 'Nope' } },
+      ],
+      usage: { input_tokens: 1, output_tokens: 1 },
+    };
+
+    const { POST } = await import('./route');
+    const res = await POST(makeRequest(makeValidBody({ sessionId: '22222222-3333-4333-9333-444444444444' })));
+    const frames = await readSseFrames(res);
+
+    expect(frames.filter((f) => f.event === 'tool_use')).toHaveLength(0);
+    expect(frames[frames.length - 1].event).toBe('done');
+
+    // Persistence still happens — the assistant message was still produced.
+    type WriteTurnArg = { role: 'user' | 'assistant'; toolArgs: unknown };
+    const assistantCall = writeTurn.mock.calls.find(
+      (c) => (c[0] as WriteTurnArg).role === 'assistant',
+    );
+    expect(assistantCall).toBeDefined();
+    expect((assistantCall![0] as WriteTurnArg).toolArgs).toBeNull();
+  });
+
+  it('strips invalid email from draft_contact_message proposals', async () => {
+    mockStream.deltas = [];
+    mockStream.finalMessage = {
+      content: [
+        {
+          type: 'tool_use',
+          name: 'draft_contact_message',
+          input: {
+            subject: 'Hi',
+            body: 'Long enough body line for validation.',
+            email: 'not-a-real-email',
+          },
+        },
+      ],
+      usage: { input_tokens: 1, output_tokens: 1 },
+    };
+
+    const { POST } = await import('./route');
+    const res = await POST(makeRequest(makeValidBody({ sessionId: '33333333-4444-4444-9444-555555555555' })));
+    const frames = await readSseFrames(res);
+
+    const toolUseFrame = frames.find((f) => f.event === 'tool_use');
+    expect(toolUseFrame).toBeDefined();
+    const data = toolUseFrame!.data as { input: Record<string, unknown> };
+    expect(data.input.email).toBeUndefined();
+    expect(data.input.subject).toBe('Hi');
+    expect(data.input.body).toContain('Long enough body');
+  });
+
+  it('returns 400 for a malformed sessionId', async () => {
+    const { POST } = await import('./route');
+    const res = await POST(makeRequest({ ...makeValidBody(), sessionId: 'not-a-uuid' }));
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 when message exceeds 1000 chars (FR-RATE-3)', async () => {
+    const { POST } = await import('./route');
+    const res = await POST(makeRequest({ ...makeValidBody(), message: 'x'.repeat(1001) }));
+    expect(res.status).toBe(400);
+  });
+
+  it('returns an SSE error frame when ANTHROPIC_API_KEY is missing', async () => {
+    delete process.env.ANTHROPIC_API_KEY;
+    const { POST } = await import('./route');
+    const res = await POST(makeRequest(makeValidBody({ sessionId: '44444444-5555-4555-9555-666666666666' })));
+    expect(res.headers.get('content-type')).toContain('text/event-stream');
+    const frames = await readSseFrames(res);
+    expect(frames).toHaveLength(1);
+    expect(frames[0].event).toBe('error');
+    expect((frames[0].data as { code: string }).code).toBe('unconfigured');
+  });
+});
