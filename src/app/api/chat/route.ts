@@ -29,6 +29,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 import { hashIp } from '@/lib/chat/ipHash';
 import { isLikelyInjection } from '@/lib/chat/injectionPatterns';
+import { detectLeakedSystemContent } from '@/lib/chat/outputFilter';
 import { upsertSession, writeTurn } from '@/lib/chat/persistence';
 import { DEFAULT_RATE_LIMIT, consume } from '@/lib/chat/rateLimiter';
 import { SSE_HEADERS, createSseStream } from '@/lib/chat/streamServer';
@@ -401,6 +402,17 @@ export async function POST(request: NextRequest): Promise<Response> {
       route: body.route || undefined,
       injectionFlagged,
     });
+    // Layer-3 output filter: flag the assistant turn if it appears to have
+    // echoed system-prompt content (FR-SAFE-4, design §9 Layer 3). Detector,
+    // not redactor — deltas have already streamed to the client; this gives
+    // us an audit signal so we can spot model regressions over time.
+    const leak = detectLeakedSystemContent(assistantText);
+    if (leak.flagged) {
+      console.warn(
+        `[chat/route] assistant turn flagged for leaked system content (patterns: ${leak.matchedPatternIndices.join(',')})`,
+      );
+    }
+
     await writeTurn({
       sessionId: body.sessionId,
       role: 'assistant',
@@ -412,6 +424,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       route: body.route || undefined,
       toolName: emittedToolUses[0]?.name,
       toolArgs: emittedToolUses.length > 0 ? emittedToolUses : null,
+      injectionFlagged: leak.flagged,
     });
   })();
 
