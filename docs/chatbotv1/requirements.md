@@ -105,7 +105,7 @@ V1 ships exactly two tools the model can call. Both are **proposals, not autonom
 
 #### 5.4.1 `navigate` — internal route navigation
 
-- **FR-AGENT-1** — The model can emit a structured `navigate({ path })` action when the user's intent maps to a known page.
+- **FR-AGENT-1** — The model can emit a structured `navigate({ path, label })` action when the user's intent maps to a known page. `path` is the internal route (allowlisted per FR-AGENT-2); `label` is short button copy (≤ 40 chars) used as the rendered button text — keeps the model in control of how the suggestion is phrased.
 - **FR-AGENT-2** — Allowed paths are a fixed allowlist derived from the route tree at build time. Anything off-allowlist is rejected client-side before navigation.
 - **FR-AGENT-3** — Navigation is proposed: the chat renders a "Take me there" button the user clicks. No automatic redirects.
 - **FR-AGENT-4** — On click, navigation is client-side (Next.js router) so the chat panel stays open across the route change where possible (subject to mobile close-then-route rule in FR-RES-26).

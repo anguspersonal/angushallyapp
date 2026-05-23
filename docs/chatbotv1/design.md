@@ -275,12 +275,14 @@ export const DRAFT_CONTACT_TOOL = {
       subject: { type: 'string', minLength: 1, maxLength: 120 },
       body:    { type: 'string', minLength: 10, maxLength: 2000 },
       name:    { type: 'string', maxLength: 80 },
-      email:   { type: 'string', format: 'email', maxLength: 120 },
+      email:   { type: 'string', format: 'email', maxLength: 120 },  // format is advisory only — see note below
     },
     required: ['subject', 'body'],
   },
 } as const;
 ```
+
+> **On `format: 'email'`:** Anthropic tool schemas accept JSON-Schema-style keywords but **`format` is advisory** — the model treats it as a hint, not a validator. The real guarantee comes from server-side validation: the route handler re-parses `email` with a regex (or `zod.string().email()`) before forwarding the proposal to the client, and FR-AGENT-10 forbids the model from inventing an email it wasn't given. Treat the schema as documentation; treat the server check as enforcement.
 
 ### 6.1 Route allowlist generation
 

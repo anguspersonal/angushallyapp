@@ -74,8 +74,8 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
     - Deterministic output order so diffs are reviewable.
     - _Requirements: FR-KB-1, FR-KB-2, FR-KB-3_
 
-  - [ ] 3.3 Wire the build step into npm scripts
-    - Add `"prebuild": "node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs"` to `package.json` (route step added in task 4; prebuild chains them).
+  - [ ] 3.3 Wire the knowledge build step into npm scripts
+    - Add `"prebuild": "node scripts/build-chat-knowledge.mjs"` to `package.json` — **knowledge only** at this point. Task 4.3 amends the chain to append the routes step once `build-chat-routes.mjs` exists, so the PR for task 3 is independently mergeable without breaking `prebuild` on `dev`.
     - Add a standalone `"build:chat": "node scripts/build-chat-knowledge.mjs"` for local iteration.
     - Commit `knowledge.generated.ts` so reviewers see content diffs.
     - _Requirements: FR-KB-1_
@@ -96,6 +96,11 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
     - **Property 4: Allowlist disjoint from deny list**
     - Assert no path in `ROUTE_ALLOWLIST` matches any pattern in `VISIBILITY.deny`.
     - **Validates: Requirements FR-AGENT-2, FR-VIS-4**
+
+  - [ ] 4.3 Extend `prebuild` to include the routes step
+    - Amend `package.json` `"prebuild"` from `"node scripts/build-chat-knowledge.mjs"` (task 3.3) to `"node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs"`.
+    - Verify both generated files (`knowledge.generated.ts`, `tools.allowlist.generated.ts`) refresh on `npm run build`.
+    - _Requirements: FR-KB-1, FR-AGENT-2_
 
 - [ ] 5. Streaming Route Handler `/api/chat`
   - [ ] 5.1 Define shared types at `src/lib/chat/types.ts`
@@ -123,10 +128,12 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
     - `export const runtime = 'nodejs'` (design §2).
     - Validate `ChatRequestBody` (uuid sessionId, message ≤ 1000 chars per FR-RATE-3, history token budget); 400 on malformed input.
     - Resolve client IP (`request.headers.get('x-forwarded-for')?.split(',')[0]` first, fallback to `request.headers.get('x-real-ip')`); call `hashIp`.
+    - **Note for future maintainers:** taking the leftmost XFF value is safe on Vercel because Vercel strips/overwrites the inbound `X-Forwarded-For` before invoking the function. On non-Vercel/edge hosts the leftmost value can be spoofed by the client; if hosting changes, replace this with the rightmost trusted-proxy hop (or the platform's equivalent `req.ip`).
     - Call `upsertSession` once per new session, `writeTurn` for the user message.
     - Initialise Anthropic client with `process.env.ANTHROPIC_API_KEY`; model `claude-haiku-4-5-20251001`; no extended thinking (TC-4).
     - Open `messages.stream({ model, system: buildSystemPrompt(), messages: [...history, userMessage], tools: [NAVIGATE_TOOL, DRAFT_CONTACT_TOOL] })`.
     - Pipe deltas into SSE; emit `tool_use` event on each tool-use block.
+    - On `draft_contact_message` tool_use blocks, **server-validate** `email` (regex or `zod.string().email()`) before forwarding to the client — `format: 'email'` in the tool schema is advisory only (design §6). On invalid email, drop the `email` field from the proposal and continue.
     - On stream completion: synthesise a `{"status":"proposed_to_user"}` tool_result for each emitted tool_use, `writeTurn` for assistant message + tool calls, emit `done` with token totals.
     - Honour `request.signal` for abort: cancel the upstream Anthropic stream.
     - All Supabase writes happen **after** the `done` event is sent (FR-PERS-3).
