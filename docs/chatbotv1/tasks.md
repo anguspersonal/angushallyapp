@@ -5,7 +5,7 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
 ---
 
 - [ ] 1. Supabase persistence foundation (schema, write path, IP hashing)
-  - [ ] 1.1 Create the `chat` schema and tables migration
+  - [x] 1.1 Create the `chat` schema and tables migration
     - Add `supabase/migrations/<timestamp>_create_chat_tables.sql` using the SQL drafted in design §8.
     - Create `chat` schema; create `chat.sessions` and `chat.messages` with the exact column set in design §8 (including `injection_flagged`, `tool_name`, `tool_args jsonb`).
     - Add indexes: `idx_chat_sessions_anon_id`, `idx_chat_sessions_ip_hash`, `idx_chat_sessions_created_at`, `idx_chat_messages_created_at`, `idx_chat_messages_session`, partial `idx_chat_messages_flagged` (WHERE `injection_flagged = true`).
@@ -13,7 +13,7 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
     - Wrap statements in `BEGIN; ... COMMIT;` and add header comment matching the convention in `supabase/migrations/20260520154800_add_hot_path_indexes.sql`.
     - _Requirements: FR-PERS-1, FR-PERS-2, FR-PERS-4_
 
-  - [ ] 1.2 Schedule the 90-day retention job in the same migration
+  - [x] 1.2 Schedule the 90-day retention job in the same migration
     - Append a `SELECT cron.schedule('chat-retention', '0 3 * * *', $$DELETE FROM chat.sessions WHERE created_at < now() - interval '90 days'$$);` call.
     - Rely on `ON DELETE CASCADE` from `chat.messages.session_id` to clean messages.
     - **human input required**
@@ -25,17 +25,17 @@ Generated from [`requirements.md`](./requirements.md) and [`design.md`](./design
     - Inspect via `supabase studio` or `psql` that `chat.sessions`, `chat.messages`, the six indexes, and the `chat-retention` cron entry all exist.
     - _Requirements: AC-8, FR-PERS-1_
 
-  - [ ] 1.4 Implement IP hashing helper at `src/lib/chat/ipHash.ts`
+  - [x] 1.4 Implement IP hashing helper at `src/lib/chat/ipHash.ts`
     - Export `hashIp(ip: string): string` using `node:crypto` `createHash('sha256').update(\`${ip}|${pepper}\`)`.
     - Read pepper from `process.env.CHAT_IP_HASH_PEPPER`; throw if missing.
     - _Requirements: FR-PERS-7, FR-RATE-5_
 
-  - [ ]* 1.5 Property test for `hashIp` determinism and pepper requirement
+  - [x]* 1.5 Property test for `hashIp` determinism and pepper requirement
     - **Property 1: Deterministic & pepper-bound IP hash**
     - Assert same `(ip, pepper)` always returns same digest; different peppers produce different digests; missing pepper throws.
     - **Validates: Requirements FR-PERS-7**
 
-  - [ ] 1.6 Implement persistence helpers at `src/lib/chat/persistence.ts`
+  - [x] 1.6 Implement persistence helpers at `src/lib/chat/persistence.ts`
     - Use `getSupabaseAdmin()` from `@/lib/supabase/admin`.
     - Export `upsertSession({ sessionId, anonId, ipHash, userAgent, referrer, route })` — idempotent insert.
     - Export `writeTurn({ sessionId, role, content, model?, tokensIn?, tokensOut?, latencyMs?, route?, toolName?, toolArgs?, injectionFlagged? })`.
