@@ -285,6 +285,17 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Tool-use stack — vertical column of proposal cards after assistant text.
+ * ------------------------------------------------------------------------ */
+
+.toolUseStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------------------
  * Nav suggestion button (`navigate` tool proposal)
  * ------------------------------------------------------------------------ */
 
