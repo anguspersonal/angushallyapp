@@ -13,6 +13,7 @@ import { GradientRoot } from '@/components/design/GradientRoot';
 import { homeHeroIntroCompleteMs } from '@/constants/homeHeroEntrance';
 import { BlogHeader } from '@/components/blog/BlogHeader';
 import { BlogFooter } from '@/components/blog/BlogFooter';
+import { ChatLauncher } from '@/components/chat/ChatLauncher';
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -155,6 +156,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       <ErrorBoundary>
         <AuthProvider>
           <SurfaceShell>{children}</SurfaceShell>
+          <ChatLauncher />
         </AuthProvider>
       </ErrorBoundary>
     </MantineProvider>
