@@ -19,7 +19,13 @@ import * as React from 'react';
  * render with surprise behaviour.
  */
 
-const LINK_RE = /\[([^\]\n]+)\]\(([^)\s]+)\)/g;
+// Permits one level of balanced parens inside the URL — handles Wikipedia/MDN
+// links like `https://en.wikipedia.org/wiki/Foo_(bar)` cleanly. The
+// alternation reads: "any non-paren / non-whitespace char, OR a `(...)`
+// group containing no parens". CommonMark allows arbitrarily nested
+// balanced parens; we cap at one level because (a) regex can't balance
+// arbitrarily and (b) deeper nesting is vanishingly rare in practice.
+const LINK_RE = /\[([^\]\n]+)\]\(((?:[^()\s]|\([^()]*\))+)\)/g;
 const BOLD_RE = /\*\*([^*\n][^*]*?)\*\*/g;
 const LIST_LINE_RE = /^\s*[-*]\s+(.+)$/;
 

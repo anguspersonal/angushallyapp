@@ -144,9 +144,45 @@ CHAT_DAILY_SPEND_CAP_USD=0.0001
 - Rate limit: 20 messages / 5 min per hashed IP, in-memory bucket
   (FR-RATE-1). On a multi-instance host this would need a shared
   store; on Vercel's per-region pooling it's good enough for v1.
+- **Spend-cap cache is also per-process.** Same caveat as the rate
+  limiter — on a multi-region deployment each region carries its own
+  60-second cache, so the worst-case daily overshoot is roughly
+  `regions × CACHE_TTL_MS × peak_qps × avg_message_cost`. If/when this
+  goes multi-region, swap for a shared store (Upstash, etc.).
 - Per-session cap: 50 user messages per `sessionId` (FR-RATE-2).
 - Max input length: 1000 chars (FR-RATE-3) — enforced client-side
   in the composer and re-validated server-side.
+
+### Per-request cost shape
+
+For budget planning, the input cost dominates the output cost on this
+build because the system prompt + knowledge bundle are ~10k tokens of
+sticky input:
+
+- **System prompt**: ~8 000 tokens (knowledge bundle) + ~2 000 tokens
+  (identity + tool + style scaffold). **Cached** as ephemeral, so the
+  first request in a 5-minute window pays full price and subsequent
+  requests pay ~10% (cache-hit pricing).
+- **History budget**: 6 000 tokens (FR-CONV-6), drops oldest turns
+  first when exceeded.
+- **Output**: bounded by `ANTHROPIC_MAX_TOKENS` in `route.ts`
+  (currently 800), typically far less in practice.
+
+At Haiku 4.5 pricing (input \$1.00 / output \$5.00 per million tokens),
+a typical 5-turn conversation costs ~\$0.001 of cached input + \$0.004
+of output ≈ **\$0.005**. The default \$5/day cap covers ~1 000 such
+conversations.
+
+### Knowledge content updates
+
+The knowledge bundle entries in
+[`scripts/chat-knowledge.config.mjs`](../../scripts/chat-knowledge.config.mjs)
+are mostly hand-crafted summaries rather than live extracts from source
+files. **Editing `/about` does not automatically update what the bot
+says about Angus.** When site content changes, the bundle config needs
+a matching edit, then `npm run build:chat`. This was a deliberate v1
+trade-off — JSX-scraping was too fragile and the hand-summarised text
+is denser. v2 may revisit.
 
 ---
 

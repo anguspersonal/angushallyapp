@@ -19,6 +19,22 @@ import { getSupabaseAdmin } from '@/lib/supabase/admin';
  * separately so they can be tested without a Supabase fixture.
  */
 
+/**
+ * IMPORTANT: the cache is **per Node process**. On a single-region Vercel
+ * deployment (current v1 posture) that's good enough — each function
+ * invocation that re-uses a warm process sees the cached value, and the
+ * cap holds within ~60s of accuracy.
+ *
+ * On a multi-region or multi-instance deployment, every region/instance
+ * carries its own cache. With N independent caches each potentially up
+ * to one TTL stale, the worst-case daily overshoot is roughly
+ * `N × CACHE_TTL_MS × peak_qps × avg_message_cost_usd`. The per-IP rate
+ * limiter (also per-process) bounds peak_qps.
+ *
+ * If/when this site goes multi-region, swap this for a shared store
+ * (e.g. Upstash Redis) and the cache disappears. The fail-open
+ * semantics in `getDailySpendUsd` still hold.
+ */
 const CACHE_TTL_MS = 60_000;
 
 type Cached = { totalUsd: number; cachedAt: number };

@@ -27,6 +27,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import type { Tool } from '@anthropic-ai/sdk/resources/messages';
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { validateChatEnvOnce } from '@/lib/chat/envValidation';
 import { hashIp } from '@/lib/chat/ipHash';
 import { isLikelyInjection } from '@/lib/chat/injectionPatterns';
 import { detectLeakedSystemContent } from '@/lib/chat/outputFilter';
@@ -222,6 +223,11 @@ function streamErrorResponse(event: Extract<StreamEvent, { event: 'error' }>): R
 // ---------- handler ----------------------------------------------------------
 
 export async function POST(request: NextRequest): Promise<Response> {
+  // 0. One-time env-var sanity check per process. Fail-open: warnings
+  //    are logged but never block a request — downstream code paths
+  //    all handle missing env gracefully.
+  validateChatEnvOnce();
+
   // 1. Parse + validate.
   let payload: unknown;
   try {
@@ -425,6 +431,11 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     // Persistence runs AFTER the user-visible `done` (FR-PERS-3). Errors
     // are swallowed inside the helpers; nothing here can fail the request.
+    //
+    // The user turn is always persisted — we have the full input regardless
+    // of stream outcome, and it's useful for abuse audits even if the
+    // model never replied (e.g. an injection probe that the user aborted
+    // after the typing indicator appeared).
     await writeTurn({
       sessionId: body.sessionId,
       role: 'user',
@@ -432,30 +443,45 @@ export async function POST(request: NextRequest): Promise<Response> {
       route: body.route || undefined,
       injectionFlagged,
     });
-    // Layer-3 output filter: flag the assistant turn if it appears to have
-    // echoed system-prompt content (FR-SAFE-4, design §9 Layer 3). Detector,
-    // not redactor — deltas have already streamed to the client; this gives
-    // us an audit signal so we can spot model regressions over time.
-    const leak = detectLeakedSystemContent(assistantText);
-    if (leak.flagged) {
-      console.warn(
-        `[chat/route] assistant turn flagged for leaked system content (patterns: ${leak.matchedPatternIndices.join(',')})`,
-      );
-    }
 
-    await writeTurn({
-      sessionId: body.sessionId,
-      role: 'assistant',
-      content: assistantText,
-      model: ANTHROPIC_MODEL,
-      tokensIn,
-      tokensOut,
-      latencyMs: Date.now() - startedAt,
-      route: body.route || undefined,
-      toolName: emittedToolUses[0]?.name,
-      toolArgs: emittedToolUses.length > 0 ? emittedToolUses : null,
-      injectionFlagged: leak.flagged,
-    });
+    // The assistant turn is conditional:
+    //  - On client abort, tokensIn/tokensOut are 0 (Anthropic's usage
+    //    block never arrived) and assistantText is partial. Persisting
+    //    that row would under-count daily spend (FR-RATE-4) and pollute
+    //    later analytics with zero-cost ghost turns. Skip.
+    //  - On upstream error (handled in the catch above), assistantText is
+    //    likely empty too; same skip.
+    //  - Otherwise persist with the full leak-detection pass.
+    const wasAborted = request.signal.aborted;
+    const hasUsefulAssistantContent = assistantText.length > 0 && !wasAborted && !upstreamError;
+    if (hasUsefulAssistantContent) {
+      // Layer-3 output filter: flag the assistant turn if it appears to have
+      // echoed system-prompt content (FR-SAFE-4, design §9 Layer 3). Detector,
+      // not redactor — deltas have already streamed to the client; this gives
+      // us an audit signal so we can spot model regressions over time.
+      const leak = detectLeakedSystemContent(assistantText);
+      if (leak.flagged) {
+        console.warn(
+          `[chat/route] assistant turn flagged for leaked system content (patterns: ${leak.matchedPatternIndices.join(',')})`,
+        );
+      }
+      await writeTurn({
+        sessionId: body.sessionId,
+        role: 'assistant',
+        content: assistantText,
+        model: ANTHROPIC_MODEL,
+        tokensIn,
+        tokensOut,
+        latencyMs: Date.now() - startedAt,
+        route: body.route || undefined,
+        toolName: emittedToolUses[0]?.name,
+        toolArgs: emittedToolUses.length > 0 ? emittedToolUses : null,
+        injectionFlagged: leak.flagged,
+      });
+    } else if (wasAborted) {
+      // Single line of diagnostic — not an error, just useful for grepping.
+      console.info('[chat/route] skipping assistant-turn persistence: client aborted');
+    }
   })();
 
   return new Response(sse.stream, { headers: SSE_HEADERS });
