@@ -1,12 +1,18 @@
 import { HttpError, publicHandler } from '@/lib/api/handler';
 import { validateContactFormBody } from '@/lib/contact/validateContactForm';
 import { sendAcknowledgmentToUser, sendInquiryToOwner } from '@/lib/email';
+import { EmailConfigError } from '@/lib/email/errors';
+import { validateEmailEnvOnce } from '@/lib/email/envValidation';
 import { nextResponseIfRecaptchaInvalid } from '@/lib/recaptcha/nextResponseForRecaptchaResult';
 import { verifyRecaptchaSite } from '@/lib/recaptcha/siteVerify';
 
 export const POST = publicHandler(
   { body: validateContactFormBody },
   async ({ body }) => {
+    // One-time env-var sanity check per process. Fail-open: warnings are
+    // logged but never block a request — see src/lib/email/envValidation.ts.
+    validateEmailEnvOnce();
+
     const { name, email, message, recaptchaToken } = body;
 
     let verificationResult: Awaited<ReturnType<typeof verifyRecaptchaSite>>;
@@ -23,15 +29,34 @@ export const POST = publicHandler(
 
     try {
       // One owner notification + one user acknowledgment per submission.
-      // `sendContactFormEmail` was previously also called here, producing
-      // a duplicate owner email — removed in QA round 1.
       await sendInquiryToOwner({ name, email, message });
       await sendAcknowledgmentToUser(name, email, message);
     } catch (error) {
-      console.error('Contact form submission error:', error);
-      throw new HttpError(500, 'Failed to process contact form submission');
+      // Log the underlying error so the operator can see the real cause
+      // (SMTP auth, ECONNREFUSED, expired OAuth refresh token, etc.)
+      // rather than just the generic 5xx that gets returned.
+      logSendError(error);
+
+      if (error instanceof EmailConfigError) {
+        throw new HttpError(500, 'Email service misconfigured', 'email_misconfigured');
+      }
+      throw new HttpError(502, 'Email service unavailable', 'email_unavailable');
     }
 
     return { message: 'Contact form submitted successfully' };
   },
 );
+
+function logSendError(error: unknown): void {
+  if (error instanceof Error) {
+    const code = (error as { code?: unknown }).code;
+    console.error('Contact form submission error:', {
+      name: error.name,
+      message: error.message,
+      code: typeof code === 'string' || typeof code === 'number' ? code : undefined,
+      stack: error.stack,
+    });
+  } else {
+    console.error('Contact form submission error (non-Error):', error);
+  }
+}

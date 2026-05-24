@@ -1,3 +1,5 @@
+import { EmailConfigError } from './errors';
+
 export type SmtpAuthConfig =
   | {
       type: 'OAuth2';
@@ -25,7 +27,9 @@ export function buildSmtpAuthConfig(): SmtpAuthConfig {
     if (!refreshToken) missing.push('GOOGLE_OAUTH_REFRESH_TOKEN');
 
     if (missing.length) {
-      throw new Error(`Email OAuth2 configuration incomplete; missing ${missing.join(', ')}.`);
+      throw new EmailConfigError(
+        `Email OAuth2 configuration incomplete; missing ${missing.join(', ')}.`,
+      );
     }
 
     return {
@@ -41,7 +45,7 @@ export function buildSmtpAuthConfig(): SmtpAuthConfig {
     return { user, pass };
   }
 
-  throw new Error(
-    'Email authentication is not configured; please provide OAuth2 or password credentials.'
+  throw new EmailConfigError(
+    'Email authentication is not configured; please provide OAuth2 or password credentials.',
   );
 }

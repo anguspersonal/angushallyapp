@@ -13,6 +13,10 @@ vi.mock('@/lib/email', () => ({
   sendAcknowledgmentToUser: vi.fn(),
 }));
 
+vi.mock('@/lib/email/envValidation', () => ({
+  validateEmailEnvOnce: vi.fn(() => []),
+}));
+
 import type { NextRequest } from 'next/server';
 import { POST } from './route';
 import { verifyRecaptchaSite } from '@/lib/recaptcha/siteVerify';
@@ -20,6 +24,8 @@ import {
   sendAcknowledgmentToUser,
   sendInquiryToOwner,
 } from '@/lib/email';
+import { EmailConfigError } from '@/lib/email/errors';
+import { validateEmailEnvOnce } from '@/lib/email/envValidation';
 
 function makeRequest(
   body: unknown,
@@ -112,14 +118,48 @@ describe('POST /api/contact', () => {
     expect(sendInquiryToOwner).not.toHaveBeenCalled();
   });
 
-  it('returns 500 when email sending throws', async () => {
+  it('returns 502 with email_unavailable code when SMTP send throws a generic error', async () => {
     vi.mocked(verifyRecaptchaSite).mockResolvedValue({ success: true });
     vi.mocked(sendInquiryToOwner).mockRejectedValue(new Error('smtp down'));
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
     const response = await POST(makeRequest(validBody));
+
+    expect(response.status).toBe(502);
+    expect(await response.json()).toEqual({
+      error: 'Email service unavailable',
+      code: 'email_unavailable',
+    });
+    // Operator must be able to see the underlying cause in logs.
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    const [, payload] = consoleErrorSpy.mock.calls[0];
+    expect(payload).toMatchObject({ message: 'smtp down' });
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('returns 500 with email_misconfigured code when send throws EmailConfigError', async () => {
+    vi.mocked(verifyRecaptchaSite).mockResolvedValue({ success: true });
+    vi.mocked(sendInquiryToOwner).mockRejectedValue(
+      new EmailConfigError('RECIPIENT_EMAIL is not configured'),
+    );
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const response = await POST(makeRequest(validBody));
+
     expect(response.status).toBe(500);
     expect(await response.json()).toEqual({
-      error: 'Failed to process contact form submission',
+      error: 'Email service misconfigured',
+      code: 'email_misconfigured',
     });
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('calls validateEmailEnvOnce on every request (helper handles dedupe internally)', async () => {
+    vi.mocked(verifyRecaptchaSite).mockResolvedValue({ success: true });
+    await POST(makeRequest(validBody));
+    expect(validateEmailEnvOnce).toHaveBeenCalled();
   });
 
   it('happy path: verifies reCAPTCHA, sends one owner + one user email with trimmed/lowercased data, returns 200', async () => {
