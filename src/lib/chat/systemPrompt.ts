@@ -20,7 +20,11 @@
  *
  * Closes FR-SAFE-1 / FR-SAFE-2 / FR-SAFE-5 / FR-SAFE-6 and FR-KB-2.
  */
-import { KNOWLEDGE_BUNDLE, type KnowledgeEntry } from './knowledge.generated';
+import {
+  KNOWLEDGE_BUNDLE,
+  KNOWLEDGE_BY_ROUTE,
+  type KnowledgeEntry,
+} from './knowledge.generated';
 
 const IDENTITY_AND_RULES = `You are the chat assistant on angushally.com — a personal site for Angus Hally.
 You help visitors learn about Angus and navigate the site. You are concise,
@@ -98,3 +102,31 @@ export const SYSTEM_PROMPT_SECTION_HEADERS = [
   '# Knowledge',
   '# Style',
 ] as const;
+
+/**
+ * Build the per-request "currently viewing" block for page-aware answers.
+ *
+ * Returns `null` when:
+ *   - no route was provided (the client may omit `route` in body)
+ *   - the route has no matching entry in `KNOWLEDGE_BY_ROUTE`
+ *     (e.g. dynamic routes, /login, /auth/**)
+ *
+ * The block is intentionally small — it's appended AFTER the cached
+ * static prompt in route.ts, so it doesn't break Anthropic prompt
+ * caching on the bulk content. The model already has full knowledge
+ * for the route in the cached prompt; this just *highlights* it.
+ *
+ * Closes the spirit of the audit's "the agent should know the page it
+ * is on" requirement.
+ */
+export function buildPageContext(route: string | null | undefined): string | null {
+  if (!route) return null;
+  const entry = KNOWLEDGE_BY_ROUTE[route];
+  if (!entry) return null;
+  return [
+    '# Currently viewing',
+    `The user is currently on \`${entry.source}\` — ${entry.topic}.`,
+    'When relevant, anchor suggestions to this page rather than guessing.',
+    'You already have full content for this page in the Knowledge section above.',
+  ].join('\n');
+}

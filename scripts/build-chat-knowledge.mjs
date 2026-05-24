@@ -2,42 +2,45 @@
 /**
  * build-chat-knowledge.mjs
  *
- * Reads `scripts/chat-knowledge.config.mjs`, runs each entry's `extract()`,
- * token-counts the joined bundle, and writes
- * `src/lib/chat/knowledge.generated.ts`. The generated file is committed
- * so reviewers can see content diffs.
+ * Reads every `.md` file under `docs/chatbot-knowledge/` (except `README.md`),
+ * parses its front-matter, token-counts the joined bundle, and writes
+ * `src/lib/chat/knowledge.generated.ts`.
  *
- * Dependency-free — runs from raw Node during `prebuild` (and locally
- * via `npm run build:chat`). Must stay deterministic: same input → byte-
- * identical output.
+ * Previous version (PR #86) shipped hand-summarised content in
+ * `scripts/chat-knowledge.config.mjs`. That config has been deleted;
+ * the markdown folder is the new source of truth so editing what the
+ * bot knows is a content-side change, not a code-side change.
  *
- * Token counting: chars/4 heuristic, not @anthropic-ai/tokenizer.
- *   - TC-5 forbids unjustified new deps. Tokenizer adds ~1MB of vendored
- *     BPE tables for a marginally more-precise number compared against an
- *     already-approximate 8000-token cap. Net complexity goes up.
- *   - chars/4 over-estimates English-prose token counts by ~10-20% vs
- *     Anthropic's tokeniser. Failing conservatively is the right direction
- *     — we under-estimate budget headroom rather than overshoot.
- *   - If non-English / heavy-markdown content starts entering the bundle,
- *     swap this function and the rest of the pipeline is unchanged.
+ * File format expected — see docs/chatbot-knowledge/README.md for the
+ * authoritative spec. Briefly: every file must have a YAML-ish header
+ * with `source`, `topic`, `priority`, delimited by `---` fences.
  *
- * See docs/chatbotv1/design.md §5.2 and docs/chatbotv1/tasks.md §3.2.
+ * Dependency-free — runs from raw Node during `prebuild`. Token counting
+ * uses the chars/4 heuristic (TC-5: no unjustified deps; the cap is
+ * already approximate; chars/4 over-estimates English-prose tokens by
+ * ~10-20% which is the conservative direction).
+ *
+ * Output layout (`src/lib/chat/knowledge.generated.ts`):
+ *   - `KNOWLEDGE_BUNDLE` — sorted array of all entries (high → normal → low)
+ *   - `KNOWLEDGE_BY_ROUTE` — lookup map keyed by `source` for the entries
+ *     whose source is a route (starts with `/`). Used by the route handler
+ *     to add a per-request "currently viewing" block to the system prompt.
+ *   - `KNOWLEDGE_TOKEN_COUNT` — final token estimate
+ *
+ * See docs/chatbotv1/design.md §5.2.
  */
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, statSync } from 'node:fs';
+import { dirname, resolve, basename, extname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const TOKEN_BUDGET = 8000;
+const PRIORITY_ORDER = { high: 0, normal: 1, low: 2 };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
-const CONFIG_PATH = resolve(__dirname, 'chat-knowledge.config.mjs');
+const KNOWLEDGE_DIR = resolve(REPO_ROOT, 'docs/chatbot-knowledge');
 const OUTPUT_PATH = resolve(REPO_ROOT, 'src/lib/chat/knowledge.generated.ts');
-
-function readFile(relPath) {
-  return readFileSync(resolve(REPO_ROOT, relPath), 'utf8');
-}
 
 function estimateTokens(text) {
   return Math.ceil(text.length / 4);
@@ -47,32 +50,69 @@ function escapeForTemplateLiteral(s) {
   return s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
 }
 
-async function loadConfig() {
-  const mod = await import(pathToFileURL(CONFIG_PATH).href);
-  if (!Array.isArray(mod.default)) {
-    throw new Error('chat-knowledge.config.mjs must default-export an array');
+/**
+ * Parse a knowledge `.md` file into `{ source, topic, priority, content, filename }`.
+ * Throws with a useful filename-tagged error if the front-matter is malformed
+ * — easier than chasing nullable returns.
+ */
+function parseKnowledgeFile(absPath) {
+  const raw = readFileSync(absPath, 'utf8');
+  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+  if (!m) {
+    throw new Error(
+      `[chat-knowledge] ${basename(absPath)}: missing front-matter. ` +
+        `Every file must start with ---\\nsource: ...\\ntopic: ...\\npriority: ...\\n---`,
+    );
   }
-  return mod.default;
+  const [, frontmatterBlock, bodyRaw] = m;
+  const fields = {};
+  for (const line of frontmatterBlock.split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    const kv = line.match(/^([A-Za-z][A-Za-z0-9_-]*)\s*:\s*(.+?)\s*$/);
+    if (!kv) {
+      throw new Error(`[chat-knowledge] ${basename(absPath)}: bad front-matter line: ${line}`);
+    }
+    fields[kv[1]] = kv[2];
+  }
+  for (const required of ['source', 'topic', 'priority']) {
+    if (!fields[required]) {
+      throw new Error(`[chat-knowledge] ${basename(absPath)}: missing required field "${required}"`);
+    }
+  }
+  if (!(fields.priority in PRIORITY_ORDER)) {
+    throw new Error(
+      `[chat-knowledge] ${basename(absPath)}: priority must be high|normal|low, got "${fields.priority}"`,
+    );
+  }
+  const content = bodyRaw.trim();
+  if (!content) {
+    throw new Error(`[chat-knowledge] ${basename(absPath)}: empty body`);
+  }
+  return {
+    filename: basename(absPath),
+    source: fields.source,
+    topic: fields.topic,
+    priority: fields.priority,
+    content,
+  };
 }
 
-function runExtractors(sources) {
-  const ctx = { readFile, repoRoot: REPO_ROOT };
-  return sources.map((entry) => {
-    if (typeof entry.extract !== 'function') {
-      throw new Error(`Entry ${entry.source} is missing an extract() function`);
-    }
-    const content = entry.extract(ctx);
-    if (typeof content !== 'string') {
-      throw new Error(
-        `Extractor for ${entry.source} returned ${typeof content}, expected string`,
-      );
-    }
-    const trimmed = content.trim();
-    if (!trimmed) {
-      throw new Error(`Extractor for ${entry.source} returned empty content`);
-    }
-    return { source: entry.source, topic: entry.topic, content: trimmed };
-  });
+/** Discover every `.md` under KNOWLEDGE_DIR (non-recursive), excluding README. */
+function discoverFiles() {
+  const out = [];
+  for (const entry of readdirSync(KNOWLEDGE_DIR)) {
+    if (entry === 'README.md') continue;
+    if (extname(entry).toLowerCase() !== '.md') continue;
+    const abs = resolve(KNOWLEDGE_DIR, entry);
+    if (!statSync(abs).isFile()) continue;
+    out.push(abs);
+  }
+  // Deterministic order — sort by filename so the generated file is stable.
+  return out.sort();
+}
+
+function isRouteSource(source) {
+  return typeof source === 'string' && source.startsWith('/');
 }
 
 function joinForCounting(entries) {
@@ -82,27 +122,47 @@ function joinForCounting(entries) {
 function renderGeneratedFile(entries, tokenCount) {
   const banner = [
     '// AUTO-GENERATED by scripts/build-chat-knowledge.mjs — DO NOT EDIT.',
-    '// Edit scripts/chat-knowledge.config.mjs and re-run `npm run build:chat`.',
+    '// Edit docs/chatbot-knowledge/*.md and re-run `npm run build:chat`.',
     '//',
     '// Committed so reviewers see content diffs in PRs.',
-    '// See docs/chatbotv1/design.md §5.2.',
+    '// See docs/chatbotv1/design.md §5.2 and docs/chatbot-knowledge/README.md.',
   ].join('\n');
 
   const entriesLiteral = entries
     .map((e) => {
       const source = JSON.stringify(e.source);
       const topic = JSON.stringify(e.topic);
+      const priority = JSON.stringify(e.priority);
       const content = escapeForTemplateLiteral(e.content);
-      return `  {\n    source: ${source},\n    topic: ${topic},\n    content: \`${content}\`,\n  },`;
+      return `  {\n    source: ${source},\n    topic: ${topic},\n    priority: ${priority},\n    content: \`${content}\`,\n  },`;
     })
+    .join('\n');
+
+  // Lookup map for route-keyed entries. We only emit the keys whose source
+  // is a route — the others are referenced through KNOWLEDGE_BUNDLE.
+  const routeMap = entries
+    .filter((e) => isRouteSource(e.source))
+    .map((e, idx) => `  ${JSON.stringify(e.source)}: KNOWLEDGE_BUNDLE[${idx}],`)
+    .join('\n');
+  // The naive `idx` above is wrong because KNOWLEDGE_BUNDLE is sorted by
+  // priority then filename, and only route entries are in routeMap. We need
+  // the index of each entry IN the full KNOWLEDGE_BUNDLE, not in the
+  // filtered subarray. Rebuild with the real index.
+  const routeMapCorrect = entries
+    .map((e, idx) => ({ e, idx }))
+    .filter(({ e }) => isRouteSource(e.source))
+    .map(({ e, idx }) => `  ${JSON.stringify(e.source)}: KNOWLEDGE_BUNDLE[${idx}],`)
     .join('\n');
 
   return [
     banner,
     '',
+    "export type KnowledgePriority = 'high' | 'normal' | 'low';",
+    '',
     'export type KnowledgeEntry = {',
     '  readonly source: string;',
     '  readonly topic: string;',
+    '  readonly priority: KnowledgePriority;',
     '  readonly content: string;',
     '};',
     '',
@@ -110,32 +170,57 @@ function renderGeneratedFile(entries, tokenCount) {
     entriesLiteral,
     '] as const satisfies readonly KnowledgeEntry[];',
     '',
+    '/**',
+    ' * Map from route → entry, for the page-aware system prompt. Only entries',
+    ' * whose source is a route (starts with `/`) appear here.',
+    ' */',
+    'export const KNOWLEDGE_BY_ROUTE: Readonly<Record<string, KnowledgeEntry>> = {',
+    routeMapCorrect,
+    '};',
+    '',
     `export const KNOWLEDGE_TOKEN_COUNT = ${tokenCount} as const;`,
     '',
   ].join('\n');
 }
 
-async function main() {
-  const sources = await loadConfig();
-  const entries = runExtractors(sources);
-  const joined = joinForCounting(entries);
+function main() {
+  const files = discoverFiles();
+  if (files.length === 0) {
+    console.error('[chat-knowledge] no .md files found in docs/chatbot-knowledge/');
+    process.exit(1);
+  }
+  const parsed = files.map(parseKnowledgeFile);
+
+  // Sort: priority first (high → low), then filename for stability.
+  parsed.sort((a, b) => {
+    const pa = PRIORITY_ORDER[a.priority];
+    const pb = PRIORITY_ORDER[b.priority];
+    if (pa !== pb) return pa - pb;
+    return a.filename.localeCompare(b.filename);
+  });
+
+  const joined = joinForCounting(parsed);
   const tokenCount = estimateTokens(joined);
 
   if (tokenCount > TOKEN_BUDGET) {
     console.error(
-      `[build-chat-knowledge] FAIL: bundle is ~${tokenCount} tokens, over the ${TOKEN_BUDGET}-token budget. Tighten an entry in scripts/chat-knowledge.config.mjs.`,
+      `[chat-knowledge] FAIL: bundle is ~${tokenCount} tokens, over the ${TOKEN_BUDGET}-token budget.\n` +
+        `Tighten the largest priority:low entries first. Files in size order:`,
     );
+    const sorted = [...parsed].sort((a, b) => b.content.length - a.content.length);
+    for (const e of sorted.slice(0, 5)) {
+      console.error(
+        `  - ${e.filename} (${e.priority}, ~${estimateTokens(e.content)} tokens)`,
+      );
+    }
     process.exit(1);
   }
 
   mkdirSync(dirname(OUTPUT_PATH), { recursive: true });
-  writeFileSync(OUTPUT_PATH, renderGeneratedFile(entries, tokenCount), 'utf8');
+  writeFileSync(OUTPUT_PATH, renderGeneratedFile(parsed, tokenCount), 'utf8');
   console.log(
-    `[build-chat-knowledge] wrote ${entries.length} entries, ~${tokenCount} tokens (budget ${TOKEN_BUDGET}) → src/lib/chat/knowledge.generated.ts`,
+    `[chat-knowledge] wrote ${parsed.length} entries, ~${tokenCount} tokens (budget ${TOKEN_BUDGET}) → src/lib/chat/knowledge.generated.ts`,
   );
 }
 
-main().catch((err) => {
-  console.error('[build-chat-knowledge] failed:', err);
-  process.exit(1);
-});
+main();

@@ -294,7 +294,11 @@ describe('POST /api/chat', () => {
     // applies prompt caching to the ~10k-token system prefix.
     expect(Array.isArray(args.system)).toBe(true);
     const systemBlocks = args.system as Array<Record<string, unknown>>;
-    expect(systemBlocks).toHaveLength(1);
+    // First block is the cached static prompt. If the request carried a
+    // known route (default valid body has `route: '/'`), a second block
+    // appended for page-aware context. Either way the first block carries
+    // the ephemeral cache breakpoint — that's what we're asserting here.
+    expect(systemBlocks.length).toBeGreaterThanOrEqual(1);
     expect(systemBlocks[0]).toMatchObject({
       type: 'text',
       cache_control: { type: 'ephemeral' },

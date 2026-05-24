@@ -46,19 +46,43 @@ assistant. For *why* it looks the way it does, see
 ## Editing the knowledge bundle
 
 The chatbot is grounded on a static bundle of site facts compiled at
-build time. To add or change what it knows:
+build time. The **single source of truth** is the folder
+[`docs/chatbot-knowledge/`](../chatbot-knowledge/) — one markdown file
+per topic, each with YAML-ish front-matter:
 
-1. Edit [`scripts/chat-knowledge.config.mjs`](../../scripts/chat-knowledge.config.mjs).
-   Each entry has `{ source, topic, extract(ctx) }`. The extractor
-   returns plain text (no JSX); `ctx.readFile(rel)` loads files
-   relative to the repo root.
+```
+---
+source: /about              # site route OR a label like "heylina"
+topic: About Angus
+priority: high              # high | normal | low
+---
+
+Body of the entry...
+```
+
+To add or change what the bot knows:
+
+1. Edit (or add) a `.md` file under [`docs/chatbot-knowledge/`](../chatbot-knowledge/).
+   See that folder's own [README](../chatbot-knowledge/README.md) for
+   the full spec.
 2. Run `npm run build:chat`. This regenerates
-   `src/lib/chat/knowledge.generated.ts` and prints the new token count.
+   `src/lib/chat/knowledge.generated.ts` (including the route-keyed
+   `KNOWLEDGE_BY_ROUTE` lookup used by the page-aware system prompt)
+   and prints the new token count.
 3. The build fails if the bundle exceeds **8 000 tokens** (FR-KB-3).
-   Tighten an entry rather than relaxing the cap; the bound exists to
-   keep per-message cost and time-to-first-token predictable.
+   Tighten the largest `priority: low` entries first.
 
-Knowledge is committed so PR reviewers see content diffs.
+Both the `.md` and the regenerated `.ts` are committed so PR reviewers
+see content diffs.
+
+### Page-aware context
+
+When a request arrives with a `route` (e.g. `/about`), the route
+handler looks up the matching knowledge entry in `KNOWLEDGE_BY_ROUTE`
+and appends a small "Currently viewing" block to the system prompt
+**after** the cached static prefix. That preserves prompt-cache hits
+on the bulk of the prompt while letting the model anchor its
+suggestions to the page the user is actually on.
 
 ---
 

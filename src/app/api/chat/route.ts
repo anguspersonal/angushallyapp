@@ -35,7 +35,7 @@ import { upsertSession, writeTurn } from '@/lib/chat/persistence';
 import { DEFAULT_RATE_LIMIT, consume } from '@/lib/chat/rateLimiter';
 import { isDailySpendOverCap } from '@/lib/chat/spendCap';
 import { SSE_HEADERS, createSseStream } from '@/lib/chat/streamServer';
-import { buildSystemPrompt } from '@/lib/chat/systemPrompt';
+import { buildPageContext, buildSystemPrompt } from '@/lib/chat/systemPrompt';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import {
   CHAT_TOOLS,
@@ -349,12 +349,23 @@ export async function POST(request: NextRequest): Promise<Response> {
       // prompt is far above the 1024-token threshold; only the system
       // block carries a breakpoint here (tools are tiny, would barely
       // help, and would use one of the four available breakpoints).
+      // Two-block system:
+      //   - First block: static prompt (identity + tools + knowledge bundle),
+      //     marked ephemeral so Anthropic caches it across requests.
+      //   - Second block (optional): per-request "currently viewing" pointer
+      //     for the page the user is on. Appended AFTER the cache breakpoint
+      //     so it doesn't invalidate the cached prefix — the cached block
+      //     covers the bulk of the tokens and this tail is ≤ ~50 tokens.
       system: [
         {
           type: 'text',
           text: buildSystemPrompt(),
           cache_control: { type: 'ephemeral' },
         },
+        ...(() => {
+          const pageContext = buildPageContext(body.route);
+          return pageContext ? [{ type: 'text' as const, text: pageContext }] : [];
+        })(),
       ],
       messages: [
         ...body.history.map((entry) => ({
