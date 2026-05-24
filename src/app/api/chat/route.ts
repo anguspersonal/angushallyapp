@@ -336,7 +336,20 @@ export async function POST(request: NextRequest): Promise<Response> {
     const upstream = anthropic.messages.stream({
       model: ANTHROPIC_MODEL,
       max_tokens: ANTHROPIC_MAX_TOKENS,
-      system: buildSystemPrompt(),
+      // Cache the system prompt: it's ~10k tokens of stable identity rules
+      // + tool list + knowledge bundle, repaid in full on every request
+      // without caching. Anthropic's ephemeral cache cuts cached-input cost
+      // to ~10% of normal, materially extending the daily spend cap. The
+      // prompt is far above the 1024-token threshold; only the system
+      // block carries a breakpoint here (tools are tiny, would barely
+      // help, and would use one of the four available breakpoints).
+      system: [
+        {
+          type: 'text',
+          text: buildSystemPrompt(),
+          cache_control: { type: 'ephemeral' },
+        },
+      ],
       messages: [
         ...body.history.map((entry) => ({
           role: entry.role,

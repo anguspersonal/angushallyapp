@@ -31,6 +31,9 @@ const mockStream = {
   deltas: [] as string[],
   finalMessage: { content: [], usage: { input_tokens: 0, output_tokens: 0 } } as MockMessage,
   abortCalls: 0,
+  /** Captures the args of the last `messages.stream()` call so tests can
+   * assert on the system/tools/messages shape (e.g. cache_control). */
+  lastStreamArgs: null as Record<string, unknown> | null,
 };
 
 function resetMockStream(): void {
@@ -38,13 +41,15 @@ function resetMockStream(): void {
   mockStream.deltas = [];
   mockStream.finalMessage = { content: [], usage: { input_tokens: 0, output_tokens: 0 } };
   mockStream.abortCalls = 0;
+  mockStream.lastStreamArgs = null;
 }
 
 vi.mock('@anthropic-ai/sdk', () => {
   return {
     default: class MockAnthropic {
       messages = {
-        stream: () => {
+        stream: (args: Record<string, unknown>) => {
+          mockStream.lastStreamArgs = args;
           const stream = {
             on: (_event: string, handler: MockTextHandler) => {
               mockStream.textHandler = handler;
@@ -269,6 +274,33 @@ describe('POST /api/chat', () => {
     expect(frames).toHaveLength(1);
     expect(frames[0].event).toBe('error');
     expect((frames[0].data as { code: string }).code).toBe('unconfigured');
+  });
+
+  it('passes the system prompt with cache_control ephemeral (prompt caching)', async () => {
+    mockStream.deltas = ['ok'];
+    mockStream.finalMessage = {
+      content: [{ type: 'text', text: 'ok' }],
+      usage: { input_tokens: 1, output_tokens: 1 },
+    };
+    const { __resetRateLimiterForTests } = await import('@/lib/chat/rateLimiter');
+    __resetRateLimiterForTests();
+    const { POST } = await import('./route');
+    await POST(makeRequest(makeValidBody({ sessionId: '88888888-9999-4999-9999-aaaaaaaaaaaa' })));
+
+    const args = mockStream.lastStreamArgs!;
+    expect(args).toBeDefined();
+    // System must be an array of blocks (not a bare string) so cache_control
+    // can attach. The block must carry { type: 'ephemeral' } so Anthropic
+    // applies prompt caching to the ~10k-token system prefix.
+    expect(Array.isArray(args.system)).toBe(true);
+    const systemBlocks = args.system as Array<Record<string, unknown>>;
+    expect(systemBlocks).toHaveLength(1);
+    expect(systemBlocks[0]).toMatchObject({
+      type: 'text',
+      cache_control: { type: 'ephemeral' },
+    });
+    expect(typeof systemBlocks[0].text).toBe('string');
+    expect((systemBlocks[0].text as string).length).toBeGreaterThan(100);
   });
 
   it('emits rate_limited when the per-IP bucket is exhausted (FR-RATE-1)', async () => {
