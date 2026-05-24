@@ -17,7 +17,7 @@
 
 .prose {
   font-family: var(--font-serif), Newsreader, Georgia, serif;
-  font-size: 19px;
+  font-size: clamp(1rem, 2.4vw, 1.1875rem);
   line-height: 1.7;
   max-width: 680px;
   margin-left: auto;
@@ -38,7 +38,7 @@
   left: 0;
   top: -0.35em;
   font-family: var(--font-serif), Newsreader, Georgia, serif;
-  font-size: 4.5rem;
+  font-size: clamp(2.75rem, 9vw, 4.5rem);
   line-height: 1;
   font-weight: 400;
   font-style: normal;
@@ -55,10 +55,10 @@
 
 .pullquoteText {
   font-family: var(--font-serif), Newsreader, Georgia, serif;
-  font-size: clamp(1.35rem, 2.5vw, 1.65rem);
-  line-height: 1.35;
+  font-size: clamp(1.15rem, 2.5vw, 1.65rem);
+  line-height: 1.4;
   font-style: italic;
-  padding-left: 2.5rem;
+  padding-left: clamp(1.5rem, 6vw, 2.5rem);
   margin: 0;
   color: var(--site-ink);
 }

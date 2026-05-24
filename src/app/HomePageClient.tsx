@@ -10,6 +10,7 @@ import {
 import { Section, Stack } from '@/components/layout';
 import NextImage from 'next/image';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import CareerTimeline from '../components/timeline/CareerTimeline';
 import { careerMilestones } from '@/data/careerMilestones';
@@ -159,6 +160,8 @@ export type HomePageClientProps = {
 
 export default function HomePageClient({ og }: HomePageClientProps) {
   const reduceMotion = useReducedMotion();
+  /** Phones — kill the scroll-scale on the HeyLina card (1.8x would overflow viewport). */
+  const isMobile = useMediaQuery('(max-width: 48em)');
   const nowSectionRef = React.useRef<HTMLElement | null>(null);
   const heyLinaCardRef = React.useRef<HTMLDivElement | null>(null);
   const [heyLinaCardHeight, setHeyLinaCardHeight] = React.useState(0);
@@ -297,12 +300,12 @@ export default function HomePageClient({ og }: HomePageClientProps) {
                   reduceMotion
                     ? undefined
                     : {
-                        scale: heyLinaScale,
+                        scale: isMobile ? 1 : heyLinaScale,
                         transformOrigin: 'top center',
-                        marginBottom: heyLinaSpacer,
+                        marginBottom: isMobile ? 0 : heyLinaSpacer,
                         position: 'relative',
                         zIndex: 5,
-                        willChange: 'transform',
+                        willChange: isMobile ? undefined : 'transform',
                       }
                 }
               >
