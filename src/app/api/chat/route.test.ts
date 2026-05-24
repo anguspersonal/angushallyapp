@@ -270,4 +270,104 @@ describe('POST /api/chat', () => {
     expect(frames[0].event).toBe('error');
     expect((frames[0].data as { code: string }).code).toBe('unconfigured');
   });
+
+  it('emits rate_limited when the per-IP bucket is exhausted (FR-RATE-1)', async () => {
+    // Pre-fill the bucket for this IP. The route handler hashes the IP
+    // before keying the limiter, and the mocked hashIp produces
+    // `hashed:203.0.113.42` for the synthetic IP set in makeRequest().
+    const { DEFAULT_RATE_LIMIT, __resetRateLimiterForTests, consume } = await import(
+      '@/lib/chat/rateLimiter'
+    );
+    __resetRateLimiterForTests();
+    for (let i = 0; i < DEFAULT_RATE_LIMIT.limit; i++) {
+      consume('hashed:203.0.113.42');
+    }
+
+    const { POST } = await import('./route');
+    const res = await POST(makeRequest(makeValidBody({ sessionId: '55555555-6666-4666-9666-777777777777' })));
+    const frames = await readSseFrames(res);
+    expect(frames).toHaveLength(1);
+    expect(frames[0].event).toBe('error');
+    expect((frames[0].data as { code: string }).code).toBe('rate_limited');
+    // Anthropic must NOT have been invoked — assert by absence of persistence
+    // writes (the route handler only writes after a stream completes).
+    expect(writeTurn).not.toHaveBeenCalled();
+    __resetRateLimiterForTests();
+  });
+
+  it('emits session_cap_reached when the per-session message cap is hit (FR-RATE-2)', async () => {
+    // Replace the admin-client mock for THIS test so countUserTurns returns
+    // a number >= the cap (50). We re-import after re-mocking so the route
+    // module's frozen reference picks up the new mock.
+    vi.resetModules();
+    vi.doMock('@/lib/supabase/admin', () => ({
+      getSupabaseAdmin: () => ({
+        schema: () => ({
+          from: () => ({
+            select: () => ({
+              eq: () => ({
+                eq: () => Promise.resolve({ count: 50, error: null }),
+              }),
+            }),
+          }),
+        }),
+      }),
+    }));
+    // Re-mock the rest of the dependencies so they continue to work after
+    // resetModules cleared the mock registry.
+    vi.doMock('@/lib/chat/persistence', () => ({
+      upsertSession: (...args: Parameters<typeof upsertSession>) => upsertSession(...args),
+      writeTurn: (...args: Parameters<typeof writeTurn>) => writeTurn(...args),
+    }));
+    vi.doMock('@/lib/chat/ipHash', () => ({ hashIp: (ip: string) => `hashed:${ip}` }));
+
+    const { __resetRateLimiterForTests } = await import('@/lib/chat/rateLimiter');
+    __resetRateLimiterForTests();
+
+    const { POST } = await import('./route');
+    const res = await POST(
+      makeRequest(makeValidBody({ sessionId: '66666666-7777-4777-9777-888888888888' })),
+    );
+    const frames = await readSseFrames(res);
+    expect(frames).toHaveLength(1);
+    expect(frames[0].event).toBe('error');
+    expect((frames[0].data as { code: string }).code).toBe('session_cap_reached');
+
+    vi.doUnmock('@/lib/supabase/admin');
+    vi.doUnmock('@/lib/chat/persistence');
+    vi.doUnmock('@/lib/chat/ipHash');
+  });
+
+  it('emits budget_exhausted when the daily spend cap is over (FR-RATE-4)', async () => {
+    vi.resetModules();
+    // Force the spend-cap check to short-circuit as "over".
+    vi.doMock('@/lib/chat/spendCap', () => ({
+      isDailySpendOverCap: () => Promise.resolve(true),
+    }));
+    vi.doMock('@/lib/chat/persistence', () => ({
+      upsertSession: (...args: Parameters<typeof upsertSession>) => upsertSession(...args),
+      writeTurn: (...args: Parameters<typeof writeTurn>) => writeTurn(...args),
+    }));
+    vi.doMock('@/lib/chat/ipHash', () => ({ hashIp: (ip: string) => `hashed:${ip}` }));
+    vi.doMock('@/lib/supabase/admin', () => ({ getSupabaseAdmin: () => null }));
+
+    const { __resetRateLimiterForTests } = await import('@/lib/chat/rateLimiter');
+    __resetRateLimiterForTests();
+
+    const { POST } = await import('./route');
+    const res = await POST(
+      makeRequest(makeValidBody({ sessionId: '77777777-8888-4888-9888-999999999999' })),
+    );
+    const frames = await readSseFrames(res);
+    expect(frames).toHaveLength(1);
+    expect(frames[0].event).toBe('error');
+    expect((frames[0].data as { code: string }).code).toBe('budget_exhausted');
+    // No persistence on a cap-rejected request (the model was never called).
+    expect(writeTurn).not.toHaveBeenCalled();
+
+    vi.doUnmock('@/lib/chat/spendCap');
+    vi.doUnmock('@/lib/chat/persistence');
+    vi.doUnmock('@/lib/chat/ipHash');
+    vi.doUnmock('@/lib/supabase/admin');
+  });
 });

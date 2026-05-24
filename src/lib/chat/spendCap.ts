@@ -44,6 +44,13 @@ export function computeSpendUsd(
   return totalUsd;
 }
 
+/**
+ * Returns true when `spendUsd` is at or past the cap. The `>=` semantics
+ * are deliberate: the cap is the maximum permissible cumulative spend, so
+ * the first request that would carry the daily total *up to* the cap also
+ * trips it. This errs on the conservative side — better to short-circuit
+ * one request early than to allow one overshoot.
+ */
 export function isOverCap(spendUsd: number, capUsd: number): boolean {
   return spendUsd >= capUsd;
 }
