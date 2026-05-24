@@ -32,6 +32,7 @@ import { isLikelyInjection } from '@/lib/chat/injectionPatterns';
 import { detectLeakedSystemContent } from '@/lib/chat/outputFilter';
 import { upsertSession, writeTurn } from '@/lib/chat/persistence';
 import { DEFAULT_RATE_LIMIT, consume } from '@/lib/chat/rateLimiter';
+import { isDailySpendOverCap } from '@/lib/chat/spendCap';
 import { SSE_HEADERS, createSseStream } from '@/lib/chat/streamServer';
 import { buildSystemPrompt } from '@/lib/chat/systemPrompt';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
@@ -270,7 +271,23 @@ export async function POST(request: NextRequest): Promise<Response> {
     });
   }
 
-  // 5. Per-session cap.
+  // 5. Daily spend cap. Checked before the per-session query so we
+  //    short-circuit when the day's budget is gone — useChat flips the
+  //    panel to <ChatRestingState /> on receipt of `budget_exhausted`.
+  //    Fail-open: getDailySpendUsd returns 0 when env or Supabase is
+  //    misconfigured, so a missing pepper or unset price var won't
+  //    accidentally lock everyone out.
+  if (await isDailySpendOverCap()) {
+    return streamErrorResponse({
+      event: 'error',
+      data: {
+        code: 'budget_exhausted',
+        message: `The chat is resting for today — try again after 00:00 UTC.`,
+      },
+    });
+  }
+
+  // 6. Per-session cap.
   const priorUserTurns = await countUserTurns(body.sessionId);
   if (priorUserTurns >= PER_SESSION_USER_TURN_CAP) {
     return streamErrorResponse({
@@ -282,10 +299,10 @@ export async function POST(request: NextRequest): Promise<Response> {
     });
   }
 
-  // 6. Layer-2 injection heuristic (flag-only; never block).
+  // 7. Layer-2 injection heuristic (flag-only; never block).
   const injectionFlagged = isLikelyInjection(body.message);
 
-  // 7. Idempotent session upsert (writes are best-effort).
+  // 8. Idempotent session upsert (writes are best-effort).
   await upsertSession({
     sessionId: body.sessionId,
     anonId: body.sessionId, // anon_id is mirrored from sessionId in v1
@@ -295,7 +312,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     firstRoute: body.route || undefined,
   });
 
-  // 8. Open SSE channel and kick off the model stream.
+  // 9. Open SSE channel and kick off the model stream.
   const sse = createSseStream();
   const messageId = randomId();
   sse.send({
