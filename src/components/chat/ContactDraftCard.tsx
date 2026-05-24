@@ -23,6 +23,26 @@ type Props = {
 const PREVIEW_MAX_CHARS = 200;
 
 /**
+ * Truncate `text` at the last whitespace before `max`, appending `…`.
+ * Avoids mid-word cuts like `"… your vi…"` which look broken.
+ *
+ * If the last-space search falls back too far (more than 30 chars before
+ * `max`), we accept a mid-word cut rather than chop a meaningful sentence
+ * in half. The threshold is conservative — readable previews matter more
+ * than character-perfect length.
+ *
+ * Exported so the unit test can pin the contract without rendering the
+ * full component.
+ */
+export function truncateAtWord(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const slice = text.slice(0, max);
+  const lastSpace = slice.lastIndexOf(' ');
+  const cut = lastSpace > max - 30 ? lastSpace : max;
+  return slice.slice(0, cut).trimEnd() + '…';
+}
+
+/**
  * Renders a `draft_contact_message` tool proposal as a preview card with
  * an "Open contact form with this draft" button. On click:
  *
@@ -36,9 +56,7 @@ const PREVIEW_MAX_CHARS = 200;
  */
 export function ContactDraftCard({ draft, onBeforeNavigate }: Props) {
   const router = useRouter();
-  const preview = draft.body.length > PREVIEW_MAX_CHARS
-    ? draft.body.slice(0, PREVIEW_MAX_CHARS).trimEnd() + '…'
-    : draft.body;
+  const preview = truncateAtWord(draft.body, PREVIEW_MAX_CHARS);
 
   const handleClick = () => {
     try {
