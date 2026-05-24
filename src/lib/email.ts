@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
 import { buildSmtpAuthConfig } from '@/lib/email/authConfig';
+import { EmailConfigError } from '@/lib/email/errors';
 
 let transporter: Transporter | null = null;
 
@@ -86,7 +87,7 @@ export async function sendInquiryToOwner({
 }) {
   const ownerEmail = process.env.RECIPIENT_EMAIL;
   if (!ownerEmail) {
-    throw new Error('RECIPIENT_EMAIL is not configured');
+    throw new EmailConfigError('RECIPIENT_EMAIL is not configured');
   }
   const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
   const subject = `New Inquiry from ${name}`;
