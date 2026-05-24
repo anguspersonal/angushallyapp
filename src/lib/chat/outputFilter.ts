@@ -56,6 +56,22 @@ export type LeakDetection = {
   matchedPatternIndices: readonly number[];
 };
 
+/**
+ * Detect (do NOT redact) leaked system content in an assistant turn.
+ *
+ * **Detector, not protection.** By the time this runs, the streamed
+ * deltas have already reached the browser — rewriting the persisted
+ * text or refusing to send the `done` event would be cosmetic at best
+ * and confusing at worst. The value of this function is **audit
+ * signal**: route.ts sets `injection_flagged = true` on the persisted
+ * assistant turn, which feeds the operator's later review of attack
+ * patterns and any system-prompt tightening.
+ *
+ * Real prevention lives in Layers 1, 2, and 4 (system prompt + heuristic
+ * + corpus test) — see this file's module-level docstring.
+ *
+ * Pure function. Same input → same output. No side effects.
+ */
 export function detectLeakedSystemContent(text: string): LeakDetection {
   if (typeof text !== 'string' || text.length === 0) {
     return { flagged: false, matchedPatternIndices: [] };

@@ -65,6 +65,18 @@ describe('renderMarkdown', () => {
       expect(html('[here](./near)')).toContain('<a href="./near">here</a>');
     });
 
+    it('handles URLs with balanced parens (Wikipedia, MDN, etc.)', () => {
+      // Audit finding (PR #79 aggregate): LINK_RE used to bail at the first
+      // `)` and broke `Foo_(bar)`-style URLs. Now permits one balanced pair.
+      expect(html('[ML](https://en.wikipedia.org/wiki/Machine_learning_(field))')).toBe(
+        '<p><a href="https://en.wikipedia.org/wiki/Machine_learning_(field)" target="_blank" rel="noopener noreferrer">ML</a></p>',
+      );
+      // Empty paren content is also balanced — should still link.
+      expect(html('[x](https://example.com/path_())')).toContain(
+        '<a href="https://example.com/path_()"',
+      );
+    });
+
     it('renders the literal markdown when the URL is unsafe', () => {
       // javascript:, data:, vbscript:, file: must NOT become <a>
       expect(html('[click](javascript:alert(1))')).toBe('<p>[click](javascript:alert(1))</p>');
