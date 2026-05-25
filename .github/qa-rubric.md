@@ -9,7 +9,7 @@ Keep this short and load-bearing. If a rule isn't being enforced or referenced i
 - [ ] No Critical or High findings outstanding (severity per `qa-review` Critical/High/Medium/Low scheme).
 - [ ] All acceptance criteria from the linked issue(s) met. If no issue is linked, the PR description states what "done" means.
 - [ ] Tests added or updated for new behaviour. Bug fixes include a regression test.
-- [ ] CI green: `next build`, `vitest`, `next lint`, `node scripts/check-breakpoints.mjs`, branch-name gate.
+- [ ] CI green: `next build`, `vitest`, `next lint`, `npx tsc --noEmit`, `node scripts/check-breakpoints.mjs`, branch-name gate.
 - [ ] No secrets in diff. No `eval`. No unguarded `dangerouslySetInnerHTML`. No user input interpolated into HTML strings without escaping (see PR #54 history).
 
 ## Should pass (non-blocking, but flag)
@@ -18,6 +18,7 @@ Keep this short and load-bearing. If a rule isn't being enforced or referenced i
 - [ ] Branch name matches `<type>/<kebab-description>` per [docs/agents/branching.md](../docs/agents/branching.md). Type prefixes: `feat`, `fix`, `chore`, `docs`, `perf`, `test`, `refactor`, `hotfix`.
 - [ ] Public APIs have TypeScript types. Public exports have JSDoc when intent isn't obvious from the type.
 - [ ] User-facing strings considered for tone and copy.
+- [ ] User-facing changes considered for keyboard navigation, alt text on images, and colour contrast.
 - [ ] No new `TODO` without an issue link.
 - [ ] If the PR is base = `main` and not `hotfix/*`, justify in the body. Standard flow goes via `dev`.
 
@@ -51,7 +52,7 @@ Keep this short and load-bearing. If a rule isn't being enforced or referenced i
 
 ### Email and user input
 
-- Any user-submitted string interpolated into an HTML email body or any `dangerouslySetInnerHTML` target goes through `escapeHtml` (or an equivalent escape that handles `&`, `<`, `>`, `"`, `'`). See PR #54 for the regression that landed this rule.
+- Any user-submitted string interpolated into an HTML email body or any `dangerouslySetInnerHTML` target goes through `escapeHtml` from `src/lib/email.ts` (or an equivalent escape that handles `&`, `<`, `>`, `"`, `'`). See PR #54 for the regression that landed this rule.
 - Outbound email subjects and bodies stay deduplicated per recipient. One owner notification per submission, not two.
 
 ### Privacy and content
