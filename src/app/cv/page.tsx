@@ -191,8 +191,9 @@ const SoftwareCV = () => {
                                 background: `linear-gradient(45deg, ${theme.colors.primary[6]}, ${theme.colors.secondary[6]})`,
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
-                                fontSize: '3rem',
-                                fontWeight: 800
+                                fontSize: 'clamp(1.75rem, 7vw, 3rem)',
+                                fontWeight: 800,
+                                lineHeight: 1.1,
                             }}
                         >
                             Side Projects & Technical Skills
@@ -228,7 +229,7 @@ const SoftwareCV = () => {
                                                     y: -8,
                                                     transition: { type: "spring", stiffness: 400, damping: 25 }
                                                 }}
-                                                style={{ willChange: 'transform', width: '100%', display: 'flex', height: '20em' }}
+                                                style={{ willChange: 'transform', width: '100%', display: 'flex', minHeight: '20em' }}
                                             >
                                                 <Paper
                                                     p="md"
@@ -325,7 +326,7 @@ const SoftwareCV = () => {
                                                 <Link href={project.link} style={{ textDecoration: 'none', color: 'inherit' }}>
                                                     <Paper
                                                         withBorder
-                                                        h="31em"
+                                                        mih="31em"
                                                     >
                                                         <Box
                                                             style={{

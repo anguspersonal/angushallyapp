@@ -50,8 +50,8 @@
 .mastheadTitle {
   font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
   font-weight: 300;
-  font-size: clamp(3rem, 9vw, 7rem);
-  line-height: 0.86;
+  font-size: clamp(2.25rem, 12vw, 7rem);
+  line-height: 0.9;
   letter-spacing: -0.04em;
   font-variation-settings: 'opsz' 144;
   text-align: center;
@@ -265,7 +265,7 @@
   font-family: var(--font-editorial), 'Fraunces', Georgia, serif;
   font-weight: 400;
   font-variation-settings: 'opsz' 144;
-  font-size: 3.6em;
+  font-size: clamp(2.4em, 8vw, 3.6em);
   line-height: 0.85;
   float: left;
   padding: 0.08em 0.18em 0 0;
@@ -327,8 +327,9 @@
 
 .introPaper {
   position: relative;
-  width: min(70vw, 480px);
+  width: min(85vw, 480px);
   aspect-ratio: 3 / 4;
+  max-height: 85svh;
   background: var(--blog-intro-paper);
   box-shadow:
     0 30px 60px rgba(0, 0, 0, 0.25),

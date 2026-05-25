@@ -180,7 +180,7 @@ export default function ContactPage() {
               </motion.div>
 
               <motion.div custom={5} variants={formElementVariants}>
-                <Group justify="center" mt="md">
+                <Group justify="center" mt="md" style={{ maxWidth: '100%', overflowX: 'auto' }}>
                   {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
                     <ReCAPTCHA
                       sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
