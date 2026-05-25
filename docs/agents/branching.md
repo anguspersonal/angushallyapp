@@ -103,7 +103,7 @@ For DDL changes with no feature dependency (a new index, a new table, a nullable
 1. Agent writes the migration at `supabase/migrations/<timestamp>_<description>.sql`.
 2. Agent opens the PR with the file. **Does not** call `apply_migration` on prod.
 3. QA reviews the SQL.
-4. On merge to `dev`: apply the migration to the dev DB (today: prod, since there's no separate dev DB — see "When that's not enough" below).
+4. On merge to `dev`: apply the migration to the dev DB (today: prod, since there's no separate dev DB — see [What we're not doing (yet)](#what-were-not-doing-yet) below for why a staging DB isn't justified yet).
 5. Verify post-apply with `pg_indexes` / `\dt` / a sanity SELECT.
 
 ### When a feature needs the DDL applied to be testable: expand-and-contract
@@ -122,14 +122,14 @@ Each PR is independently reviewable and revertible. No PR is blocked on "I can't
 
 ### Additive vs destructive — quick reference
 
-| Additive (low risk, default flow OK) | Destructive (high risk, separate PR) |
-|---|---|
-| `CREATE INDEX` | `DROP INDEX` |
-| `CREATE TABLE` | `DROP TABLE` |
-| `ADD COLUMN ... NULL` (no `NOT NULL`) | `DROP COLUMN` |
-| `CREATE TYPE` | `DROP TYPE` |
-| New FK constraint where no orphan rows exist | `ALTER COLUMN ... NOT NULL` on populated table |
-| `CREATE EXTENSION` | `DROP EXTENSION` |
+| Additive (low risk, default flow OK)         | Destructive (high risk, separate PR)              |
+| -------------------------------------------- | ------------------------------------------------- |
+| `CREATE INDEX`                               | `DROP INDEX`                                      |
+| `CREATE TABLE`                               | `DROP TABLE`                                      |
+| `ADD COLUMN ... NULL` (no `NOT NULL`)        | `DROP COLUMN`                                     |
+| `CREATE TYPE`                                | `DROP TYPE`                                       |
+| New FK constraint where no orphan rows exist | `ALTER COLUMN ... NOT NULL` on populated table    |
+| `CREATE EXTENSION`                           | `DROP EXTENSION`                                  |
 
 When in doubt, treat as destructive.
 
@@ -167,7 +167,7 @@ If migration frequency picks up or a destructive change goes wrong, re-evaluate.
 - **Never push directly to `dev` or `main`.** Always go through a PR.
 - **Never merge `dev → main` autonomously.** That step requires a human (manual visual check is part of the bar).
 - **Hotfixes still need a PR** — they just target `main`. After landing, open a follow-up to also merge the hotfix commit into `dev`.
-- **For DDL, follow the migration governance rules above.** Never apply to prod before the PR is reviewed and merged. If a feature needs the schema change to be testable, split into expand-and-contract PRs rather than bundling.
+- **For DDL, follow the [migration governance rules above](#database-migrations).** Never apply to prod before the PR is reviewed and merged. If a feature needs the schema change to be testable, split into expand-and-contract PRs rather than bundling.
 
 ## Related
 
