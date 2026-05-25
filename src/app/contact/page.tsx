@@ -41,7 +41,14 @@ interface ContactFormValues {
 }
 
 export default function ContactPage() {
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  const captchaRequired = Boolean(recaptchaSiteKey);
+
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
+  // True once reCAPTCHA's script finishes loading. Gates the submit button so
+  // users on slow networks can't click Send before the widget is interactive
+  // (issue #101).
+  const [captchaReady, setCaptchaReady] = useState(!captchaRequired);
   const [status, setStatus] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -95,8 +102,9 @@ export default function ContactPage() {
   }, []);
 
   const handleSubmit = async (values: ContactFormValues) => {
-    if (!captchaValue) {
-      setStatus('Please complete the CAPTCHA.');
+    if (captchaRequired && !captchaValue) {
+      // Single channel for this error — the field-level slot under the widget.
+      // (Previously also surfaced via setStatus, which duplicated the message.)
       form.setFieldError('captcha', 'Please complete the CAPTCHA.');
       return;
     }
@@ -180,11 +188,15 @@ export default function ContactPage() {
               </motion.div>
 
               <motion.div custom={5} variants={formElementVariants}>
-                <Group justify="center" mt="md" style={{ maxWidth: '100%', overflowX: 'auto' }}>
-                  {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ? (
+                <Group justify="center" mt="md">
+                  {recaptchaSiteKey ? (
                     <ReCAPTCHA
-                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                      sitekey={recaptchaSiteKey}
                       onChange={(value: string | null) => setCaptchaValue(value)}
+                      onExpired={() => setCaptchaValue(null)}
+                      // asyncScriptOnLoad is supported by react-google-recaptcha
+                      // at runtime but absent from its TS types.
+                      {...({ asyncScriptOnLoad: () => setCaptchaReady(true) } as Record<string, unknown>)}
                     />
                   ) : (
                     <Text size="sm" ta="center" style={{ color: 'var(--mantine-color-dimmed)' }}>
@@ -201,11 +213,16 @@ export default function ContactPage() {
               </motion.div>
 
               <motion.div custom={6} variants={formElementVariants}>
-                <Group justify="center" mt="xl">
-                  <PrimaryPillButton type="submit" disabled={isSubmitting}>
+                <Stack gap={4} align="center" mt="xl">
+                  <PrimaryPillButton type="submit" disabled={isSubmitting || !captchaReady}>
                     {isSubmitting ? 'Sending…' : 'Send Message'}
                   </PrimaryPillButton>
-                </Group>
+                  {captchaRequired && !captchaReady && (
+                    <Text size="xs" ta="center" style={{ color: 'var(--mantine-color-dimmed)' }}>
+                      Verifying you’re human…
+                    </Text>
+                  )}
+                </Stack>
               </motion.div>
 
               {status && (
@@ -216,7 +233,7 @@ export default function ContactPage() {
                     style={{
                       color: status.includes('successfully')
                         ? 'var(--mantine-color-teal-6)'
-                        : status.includes('Failed') || status.includes('error') || status.includes('Please complete')
+                        : status.includes('Failed') || status.includes('error')
                           ? 'var(--mantine-color-red-6)'
                           : 'var(--mantine-color-dimmed)',
                     }}
