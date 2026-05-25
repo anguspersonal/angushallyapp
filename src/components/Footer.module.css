@@ -107,6 +107,12 @@
   align-content: start;
 }
 
+/* 30em is intentionally off the --bp-* scale: this is the container width at which
+   the three nav columns first fit without truncating link text. Container queries
+   can't read CSS custom properties in their conditions (same constraint as @media),
+   so the magic number stays inline. The next stop up, --bp-xs (36em), leaves an
+   awkward gap where the layout has switched to 3 columns but the outer viewport
+   hasn't yet earned its own 3-col header pattern. */
 @container (min-width: 30em) {
   .right {
     grid-template-columns: 1fr 1fr 1fr;
