@@ -1,6 +1,6 @@
 # Persona-page workflow: research → markdown → rendered page
 
-A repeatable process for building persona-focused pages on this site (Developer CV, Math Teacher CV, Data Strategist CV, Operator/COO CV, etc.). The key insight: **the research markdown is intentionally over-collected and is not 1:1 copy for the final page.** It's the substrate from which an engaging, progressively-disclosed, animated rendered page is curated.
+A repeatable process for building persona-focused pages on this site (Developer CV, Data Strategist CV, Maths Teacher CV, Debate Coach CV, AI Product Manager CV, Harness Engineer CV, Operator/COO CV, etc.). The key insight: **the research markdown is intentionally over-collected and is not 1:1 copy for the final page.** It's the substrate from which an engaging, progressively-disclosed, animated rendered page is curated.
 
 ## When to use
 
@@ -76,9 +76,12 @@ Each persona page has matching downstream artefacts:
 
 | Persona | Audience | Research doc | Rendered route | Status |
 |---|---|---|---|---|
-| Developer | Hiring engineer, technical client | [docs/dev-cv.md](../dev-cv.md) | `/dev` (not yet built) | Research done; curation + render pending |
-| Math teacher | School leadership, TeachFirst alumni network | _todo_ | `/teacher` | Not started |
-| Data strategist | FTSE-100 data leader, Anmut alumni | _todo_ | `/strategist` | Not started |
+| Developer | Hiring engineer, technical client | [docs/dev-cv.md](../dev-cv.md) | `/dev` (not yet built) | Phase 2 done; curation + render pending |
+| Data strategist | FTSE-100 data leader, Anmut alumni, CDOs | [docs/data-strategy-cv.md](../data-strategy-cv.md) | `/strategist` (not yet built) | Phase 1 stub |
+| Maths teacher | School leadership, TeachFirst alumni, edtech | [docs/maths-teacher-cv.md](../maths-teacher-cv.md) | `/teacher` (not yet built) | Phase 1 stub |
+| Debate coach | Schools / unis, debate societies | [docs/debate-coach-cv.md](../debate-coach-cv.md) | `/debate` (not yet built) | Phase 1 stub — needs material confirmation from Angus |
+| AI product manager | AI startups, model labs, AI-shaped PM roles | [docs/ai-product-manager-cv.md](../ai-product-manager-cv.md) | `/ai-pm` (not yet built) | Phase 1 stub |
+| Harness engineer | Model labs, agent-tooling startups, MCP ecosystem | [docs/harness-engineer-cv.md](../harness-engineer-cv.md) | `/harness` (not yet built) | Phase 1 stub |
 | Operator / COO | Investor, board, fellow founder | [public/resume.html](../../public/resume.html) (existing) | `/` and `/projects` (existing) | Pre-existing — predates this workflow |
 
 ## Lessons earned in the dev-CV run
