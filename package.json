@@ -25,6 +25,8 @@
     "fix-nextjs:clean": "node scripts/fix-nextjs-build-errors.js --clean-deps",
     "optimize-images": "node scripts/optimize-images.mjs",
     "build:resume": "node scripts/build-resume.mjs",
+    "stats:refresh": "node scripts/fetch-code-stats.mjs --reuse --print",
+    "stats:refresh:fresh": "node scripts/fetch-code-stats.mjs --print",
     "clean:node": "bash scripts/clean-node.sh",
     "clean:next": "bash scripts/clean-next.sh",
     "clean:ports": "node scripts/clean-ports.js",
