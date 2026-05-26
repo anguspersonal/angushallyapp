@@ -21,6 +21,9 @@ How-to guides, runbooks, and onboarding material. All non-ADR, non-vision, non-a
 - [`heroku-to-vercel-migration.md`](./heroku-to-vercel-migration.md) — Heroku → Vercel migration steps
 - [`server-to-next-mapping.md`](./server-to-next-mapping.md) — Express route → Next.js Route Handler mapping
 
+### Content & site
+- [`persona-page-workflow.md`](./persona-page-workflow.md) — research → markdown → rendered page workflow for persona-shaped pages (Developer CV, Math Teacher CV, Data Strategist CV, etc.)
+
 ### Project-specific
 - [`bookmark-integration-setup.md`](./bookmark-integration-setup.md) — Raindrop.io integration setup
 
