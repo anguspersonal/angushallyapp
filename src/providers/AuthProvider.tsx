@@ -3,7 +3,13 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import type { AuthContextType, User } from '@/lib/auth/types';
+import type {
+  AuthContextType,
+  EmailAuthResult,
+  LoginCredentials,
+  SignUpCredentials,
+  User,
+} from '@/lib/auth/types';
 
 function mapSupabaseUser(su: SupabaseUser): User {
   const meta = su.user_metadata ?? {};
@@ -21,7 +27,9 @@ function mapSupabaseUser(su: SupabaseUser): User {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   setUser: () => {},
-  login: async () => { throw new Error('Use signInWithOAuth'); },
+  loginWithGoogle: async () => { throw new Error('AuthProvider not mounted'); },
+  loginWithEmail: async () => ({ error: 'AuthProvider not mounted' }),
+  signUpWithEmail: async () => ({ error: 'AuthProvider not mounted' }),
   logout: async () => {},
   checkAuth: async () => {},
   isLoading: true,
@@ -59,12 +67,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => subscription.unsubscribe();
   }, [supabase, checkAuth]);
 
-  const login = useCallback(async () => {
+  const loginWithGoogle = useCallback(async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
   }, [supabase]);
+
+  const loginWithEmail = useCallback(
+    async ({ email, password }: LoginCredentials): Promise<EmailAuthResult> => {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      return { error: error?.message ?? null };
+    },
+    [supabase],
+  );
+
+  const signUpWithEmail = useCallback(
+    async ({ email, password, fullName }: SignUpCredentials): Promise<EmailAuthResult> => {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: fullName ? { full_name: fullName } : undefined,
+        },
+      });
+      if (error) return { error: error.message };
+      // When email confirmation is required, Supabase returns a user without a session.
+      return { error: null, needsEmailConfirmation: !data.session };
+    },
+    [supabase],
+  );
 
   const logout = useCallback(async (redirectTo?: string) => {
     await supabase.auth.signOut();
@@ -82,7 +115,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider value={{
       user,
       setUser,
-      login,
+      loginWithGoogle,
+      loginWithEmail,
+      signUpWithEmail,
       logout,
       checkAuth,
       isLoading,
