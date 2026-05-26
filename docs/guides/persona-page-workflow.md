@@ -26,7 +26,7 @@ Capture in 4-6 lines at the top of the research markdown.
 
 Goal: build a research document containing *more* than will ever ship to the page, so curation has good raw material.
 
-Output: `docs/<persona>-cv.md` — e.g. [docs/dev-cv.md](../dev-cv.md), `docs/teacher-cv.md`, `docs/strategist-cv.md`. Treat as research, not copy.
+Output: `docs/cvs/<persona>-cv.md` — e.g. [docs/cvs/dev-cv.md](../cvs/dev-cv.md), `docs/cvs/maths-teacher-cv.md`, `docs/cvs/data-strategy-cv.md`. Treat as research, not copy.
 
 Use parallel Explore agents (max 3, usually 1-2 is enough):
 
@@ -76,12 +76,12 @@ Each persona page has matching downstream artefacts:
 
 | Persona | Audience | Research doc | Rendered route | Status |
 |---|---|---|---|---|
-| Developer | Hiring engineer, technical client | [docs/dev-cv.md](../dev-cv.md) | `/dev` (not yet built) | Phase 2 done; curation + render pending |
-| Data strategist | FTSE-100 data leader, Anmut alumni, CDOs | [docs/data-strategy-cv.md](../data-strategy-cv.md) | `/strategist` (not yet built) | Phase 1 stub |
-| Maths teacher | School leadership, TeachFirst alumni, edtech | [docs/maths-teacher-cv.md](../maths-teacher-cv.md) | `/teacher` (not yet built) | Phase 1 stub |
-| Debate coach | Schools / unis, debate societies | [docs/debate-coach-cv.md](../debate-coach-cv.md) | `/debate` (not yet built) | Phase 1 stub — needs material confirmation from Angus |
-| AI product manager | AI startups, model labs, AI-shaped PM roles | [docs/ai-product-manager-cv.md](../ai-product-manager-cv.md) | `/ai-pm` (not yet built) | Phase 1 stub |
-| Harness engineer | Model labs, agent-tooling startups, MCP ecosystem | [docs/harness-engineer-cv.md](../harness-engineer-cv.md) | `/harness` (not yet built) | Phase 1 stub |
+| Developer | Hiring engineer, technical client | [docs/cvs/dev-cv.md](../cvs/dev-cv.md) | `/dev` (not yet built) | Phase 2 done; curation + render pending |
+| Data strategist | FTSE-100 data leader, Anmut alumni, CDOs | [docs/cvs/data-strategy-cv.md](../cvs/data-strategy-cv.md) | `/strategist` (not yet built) | Phase 1 stub |
+| Maths teacher | School leadership, TeachFirst alumni, edtech | [docs/cvs/maths-teacher-cv.md](../cvs/maths-teacher-cv.md) | `/teacher` (not yet built) | Phase 1 stub |
+| Debate coach | Schools / unis, debate societies | [docs/cvs/debate-coach-cv.md](../cvs/debate-coach-cv.md) | `/debate` (not yet built) | Phase 1 stub — needs material confirmation from Angus |
+| AI product manager | AI startups, model labs, AI-shaped PM roles | [docs/cvs/ai-product-manager-cv.md](../cvs/ai-product-manager-cv.md) | `/ai-pm` (not yet built) | Phase 1 stub |
+| Harness engineer | Model labs, agent-tooling startups, MCP ecosystem | [docs/cvs/harness-engineer-cv.md](../cvs/harness-engineer-cv.md) | `/harness` (not yet built) | Phase 1 stub |
 | Operator / COO | Investor, board, fellow founder | [public/resume.html](../../public/resume.html) (existing) | `/` and `/projects` (existing) | Pre-existing — predates this workflow |
 
 ## Lessons earned in the dev-CV run

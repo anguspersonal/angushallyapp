@@ -1,7 +1,7 @@
 # Angus Hally — Debate Coach CV (research stub)
 
 > **Status:** Phase 1 frame partial; Phase 2 blocked pending material confirmation from Angus.
-> See [docs/guides/persona-page-workflow.md](guides/persona-page-workflow.md).
+> See [docs/guides/persona-page-workflow.md](../guides/persona-page-workflow.md).
 
 ## Phase 1 — Frame
 

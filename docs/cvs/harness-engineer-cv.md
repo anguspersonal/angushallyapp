@@ -1,7 +1,7 @@
 # Angus Hally — Harness Engineer CV (research stub)
 
 > **Status:** Phase 1 frame filled in; Phase 2 (research) pending.
-> See [docs/guides/persona-page-workflow.md](guides/persona-page-workflow.md).
+> See [docs/guides/persona-page-workflow.md](../guides/persona-page-workflow.md).
 >
 > "Harness engineer" = builds the scaffolding *around* an LLM (agent runtimes, MCP servers, skill systems, evaluation harnesses, prompt operations) rather than the model itself.
 
@@ -22,7 +22,7 @@ Source material to scan and synthesise — much of this lives in personal config
 - **Lina Lab eval harness** — production-grade LLM-as-judge framework with provenance (`judge_type`, `judge_model`, `judge_prompt_version`, `judge_rater_id`), variant experiments, multi-scope rubrics. The most substantial harness artefact. See [dev-cv.md](dev-cv.md) Lina Lab section.
 - **AHKMS workflow orchestration** — Express webhook router → step-by-step pipeline → AI extraction → human review. Agentic-pipeline pattern even if not "agent" in the SDK sense.
 - **Hooks and settings authored** — pre-commit hooks, git guardrails, harness automations in `.husky/`, `.claude/settings.json`.
-- **Co-author footprint** — `Co-Authored-By: Claude Opus 4.7` on most recent commits; shows the AI-pair workflow at scale (2,391 commits, 1.12M lines added — see [code-stats.md](code-stats.md)).
+- **Co-author footprint** — `Co-Authored-By: Claude Opus 4.7` on most recent commits; shows the AI-pair workflow at scale (2,391 commits, 1.12M lines added — see [code-stats.md](../code-stats.md)).
 
 Open questions for Angus:
 

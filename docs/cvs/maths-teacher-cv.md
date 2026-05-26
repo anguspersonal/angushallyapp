@@ -1,7 +1,7 @@
 # Angus Hally — Maths Teacher CV (research stub)
 
 > **Status:** Phase 1 frame filled in; Phase 2 (research) pending.
-> See [docs/guides/persona-page-workflow.md](guides/persona-page-workflow.md).
+> See [docs/guides/persona-page-workflow.md](../guides/persona-page-workflow.md).
 
 ## Phase 1 — Frame
 
