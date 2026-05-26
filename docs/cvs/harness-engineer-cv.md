@@ -1,9 +1,8 @@
-# Angus Hally — Harness Engineer CV (research stub)
+# Angus Hally — Harness Engineer CV
 
-> **Status:** Phase 1 frame filled in; Phase 2 (research) pending.
-> See [docs/guides/persona-page-workflow.md](../guides/persona-page-workflow.md).
+> **Workflow status (2026-05-26):** ✅ Frame · 🔄 Research (background Explore agent scanning `~/.claude/skills`, `~/.claude/agents`, `dotclaude`) · ⏳ Curate · ⏳ Render at `/harness` · ⏳ Propagate. See [persona-page-workflow.md](../guides/persona-page-workflow.md).
 >
-> "Harness engineer" = builds the scaffolding *around* an LLM (agent runtimes, MCP servers, skill systems, evaluation harnesses, prompt operations) rather than the model itself.
+> "Harness engineer" = builds the scaffolding *around* an LLM (agent runtimes, MCP servers, skill systems, evaluation harnesses, prompt operations) rather than the model itself. This doc gets a full Phase 2 + render once the agent's inventory returns.
 
 ## Phase 1 — Frame
 

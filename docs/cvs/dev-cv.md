@@ -1,5 +1,7 @@
 # Angus Hally — Developer CV
 
+> **Workflow status (2026-05-26):** ✅ Frame · ✅ Research · ✅ Curate · ✅ Render at `/dev` · ✅ Propagate (chatbot-knowledge entry at `docs/chatbot-knowledge/dev.md`). See [persona-page-workflow.md](../guides/persona-page-workflow.md).
+
 > Builder with a strategist's instincts and an operator's discipline.
 
 angus.hally@gmail.com · London, UK · [angushally.com](https://angushally.com) · [github.com/angushally](https://github.com/angushally) · [linkedin.com/in/angus-hally-9ab66a87](https://www.linkedin.com/in/angus-hally-9ab66a87/)

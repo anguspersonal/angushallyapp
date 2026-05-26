@@ -76,12 +76,12 @@ Each persona page has matching downstream artefacts:
 
 | Persona | Audience | Research doc | Rendered route | Status |
 |---|---|---|---|---|
-| Developer | Hiring engineer, technical client | [docs/cvs/dev-cv.md](../cvs/dev-cv.md) | `/dev` (not yet built) | Phase 2 done; curation + render pending |
-| Data strategist | FTSE-100 data leader, Anmut alumni, CDOs | [docs/cvs/data-strategy-cv.md](../cvs/data-strategy-cv.md) | `/strategist` (not yet built) | Phase 1 stub |
-| Maths teacher | School leadership, TeachFirst alumni, edtech | [docs/cvs/maths-teacher-cv.md](../cvs/maths-teacher-cv.md) | `/teacher` (not yet built) | Phase 1 stub |
-| Debate coach | Schools / unis, debate societies | [docs/cvs/debate-coach-cv.md](../cvs/debate-coach-cv.md) | `/debate` (not yet built) | Phase 1 stub — needs material confirmation from Angus |
-| AI product manager | AI startups, model labs, AI-shaped PM roles | [docs/cvs/ai-product-manager-cv.md](../cvs/ai-product-manager-cv.md) | `/ai-pm` (not yet built) | Phase 1 stub |
-| Harness engineer | Model labs, agent-tooling startups, MCP ecosystem | [docs/cvs/harness-engineer-cv.md](../cvs/harness-engineer-cv.md) | `/harness` (not yet built) | Phase 1 stub |
+| Developer | Hiring engineer, technical client | [docs/cvs/dev-cv.md](../cvs/dev-cv.md) | [`/dev`](../../src/app/dev/page.tsx) ✅ | Full workflow complete |
+| Data strategist | FTSE-100 data leader, Anmut alumni, CDOs | [docs/cvs/data-strategy-cv.md](../cvs/data-strategy-cv.md) | [`/strategist`](../../src/app/strategist/page.tsx) ✅ | Rendered; client-naming gaps flagged |
+| Maths teacher | School leadership, TeachFirst alumni, edtech | [docs/cvs/maths-teacher-cv.md](../cvs/maths-teacher-cv.md) | [`/teacher`](../../src/app/teacher/page.tsx) ✅ | Rendered; exam-result data gap flagged |
+| Debate coach | Schools / unis, debate societies | [docs/cvs/debate-coach-cv.md](../cvs/debate-coach-cv.md) | not rendered | ⛔ Blocked — needs material confirmation from Angus |
+| AI product manager | AI startups, model labs, AI-shaped PM roles | [docs/cvs/ai-product-manager-cv.md](../cvs/ai-product-manager-cv.md) | [`/ai-pm`](../../src/app/ai-pm/page.tsx) ✅ | Full workflow complete |
+| Harness engineer | Model labs, agent-tooling startups, MCP ecosystem | [docs/cvs/harness-engineer-cv.md](../cvs/harness-engineer-cv.md) | not yet rendered | 🔄 Research in progress (separate commit) |
 | Operator / COO | Investor, board, fellow founder | [public/resume.html](../../public/resume.html) (existing) | `/` and `/projects` (existing) | Pre-existing — predates this workflow |
 
 ## Lessons earned in the dev-CV run

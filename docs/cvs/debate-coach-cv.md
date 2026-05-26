@@ -1,7 +1,8 @@
 # Angus Hally — Debate Coach CV (research stub)
 
-> **Status:** Phase 1 frame partial; Phase 2 blocked pending material confirmation from Angus.
-> See [docs/guides/persona-page-workflow.md](../guides/persona-page-workflow.md).
+> **Workflow status (2026-05-26):** ✅ Frame · ⛔ Research BLOCKED · ⛔ Curate · ⛔ Render · ⛔ Propagate. See [persona-page-workflow.md](../guides/persona-page-workflow.md).
+>
+> Holding pattern. Angus needs to confirm the actual experience base (see "Phase 2" below). I intentionally did not render a `/debate` route in this build pass because fabricating coaching credentials would be worse than not shipping the page.
 
 ## Phase 1 — Frame
 
