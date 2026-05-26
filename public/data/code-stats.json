@@ -1,0 +1,172 @@
+{
+  "generatedAt": "2026-05-26T20:53:53.279Z",
+  "headline": {
+    "totalLinesAdded": 1118666,
+    "totalLinesDeleted": 347704,
+    "netLines": 770962,
+    "totalLinesAddedRaw": 18245385,
+    "totalLinesDeletedRaw": 16922283,
+    "totalCommits": 2391,
+    "reposContributedTo": 44
+  },
+  "activity": {
+    "totalActiveDays": 259,
+    "longestStreakDays": 16,
+    "bestDay": {
+      "date": "2026-03-30",
+      "commits": 96
+    },
+    "firstDay": "2023-06-11",
+    "lastDay": "2026-05-26"
+  },
+  "repoMeta": {
+    "total": 62,
+    "public": 27,
+    "private": 35
+  },
+  "languagesRanked": [
+    {
+      "name": "TypeScript",
+      "bytes": 21238860,
+      "pct": 0.7483964639399424
+    },
+    {
+      "name": "JavaScript",
+      "bytes": 1817338,
+      "pct": 0.0640377747668042
+    },
+    {
+      "name": "Python",
+      "bytes": 1756945,
+      "pct": 0.06190969879442503
+    },
+    {
+      "name": "Go",
+      "bytes": 1356377,
+      "pct": 0.04779483223532088
+    },
+    {
+      "name": "HTML",
+      "bytes": 1098729,
+      "pct": 0.038716056249171044
+    },
+    {
+      "name": "CSS",
+      "bytes": 485692,
+      "pct": 0.01711439198544171
+    },
+    {
+      "name": "MDX",
+      "bytes": 339488,
+      "pct": 0.01196258267863921
+    },
+    {
+      "name": "PLpgSQL",
+      "bytes": 209117,
+      "pct": 0.0073686828459591965
+    },
+    {
+      "name": "Shell",
+      "bytes": 46012,
+      "pct": 0.00162133081054278
+    },
+    {
+      "name": "EJS",
+      "bytes": 15206,
+      "pct": 0.000535815793817124
+    }
+  ],
+  "fun": {
+    "firstCommit": {
+      "date": "2023-06-11T22:10:04+01:00",
+      "repo": "anguspersonal/first-website",
+      "subject": "Initial commit",
+      "hash": "589dc7a9c1eabe8e6171639727e055ea819adb14"
+    },
+    "lastCommit": {
+      "date": "2026-05-26T20:59:19+01:00",
+      "repo": "asklina/HeyLinaWebApp_v2.0",
+      "subject": "Release: dev → main (68 commits) (#31)",
+      "hash": "3250535549f2b10f4b7d9e81a18b944ef185e75c"
+    },
+    "peakHourUTC": 17,
+    "peakWeekday": 1,
+    "avgLinesPerCommit": 468,
+    "busiestMonth": [
+      "2026-01",
+      712
+    ]
+  },
+  "topRepos": [
+    {
+      "repo": "anguspersonal/knowledgeMgmtSystemOct2025",
+      "additions": 254476,
+      "commits": 281,
+      "primaryLanguage": "TypeScript",
+      "isPrivate": false
+    },
+    {
+      "repo": "asklina/HeyLinaWebApp_v2.0",
+      "additions": 143754,
+      "commits": 285,
+      "primaryLanguage": "TypeScript",
+      "isPrivate": true
+    },
+    {
+      "repo": "anguspersonal/angushallyapp",
+      "additions": 122145,
+      "commits": 454,
+      "primaryLanguage": "TypeScript",
+      "isPrivate": false
+    },
+    {
+      "repo": "asklina/investor-room",
+      "additions": 88682,
+      "commits": 350,
+      "primaryLanguage": "TypeScript",
+      "isPrivate": true
+    },
+    {
+      "repo": "asklina/lina-lab",
+      "additions": 81564,
+      "commits": 162,
+      "primaryLanguage": "Python",
+      "isPrivate": true
+    },
+    {
+      "repo": "anguspersonal/akilii-archive",
+      "additions": 75016,
+      "commits": 1,
+      "primaryLanguage": "TypeScript",
+      "isPrivate": true
+    },
+    {
+      "repo": "anguspersonal/HeyLinaAlt--deprecated",
+      "additions": 41071,
+      "commits": 15,
+      "primaryLanguage": "TypeScript",
+      "isPrivate": true
+    },
+    {
+      "repo": "anguspersonal/HeyLinaAltV2",
+      "additions": 39807,
+      "commits": 22,
+      "primaryLanguage": "TypeScript",
+      "isPrivate": true
+    },
+    {
+      "repo": "asklina/hl-landing-page",
+      "additions": 35862,
+      "commits": 142,
+      "primaryLanguage": "TypeScript",
+      "isPrivate": true
+    },
+    {
+      "repo": "anguspersonal/signal-board",
+      "additions": 29477,
+      "commits": 98,
+      "primaryLanguage": "TypeScript",
+      "isPrivate": true
+    }
+  ]
+}
