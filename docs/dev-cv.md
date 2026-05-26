@@ -12,6 +12,8 @@ Co-founder and COO who ships code. Over the last two years I've built the Python
 
 I work fluently with AI-augmented tooling (Claude Code, Cursor) and treat code as a first-class operating function rather than something to delegate.
 
+**By the numbers** — ~1.12M lines added across 44 repos in 2,391 commits, 259 active days over ~3 years. ~75% TypeScript; Python (Lina Lab) and Go (a `github-mcp-server` fork) are the next largest slices. Computed locally via `git log --numstat` and refreshed by [scripts/fetch-code-stats.mjs](../scripts/fetch-code-stats.mjs); live counter on the [/cv](https://angushally.com/cv) page.
+
 ---
 
 ## Selected projects
@@ -137,6 +139,7 @@ Two-year leadership-development placement teaching GCSE and A-Level maths. To th
 
 ## Follow-ups (not part of the CV — internal notes)
 
+- ✅ **Code-stats wired into [/cv](https://angushally.com/cv).** A "By the numbers" section now sits above Technical Expertise on the live page, hot-loading the slim metrics from [src/data/code-stats.json](../src/data/code-stats.json) (bundled copy) and [public/data/code-stats.json](../public/data/code-stats.json) (still published for any external/widget use). The fetch script writes to both. Re-run with `npm run stats:refresh` whenever the headline number is stale.
 - **Mirror this content into the site chatbot's knowledge bundle.** The Angus Hally agent context is built from [docs/chatbot-knowledge/](chatbot-knowledge/) by [scripts/build-chat-knowledge.mjs](../scripts/build-chat-knowledge.mjs) on `prebuild`. To answer "does he know X?" questions the same way this CV does, propagate:
   - The five project blurbs above (HeyLina, AHKMS, angushallyapp, Nexus, LLM Council) — either fold into the existing `cv.md` / `heylina.md` / `projects-index.md`, or add new `project-ahkms.md`, `project-nexus.md`, `project-llm-council.md` files.
   - The full **Broader tooling** drop-down — likely as a new `tooling.md` in `chatbot-knowledge/`, so the agent can answer "is Angus comfortable with Notion / Zapier / PowerBI / etc.?" without guessing.
