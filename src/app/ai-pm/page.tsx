@@ -256,11 +256,15 @@ const AiPmPersonaPage = () => {
                     <Paper p="md" radius="md" withBorder>
                         <Group gap="sm">
                             <Text fz="sm" c="dimmed">Other lenses on the same work:</Text>
+                            <Anchor component={Link} href="/personas" size="sm">All lenses</Anchor>
+                            <Text c="dimmed">·</Text>
                             <Anchor component={Link} href="/dev" size="sm">Developer</Anchor>
                             <Text c="dimmed">·</Text>
                             <Anchor component={Link} href="/strategist" size="sm">Data strategist</Anchor>
                             <Text c="dimmed">·</Text>
                             <Anchor component={Link} href="/harness" size="sm">Harness engineer</Anchor>
+                            <Text c="dimmed">·</Text>
+                            <Anchor component={Link} href="/debate" size="sm">Debate coach</Anchor>
                             <Text c="dimmed">·</Text>
                             <Anchor href="/resume.pdf" target="_blank" rel="noopener noreferrer" size="sm">Operator resume (PDF)</Anchor>
                         </Group>

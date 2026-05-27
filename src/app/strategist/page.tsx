@@ -253,11 +253,15 @@ const StrategistPersonaPage = () => {
                     <Paper p="md" radius="md" withBorder>
                         <Group gap="sm">
                             <Text fz="sm" c="dimmed">Other lenses on the same work:</Text>
+                            <Anchor component={Link} href="/personas" size="sm">All lenses</Anchor>
+                            <Text c="dimmed">·</Text>
                             <Anchor component={Link} href="/dev" size="sm">Developer</Anchor>
                             <Text c="dimmed">·</Text>
                             <Anchor component={Link} href="/ai-pm" size="sm">AI product manager</Anchor>
                             <Text c="dimmed">·</Text>
                             <Anchor component={Link} href="/teacher" size="sm">Maths teacher</Anchor>
+                            <Text c="dimmed">·</Text>
+                            <Anchor component={Link} href="/debate" size="sm">Debate coach</Anchor>
                             <Text c="dimmed">·</Text>
                             <Anchor href="/resume.pdf" target="_blank" rel="noopener noreferrer" size="sm">Operator resume (PDF)</Anchor>
                         </Group>

@@ -26,6 +26,7 @@ import {
     IconSchool,
     IconSparkles,
     IconTerminal2,
+    IconTrophy,
     IconArrowRight,
     IconDownload,
 } from '@tabler/icons-react';
@@ -81,6 +82,15 @@ const personas = [
         question: '“Can he build the runtime around the LLM?”',
         icon: <IconTerminal2 size={28} />,
         color: 'dark' as Color,
+    },
+    {
+        href: '/debate',
+        label: 'Debate Coach',
+        tagline: 'Competed at the World University Debating Championships. Founded a school’s first debate program.',
+        audience: 'Schools wanting a coach · debate-competition judges · executives wanting structured-argument coaching',
+        question: '“Can he take my students to nationals?”',
+        icon: <IconTrophy size={28} />,
+        color: 'primary' as Color,
     },
 ];
 

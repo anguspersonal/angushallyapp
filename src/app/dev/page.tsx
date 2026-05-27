@@ -370,13 +370,15 @@ const DevPersonaPage = () => {
                             TypeScript-strict everywhere · conventional commits · Husky + lint-staged + Prettier (with Tailwind plugin) gating pushes · monorepo workspaces (pnpm, Turborepo) when more than one runtime surface earns it · ADR-style decision notes when a design choice is load-bearing · two-tier branching (feature → dev → main) on HeyLina, single-trunk on smaller repos · AI-augmented authoring (Claude Code, Cursor) treated as a tool, not a substitute for understanding.
                         </Text>
                         <Group gap="sm" mt="md">
-                            <Anchor component={Link} href="/cv" size="sm">Side-projects gallery</Anchor>
+                            <Anchor component={Link} href="/personas" size="sm">All lenses</Anchor>
                             <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/ai-pm" size="sm">AI PM lens</Anchor>
+                            <Anchor component={Link} href="/ai-pm" size="sm">AI PM</Anchor>
                             <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/harness" size="sm">Harness engineer lens</Anchor>
+                            <Anchor component={Link} href="/harness" size="sm">Harness engineer</Anchor>
                             <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/strategist" size="sm">Data strategy lens</Anchor>
+                            <Anchor component={Link} href="/strategist" size="sm">Data strategist</Anchor>
+                            <Text c="dimmed">·</Text>
+                            <Anchor component={Link} href="/debate" size="sm">Debate coach</Anchor>
                             <Text c="dimmed">·</Text>
                             <Anchor href="/resume.pdf" target="_blank" rel="noopener noreferrer" size="sm">Operator resume (PDF)</Anchor>
                         </Group>
