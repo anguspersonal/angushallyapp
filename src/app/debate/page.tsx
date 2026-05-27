@@ -28,7 +28,7 @@ import {
     IconUsers,
     IconScale,
     IconClock,
-    IconHandshake,
+    IconHeart,
     IconBolt,
     IconChecklist,
     IconStars,
@@ -90,7 +90,7 @@ const lessons = [
         color: 'accent' as Color,
     },
     {
-        icon: <IconHandshake size={24} />,
+        icon: <IconHeart size={24} />,
         title: 'Adversarial respect',
         body: 'The team you beat in round 3 is the team you have a drink with at finals night. Disagreement is what debate is for; treating opponents as enemies is the amateur move.',
         color: 'success' as Color,
@@ -157,7 +157,7 @@ const DebatePersonaPage = () => {
                         >
                             Competed at the World University Debating Championships. Founded a school&rsquo;s first debate program.
                         </Title>
-                        <Text size="lg" maw={720} mx="auto" mt="md" c="dimmed">
+                        <Text size="lg" maw={720} mx="auto" mt="md" c="gray.6">
                             Two arcs of debate: three seasons on the LSE Debate Team (2013&ndash;2016) as member then General Secretary, culminating in WUDC Malaysia 2015 &mdash; then founded the Burnt Mill Academy debate program in Harlow during TeachFirst, taking the school to its first inter-school competitions.
                         </Text>
                     </Stack>
@@ -254,7 +254,7 @@ const DebatePersonaPage = () => {
                             {principles.map((p, i) => (
                                 <Group key={i} gap="sm" align="flex-start" wrap="nowrap">
                                     <Badge size="sm" variant="filled" color="success" style={{ flexShrink: 0, marginTop: 2 }}>{i + 1}</Badge>
-                                    <Text size="sm" c="dimmed">{p}</Text>
+                                    <Text size="sm" c="gray.6">{p}</Text>
                                 </Group>
                             ))}
                         </Stack>
@@ -268,13 +268,13 @@ const DebatePersonaPage = () => {
                             <ThemeIcon size={42} radius="md" color="primary" variant="light"><IconStars size={24} /></ThemeIcon>
                             <Title order={3}>Debate never stopped being useful</Title>
                         </Group>
-                        <Text size="sm" c="dimmed" mb="sm">
+                        <Text size="sm" c="gray.6" mb="sm">
                             <strong>Investor Q&A</strong> &mdash; adversarial scrutiny under pressure, in a board context. Same muscle as PoIs.
                         </Text>
-                        <Text size="sm" c="dimmed" mb="sm">
+                        <Text size="sm" c="gray.6" mb="sm">
                             <strong>Briefing clinical advisors</strong> &mdash; structured argument with cross-examination from domain experts.
                         </Text>
-                        <Text size="sm" c="dimmed">
+                        <Text size="sm" c="gray.6">
                             <strong>Cross-functional argument</strong> &mdash; taking the other side at full strength before committing to one. The single most under-priced cognitive skill in operating work.
                         </Text>
                     </Paper>

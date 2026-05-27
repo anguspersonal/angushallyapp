@@ -18,7 +18,6 @@ import {
     Group,
     Stack,
     useMantineTheme,
-    Box,
     Badge,
 } from '@mantine/core';
 import {
@@ -28,7 +27,7 @@ import {
     IconCalendar,
     IconScale,
     IconFlask,
-    IconLayers,
+    IconStack,
     IconRocket,
     IconNetwork,
     IconDeviceMobile,
@@ -62,7 +61,7 @@ const evalPillars = [
         color: 'secondary' as Color,
     },
     {
-        icon: <IconLayers size={28} />,
+        icon: <IconStack size={28} />,
         title: 'Multi-scope rubrics',
         body: 'Message-level, turn-level, conversation-level, variant-level. Different questions live at different scopes; conflating them is the "metric up, product feels worse" trap.',
         color: 'accent' as Color,
@@ -141,7 +140,7 @@ const AiPmPersonaPage = () => {
                         >
                             Product manager who builds the eval framework, not just the spec.
                         </Title>
-                        <Text size="lg" maw={720} mx="auto" mt="md" c="dimmed">
+                        <Text size="lg" maw={720} mx="auto" mt="md" c="gray.6">
                             Most AI products are run on vibes; this one isn&rsquo;t. Co-founder and COO at HeyLina shipping a longitudinal emotional-data product across mobile, backend, and an internal ops console — with a Python evaluation engine underneath that I personally architected and ship into.
                         </Text>
                     </Stack>
@@ -240,7 +239,7 @@ const AiPmPersonaPage = () => {
                             <ThemeIcon size={42} radius="md" color="success" variant="light"><IconRocket size={24} /></ThemeIcon>
                             <Title order={3}>Commercial & GTM</Title>
                         </Group>
-                        <Text size="sm" c="dimmed">
+                        <Text size="sm" c="gray.6">
                             Founded HeyLina with a clinical-emotional-data thesis; positioning had to thread a regulatory needle (longitudinal emotional data is adjacent to clinical without being a medical device). Pricing strategy informed by years of data-valuation work. Clinical advisor relationships run by me directly. Interim raise currently running. Stakeholder-as-translator (clinical advisors, investors, engineers) is the day job.
                         </Text>
                     </Paper>

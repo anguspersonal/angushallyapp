@@ -229,7 +229,7 @@ const DevPersonaPage = () => {
                         >
                             Builder with a strategist&rsquo;s instincts and an operator&rsquo;s discipline.
                         </Title>
-                        <Text size="lg" maw={720} mx="auto" mt="md" c="dimmed">
+                        <Text size="lg" maw={720} mx="auto" mt="md" c="gray.6">
                             Co-founder and COO who ships code. Over the last two years I&rsquo;ve built the Python evaluation engine that runs HeyLina&rsquo;s prompt iteration, a multi-platform AI knowledge-management system, a full-stack personal site, and the internal tooling and engineering process behind HeyLina&rsquo;s mobile product.
                         </Text>
                     </Stack>
@@ -365,7 +365,7 @@ const DevPersonaPage = () => {
                 >
                     <Paper shadow="sm" p="xl" radius="md" withBorder>
                         <Title order={3} mb="sm">Engineering practices</Title>
-                        <Text size="sm" c="dimmed">
+                        <Text size="sm" c="gray.6">
                             TypeScript-strict everywhere · conventional commits · Husky + lint-staged + Prettier (with Tailwind plugin) gating pushes · monorepo workspaces (pnpm, Turborepo) when more than one runtime surface earns it · ADR-style decision notes when a design choice is load-bearing · two-tier branching (feature → dev → main) on HeyLina, single-trunk on smaller repos · AI-augmented authoring (Claude Code, Cursor) treated as a tool, not a substitute for understanding.
                         </Text>
                     </Paper>

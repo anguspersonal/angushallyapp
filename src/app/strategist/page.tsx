@@ -26,7 +26,6 @@ import {
     IconChartBar,
     IconRuler,
     IconCoin,
-    IconBuildingBank,
     IconCar,
     IconShield,
     IconBuilding,
@@ -147,10 +146,10 @@ const StrategistPersonaPage = () => {
                                 >
                                     Data valuation that survives contact with engineering reality.
                                 </Title>
-                                <Text size="lg" mt="md" c="dimmed">
+                                <Text size="lg" mt="md" c="gray.6">
                                     Three years at Anmut leading data-valuation and data-maturity engagements helping enterprise clients price what their data is actually worth. Four years at Accenture before that on digital transformation across UK public sector and pricing / GDPR work in telecoms and insurance.
                                 </Text>
-                                <Text size="sm" mt="md" c="dimmed">
+                                <Text size="sm" mt="md" c="gray.6">
                                     Distinct from <em>strategist-who-deck-builds-and-exits</em>: every recommendation has been pressure-tested by someone (often me) shipping the system downstream of it.
                                 </Text>
                             </Stack>
@@ -230,7 +229,7 @@ const StrategistPersonaPage = () => {
                 <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }}>
                     <Paper shadow="sm" p="xl" radius="md" withBorder>
                         <Title order={3} mb="xs">Strategy is more durable when the strategist can also stand up the system downstream of it.</Title>
-                        <Text size="sm" c="dimmed">
+                        <Text size="sm" c="gray.6">
                             Unusually for a strategist, I can read schemas, evaluate platform decisions, and ship the prototype that proves the strategy.
                         </Text>
                     </Paper>
