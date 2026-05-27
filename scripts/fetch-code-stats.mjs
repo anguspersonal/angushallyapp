@@ -102,6 +102,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
 const OUT_PATH = resolve(REPO_ROOT, 'docs', 'code-stats.json');
 const PUBLIC_PATH = resolve(REPO_ROOT, 'public', 'data', 'code-stats.json');
+// Bundled copy so the /cv page can `import` it (App Router can't bundle from public/).
+const SRC_DATA_PATH = resolve(REPO_ROOT, 'src', 'data', 'code-stats.json');
 const CACHE_DIR = join(tmpdir(), 'angushally-code-stats');
 
 const args = process.argv.slice(2);
@@ -529,12 +531,16 @@ async function main() {
       isPrivate: r.isPrivate,
     })),
   };
+  const slimJson = JSON.stringify(publicSlim, null, 2);
   mkdirSync(dirname(OUT_PATH), { recursive: true });
   writeFileSync(OUT_PATH, JSON.stringify(result, null, 2));
   mkdirSync(dirname(PUBLIC_PATH), { recursive: true });
-  writeFileSync(PUBLIC_PATH, JSON.stringify(publicSlim, null, 2));
+  writeFileSync(PUBLIC_PATH, slimJson);
+  mkdirSync(dirname(SRC_DATA_PATH), { recursive: true });
+  writeFileSync(SRC_DATA_PATH, slimJson);
   console.error(`wrote ${OUT_PATH}`);
   console.error(`wrote ${PUBLIC_PATH}`);
+  console.error(`wrote ${SRC_DATA_PATH}`);
 
   if (PRINT) {
     console.log(JSON.stringify({
