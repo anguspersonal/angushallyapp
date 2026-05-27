@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * `/personas` — hub page linking to the five rendered persona lenses.
+ * `/personas` — hub page linking to the six rendered persona lenses.
  *
  * Each persona is a curated render of a research doc under docs/cvs/.
  * See docs/guides/persona-page-workflow.md for the methodology.
@@ -125,7 +125,7 @@ const PersonasHubPage = () => {
                                 lineHeight: 1.1,
                             }}
                         >
-                            Five lenses on the same career.
+                            Six lenses on the same career.
                         </Title>
                         <Text size="lg" maw={680} mx="auto" c="gray">
                             A decade of work doesn&rsquo;t fit on one CV. Each page below frames the same career through one audience&rsquo;s question. The work is unchanged; the emphasis is curated.
