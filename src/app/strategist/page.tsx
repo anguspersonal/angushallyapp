@@ -21,7 +21,6 @@ import {
     useMantineTheme,
     Box,
     Badge,
-    Anchor,
 } from '@mantine/core';
 import {
     IconChartBar,
@@ -31,11 +30,9 @@ import {
     IconCar,
     IconShield,
     IconBuilding,
-    IconArrowRight,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import Link from 'next/link';
 import NextImage from 'next/image';
 import { Section } from '@/components/layout';
 
@@ -232,39 +229,10 @@ const StrategistPersonaPage = () => {
                 {/* ---------- Engineering bridge ---------- */}
                 <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }}>
                     <Paper shadow="sm" p="xl" radius="md" withBorder>
-                        <Group justify="space-between" align="center" wrap="wrap">
-                            <Stack gap={4} style={{ flex: 1, minWidth: 280 }}>
-                                <Title order={3}>Strategy is more durable when the strategist can also stand up the system downstream of it.</Title>
-                                <Text size="sm" c="dimmed">
-                                    Unusually for a strategist, I can read schemas, evaluate platform decisions, and ship the prototype that proves the strategy. 1.12M lines of code across 44 repos backs this up.
-                                </Text>
-                            </Stack>
-                            <Anchor component={Link} href="/dev" size="sm">
-                                <Group gap={6}>
-                                    See the engineering lens <IconArrowRight size={16} />
-                                </Group>
-                            </Anchor>
-                        </Group>
-                    </Paper>
-                </motion.div>
-
-                {/* ---------- Cross-links ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }}>
-                    <Paper p="md" radius="md" withBorder>
-                        <Group gap="sm">
-                            <Text fz="sm" c="dimmed">Other lenses on the same work:</Text>
-                            <Anchor component={Link} href="/personas" size="sm">All lenses</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/dev" size="sm">Developer</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/ai-pm" size="sm">AI product manager</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/teacher" size="sm">Maths teacher</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/debate" size="sm">Debate coach</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor href="/resume.pdf" target="_blank" rel="noopener noreferrer" size="sm">Operator resume (PDF)</Anchor>
-                        </Group>
+                        <Title order={3} mb="xs">Strategy is more durable when the strategist can also stand up the system downstream of it.</Title>
+                        <Text size="sm" c="dimmed">
+                            Unusually for a strategist, I can read schemas, evaluate platform decisions, and ship the prototype that proves the strategy.
+                        </Text>
                     </Paper>
                 </motion.div>
             </Stack>

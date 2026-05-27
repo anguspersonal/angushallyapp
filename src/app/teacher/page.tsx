@@ -22,7 +22,6 @@ import {
     useMantineTheme,
     Box,
     Badge,
-    Anchor,
 } from '@mantine/core';
 import {
     IconSchool,
@@ -31,12 +30,10 @@ import {
     IconHeart,
     IconRoute,
     IconHourglass,
-    IconArrowRight,
     IconUsers,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import Link from 'next/link';
 import NextImage from 'next/image';
 import { Section } from '@/components/layout';
 
@@ -216,39 +213,10 @@ const TeacherPersonaPage = () => {
                 {/* ---------- Continuing relevance ---------- */}
                 <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }}>
                     <Paper shadow="sm" p="xl" radius="md" withBorder>
-                        <Group justify="space-between" align="center" wrap="wrap">
-                            <Stack gap={4} style={{ flex: 1, minWidth: 280 }}>
-                                <Title order={4}>Teaching never stopped.</Title>
-                                <Text size="sm" c="dimmed">
-                                    At HeyLina I currently brief, mentor, and teach across a non-technical co-founder, a mobile engineer, clinical advisors, and investors. The teaching skill stayed live.
-                                </Text>
-                            </Stack>
-                            <Anchor component={Link} href="/ai-pm" size="sm">
-                                <Group gap={6}>
-                                    See the operator-PM lens <IconArrowRight size={16} />
-                                </Group>
-                            </Anchor>
-                        </Group>
-                    </Paper>
-                </motion.div>
-
-                {/* ---------- Cross-links ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.8 }}>
-                    <Paper p="md" radius="md" withBorder>
-                        <Group gap="sm">
-                            <Text fz="sm" c="dimmed">Other lenses:</Text>
-                            <Anchor component={Link} href="/personas" size="sm">All lenses</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/debate" size="sm">Debate coach</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/dev" size="sm">Developer</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/strategist" size="sm">Data strategist</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/ai-pm" size="sm">AI product manager</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor href="/resume.pdf" target="_blank" rel="noopener noreferrer" size="sm">Operator resume (PDF)</Anchor>
-                        </Group>
+                        <Title order={4} mb="xs">Teaching never stopped.</Title>
+                        <Text size="sm" c="dimmed">
+                            I currently brief, mentor, and teach across a non-technical co-founder, a mobile engineer, clinical advisors, and investors. The teaching skill stayed live.
+                        </Text>
                     </Paper>
                 </motion.div>
             </Stack>

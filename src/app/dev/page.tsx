@@ -38,7 +38,6 @@ import {
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import Link from 'next/link';
 import { Section } from '@/components/layout';
 import statsData from '@/data/code-stats.json';
 
@@ -358,7 +357,7 @@ const DevPersonaPage = () => {
                     </Paper>
                 </motion.div>
 
-                {/* ---------- Practices + links ---------- */}
+                {/* ---------- Engineering practices ---------- */}
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -366,22 +365,9 @@ const DevPersonaPage = () => {
                 >
                     <Paper shadow="sm" p="xl" radius="md" withBorder>
                         <Title order={3} mb="sm">Engineering practices</Title>
-                        <Text size="sm" c="dimmed" mb="md">
+                        <Text size="sm" c="dimmed">
                             TypeScript-strict everywhere · conventional commits · Husky + lint-staged + Prettier (with Tailwind plugin) gating pushes · monorepo workspaces (pnpm, Turborepo) when more than one runtime surface earns it · ADR-style decision notes when a design choice is load-bearing · two-tier branching (feature → dev → main) on HeyLina, single-trunk on smaller repos · AI-augmented authoring (Claude Code, Cursor) treated as a tool, not a substitute for understanding.
                         </Text>
-                        <Group gap="sm" mt="md">
-                            <Anchor component={Link} href="/personas" size="sm">All lenses</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/ai-pm" size="sm">AI PM</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/harness" size="sm">Harness engineer</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/strategist" size="sm">Data strategist</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/debate" size="sm">Debate coach</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor href="/resume.pdf" target="_blank" rel="noopener noreferrer" size="sm">Operator resume (PDF)</Anchor>
-                        </Group>
                     </Paper>
                 </motion.div>
             </Stack>

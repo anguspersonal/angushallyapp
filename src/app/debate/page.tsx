@@ -20,7 +20,6 @@ import {
     Stack,
     useMantineTheme,
     Badge,
-    Anchor,
 } from '@mantine/core';
 import {
     IconTrophy,
@@ -31,13 +30,11 @@ import {
     IconClock,
     IconHandshake,
     IconBolt,
-    IconArrowRight,
     IconChecklist,
     IconStars,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import Link from 'next/link';
 import { Section } from '@/components/layout';
 
 type Color = 'primary' | 'secondary' | 'accent' | 'success' | 'dark';
@@ -119,7 +116,7 @@ const arcs = [
     {
         title: 'Coach',
         sub: 'Burnt Mill Academy · Harlow · 2016–2018',
-        body: 'Founded the school\'s debate program during the TeachFirst placement — no prior infrastructure. Took Burnt Mill to **its first inter-school debate competitions**, the school\'s debut on the competitive schools\' circuit. Coaching context: a non-selective state secondary; students starting from scratch in both format knowledge and the confidence to argue in front of strangers. See `/teacher` for the broader teaching placement.',
+        body: 'Founded the school\'s debate program during a two-year TeachFirst placement at Burnt Mill Academy — no prior infrastructure. Took Burnt Mill to **its first inter-school debate competitions**, the school\'s debut on the competitive schools\' circuit. Coaching context: a non-selective state secondary; students starting from scratch in both format knowledge and the confidence to argue in front of strangers.',
         color: 'accent' as Color,
         icon: <IconSchool size={28} />,
     },
@@ -272,36 +269,14 @@ const DebatePersonaPage = () => {
                             <Title order={3}>Debate never stopped being useful</Title>
                         </Group>
                         <Text size="sm" c="dimmed" mb="sm">
-                            <strong>HeyLina investor Q&A</strong> &mdash; adversarial scrutiny under pressure, in a board context. Same muscle as PoIs.
+                            <strong>Investor Q&A</strong> &mdash; adversarial scrutiny under pressure, in a board context. Same muscle as PoIs.
                         </Text>
                         <Text size="sm" c="dimmed" mb="sm">
                             <strong>Briefing clinical advisors</strong> &mdash; structured argument with cross-examination from domain experts.
                         </Text>
                         <Text size="sm" c="dimmed">
-                            <strong>Engineering trade-offs</strong> &mdash; taking the other side of the argument at full strength before committing to one. The same muscle is in <Anchor component={Link} href="/harness">/spec-debate</Anchor>, the multi-agent skill that orchestrates a five-agent debate against a rubric.
+                            <strong>Cross-functional argument</strong> &mdash; taking the other side at full strength before committing to one. The single most under-priced cognitive skill in operating work.
                         </Text>
-                    </Paper>
-                </motion.div>
-
-                {/* ---------- Cross-links ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.8 }}>
-                    <Paper p="md" radius="md" withBorder>
-                        <Group gap="sm">
-                            <Text fz="sm" c="dimmed">Other lenses:</Text>
-                            <Anchor component={Link} href="/teacher" size="sm">Maths teacher</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/dev" size="sm">Developer</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/strategist" size="sm">Data strategist</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/ai-pm" size="sm">AI product manager</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/harness" size="sm">Harness engineer</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/personas" size="sm">All lenses</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor href="/resume.pdf" target="_blank" rel="noopener noreferrer" size="sm">Operator resume (PDF)</Anchor>
-                        </Group>
                     </Paper>
                 </motion.div>
             </Stack>

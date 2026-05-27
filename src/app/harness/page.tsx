@@ -20,8 +20,6 @@ import {
     Stack,
     useMantineTheme,
     Box,
-    Badge,
-    Anchor,
     Accordion,
     Code,
 } from '@mantine/core';
@@ -34,15 +32,12 @@ import {
     IconCode,
     IconSettings,
     IconNetwork,
-    IconArrowRight,
-    IconBrandGithub,
     IconFileText,
     IconHammer,
     IconMessageDots,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import Link from 'next/link';
 import { Section } from '@/components/layout';
 
 type Color = 'primary' | 'secondary' | 'accent' | 'success' | 'dark';
@@ -285,37 +280,9 @@ const HarnessPersonaPage = () => {
                                 <strong>MCP server choices</strong> — Notion (multiple workspaces), Slack, Gmail (forked from <Code>gongrzhe</Code>), Supabase, Vercel, computer-use (native Windows control), Claude-in-Chrome (browser DOM), PostHog, Composio (auth broker), Dex (CRM). Each MCP has a job.
                             </Text>
                             <Text size="sm" c="dimmed">
-                                <strong>AI co-author footprint at scale</strong> — <Code>Co-Authored-By: Claude Opus 4.7</Code> on most recent commits. 2,391 commits, 1.12M lines added across 44 repos. See <Anchor component={Link} href="/dev">/dev</Anchor>.
+                                <strong>AI co-author footprint at scale</strong> — <Code>Co-Authored-By: Claude Opus 4.7</Code> on most recent commits. 2,391 commits, 1.12M lines added across 44 repos.
                             </Text>
                         </Stack>
-                    </Paper>
-                </motion.div>
-
-                {/* ---------- Cross-links ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }}>
-                    <Paper p="md" radius="md" withBorder>
-                        <Group gap="sm">
-                            <Text fz="sm" c="dimmed">Other lenses:</Text>
-                            <Anchor component={Link} href="/personas" size="sm">All lenses</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/dev" size="sm">Developer</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/ai-pm" size="sm">AI product manager</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/strategist" size="sm">Data strategist</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/teacher" size="sm">Maths teacher</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/debate" size="sm">Debate coach</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor href="https://github.com/angushally" target="_blank" rel="noopener noreferrer" size="sm">
-                                <Group gap={4}>
-                                    <IconBrandGithub size={14} />
-                                    <span>GitHub</span>
-                                    <IconArrowRight size={12} />
-                                </Group>
-                            </Anchor>
-                        </Group>
                     </Paper>
                 </motion.div>
             </Stack>

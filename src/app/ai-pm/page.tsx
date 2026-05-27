@@ -20,7 +20,6 @@ import {
     useMantineTheme,
     Box,
     Badge,
-    Anchor,
 } from '@mantine/core';
 import {
     IconCode,
@@ -38,7 +37,6 @@ import {
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import Link from 'next/link';
 import { Section } from '@/components/layout';
 import statsData from '@/data/code-stats.json';
 
@@ -232,9 +230,6 @@ const AiPmPersonaPage = () => {
                                 </Grid.Col>
                             ))}
                         </Grid>
-                        <Text ta="center" mt="xl" fz="xs" style={{ color: theme.colors.gray[6] }}>
-                            Detail at <Anchor component={Link} href="/dev" style={{ color: theme.colors.gray[3] }}>/dev</Anchor>.
-                        </Text>
                     </Paper>
                 </motion.div>
 
@@ -246,28 +241,8 @@ const AiPmPersonaPage = () => {
                             <Title order={3}>Commercial & GTM</Title>
                         </Group>
                         <Text size="sm" c="dimmed">
-                            Founded HeyLina with a clinical-emotional-data thesis; positioning had to thread a regulatory needle (longitudinal emotional data is adjacent to clinical without being a medical device). Pricing strategy informed by the Anmut data-valuation background (see <Anchor component={Link} href="/strategist">/strategist</Anchor>). Clinical advisor relationships run by me directly. Interim raise currently running. Stakeholder-as-translator (clinical advisors, investors, engineers) is the day job.
+                            Founded HeyLina with a clinical-emotional-data thesis; positioning had to thread a regulatory needle (longitudinal emotional data is adjacent to clinical without being a medical device). Pricing strategy informed by years of data-valuation work. Clinical advisor relationships run by me directly. Interim raise currently running. Stakeholder-as-translator (clinical advisors, investors, engineers) is the day job.
                         </Text>
-                    </Paper>
-                </motion.div>
-
-                {/* ---------- Cross-links ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }}>
-                    <Paper p="md" radius="md" withBorder>
-                        <Group gap="sm">
-                            <Text fz="sm" c="dimmed">Other lenses on the same work:</Text>
-                            <Anchor component={Link} href="/personas" size="sm">All lenses</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/dev" size="sm">Developer</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/strategist" size="sm">Data strategist</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/harness" size="sm">Harness engineer</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor component={Link} href="/debate" size="sm">Debate coach</Anchor>
-                            <Text c="dimmed">·</Text>
-                            <Anchor href="/resume.pdf" target="_blank" rel="noopener noreferrer" size="sm">Operator resume (PDF)</Anchor>
-                        </Group>
                     </Paper>
                 </motion.div>
             </Stack>

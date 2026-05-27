@@ -91,3 +91,20 @@ Each persona page has matching downstream artefacts:
 - **Be candid about edge cases in writing.** Gmail-MCP-Server's `package.json` author wasn't Angus; ARA Copilot was v0.app-generated. The persona page is more credible *because* it labels these honestly than it would be hiding them.
 - **Numbers beat adjectives.** The code-stats wiring (1.12M lines, 2,391 commits, 259 active days) does more work in the Profile than any phrase like "production-grade" or "shipped-at-scale" ever would.
 - **The proudest piece often surfaces only on review.** Angus flagged Lina Lab as buried in Other after the first draft. Build in an explicit "what's missing or wrongly weighted?" review pass before declaring done.
+
+## v2 backlog (after v1 ships)
+
+v1 ships consistent visual treatment across all persona pages: same Mantine gradient `Paper` cards, same Framer Motion staggered-entry pattern, same overall composition (hero → headline cards → 2-up/3-up content → narrative card). This is intentional — v1 is about content and the *workflow* working end-to-end.
+
+v2 should differentiate each persona visually:
+
+- **Custom hero per persona.** `/teacher` already gestures at this with the photo hero; `/strategist` similarly with the JLR Data Fest image. `/dev`, `/ai-pm`, `/harness`, `/debate` could each get a distinct hero treatment (graph viz / eval-flow diagram / terminal mock / debate-floor metaphor).
+- **Custom components per persona.** A reusable `<PersonaHero>` and `<PersonaProjectCard>` could be extracted, then each persona overrides parts. The current pages are self-contained `page.tsx` files of ~250-350 lines each — refactor to shared components is a natural v2 move.
+- **Per-persona colour identity.** v1 reuses Mantine's `primary`/`secondary`/`accent`/`success`/`dark` semantic colors. v2 could give each persona a signature accent that carries through hero gradient + card highlights + button color.
+- **Discoverability:** the `/personas` hub is intentionally not in nav for v1 (the footer's "Work with me" column surfaces the individual lenses instead). v2 might add a nav surface or a homepage tile if the user research justifies it.
+
+Track v2 work as separate persona-specific PRs once content is settled.
+
+## Footer integration
+
+The footer's "Work with me" column lists each persona as a link (`src/components/Footer.tsx`). The `/personas` hub is **deliberately not linked from the UI** — it stays accessible by direct URL only. Each persona page is built to feel like "this is my main thing" rather than "one stop on a tour"; the cross-link bars between persona pages that existed in early drafts were removed for this reason.
