@@ -127,7 +127,7 @@ const PersonasHubPage = () => {
                         >
                             Five lenses on the same career.
                         </Title>
-                        <Text size="lg" maw={680} mx="auto" c="gray.6">
+                        <Text size="lg" maw={680} mx="auto" c="gray">
                             A decade of work doesn&rsquo;t fit on one CV. Each page below frames the same career through one audience&rsquo;s question. The work is unchanged; the emphasis is curated.
                         </Text>
                     </Stack>
@@ -180,9 +180,9 @@ const PersonasHubPage = () => {
                                 <Text fw={600}>The broader career arc — investor / board / founder framing — lives at the existing surfaces.</Text>
                                 <Group gap="sm" mt="xs">
                                     <Anchor component={Link} href="/" size="sm">Home</Anchor>
-                                    <Text c="gray.6">·</Text>
+                                    <Text c="gray">·</Text>
                                     <Anchor component={Link} href="/about" size="sm">About</Anchor>
-                                    <Text c="gray.6">·</Text>
+                                    <Text c="gray">·</Text>
                                     <Anchor component={Link} href="/projects" size="sm">Projects</Anchor>
                                 </Group>
                             </Stack>
@@ -198,7 +198,7 @@ const PersonasHubPage = () => {
 
                 {/* ---------- Methodology footnote ---------- */}
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.0 }}>
-                    <Text fz="xs" ta="center" c="gray.6" maw={680} mx="auto">
+                    <Text fz="xs" ta="center" c="gray" maw={680} mx="auto">
                         Each persona page is curated from a research markdown that intentionally over-collects. Method is documented in <code>docs/guides/persona-page-workflow.md</code> in the repo.
                     </Text>
                 </motion.div>

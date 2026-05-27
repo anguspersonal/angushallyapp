@@ -141,7 +141,7 @@ const HarnessPersonaPage = () => {
                         >
                             Code is ephemeral. The harness is leverage.
                         </Title>
-                        <Text size="lg" maw={720} mx="auto" mt="md" c="gray.6">
+                        <Text size="lg" maw={720} mx="auto" mt="md" c="gray">
                             I build the scaffolding <em>around</em> the LLM — slash-commands, agents, eval harnesses, MCP server choices, hook configuration — rather than the model itself. The footprint shows up in three places: custom Claude Code skills + agents I&rsquo;ve authored, Lina Lab (a production prompt-evaluation engine), and AHKMS (a webhook-driven AI orchestration pipeline).
                         </Text>
                     </Stack>
@@ -269,16 +269,16 @@ const HarnessPersonaPage = () => {
                             <Title order={3}>Harness configuration & ops</Title>
                         </Group>
                         <Stack gap="sm">
-                            <Text size="sm" c="gray.6">
+                            <Text size="sm" c="gray">
                                 <strong>dotclaude repo</strong> — versioned <Code>~/.claude/</Code> config: skills, agents, settings, hooks. Treated as a portfolio artefact, not a scratchpad.
                             </Text>
-                            <Text size="sm" c="gray.6">
+                            <Text size="sm" c="gray">
                                 <strong>Pre-push gates</strong> — <Code>.husky/pre-push</Code> runs typecheck + lint + test before push. Claude-Code hooks block destructive git commands (push, reset --hard, branch -D).
                             </Text>
-                            <Text size="sm" c="gray.6">
+                            <Text size="sm" c="gray">
                                 <strong>MCP server choices</strong> — Notion (multiple workspaces), Slack, Gmail (forked from <Code>gongrzhe</Code>), Supabase, Vercel, computer-use (native Windows control), Claude-in-Chrome (browser DOM), PostHog, Composio (auth broker), Dex (CRM). Each MCP has a job.
                             </Text>
-                            <Text size="sm" c="gray.6">
+                            <Text size="sm" c="gray">
                                 <strong>AI co-author footprint at scale</strong> — <Code>Co-Authored-By: Claude Opus 4.7</Code> on most recent commits. 2,391 commits, 1.12M lines added across 44 repos.
                             </Text>
                         </Stack>

@@ -157,7 +157,7 @@ const DebatePersonaPage = () => {
                         >
                             Competed at the World University Debating Championships. Founded a school&rsquo;s first debate program.
                         </Title>
-                        <Text size="lg" maw={720} mx="auto" mt="md" c="gray.6">
+                        <Text size="lg" maw={720} mx="auto" mt="md" c="gray">
                             Two arcs of debate: three seasons on the LSE Debate Team (2013&ndash;2016) as member then General Secretary, culminating in WUDC Malaysia 2015 &mdash; then founded the Burnt Mill Academy debate program in Harlow during TeachFirst, taking the school to its first inter-school competitions.
                         </Text>
                     </Stack>
@@ -254,7 +254,7 @@ const DebatePersonaPage = () => {
                             {principles.map((p, i) => (
                                 <Group key={i} gap="sm" align="flex-start" wrap="nowrap">
                                     <Badge size="sm" variant="filled" color="success" style={{ flexShrink: 0, marginTop: 2 }}>{i + 1}</Badge>
-                                    <Text size="sm" c="gray.6">{p}</Text>
+                                    <Text size="sm" c="gray">{p}</Text>
                                 </Group>
                             ))}
                         </Stack>
@@ -268,13 +268,13 @@ const DebatePersonaPage = () => {
                             <ThemeIcon size={42} radius="md" color="primary" variant="light"><IconStars size={24} /></ThemeIcon>
                             <Title order={3}>Debate never stopped being useful</Title>
                         </Group>
-                        <Text size="sm" c="gray.6" mb="sm">
+                        <Text size="sm" c="gray" mb="sm">
                             <strong>Investor Q&A</strong> &mdash; adversarial scrutiny under pressure, in a board context. Same muscle as PoIs.
                         </Text>
-                        <Text size="sm" c="gray.6" mb="sm">
+                        <Text size="sm" c="gray" mb="sm">
                             <strong>Briefing clinical advisors</strong> &mdash; structured argument with cross-examination from domain experts.
                         </Text>
-                        <Text size="sm" c="gray.6">
+                        <Text size="sm" c="gray">
                             <strong>Cross-functional argument</strong> &mdash; taking the other side at full strength before committing to one. The single most under-priced cognitive skill in operating work.
                         </Text>
                     </Paper>

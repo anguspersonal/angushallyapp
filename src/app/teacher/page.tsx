@@ -111,7 +111,7 @@ const TeacherPersonaPage = () => {
                                 >
                                     Two years teaching GCSE and A-Level maths in Harlow. The hardest thing I&rsquo;ve done.
                                 </Title>
-                                <Text size="lg" mt="md" c="gray.6">
+                                <Text size="lg" mt="md" c="gray">
                                     TeachFirst leadership-development placement at Burnt Mill Academy, 2016&ndash;2018. Where I learned to operate &mdash; the product-and-operator instinct, the willingness to teach, the comfort with being wrong in public all trace back to those two years.
                                 </Text>
                             </Stack>
@@ -137,10 +137,10 @@ const TeacherPersonaPage = () => {
                             <ThemeIcon size={48} radius="md" color="accent" variant="light"><IconSchool size={26} /></ThemeIcon>
                             <Stack gap={0}>
                                 <Title order={3}>Burnt Mill Academy &mdash; Harlow, Essex</Title>
-                                <Text fz="sm" c="gray.6">TeachFirst placement &middot; 2016&ndash;2018</Text>
+                                <Text fz="sm" c="gray">TeachFirst placement &middot; 2016&ndash;2018</Text>
                             </Stack>
                         </Group>
-                        <Text size="sm" c="gray.6" mb="md">
+                        <Text size="sm" c="gray" mb="md">
                             A large secondary school serving a mixed-intake catchment in Essex. Mathematics department; GCSE foundation and higher tier classes plus A-Level mathematics. TeachFirst recruits high-performing graduates into challenging schools on a two-year training programme that combines a PGCE with deep operational immersion in a single school.
                         </Text>
                         <Group gap={6}>
@@ -159,7 +159,7 @@ const TeacherPersonaPage = () => {
                             <ThemeIcon size={48} radius="md" color="gray" variant="light"><IconStethoscope size={26} /></ThemeIcon>
                             <Stack gap={4} style={{ flex: 1 }}>
                                 <Title order={4}>Cohort outcomes</Title>
-                                <Text fz="sm" c="gray.6">
+                                <Text fz="sm" c="gray">
                                     Class-level exam-result deltas pending. The honest version of this page leads with where students started in mock results vs where they finished at GCSE/A-Level &mdash; once Angus surfaces the data from his TeachFirst archive, this card upgrades.
                                 </Text>
                             </Stack>
@@ -203,7 +203,7 @@ const TeacherPersonaPage = () => {
                             {principles.map((p, i) => (
                                 <Group key={i} gap="sm" align="flex-start" wrap="nowrap">
                                     <Badge size="sm" variant="filled" color="accent" style={{ flexShrink: 0, marginTop: 2 }}>{i + 1}</Badge>
-                                    <Text size="sm" c="gray.6">{p}</Text>
+                                    <Text size="sm" c="gray">{p}</Text>
                                 </Group>
                             ))}
                         </Stack>
@@ -214,7 +214,7 @@ const TeacherPersonaPage = () => {
                 <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }}>
                     <Paper shadow="sm" p="xl" radius="md" withBorder>
                         <Title order={4} mb="xs">Teaching never stopped.</Title>
-                        <Text size="sm" c="gray.6">
+                        <Text size="sm" c="gray">
                             I currently brief, mentor, and teach across a non-technical co-founder, a mobile engineer, clinical advisors, and investors. The teaching skill stayed live.
                         </Text>
                     </Paper>
