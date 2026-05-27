@@ -25,12 +25,12 @@ import {
 } from '@mantine/core';
 import {
     IconChartBar,
-    IconRulerMeasure,
-    IconCurrencyPound,
+    IconRuler,
+    IconCoin,
     IconBuildingBank,
     IconCar,
     IconShield,
-    IconLandmark,
+    IconBuilding,
     IconArrowRight,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
@@ -48,7 +48,7 @@ const engagements = [
         body: 'Led engagements helping enterprise clients quantify the financial value of their data estate. Forces a chain from data → decision → revenue/cost impact rather than treating data as a balance-sheet abstraction. Outputs ranged from board-level valuations to asset-level prioritisation feeding platform investment.',
         tags: ['Data valuation', 'C-suite', 'P&L impact'],
         color: 'primary' as Color,
-        icon: <IconCurrencyPound size={24} />,
+        icon: <IconCoin size={24} />,
     },
     {
         title: 'JLR — client-side data strategy',
@@ -64,7 +64,7 @@ const engagements = [
         body: "Contributor on Grace, Anmut's data-maturity diagnostic. Scores an organisation across capability dimensions, produces a maturity baseline + improvement roadmap. Used in initial engagements to scope where the value-creation opportunity actually sits.",
         tags: ['Data maturity', 'Diagnostic', 'Roadmap'],
         color: 'accent' as Color,
-        icon: <IconRulerMeasure size={24} />,
+        icon: <IconRuler size={24} />,
     },
     {
         title: 'FTSE-100 sector data-value research',
@@ -88,7 +88,7 @@ const engagements = [
         body: 'Digital-transformation programmes across the Royal Navy, the Police, and the Courts & Tribunals Judiciary. Where I cut my teeth understanding how strategy actually contacts operations in legacy estates.',
         tags: ['Public sector', 'Royal Navy', 'Police', 'Courts'],
         color: 'primary' as Color,
-        icon: <IconLandmark size={24} />,
+        icon: <IconBuilding size={24} />,
     },
 ];
 

@@ -37,7 +37,7 @@ import {
     IconArrowRight,
     IconBrandGithub,
     IconFileText,
-    IconBuildingArch,
+    IconHammer,
     IconMessageDots,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
@@ -72,7 +72,7 @@ const skillBuckets = [
     {
         title: 'Engineering discipline',
         sub: 'SOLID, TDD, architecture, shipping',
-        icon: <IconBuildingArch size={26} />,
+        icon: <IconHammer size={26} />,
         color: 'accent' as Color,
         skills: ['/solid', '/architect-senior-engineer', '/improve-codebase-architecture', '/tdd', '/prototype', '/pragmatist'],
     },

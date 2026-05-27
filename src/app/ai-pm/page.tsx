@@ -29,12 +29,12 @@ import {
     IconCalendar,
     IconScale,
     IconFlask,
-    IconLayersIntersect,
+    IconLayers,
     IconRocket,
     IconNetwork,
     IconDeviceMobile,
     IconSparkles,
-    IconBuildingFactory,
+    IconBriefcase,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
@@ -64,7 +64,7 @@ const evalPillars = [
         color: 'secondary' as Color,
     },
     {
-        icon: <IconLayersIntersect size={28} />,
+        icon: <IconLayers size={28} />,
         title: 'Multi-scope rubrics',
         body: 'Message-level, turn-level, conversation-level, variant-level. Different questions live at different scopes; conflating them is the "metric up, product feels worse" trap.',
         color: 'accent' as Color,
@@ -104,7 +104,7 @@ const products = [
         body: 'Shipped four digital products in six months while leading agile teams. Secured £100k UKRI grant. Operator function end-to-end: product, sales, marketing, compliance, governance, content, ops, IP.',
         stack: ['Agile', 'UKRI grant', '4 products / 6 months'],
         color: 'accent' as Color,
-        icon: <IconBuildingFactory size={26} />,
+        icon: <IconBriefcase size={26} />,
     },
 ];
 
