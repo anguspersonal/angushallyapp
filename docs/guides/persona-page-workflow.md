@@ -81,7 +81,7 @@ Each persona page has matching downstream artefacts:
 | Maths teacher | School leadership, TeachFirst alumni, edtech | [docs/cvs/maths-teacher-cv.md](../cvs/maths-teacher-cv.md) | [`/teacher`](../../src/app/teacher/page.tsx) ✅ | Rendered; exam-result data gap flagged |
 | Debate coach | Schools / unis, debate societies | [docs/cvs/debate-coach-cv.md](../cvs/debate-coach-cv.md) | not rendered | ⛔ Blocked — needs material confirmation from Angus |
 | AI product manager | AI startups, model labs, AI-shaped PM roles | [docs/cvs/ai-product-manager-cv.md](../cvs/ai-product-manager-cv.md) | [`/ai-pm`](../../src/app/ai-pm/page.tsx) ✅ | Full workflow complete |
-| Harness engineer | Model labs, agent-tooling startups, MCP ecosystem | [docs/cvs/harness-engineer-cv.md](../cvs/harness-engineer-cv.md) | [`/harness`](../../src/app/harness/page.tsx) ✅ | Rendered (v1 from observable skills; background agent may refine) |
+| Harness engineer | Model labs, agent-tooling startups, MCP ecosystem | [docs/cvs/harness-engineer-cv.md](../cvs/harness-engineer-cv.md) | [`/harness`](../../src/app/harness/page.tsx) ✅ | Rendered (v2 — 36 skills verified by Explore agent; settings.json + agent files permission-denied so harness-config bucket partial) |
 | Operator / COO | Investor, board, fellow founder | [public/resume.html](../../public/resume.html) (existing) | `/` and `/projects` (existing) | Pre-existing — predates this workflow |
 
 ## Lessons earned in the dev-CV run

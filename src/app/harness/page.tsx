@@ -30,13 +30,15 @@ import {
     IconSparkles,
     IconRobot,
     IconCalendarStats,
-    IconBookmark,
-    IconMessage,
+    IconClipboardCheck,
     IconCode,
     IconSettings,
     IconNetwork,
     IconArrowRight,
     IconBrandGithub,
+    IconFileText,
+    IconBuildingArch,
+    IconMessageDots,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
@@ -47,32 +49,39 @@ type Color = 'primary' | 'secondary' | 'accent' | 'success' | 'dark';
 
 const skillBuckets = [
     {
-        title: 'Daily Operating System',
-        sub: 'Rituals for running HeyLina through Claude',
+        title: 'Daily OS & capture',
+        sub: 'Rituals + second-brain + conversation ergonomics',
         icon: <IconCalendarStats size={26} />,
         color: 'success' as Color,
-        skills: ['/dos-eod', '/dos-reflect', '/dos-inbox', '/dos-braindump', '/heylina-notion', '/heylina-pptx'],
+        skills: ['/dos-eod', '/dos-reflect', '/dos-inbox', '/dos-braindump', '/heylina-notion', '/heylina-pptx', '/capture', '/quick-capture', '/prep', '/whatsapp-blast', '/personal-style', '/handoff', '/route', '/explain', '/boss-mode'],
     },
     {
-        title: 'Capture & planning',
-        sub: 'Second-brain + day/meeting prep',
-        icon: <IconBookmark size={26} />,
+        title: 'Spec-driven development',
+        sub: '/spec-* pipeline from req → design → tasks → impl → verify',
+        icon: <IconFileText size={26} />,
         color: 'primary' as Color,
-        skills: ['/capture', '/prep', '/quick-capture', '/whatsapp-blast'],
+        skills: ['/spec-debate', '/spec-req', '/spec-design', '/spec-tasks', '/spec-impl', '/spec-verify', '/to-prd', '/to-issues'],
     },
     {
-        title: 'Conversation ergonomics',
-        sub: 'Make the assistant useful at the seam',
-        icon: <IconMessage size={26} />,
-        color: 'accent' as Color,
-        skills: ['/explain', '/handoff', '/route', '/low-brain-grill', '/boss-mode', '/personal-style'],
-    },
-    {
-        title: 'Dev tooling',
-        sub: 'PR review, repo hygiene, multi-agent debate',
-        icon: <IconCode size={26} />,
+        title: 'PR review, QA & repo hygiene',
+        sub: 'Code review, branch ops, repo cleanliness',
+        icon: <IconClipboardCheck size={26} />,
         color: 'secondary' as Color,
-        skills: ['/qa-review', '/address-review', '/review-and-comment', '/wrap', '/merge-prune', '/diagnose', '/spec-debate', '/grill-me', '/sync-dotclaude', '/git-guardrails-claude-code', '/setup-pre-commit', '/prototype', '/cloud-env'],
+        skills: ['/qa-review', '/address-review', '/review-and-comment', '/create-clean-tree', '/wrap', '/merge-prune', '/sync-dotclaude', '/git-guardrails-claude-code', '/setup-pre-commit', '/repo-organizer', '/archiver', '/cloud-env', '/setup-matt-pocock-skills'],
+    },
+    {
+        title: 'Engineering discipline',
+        sub: 'SOLID, TDD, architecture, shipping',
+        icon: <IconBuildingArch size={26} />,
+        color: 'accent' as Color,
+        skills: ['/solid', '/architect-senior-engineer', '/improve-codebase-architecture', '/tdd', '/prototype', '/pragmatist'],
+    },
+    {
+        title: 'Dialogue, diagnostics & content',
+        sub: 'Grill, fix, explain, edit',
+        icon: <IconMessageDots size={26} />,
+        color: 'dark' as Color,
+        skills: ['/diagnose', '/fix', '/fix-failing-tests', '/triage', '/grill-me', '/grill-with-docs', '/low-brain-grill', '/discuss', '/deep-thinking', '/zoom-out', '/voice-of-user', '/edit-article', '/caveman'],
     },
 ];
 
@@ -149,24 +158,24 @@ const HarnessPersonaPage = () => {
                     <Paper shadow="sm" p="xl" radius="md" style={{ background: gradient, color: theme.white }}>
                         <Title order={2} mb={4} ta="center" style={{ color: theme.white }}>Custom skills authored</Title>
                         <Text ta="center" mb="xl" maw={680} mx="auto" style={{ color: theme.colors.gray[4] }}>
-                            Each slash-command compresses a recurring workflow. Grouped by job.
+                            36 user-level skills in <Code style={{ background: theme.colors.dark[5], color: theme.colors.gray[2] }}>~/.claude/skills/</Code> plus plugin-namespaced HeyLina rituals. Each slash-command compresses a recurring workflow. Grouped by job.
                         </Text>
                         <motion.div variants={containerVariants} initial="hidden" animate="visible">
                             <Grid gutter="lg">
                                 {skillBuckets.map((bucket) => (
-                                    <Grid.Col key={bucket.title} span={{ base: 12, sm: 6, md: 3 }}>
+                                    <Grid.Col key={bucket.title} span={{ base: 12, sm: 6, md: 4 }}>
                                         <motion.div variants={itemVariants}>
                                             <Paper p="lg" radius="md" style={{ background: `linear-gradient(135deg, ${theme.colors[bucket.color][9]}, ${theme.colors[bucket.color][7]})`, color: theme.white, height: '100%' }}>
                                                 <ThemeIcon size={44} radius="md" color={bucket.color} variant="filled" mb="sm">{bucket.icon}</ThemeIcon>
                                                 <Title order={4} style={{ color: theme.white }} mb={4}>{bucket.title}</Title>
                                                 <Text fz="xs" mb="sm" style={{ color: theme.colors.gray[3] }}>{bucket.sub}</Text>
                                                 <Stack gap={2}>
-                                                    {bucket.skills.slice(0, 5).map((s) => (
+                                                    {bucket.skills.slice(0, 6).map((s) => (
                                                         <Text key={s} fz="xs" style={{ color: theme.colors.gray[2], fontFamily: mono }}>{s}</Text>
                                                     ))}
-                                                    {bucket.skills.length > 5 && (
+                                                    {bucket.skills.length > 6 && (
                                                         <Text fz="xs" fs="italic" style={{ color: theme.colors.gray[4] }}>
-                                                            + {bucket.skills.length - 5} more
+                                                            + {bucket.skills.length - 6} more
                                                         </Text>
                                                     )}
                                                 </Stack>

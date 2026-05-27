@@ -1,6 +1,6 @@
 # Angus Hally — Harness Engineer CV
 
-> **Workflow status (2026-05-26):** ✅ Frame · 🟡 Research (v1 from observable skills + workspace; background agent may refine) · ✅ Curate · ✅ Render at `/harness` · ✅ Propagate (chatbot-knowledge at `docs/chatbot-knowledge/harness.md`). See [persona-page-workflow.md](../guides/persona-page-workflow.md).
+> **Workflow status (2026-05-27):** ✅ Frame · ✅ Research (v2 — background Explore agent verified 36 skills in `~/.claude/skills/`; agent files + settings.json permission-denied so harness-config bucket remains partial) · ✅ Curate · ✅ Render at `/harness` · ✅ Propagate. See [persona-page-workflow.md](../guides/persona-page-workflow.md).
 >
 > "Harness engineer" = builds the scaffolding *around* an LLM (agent runtimes, MCP servers, skill systems, evaluation harnesses, prompt operations) rather than the model itself.
 
@@ -20,44 +20,72 @@ The differentiator vs. someone who "uses LLMs": the harness exists, is versioned
 
 ### Custom skills authored
 
-A library of Claude Code slash-commands written to compress recurring workflows. Each is a piece of LLM ergonomics around a specific job.
+A library of slash-commands compressing recurring workflows. 36 verified user-level skills in `~/.claude/skills/` (Explore-agent inventory, 2026-05-27), plus a parallel set of plugin-namespaced skills (`anthropic-skills:*`) including HeyLina-specific rituals. Grouped by job.
 
-**HeyLina Daily Operating System** — a multi-skill ritual layer for running HeyLina operations through Claude:
+**Daily Operating System & capture** *(plugin-namespaced; HeyLina-flavoured)*:
 - `/dos-eod` — end-of-day synthesis ritual
 - `/dos-reflect` — weekly reflection ritual
 - `/dos-inbox` — inbox capture
 - `/dos-braindump` — fast clear-the-head capture
 - `/heylina-notion` — Notion workspace integration
 - `/heylina-pptx` — HeyLina-branded deck generation
-
-**Personal capture & planning:**
-- `/capture` — second-brain capture (replaces `/qc`, `/dos-inbox` for broader use)
-- `/prep` — day or meeting prep
+- `/capture` — second-brain capture
 - `/quick-capture` (`/qc`) — fast Notion capture without breaking flow
+- `/prep` — day or meeting prep
 - `/whatsapp-blast` — backlog-WhatsApp triage with action routing
-
-**Conversation ergonomics:**
-- `/explain` — layered explanation of a dense output
+- `/personal-style` — load voice rules before drafting
 - `/handoff` — generate transfer artefact for a new Claude session
-- `/route` — calibrated check on whether the current Claude surface is the right one
-- `/low-brain-grill` — walk through a list of questions one at a time
-- `/boss-mode` — switch to Chair / NED persona for accountability sessions
-- `/personal-style` — load voice rules before drafting under Angus's name
+- `/route` — calibrated check on whether the current surface is right
+- `/explain` — layered explanation of a dense output
+- `/boss-mode` — Chair / NED persona for accountability sessions
 
-**Dev tooling:**
-- `/qa-review` — round-aware QA review of a PR
-- `/address-review` — companion to qa-review (action / push back / defer findings)
+**Spec-driven development**:
+- `/spec-debate` — five-agent debate (drafter → reviewer → defender → judge → implementer) scoring a spec against a rubric
+- `/spec-req` — generate a comprehensive requirements document
+- `/spec-design` — generate a standardised design document template
+- `/spec-tasks` — generate structured implementation task file from requirements + design
+- `/spec-impl` — complete implementation of specified tasks with quality checks
+- `/spec-verify` — confirm planned improvements are implemented and update task checkboxes
+- `/to-prd` — turn current context into a PRD on the project issue tracker
+- `/to-issues` — break a plan into independently-grabbable issues using tracer-bullet vertical slices
+
+**PR review, QA & repo hygiene**:
+- `/qa-review` — round-aware QA review of a PR (posts to GitHub with round marker)
+- `/address-review` — developer-side companion: triage findings, push, reply inline
 - `/review-and-comment` — review and post to PR
-- `/wrap` — end-of-session wrap-up
-- `/merge-prune` — merge + clean up branches end-to-end
-- `/diagnose` — disciplined diagnosis loop
-- `/spec-debate` — multi-agent spec validation
-- `/grill-me` / `/grill-with-docs` — stress-test a plan
-- `/sync-dotclaude` — sync personal config repo
-- `/git-guardrails-claude-code` — block destructive git commands
+- `/create-clean-tree` — semantic-batch commits across messy working tree
+- `/wrap` — end-of-session wrap-up + cheap QA gates + thematic commits
+- `/merge-prune` — end-to-end merge + branch cleanup + prune
+- `/sync-dotclaude` — sync ~/.claude/ ↔ dotclaude repo
+- `/git-guardrails-claude-code` — block destructive git commands via hooks
 - `/setup-pre-commit` — Husky + lint-staged setup
-- `/prototype` — throwaway prototype builder
+- `/repo-organizer` — repo cleanliness specialist
+- `/archiver` — feature-folder archiving
 - `/cloud-env` — configure a repo for cloud Claude Code
+- `/setup-matt-pocock-skills` — repo-aware agent-skills block in AGENTS.md / CLAUDE.md
+
+**Engineering discipline**:
+- `/solid` — SOLID principles, TDD, clean code transformation
+- `/architect-senior-engineer` — design / refactor with senior-eng discipline
+- `/improve-codebase-architecture` — find deepening opportunities informed by domain language + ADRs
+- `/tdd` — red-green-refactor loop
+- `/prototype` — throwaway prototype to flush out a design
+- `/pragmatist` — ship-focused scope cutter
+
+**Dialogue, diagnostics & content**:
+- `/diagnose` — reproduce → minimise → hypothesise → instrument → fix → regression-test
+- `/fix` — run and fix the most stale unit tests, typechecks, builds
+- `/fix-failing-tests` — systematic test-failure debug loop
+- `/triage` — issue triage through state machine
+- `/grill-me` — stress-test a plan through relentless interview
+- `/grill-with-docs` — grill + sharpen terminology against domain model
+- `/low-brain-grill` — walk through a list of questions one at a time
+- `/discuss` — conversational debate about a proposed feature
+- `/deep-thinking` — read, think, respond — no actions
+- `/zoom-out` — broader context / higher-level perspective
+- `/voice-of-user` — represents end-user against technical preferences
+- `/edit-article` — restructure + tighten article prose
+- `/caveman` — ultra-compressed communication mode (~75% token reduction)
 
 ### Custom agents
 

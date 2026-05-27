@@ -14,11 +14,12 @@ priority: normal
 
 **Three pieces of the footprint:**
 
-1. **Custom Claude Code skills authored** — 30+ slash-commands compressing recurring workflows. Grouped:
-   - HeyLina Daily Operating System: `/dos-eod`, `/dos-reflect`, `/dos-inbox`, `/dos-braindump`, `/heylina-notion`, `/heylina-pptx`
-   - Capture & planning: `/capture`, `/prep`, `/quick-capture`, `/whatsapp-blast`
-   - Conversation ergonomics: `/explain`, `/handoff`, `/route`, `/low-brain-grill`, `/boss-mode`, `/personal-style`
-   - Dev tooling: `/qa-review`, `/address-review`, `/wrap`, `/merge-prune`, `/diagnose`, `/spec-debate`, `/grill-me`, `/sync-dotclaude`, `/git-guardrails-claude-code`, `/setup-pre-commit`, `/prototype`, `/cloud-env`
+1. **Custom Claude Code skills authored** — **36 user-level skills** in `~/.claude/skills/` (verified inventory 2026-05-27) plus plugin-namespaced HeyLina rituals. Grouped:
+   - Daily OS & capture: `/dos-eod`, `/dos-reflect`, `/dos-inbox`, `/dos-braindump`, `/heylina-notion`, `/heylina-pptx`, `/capture`, `/quick-capture`, `/prep`, `/whatsapp-blast`, `/personal-style`, `/handoff`, `/route`, `/explain`, `/boss-mode`
+   - Spec-driven development: `/spec-debate`, `/spec-req`, `/spec-design`, `/spec-tasks`, `/spec-impl`, `/spec-verify`, `/to-prd`, `/to-issues`
+   - PR review, QA & repo hygiene: `/qa-review`, `/address-review`, `/review-and-comment`, `/create-clean-tree`, `/wrap`, `/merge-prune`, `/sync-dotclaude`, `/git-guardrails-claude-code`, `/setup-pre-commit`, `/repo-organizer`, `/archiver`, `/cloud-env`, `/setup-matt-pocock-skills`
+   - Engineering discipline: `/solid`, `/architect-senior-engineer`, `/improve-codebase-architecture`, `/tdd`, `/prototype`, `/pragmatist`
+   - Dialogue, diagnostics & content: `/diagnose`, `/fix`, `/fix-failing-tests`, `/triage`, `/grill-me`, `/grill-with-docs`, `/low-brain-grill`, `/discuss`, `/deep-thinking`, `/zoom-out`, `/voice-of-user`, `/edit-article`, `/caveman`
 
 2. **Custom agents** — multi-agent patterns for harder calls: `architect-senior-engineer`, `pragmatist`, `synthesiser`, `voice-of-user`, `ui-ux`, `repo-organizer`, `archiver`, `deep-thinking`, `claude-code-guide`. The `/spec-debate` skill orchestrates a five-agent debate (drafter → reviewer → defender → judge → implementer) and scores against a rubric.
 
