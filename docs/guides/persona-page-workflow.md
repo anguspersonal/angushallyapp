@@ -68,9 +68,10 @@ Build a Next.js route under `src/app/<persona>/page.tsx` mirroring the structure
 
 Each persona page has matching downstream artefacts:
 
-- **Chatbot knowledge bundle** — add or update `docs/chatbotv1/`... wait, the bundle is built from [docs/chatbot-knowledge/](../chatbot-knowledge/) via [scripts/build-chat-knowledge.mjs](../../scripts/build-chat-knowledge.mjs) on `prebuild`. For each persona, propagate the curated page content (not the over-collected research) into the appropriate `.md` files there.
+- **Chatbot knowledge bundle** — the bundle is built from [docs/chatbot-knowledge/](../chatbot-knowledge/) via [scripts/build-chat-knowledge.mjs](../../scripts/build-chat-knowledge.mjs) on `prebuild`. For each persona, propagate the curated page content (not the over-collected research) into the appropriate `.md` files there.
 - **Downloadable PDF** — the existing puppeteer pipeline at [scripts/build-resume.mjs](../../scripts/build-resume.mjs) currently serves one resume from [public/resume.html](../../public/resume.html). If you want per-persona PDFs, duplicate to `resume-dev.html`, `resume-teacher.html`, etc., and parallel build scripts.
 - **Social / external links** — LinkedIn featured-section, GitHub README, etc.
+- **Code stats refresh** — `scripts/fetch-code-stats.mjs` is **not** wired into `prebuild` because it clones every owned + asklina repo (expensive). The committed `src/data/code-stats.json` + `public/data/code-stats.json` are point-in-time snapshots; `/dev`, `/ai-pm`, and `/cv` show the snapshot date in their stats footers. Refresh cadence is **manual**: re-run `npm run stats:refresh` (a) before any LinkedIn or external push of a persona page, (b) at any persona-page content refresh, and (c) when crossing a vanity-number milestone worth showcasing.
 
 ## Personas to apply this to
 
@@ -81,7 +82,7 @@ Each persona page has matching downstream artefacts:
 | Maths teacher | School leadership, TeachFirst alumni, edtech | [docs/cvs/maths-teacher-cv.md](../cvs/maths-teacher-cv.md) | [`/teacher`](../../src/app/teacher/page.tsx) ✅ | Rendered; exam-result data gap flagged |
 | Debate coach | Schools wanting coaches with top-tier competing background; debate-judges; executives wanting argument coaching | [docs/cvs/debate-coach-cv.md](../cvs/debate-coach-cv.md) | [`/debate`](../../src/app/debate/page.tsx) ✅ | Unblocked 2026-05-27. Full workflow complete — LSE Debate + WUDC 2015 + Burnt Mill founding |
 | AI product manager | AI startups, model labs, AI-shaped PM roles | [docs/cvs/ai-product-manager-cv.md](../cvs/ai-product-manager-cv.md) | [`/ai-pm`](../../src/app/ai-pm/page.tsx) ✅ | Full workflow complete |
-| Harness engineer | Model labs, agent-tooling startups, MCP ecosystem | [docs/cvs/harness-engineer-cv.md](../cvs/harness-engineer-cv.md) | [`/harness`](../../src/app/harness/page.tsx) ✅ | Rendered (v2 — 36 skills verified by Explore agent; settings.json + agent files permission-denied so harness-config bucket partial) |
+| Harness engineer | Model labs, agent-tooling startups, MCP ecosystem | [docs/cvs/harness-engineer-cv.md](../cvs/harness-engineer-cv.md) | [`/harness`](../../src/app/harness/page.tsx) ✅ | Rendered (v3 — 43 user-level skills in `~/.claude/skills/` ground-truthed via `ls`; plugin-namespaced `anthropic-skills:*` shown separately; settings.json + agent files permission-denied so harness-config bucket partial) |
 | Operator / COO | Investor, board, fellow founder | [public/resume.html](../../public/resume.html) (existing) | `/` and `/projects` (existing) | Pre-existing — predates this workflow |
 
 ## Lessons earned in the dev-CV run
