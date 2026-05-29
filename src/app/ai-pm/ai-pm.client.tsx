@@ -29,8 +29,13 @@
 
 import Link from 'next/link';
 import { PersonaFooter, PersonaThemeToggle } from '@/components/persona';
+import { AiPmContactSection } from './AiPmContactSection';
 import { aipmFontVars } from './fonts';
 import styles from './ai-pm.module.css';
+// Skins the globally-mounted overlays (chat panel C1 / consent UI D1) for the
+// ai-pm surface. Plain global CSS keyed off [data-surface='ai-pm'] because
+// those overlays mount outside this page's .page subtree (see ai-pm.surface.css).
+import './ai-pm.surface.css';
 
 const EMAIL = 'angus.hally@gmail.com';
 const LINKEDIN_URL = 'https://www.linkedin.com/in/angus-hally-9ab66a87/';
@@ -357,12 +362,12 @@ const AiPmPersonaClient = () => {
             </section>
 
             {/* CONTACT ─────────────────────────────────────────────
-                SECTION PLACEHOLDER. The interactive contact form is issue B2
-                (#132/#133/#134) and is intentionally NOT built here — this is
-                the shell. We render the anchor target + a holding card so the
-                "Contact" nav item and the footer contact link both have a
-                destination, and so the page reads as complete. The form drops
-                into this section later without moving the anchor. */}
+                B2 (#134). The interactive contact section: a skinned form wired
+                to the shared `useContactForm` hook with source="ai-pm", plus the
+                "what I collect" notice linking to /ai-pm/privacy. The form lives
+                in AiPmContactSection (it owns the reCAPTCHA + consent wiring);
+                here we keep the editorial two-column frame and the email/LinkedIn
+                fallback alongside it. The #contact anchor is unchanged from B1. */}
             <section className={styles.corresp} id="contact" aria-label="Contact">
                 <div className={styles.correspInner}>
                     <div>
@@ -371,17 +376,10 @@ const AiPmPersonaClient = () => {
                             <br />
                             or working sessions.
                         </h2>
-                    </div>
-                    <div className={styles.col}>
-                        <p>
+                        <p className={styles.correspIntro}>
                             I read everything that arrives, and reply within two working days. The
                             most useful thing you can send is a one-page note of where you are
                             stuck.
-                        </p>
-                        {/* Holding note until the B2 contact form lands here. */}
-                        <p className={styles.formPlaceholder} data-placeholder="contact-form">
-                            A contact form is on its way to this section. In the meantime, the
-                            quickest route is email or LinkedIn.
                         </p>
                         <div className={styles.addr}>
                             Letters &nbsp;·&nbsp; <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
@@ -391,6 +389,9 @@ const AiPmPersonaClient = () => {
                                 angus-hally
                             </a>
                         </div>
+                    </div>
+                    <div className={styles.col}>
+                        <AiPmContactSection />
                     </div>
                 </div>
             </section>

@@ -9,10 +9,17 @@
  *
  * Local draft state lets the user toggle freely, then commit with "Save
  * preferences" (or take the accept-all / reject shortcuts). Neutral & tokenized
- * — persona skins are D1 (#145/#146/#147).
+ * — per-persona skins (D1, #145/#146/#147) layer on top purely through CSS
+ * keyed off the `data-surface` attribute exposed here. Mounted site-wide
+ * (outside the per-surface SurfaceShell), it reads the current surface from the
+ * shared registry — the same seam ChatPanel uses — and writes it to
+ * `data-surface` on both the overlay and the dialog so a persona can skin the
+ * scrim and the panel. Presentation wiring only; no consent-logic change.
  */
 
 import * as React from 'react';
+import { usePathname } from 'next/navigation';
+import { resolveSurface } from '@/lib/surfaces';
 import { useConsentContext } from '@/providers/ConsentProvider';
 import {
   CONSENT_CATEGORIES,
@@ -23,6 +30,8 @@ import styles from './PreferenceCenter.module.css';
 export function PreferenceCenter() {
   const ctx = useConsentContext();
   const open = Boolean(ctx?.isPreferenceCenterOpen);
+  const pathname = usePathname();
+  const surface = resolveSurface(pathname)?.surface;
 
   // Local draft, seeded from current choices each time the dialog opens.
   const [draft, setDraft] = React.useState<Record<string, boolean>>({});
@@ -63,6 +72,7 @@ export function PreferenceCenter() {
     <div
       className={styles.overlay}
       role="presentation"
+      data-surface={surface}
       onClick={(e) => {
         if (e.target === e.currentTarget) ctx.closePreferenceCenter();
       }}
@@ -72,6 +82,7 @@ export function PreferenceCenter() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="consent-pc-title"
+        data-surface={surface}
       >
         <div className={styles.header}>
           <div>

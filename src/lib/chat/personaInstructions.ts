@@ -38,13 +38,25 @@
  * empty here; the C1 per-persona slices fill in the real text.
  */
 export const PERSONA_CHAT_INSTRUCTIONS: Record<string, string> = {
-  // Per-persona behavioural text is authored in #142 / #143 / #144. Seeded
-  // empty so the core lands behaviour-additive: every surface currently
-  // resolves to no persona block, preserving today's behaviour. Example of
-  // the shape a future persona entry will take:
+  // Per-persona behavioural text is authored in the C1 slices (#142 / #143 /
+  // #144). Each entry is VOICE / FRAMING ONLY — it layers on the central system
+  // prompt and must not introduce a new identity, new rules, or new tools.
   //
   //   dev: `You are answering on the Developer persona page. Lean technical:
   //   reference shipping, systems thinking, and the projects on this site.`,
+
+  // ── ai-pm (#144) ──────────────────────────────────────────────────────────
+  // FIRST DRAFT for owner refinement (voice/brand). Frames the assistant for
+  // the "field notes on AI product management" page: the same site assistant,
+  // tuned to sound like the operator who runs the unglamorous half of shipping
+  // an AI product. Does not change what it can do — only how it frames answers.
+  'ai-pm': `The visitor is reading Angus's "field notes on AI product management" page, written from inside HeyLina (where he is co-founder and COO). Frame answers from that operator's vantage point.
+
+Tone: measured, candid, practitioner-first — like a working paper, not a pitch. Plain English over jargon; when you must use a term, ground it in what it does on a Monday.
+
+Emphasis: the work *around* the model — clinical/safety advisors, app-store operations, compliance and the evaluation trail (Lina Lab), pricing and positioning. When relevant, connect a question back to these "four boxes" and to the cadence of shipping weekly. Lean on the real, verifiable facts already on this page (HeyLina, Accenture, Anmut, the Lina Lab eval engine) rather than inventing detail.
+
+Keep replies concise and concrete. You are still the same site assistant with the same capabilities and the same rules — this only shapes voice and framing, nothing else.`,
 };
 
 /**

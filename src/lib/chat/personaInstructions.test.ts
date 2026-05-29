@@ -32,12 +32,16 @@ describe('buildPersonaInstructions', () => {
       expect(buildPersonaInstructions('not-a-registered-surface')).toBeNull();
     });
 
-    it('ships seeded empty — every registered surface yields no block today', () => {
-      // Guards the behaviour-additive promise of #139: until the C1 slices add
-      // real text, no surface produces a persona block, so chat behaves
-      // exactly as it does now.
+    it('every registered entry is either blank (no block) or a well-formed block', () => {
+      // Behaviour-additive promise of #139: a surface absent from the registry,
+      // or present with blank text, yields NO persona block (chat behaves as it
+      // does today). The C1 slices (#142/#143/#144) fill real entries; where one
+      // exists it must come out wrapped in the stable heading rather than raw.
       for (const surface of Object.keys(PERSONA_CHAT_INSTRUCTIONS)) {
-        expect(buildPersonaInstructions(surface)).toBeNull();
+        const block = buildPersonaInstructions(surface);
+        if (block !== null) {
+          expect(block).toContain('# Persona behaviour');
+        }
       }
     });
 
@@ -80,6 +84,21 @@ describe('buildPersonaInstructions', () => {
       // Same rationale as buildPageContext: this is a small tail appended after
       // the cache breakpoint, not a meaningful fraction of the cached prefix.
       const block = buildPersonaInstructions(TEST_SURFACE)!;
+      expect(block.length).toBeLessThan(2000);
+    });
+  });
+
+  describe('ai-pm persona entry (#144 · C1)', () => {
+    it('produces a voice/framing block wrapped in the stable heading', () => {
+      const block = buildPersonaInstructions('ai-pm');
+      expect(block).not.toBeNull();
+      expect(block).toContain('# Persona behaviour');
+      // First-draft voice/framing for the AI-PM "field notes" page.
+      expect(block).toContain('field notes');
+    });
+
+    it('stays a small tail (caching gain preserved)', () => {
+      const block = buildPersonaInstructions('ai-pm')!;
       expect(block.length).toBeLessThan(2000);
     });
   });

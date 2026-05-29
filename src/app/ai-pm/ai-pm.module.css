@@ -391,9 +391,12 @@
   max-width: 1180px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 80px;
-  align-items: end;
+  /* The left column is the editorial heading + address; the right is the live
+     B2 form. Top-align so the form sits beside the heading rather than baseline-
+     anchored to it. */
+  align-items: start;
 }
 .corresp h2 {
   margin: 0;
@@ -404,8 +407,8 @@
   letter-spacing: -0.02em;
 }
 .corresp h2 em { font-style: italic; }
-.corresp .col p {
-  margin: 0;
+.correspIntro {
+  margin: 28px 0 0;
   font-family: var(--serif);
   font-style: italic;
   font-weight: 300;
@@ -413,27 +416,93 @@
   line-height: 30px;
   color: var(--ink-soft);
 }
-.corresp .col .addr {
+.corresp .addr {
   font-family: var(--mono);
   font-size: 12px;
   color: var(--ink);
   margin-top: 22px;
   line-height: 22px;
 }
-.corresp .col .addr a { color: var(--accent); }
+.corresp .addr a { color: var(--accent); }
 
-/* Holding note in the Contact section until the B2 contact form lands here
-   (#132/#133/#134). Deliberately understated — it should read as a galley
-   note, not a missing-content error. */
+/* ── B2 contact form (#134) ─────────────────────────────────────────────
+   The shared persona ContactForm (src/components/persona) is dressed entirely
+   through --persona-* tokens set HERE — the component itself is never forked.
+   These map the editorial palette/typography onto the neutral, tokenized form.
+   The whole block inherits the morning/evening palette because every token
+   resolves through the --ink/--accent/--rule vars defined on .page above. */
+.contactForm {
+  --persona-ink: var(--ink);
+  --persona-accent: var(--accent);
+  --persona-form-gap: 18px;
+  --persona-form-field-bg: var(--paper);
+  --persona-form-border: var(--rule);
+  --persona-form-radius: 4px;
+  --persona-form-label: var(--ink-soft);
+  --persona-form-focus-ring: color-mix(in srgb, var(--accent) 28%, transparent);
+  --persona-form-error: #c0392b;
+  --persona-form-success: var(--ink);
+  --persona-form-submit-ink: var(--paper);
+  --persona-form-submit-align: flex-start;
+  font-family: var(--sans);
+}
+/* The form's labels/inputs are sans (UI), not the body serif. */
+.contactForm :global(label) {
+  font-family: var(--sans);
+  letter-spacing: 0.02em;
+}
+.contactForm :global(input),
+.contactForm :global(textarea) {
+  font-family: var(--sans);
+}
+.contactForm :global(button[type='submit']) {
+  font-family: var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 12px 22px;
+}
+/* Success / error feedback in the editorial voice. */
+.contactForm :global([role='status']) {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--ink);
+}
+
+/* "What I collect" collection notice — the one-line privacy link (B2 AC). */
+.collectionNotice {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--ink-dim);
+}
+.collectionNotice a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Deferred-reCAPTCHA hint, shown until the user interacts / consents. */
+.recaptchaHint {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+}
+
+/* Holding note for the unconfigured-key fallback (no NEXT_PUBLIC_RECAPTCHA_SITE_KEY).
+   Deliberately understated — reads as a galley note, not a missing-content error. */
 .formPlaceholder {
-  margin-top: 22px !important;
+  margin: 14px 0 0;
   padding: 14px 18px;
   border: 1px dashed var(--rule);
-  font-family: var(--sans) !important;
-  font-style: normal !important;
-  font-size: 14px !important;
-  line-height: 22px !important;
-  color: var(--ink-dim) !important;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--ink-dim);
   background: var(--paper-2);
 }
 
