@@ -9,7 +9,7 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
-cd "$CLAUDE_PROJECT_DIR"
+cd "${CLAUDE_PROJECT_DIR:?CLAUDE_PROJECT_DIR not set}"
 
 # Seed .env.local from the committed sample only when no real env file is
 # mounted. Real secrets belong in the cloud env's Environment variables field;
