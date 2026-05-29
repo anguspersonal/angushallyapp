@@ -35,14 +35,21 @@ function isProjectsDesktopPath(pathname: string | null): boolean {
   return pathname === '/projects';
 }
 
+function isDevPersonaPath(pathname: string | null): boolean {
+  // The `/dev` persona owns the full viewport: its own fixed nav, plasma
+  // background, and footer. Site chrome is suppressed like `/projects`.
+  return pathname === '/dev';
+}
+
 /**
  * Maps a route to a surface attribute. Surface is orthogonal to colour-scheme:
  * components that care about it (Glass, GradientRoot) read it independently.
  * Add new surfaces here when introducing route-level visual systems.
  */
-function surfaceForPath(pathname: string | null): 'blog' | 'projects' | undefined {
+function surfaceForPath(pathname: string | null): 'blog' | 'projects' | 'dev' | undefined {
   if (isBlogPath(pathname)) return 'blog';
   if (isProjectsDesktopPath(pathname)) return 'projects';
+  if (isDevPersonaPath(pathname)) return 'dev';
   return undefined;
 }
 
@@ -120,6 +127,17 @@ function SurfaceShell({ children }: { children: React.ReactNode }) {
   if (surface === 'projects') {
     return (
       <div data-surface="projects">
+        <main>{children}</main>
+      </div>
+    );
+  }
+
+  // Surface "dev" is a full-bleed editorial persona page. It renders its own
+  // fixed nav, plasma WebGL hero, and footer — site Header, Footer, AppShell,
+  // and GradientRoot are all suppressed.
+  if (surface === 'dev') {
+    return (
+      <div data-surface="dev">
         <main>{children}</main>
       </div>
     );

@@ -3,375 +3,452 @@
 /**
  * `/dev` — Developer persona page.
  *
- * Curated render of docs/cvs/dev-cv.md. The research markdown is the
- * substrate; this page is the engaging visual presentation. See
- * docs/guides/persona-page-workflow.md for the workflow.
+ * Full-bleed editorial "plasma" surface (site chrome suppressed via the
+ * `dev` surface in ClientLayout). Copy is grounded in docs/cvs/dev-cv.md
+ * and live metrics from @/data/code-stats.json. The hero is a draggable
+ * WebGL plasma blob (three.js + custom GLSL).
+ * See docs/guides/persona-page-workflow.md.
  */
 
 import React from 'react';
-import {
-    Title,
-    Text,
-    Paper,
-    Grid,
-    ThemeIcon,
-    Group,
-    Stack,
-    useMantineTheme,
-    Box,
-    Badge,
-    Anchor,
-} from '@mantine/core';
-import {
-    IconCode,
-    IconGitCommit,
-    IconBrandGithub,
-    IconCalendar,
-    IconBrandTypescript,
-    IconExternalLink,
-    IconDeviceMobile,
-    IconCpu,
-    IconDatabase,
-    IconSparkles,
-    IconBuildingBank,
-    IconNetwork,
-} from '@tabler/icons-react';
-import { motion } from 'framer-motion';
-import type { Variants } from 'framer-motion';
-import { Section } from '@/components/layout';
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import styles from './dev.module.css';
 import statsData from '@/data/code-stats.json';
 
-// ---------- formatting helpers ----------
+// three.js is heavy — code-split it out of the route's initial bundle and
+// the server render. The hero text below stays server-rendered; only the
+// WebGL canvas mounts client-side after hydration.
+const PlasmaHero = dynamic(() => import('./PlasmaHero'), { ssr: false });
+
+const CONTACT_EMAIL = 'angus.hally@gmail.com';
+const GITHUB_URL = 'https://github.com/anguspersonal';
+const LINKEDIN_URL = 'https://www.linkedin.com/in/angus-hally-9ab66a87/';
+
 const formatCompact = (n: number): string => {
     if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
     if (n >= 1_000) return `${(n / 1_000).toFixed(n >= 10_000 ? 0 : 1)}k`;
     return `${n}`;
 };
-const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const formatISODate = (iso: string): string => {
-    const d = new Date(iso);
-    return `${d.getUTCDate()} ${MONTH_SHORT[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
-};
 
-// ---------- content ----------
-type ProjectColor = 'primary' | 'secondary' | 'accent' | 'success' | 'dark';
+const tickerItems = [
+    'react 19',
+    'next.js 15 · app router',
+    'typescript · strict',
+    'react native · expo',
+    'firebase functions v2',
+    'fastapi + pydantic',
+    'postgres + knex',
+    'supabase',
+    'pinecone · vector',
+    'openai sdk',
+    '@anthropic-ai/sdk',
+    'llamaindex',
+    'framer motion',
+    'vitest · detox',
+];
 
-interface Project {
-    title: string;
-    tagline: string;
-    description: string;
-    stack: string[];
-    proves: string[];
-    color: ProjectColor;
+interface ShipItem {
+    year: string;
+    name: string;
+    desc: string;
+    stack: string;
     href?: string;
-    icon: React.ReactNode;
 }
 
-const projects: Project[] = [
+const shipping: ShipItem[] = [
     {
-        title: 'HeyLina',
-        tagline: 'Customer-facing AI product · mobile + backend + internal ops console',
-        description:
-            'Three-surface monorepo: Expo / React Native customer app, Firebase Cloud Functions v2 backend, and an internal React + Vite ops console. RAG-augmented chat with user-scoped Pinecone indexes, GPT-4o + GPT-4o-audio-preview, ElevenLabs TTS, prompt config served live from Firestore.',
-        stack: ['Expo', 'React Native', 'Firebase Functions v2', 'Pinecone', 'OpenAI', 'ElevenLabs'],
-        proves: [
-            'Production mobile + backend monorepo',
-            'RAG with user-scoped vector indexes',
-            'Firestore RBAC with field-level write rules & soft-delete window',
-        ],
-        color: 'success',
-        icon: <IconDeviceMobile size={28} />,
+        year: '2025 · ongoing',
+        name: 'HeyLina',
+        desc: 'Customer-facing AI product. Expo / React Native app, Firebase Functions v2 backend, internal React + Vite ops console. RAG chat with user-scoped Pinecone indexes.',
+        stack: 'expo · functions · pinecone',
     },
     {
-        title: 'Lina Lab',
-        tagline: 'Prompt-evaluation engine for HeyLina · Python / FastAPI',
-        description:
-            'The evaluation backbone behind HeyLina. Versioned prompt catalog, variant-comparison runtime, multi-scope eval framework (message / turn / conversation / variant). Data model leads with eight MECE kickoff types in scenario_types.py against scenarios stored in Supabase.',
-        stack: ['FastAPI', 'Pydantic', 'Supabase', 'Railway', 'OpenAI', 'Tiktoken'],
-        proves: [
-            'LLM-as-judge with full provenance (judge_type, judge_model, judge_prompt_version, judge_rater_id)',
-            'Variant experiments × model × temperature × role-preset × message-style',
-            'Prompt soft-delete + version pinning so historical runs resolve',
-        ],
-        color: 'secondary',
-        icon: <IconSparkles size={28} />,
+        year: '2025 · ongoing',
+        name: 'Lina Lab',
+        desc: 'Prompt-evaluation engine behind HeyLina. Versioned prompt catalog, LLM-as-judge with full provenance, multi-scope eval framework.',
+        stack: 'fastapi · supabase · openai',
         href: 'https://lina-lab-production.up.railway.app',
     },
     {
-        title: 'AHKMS',
-        tagline: 'Multi-platform AI knowledge-management system · Oct 2025–',
-        description:
-            'Turborepo monorepo: packages/web (Next.js 14 on Vercel), packages/worker (Express on Railway in Docker with poppler-utils), packages/mobile (Expo / React Native), packages/shared (typed contracts). Supabase for Postgres, Auth, Storage, Edge Functions.',
-        stack: ['Next.js 14', 'Express', 'React Native', 'Supabase', 'Docker', 'Vercel', 'Railway'],
-        proves: [
-            'PARAMPS taxonomy across 7 migrations and 11 lifecycle states',
-            'Capture → workflow → AI extraction → human-in-the-loop review pipeline',
-            'Multi-platform architecture with shared typed contracts',
-        ],
-        color: 'primary',
-        icon: <IconNetwork size={28} />,
+        year: '2025 · ongoing',
+        name: 'AHKMS',
+        desc: 'Multi-platform knowledge-management system (PARAMPS). Turborepo: Next.js web, Express worker, Expo mobile, shared contracts. Capture → AI extraction → human-in-the-loop review.',
+        stack: 'next · express · supabase',
         href: 'https://kms.angushally.com',
     },
     {
-        title: 'angushallyapp',
-        tagline: 'This site — full-stack personal platform',
-        description:
-            'Next.js 15 / React 19 monorepo with Node / Express backend and PostgreSQL (Knex migrations). Mantine 8 UI, Supabase SSR, Framer Motion. Hosted across Heroku and Vercel.',
-        stack: ['Next.js 15', 'React 19', 'Node/Express', 'PostgreSQL', 'Knex', 'Mantine 8'],
-        proves: [
-            'Habit tracker, Strava sync, FSA hygiene lookup, blog, contact form',
-            'Google OAuth 2.0 + JWT auth with RBAC',
-            'Puppeteer-driven resume PDF builder + @anthropic-ai/sdk-backed chat',
-        ],
-        color: 'accent',
-        icon: <IconCode size={28} />,
+        year: '2023 →',
+        name: 'angushallyapp',
+        desc: 'This site. Next.js 15 / React 19 with Node / Express + PostgreSQL. Habit tracker, Strava sync, UK FSA hygiene lookup, blog, @anthropic-ai/sdk chat.',
+        stack: 'next · postgres · mantine',
         href: 'https://angushally.com',
     },
     {
-        title: 'Nexus',
-        tagline: 'Chat-first unified personal workspace',
-        description:
-            'React / TypeScript / Vite SPA with Firebase (Firestore + Auth + Hosting). Tests the hypothesis that one chat input over a structured personal knowledge graph is enough surface area for life + work.',
-        stack: ['React', 'Vite', 'TypeScript', 'Firebase', 'Tailwind', 'shadcn-ui'],
-        proves: [
-            'Chat-first interaction model',
-            'Firestore data modelling for personal knowledge graphs',
-        ],
-        color: 'dark',
-        icon: <IconCpu size={28} />,
-    },
-    {
-        title: 'LLM Council',
-        tagline: 'Weekend hack · multi-model evaluation via OpenRouter',
-        description:
-            'Three-stage local tool: query fans out to GPT-5.1, Gemini 3 Pro, Claude Sonnet 4.5, Grok 4; models anonymously cross-rank each other; a Chairman model synthesises the final answer. Honest framing: 99% vibe-coded.',
-        stack: ['Python', 'uv', 'React', 'Vite', 'OpenRouter'],
-        proves: [
-            'Multi-model orchestration pattern',
-            'Anonymised cross-rank → chairman synthesis flow',
-        ],
-        color: 'primary',
-        icon: <IconBuildingBank size={28} />,
+        year: '2025',
+        name: 'Nexus',
+        desc: 'Chat-first personal workspace over a structured knowledge graph. React + Vite + Tailwind on the front, Firebase underneath.',
+        stack: 'react · firebase',
     },
 ];
 
-interface SkillGroup {
+interface Capability {
+    num: string;
+    accent: string;
     title: string;
-    icon: React.ReactNode;
-    color: ProjectColor;
-    items: string[];
+    desc: string;
+    tags: string[];
 }
 
-const skillGroups: SkillGroup[] = [
+const capabilities: Capability[] = [
     {
-        title: 'Languages & runtimes',
-        icon: <IconBrandTypescript size={24} />,
-        color: 'primary',
-        items: ['TypeScript (strict)', 'JavaScript', 'Python', 'SQL'],
+        num: '01',
+        accent: 'var(--plasma-1)',
+        title: 'Full-stack product',
+        desc: 'React 19 / Next.js 15 App Router on the front to Node / Express + Postgres on the back. Auth, RBAC, the whole vertical.',
+        tags: ['next', 'react', 'node'],
     },
     {
-        title: 'Frontend',
-        icon: <IconCode size={24} />,
-        color: 'accent',
-        items: ['React 19', 'Next.js 15 (App Router)', 'React Native (Expo)', 'Vite', 'Tailwind', 'Mantine', 'shadcn / Radix UI', 'Framer Motion'],
+        num: '02',
+        accent: 'var(--plasma-2)',
+        title: 'Mobile',
+        desc: 'React Native (Expo / Expo Router), EAS builds, Detox E2E. Shipping HeyLina’s customer app alongside our mobile engineer.',
+        tags: ['expo', 'rn', 'eas'],
     },
     {
-        title: 'Backend',
-        icon: <IconCpu size={24} />,
-        color: 'secondary',
-        items: ['Node.js', 'Express', 'Firebase Cloud Functions v2', 'FastAPI + Pydantic', 'Supabase Edge Functions (Deno)'],
+        num: '03',
+        accent: 'var(--plasma-3)',
+        title: 'AI / LLM systems',
+        desc: 'RAG with user-scoped vector indexes, tool-use, structured outputs, prompt config served live. UX that respects latency and uncertainty.',
+        tags: ['openai', 'anthropic', 'rag'],
     },
     {
-        title: 'Data & ML',
-        icon: <IconDatabase size={24} />,
-        color: 'success',
-        items: ['PostgreSQL + Knex', 'Supabase', 'Firestore', 'Pinecone (vector)', 'OpenAI', '@anthropic-ai/sdk', 'LlamaIndex', 'ElevenLabs', 'OpenRouter'],
+        num: '04',
+        accent: 'var(--plasma-4)',
+        title: 'Eval & harness',
+        desc: 'Versioned prompt catalogs, LLM-as-judge with full provenance, multi-scope rubrics, promotion pipelines. The Lina Lab discipline.',
+        tags: ['fastapi', 'evals', 'provenance'],
+    },
+    {
+        num: '05',
+        accent: 'var(--plasma-1)',
+        title: 'Backend & data',
+        desc: 'Postgres + Knex migrations, Supabase, Firestore, Pinecone. Typed schemas, MECE taxonomies, lifecycle state machines, soft-delete + version pinning.',
+        tags: ['postgres', 'supabase', 'pinecone'],
+    },
+    {
+        num: '06',
+        accent: 'var(--plasma-2)',
+        title: 'Polish & ops',
+        desc: 'Framer Motion, CI/CD on GitHub Actions, Husky + lint-staged gates, Puppeteer rendering, PWA. The last 5% that survives a Lighthouse run.',
+        tags: ['framer', 'ci', 'husky'],
     },
 ];
 
-// ---------- motion config ----------
-const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
-};
-const itemVariants: Variants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100, damping: 20 } },
-};
-
 const DevPersonaPage = () => {
-    const theme = useMantineTheme();
-    const gradient = `linear-gradient(135deg, ${theme.colors.dark[7]}, ${theme.colors.dark[8]})`;
+    const fpsRef = React.useRef<HTMLSpanElement>(null);
+    const msRef = React.useRef<HTMLSpanElement>(null);
+
+    const lines = formatCompact(statsData.headline.totalLinesAdded);
+    const commits = statsData.headline.totalCommits.toLocaleString('en-GB');
+    const repos = statsData.headline.reposContributedTo;
+    const activeDays = statsData.activity.totalActiveDays;
 
     return (
-        <Section width="wide" padY="default">
-            <Stack gap="xl">
-                {/* ---------- Hero ---------- */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1 }}
-                >
-                    <Stack gap="xs" ta="center">
-                        <Text fz="sm" tt="uppercase" fw={700} style={{ letterSpacing: '0.15em', color: theme.colors.primary[6] }}>
-                            Developer
-                        </Text>
-                        <Title
-                            order={1}
-                            style={{
-                                background: `linear-gradient(45deg, ${theme.colors.primary[6]}, ${theme.colors.secondary[6]})`,
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                fontSize: 'clamp(2rem, 7vw, 3.5rem)',
-                                fontWeight: 800,
-                                lineHeight: 1.1,
-                            }}
-                        >
-                            Builder with a strategist&rsquo;s instincts and an operator&rsquo;s discipline.
-                        </Title>
-                        <Text size="lg" maw={720} mx="auto" mt="md" c="gray">
-                            Co-founder and COO who ships code. Over the last two years I&rsquo;ve built the Python evaluation engine that runs HeyLina&rsquo;s prompt iteration, a multi-platform AI knowledge-management system, a full-stack personal site, and the internal tooling and engineering process behind HeyLina&rsquo;s mobile product.
-                        </Text>
-                    </Stack>
-                </motion.div>
+        <div className={styles.page}>
+            <div className={styles.noise} />
+            <div className={styles.scanline} />
+            <div className={styles.railL} />
+            <div className={styles.railR} />
 
-                {/* ---------- By the numbers ---------- */}
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                >
-                    <Paper shadow="sm" p="xl" radius="md" style={{ background: gradient, color: theme.white }}>
-                        <Title order={2} mb={4} ta="center" style={{ color: theme.white }}>By the numbers</Title>
-                        <Text ta="center" mb="xl" style={{ color: theme.colors.gray[4] }}>
-                            Across {statsData.headline.reposContributedTo} GitHub repos · {statsData.activity.firstDay.slice(0, 4)}–{statsData.activity.lastDay.slice(0, 4)}
-                        </Text>
-                        <Grid gutter="xl">
-                            {[
-                                { icon: <IconCode size={28} />, value: formatCompact(statsData.headline.totalLinesAdded), label: 'lines added', color: 'primary' as const },
-                                { icon: <IconGitCommit size={28} />, value: statsData.headline.totalCommits.toLocaleString('en-GB'), label: 'commits', color: 'secondary' as const },
-                                { icon: <IconBrandGithub size={28} />, value: `${statsData.headline.reposContributedTo}`, label: 'repos contributed to', color: 'accent' as const },
-                                { icon: <IconCalendar size={28} />, value: `${statsData.activity.totalActiveDays}`, label: 'active days', color: 'success' as const },
-                            ].map((stat) => (
-                                <Grid.Col key={stat.label} span={{ base: 6, md: 3 }}>
-                                    <Stack align="center" gap="xs">
-                                        <ThemeIcon size={52} radius="md" color={stat.color}>{stat.icon}</ThemeIcon>
-                                        <Text fz="2.25rem" fw={800} style={{ color: theme.white, lineHeight: 1 }}>{stat.value}</Text>
-                                        <Text fz="sm" ta="center" style={{ color: theme.colors.gray[4] }}>{stat.label}</Text>
-                                    </Stack>
-                                </Grid.Col>
-                            ))}
-                        </Grid>
-                        <Box mt="xl" pt="md" style={{ borderTop: `1px solid ${theme.colors.dark[5]}` }}>
-                            <Text fz="xs" tt="uppercase" ta="center" mb="sm" style={{ color: theme.colors.gray[5], letterSpacing: '0.1em' }}>
-                                Top languages
-                            </Text>
-                            <Group gap="lg" justify="center">
-                                {statsData.languagesRanked.slice(0, 5).map((lang) => (
-                                    <Group gap={6} key={lang.name}>
-                                        <Text fw={600} style={{ color: theme.white }}>{lang.name}</Text>
-                                        <Text fz="sm" style={{ color: theme.colors.gray[4] }}>{Math.round(lang.pct * 100)}%</Text>
-                                    </Group>
-                                ))}
-                            </Group>
-                        </Box>
-                        <Text ta="center" mt="md" fz="xs" style={{ color: theme.colors.gray[6] }}>
-                            Computed locally via <code>git log --numstat</code>. Updated {formatISODate(statsData.generatedAt)}.
-                        </Text>
-                    </Paper>
-                </motion.div>
+            {/* ── nav ── */}
+            <nav className={styles.navBar}>
+                <Link className={styles.brand} href="/">
+                    <span className={styles.gem} />
+                    AHALLY · <span className={styles.brandDim}>/dev</span>
+                </Link>
+                <div className={styles.navLinks}>
+                    <a className={styles.navLink} href="#shipping">
+                        <span className={styles.navLinkN}>01</span>shipping
+                    </a>
+                    <a className={styles.navLink} href="#stack">
+                        <span className={styles.navLinkN}>02</span>stack
+                    </a>
+                    <a className={styles.navLink} href="#contact">
+                        <span className={styles.navLinkN}>03</span>contact
+                    </a>
+                </div>
+                <Link className={styles.back} href="/personas">
+                    ← all personas
+                </Link>
+            </nav>
 
-                {/* ---------- Selected projects ---------- */}
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                >
-                    <Paper shadow="sm" p="xl" radius="md" style={{ background: gradient, color: theme.white }}>
-                        <Title order={2} mb="xl" ta="center" style={{ color: theme.white }}>Selected projects</Title>
-                        <motion.div variants={containerVariants} initial="hidden" animate="visible">
-                            <Grid gutter="lg">
-                                {projects.map((p) => (
-                                    <Grid.Col key={p.title} span={{ base: 12, md: 6 }}>
-                                        <motion.div variants={itemVariants} whileHover={{ y: -6 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
-                                            <Paper p="lg" radius="md" style={{ background: `linear-gradient(135deg, ${theme.colors[p.color][9]}, ${theme.colors[p.color][7]})`, color: theme.white, height: '100%' }}>
-                                                <Group justify="space-between" mb="sm" align="flex-start">
-                                                    <Group gap="sm">
-                                                        <ThemeIcon size={42} radius="md" color={p.color} variant="filled">{p.icon}</ThemeIcon>
-                                                        <Stack gap={0}>
-                                                            <Title order={3} size="h4" style={{ color: theme.white }}>{p.title}</Title>
-                                                            <Text fz="xs" style={{ color: theme.colors.gray[3] }}>{p.tagline}</Text>
-                                                        </Stack>
-                                                    </Group>
-                                                    {p.href && (
-                                                        <Anchor href={p.href} target="_blank" rel="noopener noreferrer" style={{ color: theme.colors.gray[3] }}>
-                                                            <IconExternalLink size={18} />
-                                                        </Anchor>
-                                                    )}
-                                                </Group>
-                                                <Text fz="sm" mb="md" style={{ color: theme.colors.gray[2] }}>{p.description}</Text>
-                                                <Group gap={6} mb="md">
-                                                    {p.stack.map((s) => (
-                                                        <Badge key={s} size="xs" variant="light" color={p.color}>{s}</Badge>
-                                                    ))}
-                                                </Group>
-                                                <Stack gap={4}>
-                                                    {p.proves.map((line, i) => (
-                                                        <Text key={i} fz="xs" style={{ color: theme.colors.gray[2] }}>• {line}</Text>
-                                                    ))}
-                                                </Stack>
-                                            </Paper>
-                                        </motion.div>
-                                    </Grid.Col>
-                                ))}
-                            </Grid>
-                        </motion.div>
-                    </Paper>
-                </motion.div>
+            {/* ── hero ── */}
+            <section className={styles.hero} id="top">
+                <div className={styles.heroGrid} />
+                <div className={styles.wash1} />
+                <div className={styles.wash2} />
+                <PlasmaHero fpsRef={fpsRef} msRef={msRef} />
 
-                {/* ---------- Technical skills ---------- */}
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
-                >
-                    <Paper shadow="sm" p="xl" radius="md" style={{ background: gradient, color: theme.white }}>
-                        <Title order={2} mb="xl" ta="center" style={{ color: theme.white }}>Technical skills</Title>
-                        <Grid gutter="lg">
-                            {skillGroups.map((g) => (
-                                <Grid.Col key={g.title} span={{ base: 12, sm: 6, md: 3 }}>
-                                    <Paper p="md" radius="md" withBorder style={{ background: 'transparent', borderColor: theme.colors.dark[4], height: '100%' }}>
-                                        <Group gap="sm" mb="sm">
-                                            <ThemeIcon size={36} radius="md" color={g.color}>{g.icon}</ThemeIcon>
-                                            <Text fw={700} style={{ color: theme.white }}>{g.title}</Text>
-                                        </Group>
-                                        <Stack gap={4}>
-                                            {g.items.map((item) => (
-                                                <Text key={item} fz="sm" style={{ color: theme.colors.gray[3] }}>• {item}</Text>
-                                            ))}
-                                        </Stack>
-                                    </Paper>
-                                </Grid.Col>
-                            ))}
-                        </Grid>
-                    </Paper>
-                </motion.div>
+                <div className={`${styles.corner} ${styles.cornerTl}`} />
+                <div className={`${styles.corner} ${styles.cornerTr}`} />
+                <div className={`${styles.corner} ${styles.cornerBl}`} />
+                <div className={`${styles.corner} ${styles.cornerBr}`} />
 
-                {/* ---------- Engineering practices ---------- */}
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.6 }}
-                >
-                    <Paper shadow="sm" p="xl" radius="md" withBorder>
-                        <Title order={3} mb="sm">Engineering practices</Title>
-                        <Text size="sm" c="gray">
-                            TypeScript-strict everywhere · conventional commits · Husky + lint-staged + Prettier (with Tailwind plugin) gating pushes · monorepo workspaces (pnpm, Turborepo) when more than one runtime surface earns it · ADR-style decision notes when a design choice is load-bearing · two-tier branching (feature → dev → main) on HeyLina, single-trunk on smaller repos · AI-augmented authoring (Claude Code, Cursor) treated as a tool, not a substitute for understanding.
-                        </Text>
-                    </Paper>
-                </motion.div>
-            </Stack>
-        </Section>
+                <div className={styles.overlay}>
+                    <div className={styles.overlayRow}>
+                        <span className={styles.eyebrow}>co-founder &amp; coo · ships code · london</span>
+                        <div className={styles.telemetry}>
+                            <span>
+                                fps <span className={styles.telemetryV} ref={fpsRef}>60</span>
+                            </span>
+                            <span>
+                                ms <span className={styles.telemetryV} ref={msRef}>14</span>
+                            </span>
+                            <span className={styles.telemetryOk}>● online</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h1 className={styles.headline}>
+                            Builder with a <span className={styles.glow}>strategist&rsquo;s instincts</span>
+                            <br />
+                            <span className={styles.dim}>&amp; an operator&rsquo;s</span>
+                            <br />
+                            <span className={styles.dim}>discipline.</span>
+                        </h1>
+                        <p className={styles.lede}>
+                            Angus Hally — co-founder &amp; COO at HeyLina, and I ship the code. Over the last two
+                            years I&rsquo;ve built the <em>Python evaluation engine</em> behind HeyLina&rsquo;s prompt
+                            iteration, a multi-platform AI knowledge-management system, and this site. A decade of data
+                            strategy before that — but every system here has my fingerprints on the code, not just the
+                            spec.
+                        </p>
+                        <div className={styles.ctaRow}>
+                            <a className={`${styles.btn} ${styles.btnPrimary}`} href={`mailto:${CONTACT_EMAIL}`}>
+                                get in touch ↗
+                            </a>
+                            <a className={styles.btn} href="#shipping">
+                                <span className={styles.dot} /> see what&rsquo;s shipping
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className={styles.overlayRowEnd}>
+                        <span className={styles.scrollCue}>
+                            <span className={styles.track} />
+                            <span className={styles.scrollLabel}>scroll · ▼</span>
+                        </span>
+                        <span className={styles.dragNote}>
+                            drag the form to spin it
+                            <br />↕ ↔
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── ticker ── */}
+            <div className={styles.ticker}>
+                <div className={styles.strip}>
+                    {[0, 1, 2].map((copy) =>
+                        tickerItems.map((item) => <span key={`${copy}-${item}`}>{item}</span>),
+                    )}
+                </div>
+            </div>
+
+            {/* ── shipping ── */}
+            <section className={`${styles.block} ${styles.shipping}`} id="shipping">
+                <div className={styles.container}>
+                    <div className={styles.secHead}>
+                        <div>
+                            <div className={styles.secId}>§ 01</div>
+                            <div className={styles.secEye}>— shipping</div>
+                        </div>
+                        <h2 className={styles.secTitle}>
+                            built &amp; running.
+                            <br />
+                            not pitched.
+                        </h2>
+                        <div className={styles.secNote}>
+                            A sample from the last two years — some HeyLina (where I&rsquo;m co-founder), the rest
+                            personal tooling that outlived the prototype.{' '}
+                            <strong>
+                                ~{lines} lines across {repos} repos in {commits} commits
+                            </strong>
+                            , {activeDays} active days. Computed locally via <code>git log --numstat</code>.
+                        </div>
+                    </div>
+
+                    <ul className={styles.shipList}>
+                        {shipping.map((p) => {
+                            const inner = (
+                                <>
+                                    <span className={styles.yr}>{p.year}</span>
+                                    <span className={styles.shipName}>{p.name}</span>
+                                    <span className={styles.shipDesc}>{p.desc}</span>
+                                    <span className={styles.shipStack}>{p.stack}</span>
+                                    <span className={styles.arr}>↗</span>
+                                </>
+                            );
+                            return (
+                                <li className={styles.shipItem} key={p.name}>
+                                    {p.href ? (
+                                        <a
+                                            className={styles.shipLink}
+                                            href={p.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {inner}
+                                        </a>
+                                    ) : (
+                                        inner
+                                    )}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            </section>
+
+            {/* ── what i pick up ── */}
+            <section className={styles.block} id="stack">
+                <div className={styles.container}>
+                    <div className={styles.secHead}>
+                        <div>
+                            <div className={styles.secId}>§ 02</div>
+                            <div className={styles.secEye}>— what i pick up</div>
+                        </div>
+                        <h2 className={styles.secTitle}>
+                            six things,
+                            <br />
+                            done deep.
+                        </h2>
+                        <div className={styles.secNote}>
+                            Grouped by evidence in the codebases above — not buzzwords. If your project is one of these,
+                            I can probably help.
+                        </div>
+                    </div>
+
+                    <div className={styles.cards}>
+                        {capabilities.map((c) => (
+                            <div
+                                className={styles.card}
+                                key={c.num}
+                                style={{ ['--accent' as string]: c.accent } as React.CSSProperties}
+                            >
+                                <div className={styles.cardRow}>
+                                    <span className={styles.cardNum}>{c.num}</span>
+                                    <span className={styles.cardDot}>●</span>
+                                </div>
+                                <h3 className={styles.cardTitle}>{c.title}</h3>
+                                <p className={styles.cardDesc}>{c.desc}</p>
+                                <div className={styles.tags}>
+                                    {c.tags.map((t) => (
+                                        <span className={styles.tag} key={t}>
+                                            {t}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── CTA ── */}
+            <section className={styles.ctaSection} id="contact">
+                <div className={styles.container}>
+                    <span className={styles.eyebrow}>focused on heylina · occasional engagements · london</span>
+                    <h2 className={styles.ctaTitle}>
+                        want to build
+                        <br />
+                        <span className={styles.glow}>something</span>?
+                    </h2>
+                    <p className={styles.ctaText}>
+                        I&rsquo;m focused on HeyLina, but I take on occasional engagements for people in my network and
+                        selected clients. Send a paragraph — I&rsquo;ll reply.
+                    </p>
+                    <div className={styles.ctaButtons}>
+                        <a className={`${styles.btn} ${styles.btnPrimary}`} href={`mailto:${CONTACT_EMAIL}`}>
+                            {CONTACT_EMAIL} ↗
+                        </a>
+                        <Link className={styles.btn} href="/contact">
+                            contact form ↗
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── footer ── */}
+            <footer className={styles.footer}>
+                <div className={styles.container}>
+                    <div className={styles.footerGrid}>
+                        <div>
+                            <div className={styles.footerBrand}>
+                                <span className={styles.footerGemSm} />
+                                <strong>AHALLY · /dev</strong>
+                            </div>
+                            <p className={styles.footerBlurb}>
+                                Co-founder of HeyLina. Available for select build work alongside that. London.
+                            </p>
+                            <p className={styles.footerShipping}>● currently shipping</p>
+                        </div>
+                        <div>
+                            <h4 className={styles.footerH4}>practice</h4>
+                            <a className={styles.footerLink} href="#stack">
+                                full-stack
+                            </a>
+                            <a className={styles.footerLink} href="#stack">
+                                mobile
+                            </a>
+                            <a className={styles.footerLink} href="#stack">
+                                ai / llm
+                            </a>
+                            <a className={styles.footerLink} href="#stack">
+                                backend
+                            </a>
+                        </div>
+                        <div>
+                            <h4 className={styles.footerH4}>tools</h4>
+                            <Link className={styles.footerLink} href="/projects">
+                                habit tracker
+                            </Link>
+                            <Link className={styles.footerLink} href="/projects">
+                                fsa lookup
+                            </Link>
+                            <Link className={styles.footerLink} href="/projects">
+                                strava sync
+                            </Link>
+                        </div>
+                        <div>
+                            <h4 className={styles.footerH4}>contact</h4>
+                            <a className={styles.footerLink} href={`mailto:${CONTACT_EMAIL}`}>
+                                {CONTACT_EMAIL}
+                            </a>
+                            <a className={styles.footerLink} href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+                                github
+                            </a>
+                            <a
+                                className={styles.footerLink}
+                                href={LINKEDIN_URL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                linkedin
+                            </a>
+                            <Link className={styles.footerLink} href="/contact">
+                                contact form
+                            </Link>
+                        </div>
+                    </div>
+                    <div className={styles.footerStrip}>
+                        <span>© mmxxvi · angus hally</span>
+                        <Link href="/personas">← back to all personas</Link>
+                    </div>
+                </div>
+            </footer>
+        </div>
     );
 };
 
