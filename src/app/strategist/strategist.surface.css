@@ -1,0 +1,126 @@
+/*
+ * `/strategist` — GLOBAL persona skin for cross-tree fixed UI (issues #143 / #146).
+ *
+ * Why global (not a CSS module): the chat panel and the consent banner /
+ * preference-center are mounted in ClientLayout OUTSIDE the per-surface
+ * SurfaceShell wrapper, as fixed-position siblings. A route-scoped CSS module
+ * therefore can't reach them. Each of those components instead exposes the
+ * current surface as a `data-surface` attribute on its own root (ChatPanel
+ * already did; ConsentBanner/PreferenceCenter now do too — presentation only).
+ * This file is a plain (non-module) stylesheet imported by the strategist
+ * route, mirroring the existing `blog.css` precedent, so its global
+ * `[data-surface='strategist']` selectors can paint those elements.
+ *
+ * It changes PRESENTATION ONLY. No component logic, no consent logic, no shared
+ * CSS module is touched. The skins are FIRST DRAFTS for owner polish (PRD #123).
+ *
+ * Roots carrying data-surface="strategist" (so the selectors below stay precise):
+ *   - ConsentBanner       → <aside>  (its .panel is the direct child <div>)
+ *   - PreferenceCenter    → <div>    (.overlay; its dialog is the [role='dialog'] child)
+ *   - ChatPanel           → <div role='dialog'>  (the .panel itself)
+ *
+ * The strategist palette is re-declared here (a global file can't read the
+ * route module's scoped --ink/--paper tokens). Keep in sync with the LIGHT/DARK
+ * palettes in strategist.module.css. Light is the default ground; dark overrides
+ * under [data-mantine-color-scheme='dark'].
+ */
+
+/* ── Strategist palette, scoped to the skinned roots ─────────────────────── */
+[data-surface='strategist'] {
+  --st-paper: #ffffff;
+  --st-paper-2: #faf9f6;
+  --st-ink: #0c0c0a;
+  --st-ink-2: #2a2823;
+  --st-gray: #9d9a92;
+  --st-hair: #e6e4de;
+  --st-mono: var(--font-space-mono, "Space Mono", ui-monospace, Menlo, monospace);
+}
+
+[data-mantine-color-scheme='dark'] [data-surface='strategist'] {
+  --st-paper: #0c0d0f;
+  --st-paper-2: #14161a;
+  --st-ink: #f2f1ec;
+  --st-ink-2: #b9b7ae;
+  --st-gray: #6f6e68;
+  --st-hair: #26282d;
+}
+
+/* =========================================================================
+ * D1 (#146) — consent banner + preference center skin.
+ *
+ * Both shared consent CSS modules resolve every colour through --site-* /
+ * --button-* tokens with fallbacks, so we skin them WITHOUT editing those
+ * modules: we re-point those tokens to the strategist palette, scoped to the
+ * consent roots. This repaints the panel stock, ink, accent and the
+ * primary/secondary buttons to ink-on-paper, in both light and dark.
+ *
+ * Restricted to the consent roots (aside = banner, div.overlay = preference
+ * center) so it never leaks onto the chat panel, which is also a
+ * data-surface='strategist' root but is Mantine-token driven (see C1 below).
+ * ====================================================================== */
+aside[data-surface='strategist'],
+div[data-surface='strategist']:not([role='dialog']) {
+  --site-bg-0: var(--st-paper);
+  --site-bg-1: var(--st-paper-2);
+  --site-ink: var(--st-ink);
+  --site-ink-muted: var(--st-ink-2);
+  --site-ink-caption: var(--st-gray);
+  --site-accent: var(--st-ink);
+
+  /* Primary action = ink fill with paper text (matches the page CTA). */
+  --button-background-color: var(--st-ink);
+  --button-text-color: var(--st-paper);
+  --button-border-color: var(--st-ink);
+}
+
+/* Editorial chrome: square the panel/dialog corners + the pill buttons, and
+ * give buttons + headings the persona's mono/display register. Presentation
+ * only; targets the shared modules' known structural elements, not hashed
+ * class names. */
+aside[data-surface='strategist'] > div, /* banner .panel */
+div[data-surface='strategist'] > [role='dialog'] /* preference .dialog */ {
+  border-radius: 4px;
+}
+
+aside[data-surface='strategist'] button,
+div[data-surface='strategist']:not([role='dialog']) button {
+  border-radius: 2px;
+  font-family: var(--st-mono);
+  letter-spacing: 0.04em;
+}
+
+aside[data-surface='strategist'] h2,
+div[data-surface='strategist']:not([role='dialog']) h2 {
+  letter-spacing: -0.01em;
+}
+
+/* =========================================================================
+ * C1 (#143) — chat panel skin.
+ *
+ * The chat panel root is <div role='dialog' data-surface='strategist'> and is
+ * styled with Mantine tokens. We override a focused set of those tokens ONLY on
+ * the strategist chat panel, so the conversation surface adopts the persona's
+ * ink-on-paper ground, hairline borders and ink primary (user bubble). Scoped
+ * to the panel — Mantine elsewhere is untouched.
+ * ====================================================================== */
+[role='dialog'][data-surface='strategist'] {
+  --mantine-color-body: var(--st-paper);
+  --mantine-color-text: var(--st-ink);
+  --mantine-color-default-border: var(--st-hair);
+  --mantine-color-default-hover: var(--st-paper-2);
+  --mantine-color-dimmed: var(--st-gray);
+  /* User bubble = ink fill, paper text (mirrors the page's CTA). */
+  --mantine-primary-color-filled: var(--st-ink);
+  --mantine-primary-color-contrast: var(--st-paper);
+}
+
+/* Header title in the strategist register — mono lettering. */
+[role='dialog'][data-surface='strategist'] header {
+  font-family: var(--st-mono);
+  letter-spacing: 0.02em;
+}
+
+/* Suggested-prompt chips: square editorial buttons rather than rounded. */
+[role='dialog'][data-surface='strategist'] button {
+  border-radius: 2px;
+}

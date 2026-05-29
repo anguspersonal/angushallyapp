@@ -16,8 +16,17 @@
  * back to the main site, and a `PersonaThemeToggle` wired into the persona's
  * light + dark palette (scoped in strategist.module.css under the strategist
  * surface). Metadata is supplied by the sibling server `page.tsx` via the
- * documented server-wrapper-over-client-island pattern. The Contact section
- * is a placeholder anchor only — the actual form is B2 (#132/#133/#134).
+ * documented server-wrapper-over-client-island pattern.
+ *
+ * Contact + privacy (issue #133 / PRD #123 · Phase B2): the Contact section is
+ * now a real form (`StrategistContact`) wired to the shared `useContactForm`
+ * hook with `source='strategist'`, and the footer links to the persona-chrome
+ * privacy page at `/strategist/privacy`.
+ *
+ * Chat + consent skins (issues #143 / #146): the shared chat panel and consent
+ * UI carry `data-surface="strategist"`; their persona skin lives in the global
+ * `strategist.surface.css` imported here (it must be global to reach those
+ * fixed-position elements, which mount outside this route's DOM subtree).
  */
 
 import React from 'react';
@@ -25,8 +34,13 @@ import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { PersonaFooter, PersonaThemeToggle } from '@/components/persona';
+import { StrategistContact } from './StrategistContact';
 import { strategistFontClassNames } from './fonts';
 import styles from './strategist.module.css';
+// Global (non-module) persona skin for cross-tree fixed elements — the chat
+// panel and consent banner/preference-center, which set data-surface but mount
+// outside this route's wrapper. See the file header for why this must be global.
+import './strategist.surface.css';
 
 const DataFieldHero = dynamic(() => import('./DataFieldHero'), { ssr: false });
 
@@ -232,27 +246,8 @@ const StrategistPersonaPage = () => {
                     </div>
                 </motion.section>
 
-                {/* ---------- Contact (placeholder anchor; form is issue B2) ---------- */}
-                <motion.section
-                    id="contact"
-                    className={styles.contact}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.3 }}
-                    variants={reveal}
-                >
-                    <div className={styles.sectionHead}>
-                        <span className={styles.sectionNum}>04 / contact</span>
-                        <h2 className={styles.sectionTitle}>Get in touch</h2>
-                    </div>
-                    <p className={styles.contactLede}>
-                        Have a data-value or strategy problem worth a conversation? The quickest
-                        route is a short email &mdash; a contact form lands here shortly.
-                    </p>
-                    <a className={styles.contactCta} href={`mailto:${CONTACT_EMAIL}`}>
-                        {CONTACT_EMAIL} ↗
-                    </a>
-                </motion.section>
+                {/* ---------- Contact (issue #133 / B2) ---------- */}
+                <StrategistContact />
             </div>
 
             {/* ---------- Footer (shared chrome kit, themed for strategist) ---------- */}
@@ -265,8 +260,8 @@ const StrategistPersonaPage = () => {
                     </a>
                 }
                 privacy={
-                    <a className={styles.footerLink} href="#contact">
-                        Contact
+                    <a className={styles.footerLink} href="/strategist/privacy">
+                        Privacy
                     </a>
                 }
                 socials={

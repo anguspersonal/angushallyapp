@@ -9,17 +9,26 @@
  *   - Reject non-essential
  *   - Manage (opens the preference center)
  *
- * Neutral & tokenized — no persona skin here (that's D1, #145/#146/#147). Links
- * to /privacy as a placeholder (content lands in #126).
+ * Neutral & tokenized — no persona skin here (that's D1, #145/#146/#147). It
+ * exposes the current surface as `data-surface` (resolved through the shared
+ * surface registry, exactly like ChatPanel) so a persona can skin the banner
+ * via [data-surface="<persona>"] CSS WITHOUT this component owning any persona
+ * colours. When the route has no surface the attribute is omitted, so the
+ * neutral default is unchanged. Presentation-only: no consent logic depends on
+ * it. Links to /privacy (content lands in #126).
  */
 
 import * as React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { resolveSurface } from '@/lib/surfaces';
 import { useConsentContext } from '@/providers/ConsentProvider';
 import styles from './ConsentBanner.module.css';
 
 export function ConsentBanner() {
   const ctx = useConsentContext();
+  const pathname = usePathname();
+  const surface = resolveSurface(pathname)?.surface;
 
   if (!ctx || !ctx.shouldShowBanner) return null;
 
@@ -30,6 +39,7 @@ export function ConsentBanner() {
       aria-modal="false"
       aria-labelledby="consent-banner-title"
       aria-describedby="consent-banner-body"
+      data-surface={surface}
     >
       <div className={styles.panel}>
         <h2 id="consent-banner-title" className={styles.title}>

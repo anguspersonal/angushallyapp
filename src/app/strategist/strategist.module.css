@@ -42,6 +42,21 @@
     --persona-footer-border: var(--hair);
     --persona-toggle-hover-bg: color-mix(in srgb, var(--ink) 9%, transparent);
 
+    /* Skin the shared persona ContactForm (issue #133 / B2). The form reads
+       these --persona-* tokens (see ContactForm.module.css), so the editorial
+       ink-on-paper look tracks light/dark without forking that component.
+       Square corners + mono labels + an ink-filled submit match the page. */
+    --persona-accent: var(--ink);
+    --persona-form-gap: 1.1rem;
+    --persona-form-radius: 0;
+    --persona-form-label: var(--gray);
+    --persona-form-border: var(--hair);
+    --persona-form-field-bg: var(--paper);
+    --persona-form-focus-ring: color-mix(in srgb, var(--ink) 18%, transparent);
+    --persona-form-submit-ink: var(--paper);
+    --persona-form-error: #b42318;
+    --persona-form-success: var(--ink);
+
     background: var(--paper);
     color: var(--ink);
     font-family: var(--grot);
@@ -61,6 +76,8 @@
     --hair: #26282d;
     --steel: #aeb3bb;
     --persona-toggle-hover-bg: color-mix(in srgb, var(--ink) 14%, transparent);
+    /* Brighter error red so validation copy reads on the dark ink-room ground. */
+    --persona-form-error: #ff6b5e;
 }
 
 .page ::selection {
@@ -552,40 +569,70 @@
 }
 
 /* ──────────────────────── Contact ───────────────────────
-   Placeholder anchor only — the actual contact form is issue B2
-   (#132/#133/#134). This section exists so the nav Contact anchor has a
-   destination and the page reads as complete. */
+   The real contact form (issue #133 / B2). `StrategistContact` renders the
+   shared persona `ContactForm`, themed through the --persona-* tokens set on
+   `.page` above. These classes add the editorial layout + the collection
+   notice / reCAPTCHA hint affordances the tokens don't cover. */
 .contact {
     scroll-margin-top: 84px;
 }
 
 .contactLede {
-    margin: 0 0 22px;
+    margin: 0 0 28px;
     font-size: 15px;
     line-height: 1.6;
     color: var(--ink-2);
     max-width: 60ch;
 }
 
-.contactCta {
-    display: inline-flex;
-    align-items: center;
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--ink);
-    text-decoration: none;
-    border: 1.5px solid var(--ink);
-    border-radius: 999px;
-    padding: 12px 24px;
-    transition: background 0.25s var(--easing), color 0.25s var(--easing);
+.contactForm {
+    max-width: 560px;
 }
 
-.contactCta:hover,
-.contactCta:focus-visible {
-    background: var(--ink);
-    color: var(--paper);
+/* The shared form, given a mono label scale + a square editorial submit. */
+.form :global(label) {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.form :global(button[type='submit']) {
+    font-family: var(--mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 13px 28px;
+}
+
+/* One-line "what we collect" notice rendered as the form intro. */
+.contactNotice {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--gray);
+}
+
+.contactNoticeLink {
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--hair);
+    transition: color 0.2s var(--easing), border-color 0.2s var(--easing);
+}
+
+.contactNoticeLink:hover,
+.contactNoticeLink:focus-visible {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+}
+
+/* reCAPTCHA deferral / readiness hint. */
+.contactHint {
+    margin: 4px 0 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--gray);
 }
 
 /* Anchored sections sit below the sticky nav. */

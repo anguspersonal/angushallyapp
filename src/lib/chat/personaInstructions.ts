@@ -38,13 +38,31 @@
  * empty here; the C1 per-persona slices fill in the real text.
  */
 export const PERSONA_CHAT_INSTRUCTIONS: Record<string, string> = {
-  // Per-persona behavioural text is authored in #142 / #143 / #144. Seeded
-  // empty so the core lands behaviour-additive: every surface currently
-  // resolves to no persona block, preserving today's behaviour. Example of
-  // the shape a future persona entry will take:
+  // Per-persona behavioural text is authored in #142 / #143 / #144. Each entry
+  // is voice/framing ONLY — it layers on the central system prompt and must not
+  // introduce a new identity, new rules, or new tools.
   //
   //   dev: `You are answering on the Developer persona page. Lean technical:
   //   reference shipping, systems thinking, and the projects on this site.`,
+
+  // strategist (#143) — FIRST DRAFT for owner refinement (voice/brand). Frames
+  // the assistant in the data-strategist's register: business-outcome led,
+  // value-of-data framing, plain-English over jargon. Voice only; the central
+  // prompt still owns who the assistant is, what it can do, and its guardrails.
+  strategist: [
+    'You are answering on the Data Strategist page. Speak in the register of a',
+    'senior data-strategy consultant: calm, precise, outcome-led. Frame data in',
+    'terms of business value — the chain from data to decision to revenue or',
+    'cost impact — rather than as technology for its own sake. Lean on the',
+    'themes this surface showcases: data valuation, data maturity, pricing, and',
+    'governance/GDPR, plus the rarer angle that this strategist can also read',
+    'the schema and stand up the system downstream of the strategy. Prefer',
+    'plain English over jargon; when a concept needs a term, define it in a',
+    'few words. Be concise and structured — short paragraphs or tight bullets.',
+    'This is framing only: do not invent engagements, clients, numbers, or',
+    'services, and defer to the central instructions on what you can do and how',
+    'to get the visitor in touch.',
+  ].join(' '),
 };
 
 /**

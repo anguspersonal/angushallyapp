@@ -8,11 +8,11 @@ import {
 /**
  * Behavioural tests for the per-persona chat layer (#139, C0).
  *
- * The registry ships seeded EMPTY (the real per-persona text is authored in
- * #142 / #143 / #144), so these tests inject a temporary entry to exercise the
- * selection + wrapping behaviour, then restore the registry. We assert the
- * external contract — given a surface, the block that comes out — not the
- * literal text of any persona, which lives elsewhere.
+ * The registry shipped seeded EMPTY in C0; the C1 per-persona slices (#142 /
+ * #143 / #144) fill in real text. These tests inject a temporary entry to
+ * exercise the selection + wrapping behaviour, then restore the registry. We
+ * assert the external contract — given a surface, the block that comes out —
+ * not the literal text of any persona, which lives elsewhere.
  */
 describe('buildPersonaInstructions', () => {
   const TEST_SURFACE = '__test_persona__';
@@ -32,12 +32,19 @@ describe('buildPersonaInstructions', () => {
       expect(buildPersonaInstructions('not-a-registered-surface')).toBeNull();
     });
 
-    it('ships seeded empty — every registered surface yields no block today', () => {
-      // Guards the behaviour-additive promise of #139: until the C1 slices add
-      // real text, no surface produces a persona block, so chat behaves
-      // exactly as it does now.
+    it('every registered entry is either empty (no block) or a valid wrapped block', () => {
+      // C0 shipped seeded empty; the C1 slices fill in real per-persona text.
+      // The behaviour-additive contract still holds per surface: an empty/blank
+      // entry yields no block (today's behaviour), and a non-empty entry yields
+      // a well-formed block — never anything in between.
       for (const surface of Object.keys(PERSONA_CHAT_INSTRUCTIONS)) {
-        expect(buildPersonaInstructions(surface)).toBeNull();
+        const block = buildPersonaInstructions(surface);
+        if (PERSONA_CHAT_INSTRUCTIONS[surface].trim()) {
+          expect(block).not.toBeNull();
+          expect(block).toContain('# Persona behaviour');
+        } else {
+          expect(block).toBeNull();
+        }
       }
     });
 

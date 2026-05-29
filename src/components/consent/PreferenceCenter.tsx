@@ -9,10 +9,16 @@
  *
  * Local draft state lets the user toggle freely, then commit with "Save
  * preferences" (or take the accept-all / reject shortcuts). Neutral & tokenized
- * — persona skins are D1 (#145/#146/#147).
+ * — persona skins are D1 (#145/#146/#147). It exposes the current surface as
+ * `data-surface` (resolved through the shared surface registry, like ChatPanel)
+ * so a persona can skin it via [data-surface="<persona>"] CSS without this
+ * component owning persona colours. Presentation-only: no consent logic reads
+ * it; the attribute is omitted on surfaceless routes (neutral default unchanged).
  */
 
 import * as React from 'react';
+import { usePathname } from 'next/navigation';
+import { resolveSurface } from '@/lib/surfaces';
 import { useConsentContext } from '@/providers/ConsentProvider';
 import {
   CONSENT_CATEGORIES,
@@ -23,6 +29,8 @@ import styles from './PreferenceCenter.module.css';
 export function PreferenceCenter() {
   const ctx = useConsentContext();
   const open = Boolean(ctx?.isPreferenceCenterOpen);
+  const pathname = usePathname();
+  const surface = resolveSurface(pathname)?.surface;
 
   // Local draft, seeded from current choices each time the dialog opens.
   const [draft, setDraft] = React.useState<Record<string, boolean>>({});
@@ -63,6 +71,7 @@ export function PreferenceCenter() {
     <div
       className={styles.overlay}
       role="presentation"
+      data-surface={surface}
       onClick={(e) => {
         if (e.target === e.currentTarget) ctx.closePreferenceCenter();
       }}

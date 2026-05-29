@@ -1,0 +1,94 @@
+/*
+ * `/strategist/privacy` prose styles.
+ *
+ * Layout/typography only — every colour resolves through the strategist palette
+ * tokens (--ink / --ink-2 / --gray / --hair / --paper-2) set on `.page` in
+ * ../strategist.module.css, so this page tracks the persona's light + dark
+ * modes without re-declaring any colours. The canonical legal text comes from
+ * src/lib/legal/privacyPolicy.ts; nothing here duplicates it.
+ */
+
+.draftNotice {
+    margin: 0 0 28px;
+    padding: 14px 18px;
+    border: 1px solid var(--hair);
+    border-left: 3px solid var(--ink);
+    background: var(--paper-2);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    color: var(--ink-2);
+}
+
+.intro {
+    margin: 0 0 40px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 68ch;
+}
+
+.manageLink {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink);
+}
+
+.manageLink:hover {
+    opacity: 0.7;
+}
+
+.policy {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(32px, 5vh, 52px);
+}
+
+.section {
+    scroll-margin-top: 84px;
+}
+
+.heading {
+    margin: 0 0 14px;
+    font-family: var(--grot);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    font-size: clamp(18px, 2.2vw, 24px);
+    line-height: 1.1;
+    color: var(--ink);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--hair);
+}
+
+.paragraph {
+    margin: 0 0 14px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--ink-2);
+    max-width: 72ch;
+}
+
+.paragraph:last-child {
+    margin-bottom: 0;
+}
+
+.list {
+    margin: 0 0 14px;
+    padding-left: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 72ch;
+}
+
+.listItem {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+}
+
+.listItem::marker {
+    color: var(--gray);
+}
