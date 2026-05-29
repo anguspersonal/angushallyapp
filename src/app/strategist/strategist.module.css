@@ -5,6 +5,22 @@
  * deliberately distinct signature from the dark Mantine persona pages.
  * Font variables (--font-archivo / --font-space-mono) are applied via
  * `strategistFontClassNames` on the page root, so they stay scoped here.
+ *
+ * Light + dark palette (PRD #123 · issue #130). The colour tokens on `.page`
+ * are the LIGHT "paper" palette and also serve as the no-attribute default
+ * (the editorial identity is fundamentally ink-on-paper, so it is the natural
+ * pre-hydration ground). The DARK "ink-room" palette overrides them under
+ * `[data-mantine-color-scheme='dark']`, matching the site-wide convention
+ * (see /dev's dev.module.css, globals.css, GradientRoot.module.css). The
+ * day/night toggle is the shared `PersonaThemeToggle`, wired in the page's nav
+ * and footer — toggling it flips the same Mantine color-scheme attribute the
+ * main site uses, so only these ~7 surface tokens change between modes. Both
+ * modes suit the steel-sphere hero (the WebGL renderer is alpha-transparent
+ * and sits on whatever ground the CSS provides), so neither mode is hidden.
+ *
+ * Tokens are scoped to the strategist surface: the route renders inside
+ * `[data-surface="strategist"]` (set by ClientLayout's fullBleed shell), and
+ * `.page` is this route-local CSS module, so nothing here can leak site-wide.
  */
 
 .page {
@@ -19,11 +35,32 @@
     --mono: var(--font-space-mono), "Space Mono", ui-monospace, Menlo, monospace;
     --easing: cubic-bezier(0.16, 0.84, 0.24, 1);
 
+    /* Skin the shared persona chrome kit (footer + theme toggle) off the same
+       palette so it tracks light/dark without forking those components. */
+    --persona-ink: var(--ink);
+    --persona-footer-bg: var(--paper-2);
+    --persona-footer-border: var(--hair);
+    --persona-toggle-hover-bg: color-mix(in srgb, var(--ink) 9%, transparent);
+
     background: var(--paper);
     color: var(--ink);
     font-family: var(--grot);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+}
+
+/* DARK "ink-room" palette — near-black ground, paper-coloured ink, steel kept
+   cool. The steel-sphere hero reads as polished metal on charcoal; only the
+   surface tokens invert. */
+[data-mantine-color-scheme='dark'] .page {
+    --paper: #0c0d0f;
+    --paper-2: #14161a;
+    --ink: #f2f1ec;
+    --ink-2: #b9b7ae;
+    --gray: #6f6e68;
+    --hair: #26282d;
+    --steel: #aeb3bb;
+    --persona-toggle-hover-bg: color-mix(in srgb, var(--ink) 14%, transparent);
 }
 
 .page ::selection {
@@ -405,4 +442,180 @@
     .fwGrid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ─────────────────── In-page anchor nav ─────────────────── */
+/* Persona-local anchors (Hero / About / Work / Contact) — NOT first-class
+   site nav. Sticky editorial bar; the single route back to the main site is
+   the discreet link in the footer, per PRD #123 (personas are standalone). */
+.navBar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px clamp(18px, 3vw, 40px);
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--hair);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.brandGem {
+    width: 9px;
+    height: 9px;
+    background: var(--ink);
+    transform: rotate(45deg);
+}
+
+.brandDim {
+    color: var(--gray);
+}
+
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: clamp(14px, 2.4vw, 30px);
+}
+
+.navLink {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: color 0.2s var(--easing), border-color 0.2s var(--easing);
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+}
+
+.navLinkN {
+    font-size: 9px;
+    color: var(--gray);
+}
+
+.navToggle {
+    flex: none;
+    color: var(--ink);
+}
+
+@media (max-width: 40em) {
+    .navLinks {
+        display: none;
+    }
+}
+
+/* ───────────────────────── About ───────────────────────── */
+.aboutLede {
+    margin: 0;
+    font-family: var(--grot);
+    font-weight: 600;
+    font-size: clamp(18px, 2vw, 26px);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    max-width: 56ch;
+}
+
+.aboutBody {
+    margin: 18px 0 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 64ch;
+}
+
+/* ──────────────────────── Contact ───────────────────────
+   Placeholder anchor only — the actual contact form is issue B2
+   (#132/#133/#134). This section exists so the nav Contact anchor has a
+   destination and the page reads as complete. */
+.contact {
+    scroll-margin-top: 84px;
+}
+
+.contactLede {
+    margin: 0 0 22px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 60ch;
+}
+
+.contactCta {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-decoration: none;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    padding: 12px 24px;
+    transition: background 0.25s var(--easing), color 0.25s var(--easing);
+}
+
+.contactCta:hover,
+.contactCta:focus-visible {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+/* Anchored sections sit below the sticky nav. */
+.body > section[id] {
+    scroll-margin-top: 84px;
+}
+
+/* ──────────────────────── Footer ────────────────────────
+   The shared PersonaFooter, skinned via the persona tokens set on `.page`
+   (--persona-ink / --persona-footer-*). This className adds only the bits the
+   tokens don't cover — link affordances and a slightly tighter type scale. */
+.footer {
+    font-family: var(--mono);
+}
+
+.footerLink {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s var(--easing), border-color 0.2s var(--easing);
+}
+
+.footerLink:hover,
+.footerLink:focus-visible {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+}
+
+.footerToggle {
+    color: var(--ink);
 }
