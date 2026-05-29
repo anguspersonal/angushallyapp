@@ -1,38 +1,42 @@
 import { describe, it, expect } from 'vitest';
 import { validateContactFormBody } from './validateContactForm';
+import { DEFAULT_LEAD_SOURCE } from './leadSources';
 
 const validInput = {
   name: 'Angus',
   email: 'angus@example.com',
+  subject: 'Hello',
   message: 'Hello there',
+  source: 'contact_page',
   recaptchaToken: 'token-123',
 };
 
 describe('validateContactFormBody', () => {
   describe('rejects', () => {
-    it('null body with all four required errors', () => {
+    it('null body with all five required errors', () => {
       const result = validateContactFormBody(null);
       expect(result.ok).toBe(false);
       if (!result.ok) {
         expect(result.errors).toEqual([
           'Name is required',
           'Valid email is required',
+          'Subject is required',
           'Message is required',
           'reCAPTCHA verification required',
         ]);
       }
     });
 
-    it('undefined body with all four required errors', () => {
+    it('undefined body with all five required errors', () => {
       const result = validateContactFormBody(undefined);
       expect(result.ok).toBe(false);
-      if (!result.ok) expect(result.errors).toHaveLength(4);
+      if (!result.ok) expect(result.errors).toHaveLength(5);
     });
 
-    it('empty object with all four required errors', () => {
+    it('empty object with all five required errors', () => {
       const result = validateContactFormBody({});
       expect(result.ok).toBe(false);
-      if (!result.ok) expect(result.errors).toHaveLength(4);
+      if (!result.ok) expect(result.errors).toHaveLength(5);
     });
 
     it('whitespace-only name', () => {
@@ -65,6 +69,12 @@ describe('validateContactFormBody', () => {
       if (!result.ok) expect(result.errors).toEqual(['Valid email is required']);
     });
 
+    it('whitespace-only subject', () => {
+      const result = validateContactFormBody({ ...validInput, subject: '   ' });
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.errors).toEqual(['Subject is required']);
+    });
+
     it('whitespace-only message', () => {
       const result = validateContactFormBody({ ...validInput, message: '   ' });
       expect(result.ok).toBe(false);
@@ -77,10 +87,17 @@ describe('validateContactFormBody', () => {
       if (!result.ok) expect(result.errors).toEqual(['reCAPTCHA verification required']);
     });
 
+    it('source outside the known set', () => {
+      const result = validateContactFormBody({ ...validInput, source: 'evil-spoof' });
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.errors).toEqual(['Invalid source']);
+    });
+
     it('reports multiple errors at once in field order', () => {
       const result = validateContactFormBody({
         name: '',
         email: 'not-an-email',
+        subject: '',
         message: '',
         recaptchaToken: '',
       });
@@ -89,6 +106,7 @@ describe('validateContactFormBody', () => {
         expect(result.errors).toEqual([
           'Name is required',
           'Valid email is required',
+          'Subject is required',
           'Message is required',
           'reCAPTCHA verification required',
         ]);
@@ -102,16 +120,19 @@ describe('validateContactFormBody', () => {
       expect(result).toEqual({ ok: true, data: validInput });
     });
 
-    it('trims name, message, and recaptchaToken', () => {
+    it('trims name, subject, message, and recaptchaToken', () => {
       const result = validateContactFormBody({
         name: '  Angus  ',
         email: 'angus@example.com',
+        subject: '  Hello  ',
         message: '  Hello there  ',
+        source: 'contact_page',
         recaptchaToken: '  token-123  ',
       });
       expect(result.ok).toBe(true);
       if (result.ok) {
         expect(result.data.name).toBe('Angus');
+        expect(result.data.subject).toBe('Hello');
         expect(result.data.message).toBe('Hello there');
         expect(result.data.recaptchaToken).toBe('token-123');
       }
@@ -126,17 +147,43 @@ describe('validateContactFormBody', () => {
       if (result.ok) expect(result.data.email).toBe('angus.hally@example.com');
     });
 
-    it('ignores extra unknown fields (e.g. subject from the client form)', () => {
-      // The client form posts `subject` but the validator currently drops it.
-      // This test pins the current behavior so the divergence is visible.
+    it('captures subject (previously dropped — issue #124)', () => {
       const result = validateContactFormBody({
         ...validInput,
-        subject: 'A subject the server ignores',
+        subject: 'A subject the server now keeps',
       });
       expect(result.ok).toBe(true);
       if (result.ok) {
-        expect(result.data).not.toHaveProperty('subject');
+        expect(result.data.subject).toBe('A subject the server now keeps');
       }
     });
+
+    it('defaults source to contact_page when omitted (existing /contact client)', () => {
+      const withoutSource = {
+        name: validInput.name,
+        email: validInput.email,
+        subject: validInput.subject,
+        message: validInput.message,
+        recaptchaToken: validInput.recaptchaToken,
+      };
+      const result = validateContactFormBody(withoutSource);
+      expect(result.ok).toBe(true);
+      if (result.ok) expect(result.data.source).toBe(DEFAULT_LEAD_SOURCE);
+    });
+
+    it('defaults source when present but blank', () => {
+      const result = validateContactFormBody({ ...validInput, source: '   ' });
+      expect(result.ok).toBe(true);
+      if (result.ok) expect(result.data.source).toBe(DEFAULT_LEAD_SOURCE);
+    });
+
+    it.each(['teacher', 'strategist', 'ai-pm'])(
+      'accepts known persona source: %s',
+      (source) => {
+        const result = validateContactFormBody({ ...validInput, source });
+        expect(result.ok).toBe(true);
+        if (result.ok) expect(result.data.source).toBe(source);
+      },
+    );
   });
 });
