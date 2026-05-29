@@ -11,7 +11,7 @@ this file explains the *reasoning*.
 | --- | --- | --- | --- |
 | **Strictly necessary** | Yes | Supabase auth session cookies; the consent record itself | Cannot be switched off — the site cannot function without it. The preference-center toggle is rendered read-only. |
 | **Security & anti-spam** | No | Google reCAPTCHA | Loaded when the user consents to *Security* up-front, **or** the moment they interact with the contact form (focus / typing / submit). See "reCAPTCHA" below. |
-| **Analytics** | No | PostHog (stood up consent-gated in #141) | Never loaded until the *Analytics* category is consented. Revoking it must stop further loading. |
+| **Analytics** | No | PostHog (consent-gated, #141 — see [analytics guide](guides/analytics.md)) | Never initialised until the *Analytics* category is consented; revoking it tears PostHog down so capture stops. Also no-ops entirely when no PostHog key is configured. |
 | **Functional** | No | Non-essential preference cookies, e.g. the day/night theme preference | Never loaded until the *Functional* category is consented. |
 
 ## The gate
