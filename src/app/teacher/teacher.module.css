@@ -3,12 +3,24 @@
  * `/teacher` persona (v2). Self-contained: all custom properties live on the
  * `.page` root so nothing leaks into the rest of the site. Element selectors
  * are descendant-scoped under `.page` for the same reason.
+ *
+ * Night / day (issue #129): BOTH modes are kept — they are the same metaphor
+ * read two ways. DAY is the default below: a warm-cream teacher's notebook
+ * (light paper, deep blue-black ink). NIGHT inverts it into a literal slate
+ * CHALKBOARD (dark slate ground, chalk-white ink, the accents reading as
+ * coloured chalk). Day is the no-attribute default so there is no flash before
+ * hydration on the common case; the NIGHT palette overrides the ~6 surface
+ * tokens under `[data-mantine-color-scheme='dark']`, matching the site-wide
+ * convention (see globals.css / dev.module.css). The toggle lives in this
+ * surface's own header (PersonaThemeToggle) and persists via the shared Mantine
+ * color-scheme key, exactly like the main site. Only the surface tokens differ
+ * between modes; the five chalk accents are shared so the identity is constant.
  */
 
 .page {
-  --paper:   #fbf3e6;       /* warm cream chalkboard-ish */
+  --paper:   #fbf3e6;       /* DAY: warm cream notebook paper */
   --paper-2: #f3e8d3;
-  --ink:     #1f2233;       /* deep blue-black */
+  --ink:     #1f2233;       /* deep blue-black ink */
   --ink-soft:#3d4159;
   --ink-dim: #767995;
   --rule:    #d9cfb8;
@@ -18,6 +30,13 @@
   --accent-3:#5fb7e6;       /* light blue */
   --accent-4:#8f6dff;       /* purple */
   --accent-5:#7bd07b;       /* green */
+
+  /* Stable "dark panel" tokens — the hero blackboard, the pedagogy band, and
+     the lesson thumbnails are chalkboards in BOTH modes, so they read off these
+     fixed values rather than the mode-flipping --ink / --paper pair. In NIGHT
+     they melt into the page; in DAY they pop as dark slate on warm paper. */
+  --board:    #1f2233;
+  --on-board: #fbf3e6;
 
   --display: var(--font-bricolage), system-ui, sans-serif;
   --serif:   var(--font-lora), "Iowan Old Style", Georgia, serif;
@@ -33,10 +52,28 @@
   min-height: 100vh;
 }
 
+/* NIGHT — literal chalkboard. The cream "paper" becomes dark slate and the
+   blue-black "ink" becomes chalk white, so the warm-paper sections and the
+   already-dark blackboard panels (`--ink` grounds) read as one continuous
+   board. `--rule` warms into a faint chalk dust line. The five chalk accents
+   are intentionally unchanged — coloured chalk reads true on slate. */
+[data-mantine-color-scheme='dark'] .page {
+  --paper:   #14171f;       /* NIGHT: dark slate board */
+  --paper-2: #1b1f2a;
+  --ink:     #f3efe6;       /* chalk white */
+  --ink-soft:#cbd0dd;
+  --ink-dim: #8a90a4;
+  --rule:    rgba(243, 239, 230, 0.16);
+  /* The dark panels lift one step above the page so they still read as framed
+     boards rather than vanishing into the slate. */
+  --board:    #232735;
+  --on-board: #f3efe6;
+}
+
 .page * { box-sizing: border-box; }
 .page a { color: var(--ink); text-decoration: none; }
 .page button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
-.page ::selection { background: var(--accent); color: var(--paper); }
+.page ::selection { background: var(--accent); color: var(--board); }
 
 /* ── topbar ── */
 .top {
@@ -48,7 +85,7 @@
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; }
 .brandDot {
   width: 28px; height: 28px; border-radius: 50%;
-  background: var(--accent-3); color: var(--paper);
+  background: var(--accent-3); color: var(--board);
   display: inline-flex; align-items: center; justify-content: center;
   font-family: var(--serif); font-style: italic; font-weight: 500;
 }
@@ -96,19 +133,19 @@
 
 /* hero illustration — gentle chalkboard scene */
 .blackboard {
-  background: var(--ink); color: var(--paper);
+  background: var(--board); color: var(--on-board);
   border-radius: 14px; padding: 30px;
   aspect-ratio: 1.1 / 1;
   position: relative; overflow: hidden;
   box-shadow: 0 24px 50px -22px rgba(31, 34, 51, .45),
-              0 0 0 6px var(--paper),
+              0 0 0 6px var(--paper-2),
               0 0 0 7px var(--rule);
 }
 .blackboard::before {
   content: ""; position: absolute; inset: 0;
   background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, .08), transparent 60%);
 }
-.bbEq { font-family: var(--serif); font-style: italic; font-size: 26px; line-height: 1.4; color: var(--paper); }
+.bbEq { font-family: var(--serif); font-style: italic; font-size: 26px; line-height: 1.4; color: var(--on-board); }
 .bbEq :global(.num) { color: var(--accent); }
 .bbEq :global(.var) { color: var(--accent-3); }
 .bbEq :global(.op) { color: var(--accent-2); margin: 0 6px; }
@@ -156,24 +193,24 @@
   position: relative; overflow: hidden;
 }
 .lesson:hover { transform: translateY(-4px); box-shadow: 0 18px 36px -18px rgba(31, 34, 51, .25); border-color: var(--ink); }
-.thumb { aspect-ratio: 16/9; background: var(--ink); border-radius: 8px; position: relative; overflow: hidden; margin-bottom: 18px; }
+.thumb { aspect-ratio: 16/9; background: var(--board); border-radius: 8px; position: relative; overflow: hidden; margin-bottom: 18px; }
 .thumb svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .thumbTag {
   position: absolute; left: 14px; top: 14px;
-  font-family: var(--mono); font-size: 10.5px; color: var(--paper);
+  font-family: var(--mono); font-size: 10.5px; color: var(--on-board);
   letter-spacing: 0.12em; background: rgba(0, 0, 0, .4); padding: 4px 8px; border-radius: 999px;
 }
 .lesson h3 { margin: 0 0 8px; font-size: 19px; font-weight: 600; line-height: 1.25; }
 .lesson h3 em { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--accent); }
 .lesson p { margin: 0; font-family: var(--serif); font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
 
-/* ── why / pedagogy (dark) ── */
-.why { padding: 96px 32px; background: var(--ink); color: var(--paper); }
+/* ── why / pedagogy — always a chalkboard band (stable --board, both modes) ── */
+.why { padding: 96px 32px; background: var(--board); color: var(--on-board); }
 .whyInner { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
 .why .sectionEye { color: var(--accent-2); }
-.why .h2 { color: var(--paper); }
+.why .h2 { color: var(--on-board); }
 .whyLede { font-family: var(--serif); font-size: 18px; line-height: 1.65; color: rgba(255, 255, 255, .78); }
-.whyLede em { color: var(--paper); font-style: italic; }
+.whyLede em { color: var(--on-board); font-style: italic; }
 
 .reasons { display: grid; gap: 18px; }
 .reason {
@@ -185,7 +222,7 @@
 .glyph {
   width: 56px; height: 56px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  font-family: var(--display); font-weight: 700; font-size: 22px; color: var(--ink);
+  font-family: var(--display); font-weight: 700; font-size: 22px; color: var(--board);
 }
 .reason h4 { margin: 0 0 6px; font-size: 19px; font-weight: 600; }
 .reason h4 em { font-family: var(--serif); font-style: italic; color: var(--accent-2); font-weight: 500; }
@@ -233,13 +270,45 @@
   display: inline-flex; align-items: center; justify-content: center;
 }
 
-/* ── footer ── */
+/* ── footer — shared PersonaFooter kit, skinned via --persona-* tokens ──
+   The kit ships no colours; these tokens drive it. Day = the dark-ink utility
+   bar that closed the page before; night = a slightly-raised slate panel so it
+   reads as the bottom edge of the chalkboard. */
 .footer {
-  padding: 30px 32px; background: var(--ink); color: rgba(255, 255, 255, .6);
-  display: flex; justify-content: space-between; align-items: center;
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  --persona-ink: var(--paper);
+  --persona-footer-bg: var(--ink);
+  --persona-footer-border: transparent;
+  --persona-footer-pad: 26px 32px;
+  --persona-footer-fineprint-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
-.footer a { color: var(--paper); border-bottom: 1px solid var(--paper); }
+.footer a { color: var(--paper); }
+.footer a:hover { color: var(--accent-2); }
+[data-mantine-color-scheme='dark'] .footer {
+  --persona-footer-bg: var(--paper-2);
+  --persona-footer-border: var(--rule);
+  --persona-ink: var(--ink);
+}
+[data-mantine-color-scheme='dark'] .footer a { color: var(--ink); }
+.footerMuted { opacity: 0.6; }
+
+/* ── theme toggle (in the top bar) ── */
+.themeToggle {
+  --persona-ink: var(--ink-soft);
+  width: 38px; height: 38px; min-width: 38px; min-height: 38px;
+  border: 1px solid var(--rule); border-radius: 999px;
+}
+.themeToggle:hover { color: var(--ink); border-color: var(--ink); }
+
+/* ── contact section placeholder (real form is issue B2) ── */
+.contactPlaceholder {
+  margin: 8px auto 0; max-width: 46ch;
+  font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  padding: 14px 18px; border: 1.5px dashed var(--rule); border-radius: 12px;
+}
 
 @media (max-width: 56.25em) {
   .heroInner, .whyInner, .forGrid, .series { grid-template-columns: 1fr; }
