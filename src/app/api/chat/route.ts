@@ -35,6 +35,7 @@ import { upsertSession, writeTurn } from '@/lib/chat/persistence';
 import { DEFAULT_RATE_LIMIT, consume } from '@/lib/chat/rateLimiter';
 import { isDailySpendOverCap } from '@/lib/chat/spendCap';
 import { SSE_HEADERS, createSseStream } from '@/lib/chat/streamServer';
+import { buildPersonaInstructions } from '@/lib/chat/personaInstructions';
 import { buildPageContext, buildSystemPrompt } from '@/lib/chat/systemPrompt';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import {
@@ -124,7 +125,7 @@ function validateBody(payload: unknown): ValidatedBody {
     return { ok: false, reason: 'body must be a JSON object' };
   }
   const raw = payload as Record<string, unknown>;
-  const { sessionId, message, history, route } = raw;
+  const { sessionId, message, history, route, surface } = raw;
 
   if (typeof sessionId !== 'string' || !UUID_REGEX.test(sessionId)) {
     return { ok: false, reason: 'sessionId must be a uuid' };
@@ -141,6 +142,11 @@ function validateBody(payload: unknown): ValidatedBody {
   if (typeof route !== 'string') {
     return { ok: false, reason: 'route must be a string' };
   }
+  // `surface` is optional (older clients won't send it; absent → no persona
+  // block). When present it must be a string; anything else is malformed.
+  if (surface !== undefined && typeof surface !== 'string') {
+    return { ok: false, reason: 'surface must be a string when present' };
+  }
 
   return {
     ok: true,
@@ -149,6 +155,7 @@ function validateBody(payload: unknown): ValidatedBody {
       message,
       history: history as ChatHistoryEntry[],
       route,
+      ...(surface !== undefined ? { surface } : {}),
     },
   };
 }
@@ -382,6 +389,12 @@ export async function POST(request: NextRequest): Promise<Response> {
       //     for the page the user is on. Appended AFTER the cache breakpoint
       //     so it doesn't invalidate the cached prefix — the cached block
       //     covers the bulk of the tokens and this tail is ≤ ~50 tokens.
+      //   - Third block (optional): per-persona behavioural instructions for
+      //     the current surface. Same seam as the page-context block —
+      //     appended AFTER the breakpoint so the cached prefix is preserved
+      //     (no cache-hit regression). Absent/unknown surface → no block, so
+      //     the assistant behaves exactly as before. The block is keyed off
+      //     the surface registry; see src/lib/chat/personaInstructions.ts.
       system: [
         {
           type: 'text',
@@ -391,6 +404,12 @@ export async function POST(request: NextRequest): Promise<Response> {
         ...(() => {
           const pageContext = buildPageContext(body.route);
           return pageContext ? [{ type: 'text' as const, text: pageContext }] : [];
+        })(),
+        ...(() => {
+          const personaInstructions = buildPersonaInstructions(body.surface);
+          return personaInstructions
+            ? [{ type: 'text' as const, text: personaInstructions }]
+            : [];
         })(),
       ],
       messages: [

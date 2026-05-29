@@ -7,6 +7,7 @@ import {
   IconBrandLinkedin,
   IconBrandGithub,
 } from '@tabler/icons-react';
+import { ConsentManageLink } from './consent/ConsentManageLink';
 import styles from './Footer.module.css';
 
 type FooterLink = { label: string; href: string };
@@ -17,6 +18,7 @@ const mainLinks: FooterLink[] = [
   { label: 'Projects', href: '/projects' },
   { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
+  { label: 'Privacy', href: '/privacy' },
 ];
 
 // Each entry surfaces a single persona "lens". The /personas hub is
@@ -70,6 +72,11 @@ function Footer() {
                 {link.label}
               </Link>
             ))}
+            {/* Re-opens the consent preference center so choices stay revocable
+                site-wide (issue #140). */}
+            <ConsentManageLink className={styles.colLink}>
+              Cookie preferences
+            </ConsentManageLink>
           </div>
           <div>
             <h5 className={styles.colHeading}>Work with me</h5>

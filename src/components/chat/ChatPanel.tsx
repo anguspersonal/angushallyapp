@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ActionIcon, Loader, ScrollArea, Text } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import { usePathname } from 'next/navigation';
+import { resolveSurface } from '@/lib/surfaces';
 import { ChatComposer } from './ChatComposer';
 import { ChatMessage } from './ChatMessage';
 import { ChatRestingState } from './ChatRestingState';
@@ -62,6 +63,12 @@ export function ChatPanel({ onClose }: Props) {
   // Re-runs on pathname change so an in-message link click releases the
   // lock even before the unmount fires (FR-RES-11).
   const pathname = usePathname();
+  // Expose the current persona surface as data-surface so personas can skin
+  // the panel later (CSS keyed off [data-surface="<persona>"]). Resolved
+  // through the shared surface registry (single source of truth). When the
+  // route has no surface, the attribute is omitted entirely — no visual
+  // change from today's default chrome.
+  const surface = resolveSurface(pathname)?.surface;
   React.useEffect(() => {
     const original = document.body.style.overflow;
     const isMobile = window.matchMedia('(max-width: 47.99em)').matches;
@@ -101,7 +108,12 @@ export function ChatPanel({ onClose }: Props) {
   const isResting = status === 'resting' || lastError === 'budget_exhausted';
 
   return (
-    <div className={styles.panel} role="dialog" aria-label="Chat with the site assistant">
+    <div
+      className={styles.panel}
+      role="dialog"
+      aria-label="Chat with the site assistant"
+      data-surface={surface}
+    >
       <header className={styles.header}>
         <Text fw={600} size="sm" className={styles.headerTitle}>
           Chat with Angus&apos;s site
