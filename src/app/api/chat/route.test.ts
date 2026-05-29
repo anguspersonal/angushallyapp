@@ -406,4 +406,83 @@ describe('POST /api/chat', () => {
     vi.doUnmock('@/lib/chat/ipHash');
     vi.doUnmock('@/lib/supabase/admin');
   });
+
+  it('fails closed with `unconfigured` when ipHash throws (missing pepper) — never persists a raw IP', async () => {
+    // Simulate a missing CHAT_IP_HASH_PEPPER: the real hashIp throws. The
+    // route must hard-fail with `unconfigured` (mirroring the missing-API-key
+    // path) rather than degrading to persisting the raw IP into ip_hash.
+    vi.resetModules();
+    vi.doMock('@/lib/chat/ipHash', () => ({
+      hashIp: () => {
+        throw new Error('CHAT_IP_HASH_PEPPER environment variable is not set');
+      },
+    }));
+    vi.doMock('@/lib/chat/persistence', () => ({
+      upsertSession: (...args: Parameters<typeof upsertSession>) => upsertSession(...args),
+      writeTurn: (...args: Parameters<typeof writeTurn>) => writeTurn(...args),
+    }));
+    vi.doMock('@/lib/supabase/admin', () => ({ getSupabaseAdmin: () => null }));
+
+    const { POST } = await import('./route');
+    const res = await POST(
+      makeRequest(makeValidBody({ sessionId: '99999999-aaaa-4aaa-9aaa-bbbbbbbbbbbb' })),
+    );
+    expect(res.headers.get('content-type')).toContain('text/event-stream');
+    const frames = await readSseFrames(res);
+    expect(frames).toHaveLength(1);
+    expect(frames[0].event).toBe('error');
+    expect((frames[0].data as { code: string }).code).toBe('unconfigured');
+    // The raw IP must never reach persistence.
+    expect(upsertSession).not.toHaveBeenCalled();
+    expect(writeTurn).not.toHaveBeenCalled();
+
+    vi.doUnmock('@/lib/chat/ipHash');
+    vi.doUnmock('@/lib/chat/persistence');
+    vi.doUnmock('@/lib/supabase/admin');
+  });
+});
+
+describe('resolveClientIp (X-Forwarded-For trust boundary)', () => {
+  function reqWithHeaders(headers: Record<string, string>): NextRequest {
+    return new NextRequest('http://localhost/api/chat', { method: 'POST', headers });
+  }
+
+  it('prefers the single-value x-real-ip header', async () => {
+    const { resolveClientIp } = await import('./route');
+    const ip = resolveClientIp(
+      reqWithHeaders({
+        'x-real-ip': '198.51.100.7',
+        'x-forwarded-for': '1.1.1.1, 198.51.100.7',
+      }),
+    );
+    expect(ip).toBe('198.51.100.7');
+  });
+
+  it('uses the RIGHTMOST X-Forwarded-For hop (the trusted, platform-appended value)', async () => {
+    const { resolveClientIp } = await import('./route');
+    // Client-set spoof on the left, Vercel-appended real IP on the right.
+    const ip = resolveClientIp(reqWithHeaders({ 'x-forwarded-for': '6.6.6.6, 203.0.113.42' }));
+    expect(ip).toBe('203.0.113.42');
+  });
+
+  it('does not return the spoofable leftmost X-Forwarded-For entry', async () => {
+    const { resolveClientIp } = await import('./route');
+    const ip = resolveClientIp(
+      reqWithHeaders({ 'x-forwarded-for': 'attacker-spoof, attacker-spoof-2, 203.0.113.42' }),
+    );
+    expect(ip).not.toBe('attacker-spoof');
+    expect(ip).toBe('203.0.113.42');
+  });
+
+  it('handles a single-entry X-Forwarded-For', async () => {
+    const { resolveClientIp } = await import('./route');
+    expect(resolveClientIp(reqWithHeaders({ 'x-forwarded-for': '203.0.113.42' }))).toBe(
+      '203.0.113.42',
+    );
+  });
+
+  it('falls back to "unknown" when no trusted header is present', async () => {
+    const { resolveClientIp } = await import('./route');
+    expect(resolveClientIp(reqWithHeaders({}))).toBe('unknown');
+  });
 });
