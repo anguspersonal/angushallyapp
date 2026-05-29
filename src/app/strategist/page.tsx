@@ -14,7 +14,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { strategistFontClassNames } from '@/lib/fonts';
+import { strategistFontClassNames } from './fonts';
 import styles from './strategist.module.css';
 
 const DataFieldHero = dynamic(() => import('./DataFieldHero'), { ssr: false });

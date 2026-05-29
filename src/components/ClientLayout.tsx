@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { MantineProvider, AppShell } from '@mantine/core';
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { theme } from '../lib/theme';
+import { resolveSurface } from '../lib/surfaces';
 import { AuthProvider } from '../providers/AuthProvider';
 import { ErrorBoundary } from './ErrorBoundary';
 import Header from './Header';
@@ -21,29 +22,6 @@ interface ClientLayoutProps {
 
 function isHomePath(pathname: string | null): boolean {
   return pathname === '/' || pathname === '';
-}
-
-function isBlogPath(pathname: string | null): boolean {
-  if (!pathname) return false;
-  return pathname === '/blog' || pathname.startsWith('/blog/');
-}
-
-function isProjectsDesktopPath(pathname: string | null): boolean {
-  // Only the `/projects` index gets the macOS desktop shell. Sub-routes like
-  // `/projects/strava` or `/projects/data-value-game` keep the default site
-  // chrome so deep links continue to work as standalone pages.
-  return pathname === '/projects';
-}
-
-/**
- * Maps a route to a surface attribute. Surface is orthogonal to colour-scheme:
- * components that care about it (Glass, GradientRoot) read it independently.
- * Add new surfaces here when introducing route-level visual systems.
- */
-function surfaceForPath(pathname: string | null): 'blog' | 'projects' | undefined {
-  if (isBlogPath(pathname)) return 'blog';
-  if (isProjectsDesktopPath(pathname)) return 'projects';
-  return undefined;
 }
 
 function HomeSyncedHeaderShell({ children }: { children: React.ReactNode }) {
@@ -99,13 +77,13 @@ function HomeSyncedHeaderShell({ children }: { children: React.ReactNode }) {
 
 function SurfaceShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const surface = surfaceForPath(pathname);
+  const def = resolveSurface(pathname);
 
-  // Surface "blog" gets bespoke editorial chrome — no AppShell, no Glass nav,
-  // no pill shape. Flat sticky topbar and editorial footer instead.
-  if (surface === 'blog') {
+  // Surface kind "editorial" gets bespoke editorial chrome — no AppShell, no
+  // Glass nav, no pill shape. Flat sticky topbar and editorial footer instead.
+  if (def?.kind === 'editorial') {
     return (
-      <div data-surface="blog">
+      <div data-surface={def.surface}>
         <GradientRoot />
         <BlogHeader />
         <main style={{ minHeight: 'calc(100vh - 60px)' }}>{children}</main>
@@ -114,12 +92,12 @@ function SurfaceShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Surface "projects" is a full-bleed macOS desktop. Site Header, Footer,
-  // AppShell, and GradientRoot are all suppressed — the page owns the entire
-  // viewport and renders its own wallpaper, menu bar, and dock.
-  if (surface === 'projects') {
+  // Surface kind "fullBleed" — the page owns the entire viewport and renders
+  // its own nav / hero / footer. Site Header, Footer, AppShell, and
+  // GradientRoot are all suppressed.
+  if (def?.kind === 'fullBleed') {
     return (
-      <div data-surface="projects">
+      <div data-surface={def.surface}>
         <main>{children}</main>
       </div>
     );

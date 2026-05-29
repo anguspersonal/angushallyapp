@@ -1,4 +1,4 @@
-import { Archivo, Fraunces, League_Gothic, Newsreader, Space_Mono, Ubuntu } from 'next/font/google';
+import { Fraunces, JetBrains_Mono, League_Gothic, Newsreader, Ubuntu } from 'next/font/google';
 
 /** Display: nav brand, hero name, section headings (amendment). */
 export const leagueGothic = League_Gothic({
@@ -35,25 +35,14 @@ export const fraunces = Fraunces({
   display: 'swap',
 });
 
-/** Editorial grotesque — the `/strategist` persona "data field" identity. */
-export const archivo = Archivo({
+/** Monospace — terminal/telemetry chrome on the `/dev` persona page. */
+export const jetBrainsMono = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
-  variable: '--font-archivo',
-  display: 'swap',
-});
-
-/** Mono labels / metrics — paired with Archivo on `/strategist`. */
-export const spaceMono = Space_Mono({
-  subsets: ['latin'],
-  weight: ['400', '700'],
+  weight: ['300', '400', '500', '700'],
   style: ['normal', 'italic'],
-  variable: '--font-space-mono',
+  variable: '--font-mono',
   display: 'swap',
 });
-
-/** Variables scoped to the `/strategist` editorial re-skin (not loaded site-wide). */
-export const strategistFontClassNames = `${archivo.variable} ${spaceMono.variable}`.trim();
 
 export const fontClassNames =
-  `${leagueGothic.variable} ${newsreader.variable} ${ubuntu.variable} ${fraunces.variable}`.trim();
+  `${leagueGothic.variable} ${newsreader.variable} ${ubuntu.variable} ${fraunces.variable} ${jetBrainsMono.variable}`.trim();
