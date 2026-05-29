@@ -35,14 +35,21 @@ function isProjectsDesktopPath(pathname: string | null): boolean {
   return pathname === '/projects';
 }
 
+function isAiPmPath(pathname: string | null): boolean {
+  // The `/ai-pm` persona (v2) is a full-bleed editorial page that renders its
+  // own masthead, nav, and footer — the site chrome is suppressed for it.
+  return pathname === '/ai-pm';
+}
+
 /**
  * Maps a route to a surface attribute. Surface is orthogonal to colour-scheme:
  * components that care about it (Glass, GradientRoot) read it independently.
  * Add new surfaces here when introducing route-level visual systems.
  */
-function surfaceForPath(pathname: string | null): 'blog' | 'projects' | undefined {
+function surfaceForPath(pathname: string | null): 'blog' | 'projects' | 'ai-pm' | undefined {
   if (isBlogPath(pathname)) return 'blog';
   if (isProjectsDesktopPath(pathname)) return 'projects';
+  if (isAiPmPath(pathname)) return 'ai-pm';
   return undefined;
 }
 
@@ -120,6 +127,17 @@ function SurfaceShell({ children }: { children: React.ReactNode }) {
   if (surface === 'projects') {
     return (
       <div data-surface="projects">
+        <main>{children}</main>
+      </div>
+    );
+  }
+
+  // Surface "ai-pm" is the full-bleed editorial persona page (v2). Site chrome
+  // and GradientRoot are suppressed; the page supplies its own masthead, nav,
+  // and footer.
+  if (surface === 'ai-pm') {
+    return (
+      <div data-surface="ai-pm">
         <main>{children}</main>
       </div>
     );

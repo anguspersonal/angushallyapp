@@ -1,251 +1,384 @@
-'use client';
-
 /**
- * `/ai-pm` — AI Product Manager persona page.
+ * `/ai-pm` — AI Product Manager persona, v2.
  *
- * Curated render of docs/cvs/ai-product-manager-cv.md. Eval-discipline
- * section is the differentiator for this persona vs the dev one;
- * everything else is supporting. See docs/guides/persona-page-workflow.md.
+ * Editorial "field notes on AI product" treatment (per the design brief),
+ * rendered full-bleed: ClientLayout suppresses the site Header/Footer/Gradient
+ * for the `ai-pm` surface, so this page owns its own masthead, nav, and footer.
+ *
+ * Content is a hybrid: the brief's structure and voice, grounded in real facts
+ * — HeyLina (co-founder/COO), Accenture, Anmut, and the Lina Lab evaluation
+ * engine (see docs/cvs/ai-product-manager-cv.md). Links, email, and references
+ * are real and verifiable, not the brief's placeholders.
  */
 
-import React from 'react';
-import {
-    Title,
-    Text,
-    Paper,
-    Grid,
-    ThemeIcon,
-    Group,
-    Stack,
-    useMantineTheme,
-    Badge,
-} from '@mantine/core';
-import {
-    IconCode,
-    IconGitCommit,
-    IconBrandGithub,
-    IconCalendar,
-    IconScale,
-    IconFlask,
-    IconStack,
-    IconRocket,
-    IconNetwork,
-    IconDeviceMobile,
-    IconSparkles,
-    IconBriefcase,
-} from '@tabler/icons-react';
-import { motion } from 'framer-motion';
-import type { Variants } from 'framer-motion';
-import { Section } from '@/components/layout';
-import statsData from '@/data/code-stats.json';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { aipmFontVars } from './fonts';
+import styles from './page.module.css';
 
-const formatCompact = (n: number): string => {
-    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
-    if (n >= 1_000) return `${(n / 1_000).toFixed(n >= 10_000 ? 0 : 1)}k`;
-    return `${n}`;
+export const metadata: Metadata = {
+    title: 'Angus Hally — AI Product Management',
+    description:
+        'A working paper on what AI product management actually looks like when the model is the hard part — clinical advisors, compliance, versioning, app-store ops, pricing — from inside HeyLina.',
 };
 
-type Color = 'primary' | 'secondary' | 'accent' | 'success' | 'dark';
-
-const evalPillars = [
-    {
-        icon: <IconScale size={28} />,
-        title: 'Provenance',
-        body: 'Every eval row carries judge_type, judge_model, judge_prompt_version, judge_rater_id. Regressions are diagnosable, not vibes.',
-        color: 'primary' as Color,
-    },
-    {
-        icon: <IconFlask size={28} />,
-        title: 'Variants',
-        body: 'Model × temperature × role-preset × message-style toggles with baseline-delta reporting. Comparison cost ≈ config-authoring cost.',
-        color: 'secondary' as Color,
-    },
-    {
-        icon: <IconStack size={28} />,
-        title: 'Multi-scope rubrics',
-        body: 'Message-level, turn-level, conversation-level, variant-level. Different questions live at different scopes; conflating them is the "metric up, product feels worse" trap.',
-        color: 'accent' as Color,
-    },
-];
-
-const products = [
-    {
-        title: 'HeyLina',
-        tagline: 'AI product on iOS + Android · 2025–Present',
-        body: 'Co-founder and COO. Own product strategy, GTM, fundraising, pricing, clinical advisor relationships, and the engineering process — alongside our mobile engineer.',
-        stack: ['Expo / React Native', 'Firebase Functions', 'Pinecone', 'OpenAI', 'ElevenLabs'],
-        color: 'success' as Color,
-        icon: <IconDeviceMobile size={26} />,
-    },
-    {
-        title: 'Lina Lab',
-        tagline: 'Prompt-evaluation engine · part of the HeyLina stack',
-        body: 'The discipline angle. FastAPI service with versioned prompt catalog, variant-comparison runtime, multi-scope eval, LLM-as-judge with full provenance, prompt soft-delete + version pinning, promotion pipeline.',
-        stack: ['FastAPI', 'Pydantic', 'Supabase', 'Railway'],
-        color: 'secondary' as Color,
-        icon: <IconSparkles size={26} />,
-        href: 'https://lina-lab-production.up.railway.app',
-    },
-    {
-        title: 'AHKMS',
-        tagline: 'Multi-platform AI knowledge-management product · Oct 2025–',
-        body: 'Personal full-stack product. Capture → workflow → AI extraction → PARAMPS classification → human-in-the-loop review → derived artifacts with lineage tracking.',
-        stack: ['Next.js 14', 'Express', 'React Native', 'Supabase'],
-        color: 'primary' as Color,
-        icon: <IconNetwork size={26} />,
-        href: 'https://kms.angushally.com',
-    },
-    {
-        title: 'Teamvine',
-        tagline: 'Head of Product · 2020–2022',
-        body: 'Shipped four digital products in six months while leading agile teams. Secured £100k UKRI grant. Operator function end-to-end: product, sales, marketing, compliance, governance, content, ops, IP.',
-        stack: ['Agile', 'UKRI grant', '4 products / 6 months'],
-        color: 'accent' as Color,
-        icon: <IconBriefcase size={26} />,
-    },
-];
-
-const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
-};
-const itemVariants: Variants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100, damping: 20 } },
-};
+const EMAIL = 'angus.hally@gmail.com';
 
 const AiPmPersonaPage = () => {
-    const theme = useMantineTheme();
-    const gradient = `linear-gradient(135deg, ${theme.colors.dark[7]}, ${theme.colors.dark[8]})`;
-
     return (
-        <Section width="wide" padY="default">
-            <Stack gap="xl">
-                {/* ---------- Hero ---------- */}
-                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
-                    <Stack gap="xs" ta="center">
-                        <Text fz="sm" tt="uppercase" fw={700} style={{ letterSpacing: '0.15em', color: theme.colors.secondary[6] }}>
-                            AI Product Manager
-                        </Text>
-                        <Title
-                            order={1}
-                            style={{
-                                background: `linear-gradient(45deg, ${theme.colors.secondary[6]}, ${theme.colors.accent[6]})`,
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                fontSize: 'clamp(2rem, 7vw, 3.5rem)',
-                                fontWeight: 800,
-                                lineHeight: 1.1,
-                            }}
-                        >
-                            Product manager who builds the eval framework, not just the spec.
-                        </Title>
-                        <Text size="lg" maw={720} mx="auto" mt="md" c="gray">
-                            Most AI products are run on vibes; this one isn&rsquo;t. Co-founder and COO at HeyLina shipping a longitudinal emotional-data product across mobile, backend, and an internal ops console — with a Python evaluation engine underneath that I personally architected and ship into.
-                        </Text>
-                    </Stack>
-                </motion.div>
+        <div className={`${aipmFontVars} ${styles.page}`} id="top">
+            <header className={styles.top}>
+                <Link className={styles.brand} href="#top">
+                    A. Hally <em>— Field notes on AI product</em>
+                </Link>
+                <nav>
+                    <a href="#essay">Essay</a>
+                    <a href="#how">Practice</a>
+                    <a href="#refs">References</a>
+                    <Link href="/personas" className={styles.back}>
+                        ↩ All personas
+                    </Link>
+                </nav>
+            </header>
 
-                {/* ---------- Eval discipline (the headline differentiator) ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
-                    <Paper shadow="sm" p="xl" radius="md" style={{ background: gradient, color: theme.white }}>
-                        <Title order={2} mb={4} ta="center" style={{ color: theme.white }}>Eval discipline</Title>
-                        <Text ta="center" mb="xl" maw={680} mx="auto" style={{ color: theme.colors.gray[4] }}>
-                            The differentiator vs. a generalist PM. From Lina Lab — HeyLina&rsquo;s prompt-evaluation engine.
-                        </Text>
-                        <motion.div variants={containerVariants} initial="hidden" animate="visible">
-                            <Grid gutter="xl">
-                                {evalPillars.map((pillar) => (
-                                    <Grid.Col key={pillar.title} span={{ base: 12, md: 4 }}>
-                                        <motion.div variants={itemVariants}>
-                                            <Paper p="lg" radius="md" style={{ background: `linear-gradient(135deg, ${theme.colors[pillar.color][9]}, ${theme.colors[pillar.color][7]})`, color: theme.white, height: '100%' }}>
-                                                <ThemeIcon size={52} radius="md" color={pillar.color} variant="filled" mb="md">{pillar.icon}</ThemeIcon>
-                                                <Title order={3} size="h4" style={{ color: theme.white }} mb="xs">{pillar.title}</Title>
-                                                <Text fz="sm" style={{ color: theme.colors.gray[2] }}>{pillar.body}</Text>
-                                            </Paper>
-                                        </motion.div>
-                                    </Grid.Col>
-                                ))}
-                            </Grid>
-                        </motion.div>
-                        <Text ta="center" mt="xl" fz="xs" style={{ color: theme.colors.gray[6] }}>
-                            Implementation: <code>scenario_types.py</code> · 8 MECE kickoff types · scenarios in Supabase · prompt soft-delete + version pinning · promotion pipeline with Slack notifications.
-                        </Text>
-                    </Paper>
-                </motion.div>
+            <div className={styles.masthead}>
+                <span className={styles.l}>
+                    <span>Vol. III · Issue 02</span>
+                    <span>2026 — Q2</span>
+                    <span>Field notes</span>
+                </span>
+                <span className={styles.r}>/ai-pm</span>
+            </div>
 
-                {/* ---------- Selected products ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}>
-                    <Paper shadow="sm" p="xl" radius="md" style={{ background: gradient, color: theme.white }}>
-                        <Title order={2} mb="xl" ta="center" style={{ color: theme.white }}>Selected products</Title>
-                        <motion.div variants={containerVariants} initial="hidden" animate="visible">
-                            <Grid gutter="lg">
-                                {products.map((p) => (
-                                    <Grid.Col key={p.title} span={{ base: 12, md: 6 }}>
-                                        <motion.div variants={itemVariants} whileHover={{ y: -6 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
-                                            <Paper p="lg" radius="md" style={{ background: `linear-gradient(135deg, ${theme.colors[p.color][9]}, ${theme.colors[p.color][7]})`, color: theme.white, height: '100%' }}>
-                                                <Group gap="sm" mb="sm" align="flex-start">
-                                                    <ThemeIcon size={42} radius="md" color={p.color} variant="filled">{p.icon}</ThemeIcon>
-                                                    <Stack gap={0}>
-                                                        <Title order={3} size="h4" style={{ color: theme.white }}>{p.title}</Title>
-                                                        <Text fz="xs" style={{ color: theme.colors.gray[3] }}>{p.tagline}</Text>
-                                                    </Stack>
-                                                </Group>
-                                                <Text fz="sm" mb="md" style={{ color: theme.colors.gray[2] }}>{p.body}</Text>
-                                                <Group gap={6}>
-                                                    {p.stack.map((s) => (
-                                                        <Badge key={s} size="xs" variant="light" color={p.color}>{s}</Badge>
-                                                    ))}
-                                                </Group>
-                                            </Paper>
-                                        </motion.div>
-                                    </Grid.Col>
-                                ))}
-                            </Grid>
-                        </motion.div>
-                    </Paper>
-                </motion.div>
+            {/* HERO ─────────────────────────── */}
+            <section className={styles.hero}>
+                <div className={styles.kicker}>— Practice paper · AI product management</div>
+                <h1>
+                    The <em>unglamorous</em> half of shipping{' '}
+                    <span className={styles.drop}>AI products.</span>
+                </h1>
+                <p className={styles.deck}>
+                    A working paper on what AI product management <em>actually</em> looks like
+                    when the model is the hard part — clinical advisors, compliance, versioning,
+                    app-store ops, pricing — written from inside an emotionally-intelligent AI
+                    product that ships weekly.
+                </p>
+                <div className={styles.byline}>
+                    <span>
+                        <strong>Author</strong>
+                        <br />
+                        Angus Hally
+                    </span>
+                    <span>
+                        <strong>Role</strong>
+                        <br />
+                        Co-founder · COO, HeyLina
+                    </span>
+                    <span>
+                        <strong>Filed</strong>
+                        <br />
+                        London · 2026.05
+                    </span>
+                    <span>
+                        <strong>Reading</strong>
+                        <br />≈ 9 minutes
+                    </span>
+                </div>
+            </section>
 
-                {/* ---------- By the numbers (engineering credibility) ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }}>
-                    <Paper shadow="sm" p="xl" radius="md" style={{ background: gradient, color: theme.white }}>
-                        <Title order={2} mb={4} ta="center" style={{ color: theme.white }}>Engineering credibility</Title>
-                        <Text ta="center" mb="xl" style={{ color: theme.colors.gray[4] }}>
-                            I read PRs, write PRs, ship PRs. The dev work is the credential.
-                        </Text>
-                        <Grid gutter="xl">
-                            {[
-                                { icon: <IconCode size={28} />, value: formatCompact(statsData.headline.totalLinesAdded), label: 'lines added', color: 'primary' as Color },
-                                { icon: <IconGitCommit size={28} />, value: statsData.headline.totalCommits.toLocaleString('en-GB'), label: 'commits', color: 'secondary' as Color },
-                                { icon: <IconBrandGithub size={28} />, value: `${statsData.headline.reposContributedTo}`, label: 'repos', color: 'accent' as Color },
-                                { icon: <IconCalendar size={28} />, value: `${statsData.activity.totalActiveDays}`, label: 'active days', color: 'success' as Color },
-                            ].map((stat) => (
-                                <Grid.Col key={stat.label} span={{ base: 6, md: 3 }}>
-                                    <Stack align="center" gap="xs">
-                                        <ThemeIcon size={48} radius="md" color={stat.color}>{stat.icon}</ThemeIcon>
-                                        <Text fz="2rem" fw={800} style={{ color: theme.white, lineHeight: 1 }}>{stat.value}</Text>
-                                        <Text fz="xs" ta="center" style={{ color: theme.colors.gray[4] }}>{stat.label}</Text>
-                                    </Stack>
-                                </Grid.Col>
-                            ))}
-                        </Grid>
-                    </Paper>
-                </motion.div>
+            {/* ARTICLE ─────────────────────────── */}
+            <article className={styles.article} id="essay">
+                <p>
+                    Every founder I meet with an AI product is convinced their hard part is the
+                    model. By the time they have shipped past the demo, they have discovered that
+                    the hard part is everything around it — the clinical advisors who decide
+                    whether a response is safe, the app-store reviewer who decides whether the
+                    screenshot is misleading, the pricing decision that decides whether a number
+                    implies a medical claim, and the version pipeline that decides whether last
+                    Tuesday&rsquo;s release is better than this Tuesday&rsquo;s. The model is
+                    twenty percent of the work and eighty percent of the conversation.
+                </p>
 
-                {/* ---------- Commercial / GTM ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }}>
-                    <Paper shadow="sm" p="xl" radius="md" withBorder>
-                        <Group gap="md" mb="md">
-                            <ThemeIcon size={42} radius="md" color="success" variant="light"><IconRocket size={24} /></ThemeIcon>
-                            <Title order={3}>Commercial & GTM</Title>
-                        </Group>
-                        <Text size="sm" c="gray">
-                            Founded HeyLina with a clinical-emotional-data thesis; positioning had to thread a regulatory needle (longitudinal emotional data is adjacent to clinical without being a medical device). Pricing strategy informed by years of data-valuation work. Clinical advisor relationships run by me directly. Interim raise currently running. Stakeholder-as-translator (clinical advisors, investors, engineers) is the day job.
-                        </Text>
-                    </Paper>
-                </motion.div>
-            </Stack>
-        </Section>
+                <p>
+                    I am the co-founder and COO of <a href="https://heylina.ai">HeyLina</a>, an
+                    emotionally intelligent AI mobile product on iOS and Android. I do the eighty
+                    percent. My co-founder builds the model and the application; I make sure
+                    everything around it — including the company itself — compounds week on week.
+                    This page is the working paper on that practice, partly so I remember what I
+                    have learned, and partly so people running comparable products can{' '}
+                    <em>recognise themselves in it</em> and write to me.
+                </p>
+
+                <aside className={styles.figure}>
+                    <div className={styles.label}>— Fig. 01 · The four boxes I run</div>
+                    <h4>The AI-PM stack at HeyLina</h4>
+                    <ul>
+                        <li>
+                            <strong>Clinical &amp; safety advisors.</strong> Clinical advisor
+                            relationships I run directly, adjudicating ambiguous responses against
+                            a documented safety posture on a regular cadence.
+                        </li>
+                        <li>
+                            <strong>App-store operations.</strong> Versioned screenshots,
+                            response-policy docs, and the dialogue we have with reviewers every
+                            release across two app stores.
+                        </li>
+                        <li>
+                            <strong>Compliance &amp; eval trail.</strong> Lina Lab — our
+                            prompt-evaluation engine — gives an audit-ready record: LLM-as-judge
+                            with full provenance (judge type, model, prompt version, rater id),
+                            multi-scope rubrics, version-pinned prompts, and a promotion pipeline.
+                        </li>
+                        <li>
+                            <strong>Pricing &amp; positioning.</strong> The single biggest lever
+                            on whether users perceive us as wellness or as medical — the
+                            highest-stakes framing decision we make.
+                        </li>
+                    </ul>
+                    <div className={styles.caption}>
+                        — Each box has its own cadence, ritual, and document. The model is only one
+                        input to any of them.
+                    </div>
+                </aside>
+
+                <h2>
+                    <span className={styles.n}>— § 01</span>The case for an AI-PM role at all
+                </h2>
+
+                <p>
+                    AI products do not fail because the model is wrong. They fail because the
+                    company around the model is not yet built. The PM role I am describing is
+                    closer to the early role of a regulatory-affairs lead at a biotech, or a head
+                    of operations at a clinical-trials site, than it is to anything in consumer
+                    software. It is a job that did not exist three years ago and that almost nobody
+                    is writing about in public — partly because the people doing it are too busy
+                    doing it.
+                </p>
+
+                <p className={styles.pull}>
+                    &ldquo;AI products do not fail because the model is wrong. They fail because
+                    the company around the model is not yet built.&rdquo;
+                </p>
+
+                <p>
+                    The discipline I draw on most is not product management as it is taught at
+                    FAANGs. It is the operating-cadence work I did at <em>Accenture</em> and the
+                    data-valuation work I did at <em>Anmut</em> — both of which are really about
+                    turning ambiguous information into a decision a team can act on in a given
+                    week. That muscle transfers almost without modification to AI product work,
+                    because the modal problem of an AI PM is exactly that: &ldquo;what should we
+                    decide on Monday given a model whose behaviour we only partially
+                    understand?&rdquo;
+                </p>
+
+                <h2>
+                    <span className={styles.n}>— § 02</span>What I actually do in a week
+                </h2>
+
+                <p>
+                    Monday is the pipeline review — last week&rsquo;s release notes, this
+                    week&rsquo;s fixture additions, anything the eval harness has flagged. The
+                    middle of the week is clinical-safety work and app-store ops: flagged
+                    transcripts adjudicated against the rubric, and whatever the
+                    regulator-of-the-week has decided to write about. The back half is the
+                    long-horizon work — pricing experiments, advisor relationships, and the
+                    compliance documents nobody asks for until they suddenly do.
+                </p>
+
+                <p>
+                    There is no calendar slot for &ldquo;make the product better.&rdquo; The
+                    product gets better because the four boxes above each get one degree more
+                    rigorous every week. That, and a measurable eval loop underneath it, is the
+                    whole game.
+                </p>
+
+                <h2>
+                    <span className={styles.n}>— § 03</span>Why the eval engine is the credential
+                </h2>
+
+                <p>
+                    Most AI products are run on vibes; this one isn&rsquo;t. Underneath HeyLina
+                    sits <em>Lina Lab</em>, a prompt-evaluation engine I personally architected and
+                    ship into — a versioned prompt catalog, a variant-comparison runtime, and a
+                    multi-scope eval framework (message, turn, conversation, variant). It exists
+                    because the commercial reasoning about iteration velocity required it, not
+                    because the engineering taste alone did. The dev work is the credential: I
+                    read PRs, write PRs, and ship PRs across mobile, backend, and the eval layer.
+                </p>
+
+                <p>
+                    I am useful to a team that has <em>shipped an AI product to real users</em> and
+                    whose operational machinery has not caught up — that is, if you can feel the
+                    four boxes above tugging at you but have not yet named them. I am less useful
+                    if you are still trying to find product-market fit; there are people much
+                    better than me for that.
+                </p>
+            </article>
+
+            {/* RESPONSIBILITIES ─────────────────────────── */}
+            <section className={styles.resp} id="how">
+                <div className={styles.respInner}>
+                    <div className={styles.head}>
+                        <div className={styles.l}>— § 04 · Responsibilities</div>
+                        <h2>
+                            The shape of an AI-PM engagement, <em>itemised.</em>
+                        </h2>
+                    </div>
+                    <div className={styles.grid}>
+                        <div className={styles.item}>
+                            <div className={styles.id}>i.</div>
+                            <h3>
+                                Audit the <em>four boxes</em>
+                            </h3>
+                            <p>
+                                Map the existing operating ritual against the four-box model,
+                                identify the two that are most under-built, and write a memo with
+                                concrete next steps.
+                            </p>
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.id}>ii.</div>
+                            <h3>
+                                Install the <em>cadence</em>
+                            </h3>
+                            <p>
+                                Weekly pipeline review, structured advisor session, release-notes
+                                discipline. Paired with the existing PM so the muscle transfers.
+                            </p>
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.id}>iii.</div>
+                            <h3>
+                                Build the <em>compliance trail</em>
+                            </h3>
+                            <p>
+                                The audit-ready document set: fixture provenance, rubric versions,
+                                model-change log, advisor adjudication record. The regulator will
+                                eventually ask.
+                            </p>
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.id}>iv.</div>
+                            <h3>
+                                Stand up the <em>eval loop</em>
+                            </h3>
+                            <p>
+                                LLM-as-judge with provenance, variant comparison, multi-scope
+                                rubrics, and a promotion pipeline — the Lina Lab pattern, adapted
+                                to your stack so iteration stops being guesswork.
+                            </p>
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.id}>v.</div>
+                            <h3>
+                                Pricing &amp; <em>positioning</em>
+                            </h3>
+                            <p>
+                                An evidence-based working session on the most consequential framing
+                                decision of your product, informed by data-valuation work. Plus a
+                                written recommendation.
+                            </p>
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.id}>vi.</div>
+                            <h3>Advisor recruitment</h3>
+                            <p>
+                                Identifying, interviewing, and contracting an initial clinical or
+                                domain panel, using a structured interview script.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* REFERENCES ─────────────────────────── */}
+            <section className={styles.refs} id="refs">
+                <h3>— References &amp; further reading</h3>
+                <ol>
+                    <li>
+                        <span className={styles.n}>i.</span> Hally, A.{' '}
+                        <em>Harness engineer — notes on the runtime around the LLM.</em>{' '}
+                        <Link href="/harness">/harness</Link>
+                    </li>
+                    <li>
+                        <span className={styles.n}>ii.</span> Hally, A.{' '}
+                        <em>Developer — can he ship?</em> <Link href="/dev">/dev</Link>
+                    </li>
+                    <li>
+                        <span className={styles.n}>iii.</span> Hally, A.{' '}
+                        <em>Data strategist — data valuation that survives engineering reality.</em>{' '}
+                        <Link href="/strategist">/strategist</Link>
+                    </li>
+                    <li>
+                        <span className={styles.n}>iv.</span> Anthropic.{' '}
+                        <em>Constitutional AI and the operationalisation of safety.</em>{' '}
+                        anthropic.com · 2023.
+                    </li>
+                    <li>
+                        <span className={styles.n}>v.</span> FDA.{' '}
+                        <em>
+                            Artificial Intelligence/Machine Learning-Based Software as a Medical
+                            Device (SaMD) Action Plan.
+                        </em>{' '}
+                        2021.
+                    </li>
+                    <li>
+                        <span className={styles.n}>vi.</span> <em>HeyLina</em> — emotionally
+                        intelligent AI, iOS &amp; Android.{' '}
+                        <a href="https://heylina.ai">heylina.ai</a>
+                    </li>
+                    <li>
+                        <span className={styles.n}>vii.</span> Hally, A.{' '}
+                        <em>How I got here.</em> <Link href="/about">/about</Link>
+                    </li>
+                    <li>
+                        <span className={styles.n}>viii.</span> BSc Philosophy &amp; Economics,
+                        First Class — <em>London School of Economics</em>, 2013–2016.
+                    </li>
+                </ol>
+            </section>
+
+            {/* CORRESPONDENCE ─────────────────────────── */}
+            <section className={styles.corresp}>
+                <div className={styles.correspInner}>
+                    <div>
+                        <h2>
+                            For <em>correspondence</em>
+                            <br />
+                            or working sessions.
+                        </h2>
+                    </div>
+                    <div className={styles.col}>
+                        <p>
+                            I read everything that arrives, and reply within two working days. The
+                            most useful thing you can send is a one-page note of where you are
+                            stuck.
+                        </p>
+                        <div className={styles.addr}>
+                            Letters &nbsp;·&nbsp; <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+                            <br />
+                            Contact &nbsp;·&nbsp; <Link href="/contact">angushally.com/contact</Link>
+                            <br />
+                            LinkedIn &nbsp;·&nbsp;{' '}
+                            <a
+                                href="https://www.linkedin.com/in/angus-hally-9ab66a87/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                angus-hally
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer className={styles.footer}>
+                <span>© mmxxvi · A. Hally · London</span>
+                <span>
+                    <Link href="/personas">↩ All personas</Link>
+                </span>
+            </footer>
+        </div>
     );
 };
 
