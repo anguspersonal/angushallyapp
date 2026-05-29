@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:turbopack": "next dev --turbopack",
-    "prebuild": "node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs && node scripts/build-resume.mjs",
+    "prebuild": "node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs",
     "build": "next build",
     "build:chat": "node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs",
     "start": "next start",
