@@ -78,7 +78,7 @@ Each persona page has matching downstream artefacts:
 | Persona | Audience | Research doc | Rendered route | Status |
 |---|---|---|---|---|
 | Developer | Hiring engineer, technical client | [docs/cvs/dev-cv.md](../cvs/dev-cv.md) | [`/dev`](../../src/app/dev/page.tsx) ✅ | Full workflow complete |
-| Data strategist | FTSE-100 data leader, Anmut alumni, CDOs | [docs/cvs/data-strategy-cv.md](../cvs/data-strategy-cv.md) | [`/strategist`](../../src/app/strategist/page.tsx) ✅ | Rendered; client-naming gaps flagged |
+| Data strategist | FTSE-100 data leader, Anmut alumni, CDOs | [docs/cvs/data-strategy-cv.md](../cvs/data-strategy-cv.md) | [`/strategist`](../../src/app/strategist/page.tsx) ✅ | **v2 shipped** — editorial ink-on-paper re-skin + interactive three.js "data field" hero ([DataFieldHero](../../src/app/strategist/DataFieldHero.tsx)): a steel-sphere lattice that resolves from noise→structure via a Clarity toggle. Client-naming gaps still flagged |
 | Maths teacher | School leadership, TeachFirst alumni, edtech | [docs/cvs/maths-teacher-cv.md](../cvs/maths-teacher-cv.md) | [`/teacher`](../../src/app/teacher/page.tsx) ✅ | Rendered; exam-result data gap flagged |
 | Debate coach | Schools wanting coaches with top-tier competing background; debate-judges; executives wanting argument coaching | [docs/cvs/debate-coach-cv.md](../cvs/debate-coach-cv.md) | [`/debate`](../../src/app/debate/page.tsx) ✅ | Unblocked 2026-05-27. Full workflow complete — LSE Debate + WUDC 2015 + Burnt Mill founding |
 | AI product manager | AI startups, model labs, AI-shaped PM roles | [docs/cvs/ai-product-manager-cv.md](../cvs/ai-product-manager-cv.md) | [`/ai-pm`](../../src/app/ai-pm/page.tsx) ✅ | Full workflow complete |
@@ -99,7 +99,7 @@ v1 ships consistent visual treatment across all persona pages: same Mantine grad
 
 v2 should differentiate each persona visually:
 
-- **Custom hero per persona.** `/teacher` already gestures at this with the photo hero; `/strategist` similarly with the JLR Data Fest image. `/dev`, `/ai-pm`, `/harness`, `/debate` could each get a distinct hero treatment (graph viz / eval-flow diagram / terminal mock / debate-floor metaphor).
+- **Custom hero per persona.** `/teacher` gestures at this with the photo hero; `/strategist` now goes furthest — a full interactive three.js "data field" hero (steel-sphere lattice resolving from noise→structure on a Clarity toggle) on an editorial ink-on-paper re-skin (Archivo + Space Mono). `/dev`, `/ai-pm`, `/harness`, `/debate` could each get a distinct hero treatment (graph viz / eval-flow diagram / terminal mock / debate-floor metaphor).
 - **Custom components per persona.** A reusable `<PersonaHero>` and `<PersonaProjectCard>` could be extracted, then each persona overrides parts. The current pages are self-contained `page.tsx` files of ~250-350 lines each — refactor to shared components is a natural v2 move.
 - **Per-persona colour identity.** v1 reuses Mantine's `primary`/`secondary`/`accent`/`success`/`dark` semantic colors. v2 could give each persona a signature accent that carries through hero gradient + card highlights + button color.
 - **Discoverability:** the `/personas` hub is intentionally not in nav for v1 (the footer's "Work with me" column surfaces the individual lenses instead). v2 might add a nav surface or a homepage tile if the user research justifies it.
