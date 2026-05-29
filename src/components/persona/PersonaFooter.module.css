@@ -1,0 +1,80 @@
+/*
+ * Neutral, tokenized footer chrome. No persona colours are baked in — every
+ * colour resolves through a --persona-footer-* / --persona-ink token with a
+ * sensible currentColor fallback, so a persona skins it by setting tokens on
+ * an ancestor (or passing a className) without forking this file.
+ */
+.footer {
+  width: 100%;
+  border-top: 1px solid
+    var(--persona-footer-border, color-mix(in srgb, currentColor 18%, transparent));
+  color: var(--persona-ink, currentColor);
+  background: var(--persona-footer-bg, transparent);
+  container-type: inline-size;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: var(--persona-footer-pad, clamp(1.25rem, 3vw, 2.5rem));
+}
+
+/* Utility row goes horizontal once there is room. */
+@container (min-width: 36em) {
+  .row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.utility {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--persona-footer-gap, 1.25rem);
+}
+
+.slot {
+  display: inline-flex;
+  align-items: center;
+}
+
+.socials {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.copyright {
+  font-size: var(--persona-footer-fineprint-size, 0.75rem);
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+/* Single, deliberately discreet link back to the main site. */
+.mainSiteLink {
+  font-size: var(--persona-footer-fineprint-size, 0.75rem);
+  color: inherit;
+  opacity: 0.6;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition:
+    opacity 150ms ease,
+    border-color 150ms ease;
+}
+
+.mainSiteLink:hover,
+.mainSiteLink:focus-visible {
+  opacity: 1;
+  border-bottom-color: currentColor;
+}

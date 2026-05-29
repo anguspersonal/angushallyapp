@@ -25,9 +25,15 @@ export interface SurfaceDef {
 
 export const SURFACES: SurfaceDef[] = [
   { surface: 'blog', kind: 'editorial', match: (p) => p === '/blog' || p.startsWith('/blog/') },
+  // `/projects` is exact-match: its sub-routes (e.g. /projects/foo) keep default
+  // site chrome. Project pages are individual destinations, not a persona subtree.
   { surface: 'projects', kind: 'fullBleed', match: (p) => p === '/projects' },
-  { surface: 'dev', kind: 'fullBleed', match: (p) => p === '/dev' },
-  { surface: 'ai-pm', kind: 'fullBleed', match: (p) => p === '/ai-pm' },
+  // Persona surfaces own their whole subtree (index + anything beneath), so a
+  // sub-page like /<persona>/privacy renders in the persona's chrome. `/dev` is
+  // the reference persona surface; further personas should follow this prefix
+  // matcher (`p === '/<persona>' || p.startsWith('/<persona>/')`).
+  { surface: 'dev', kind: 'fullBleed', match: (p) => p === '/dev' || p.startsWith('/dev/') },
+  { surface: 'ai-pm', kind: 'fullBleed', match: (p) => p === '/ai-pm' || p.startsWith('/ai-pm/') },
 ];
 
 export function resolveSurface(pathname: string | null | undefined): SurfaceDef | undefined {
