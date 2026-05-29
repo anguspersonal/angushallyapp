@@ -14,7 +14,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { aipmFontVars } from './fonts';
-import styles from './page.module.css';
+import styles from './ai-pm.module.css';
 
 export const metadata: Metadata = {
     title: 'Angus Hally — AI Product Management',

@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:turbopack": "next dev --turbopack",
-    "prebuild": "node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs && node scripts/build-resume.mjs",
+    "prebuild": "node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs",
     "build": "next build",
     "build:chat": "node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs",
     "start": "next start",
@@ -57,6 +57,7 @@
     "react-google-recaptcha": "^3.1.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
+    "three": "^0.184.0",
     "typescript": "^5.4.5"
   },
   "devDependencies": {
@@ -69,6 +70,7 @@
     "@types/nodemailer": "^7.0.11",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
+    "@types/three": "^0.184.1",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitest/coverage-v8": "^1.2.1",
     "eslint": "^9.0.0",

@@ -92,6 +92,72 @@ E2E and manual visual are the bar for promoting `dev → main`. An agent that to
 
 The split exists because feature-branch PRs land often (multiple per day during active work) and dev→main is rare (once a session, or once a day). Making feature PRs wait on E2E would dominate the loop; running E2E on every feature branch wastes CI minutes. The tradeoff is intentional: catch the cheap mistakes early, batch the expensive ones at promotion time.
 
+## Database migrations
+
+Schema changes follow a different gate than code. Code lands once and runs; DDL (Data Definition Language — `CREATE TABLE`, `DROP INDEX`, `ALTER COLUMN`, etc.) changes physical state that's hard to reverse. **Default rule: review the SQL before applying it to prod.**
+
+### Default flow — stage SQL in PR, apply after merge
+
+For DDL changes with no feature dependency (a new index, a new table, a nullable column with no consumer yet):
+
+1. Agent writes the migration at `supabase/migrations/<timestamp>_<description>.sql`.
+2. Agent opens the PR with the file. **Does not** call `apply_migration` on prod.
+3. QA reviews the SQL.
+4. On merge to `dev`: apply the migration to the dev DB (today: prod, since there's no separate dev DB — see [What we're not doing (yet)](#what-were-not-doing-yet) below for why a staging DB isn't justified yet).
+5. Verify post-apply with `pg_indexes` / `\dt` / a sanity SELECT.
+
+### When a feature needs the DDL applied to be testable: expand-and-contract
+
+If you can't fully exercise the PR without the schema change in place, **don't bundle them**. Split into two PRs (the "expand-and-contract" or "parallel change" pattern):
+
+- **PR A — expand.** The additive DDL only. No application-code change. Old code keeps working because the new column / table / index is unused.
+- **PR B — use.** Application code reads/writes the new schema. No DDL in this PR. Tests pass because the schema is already on prod (PR A landed first).
+- **(Optional) PR C — contract.** Drop the old column / tighten constraints. Only after the feature has been live and stable for at least one dev→main cycle.
+
+Each PR is independently reviewable and revertible. No PR is blocked on "I can't test until the DDL ships." This is the default for any feature that introduces schema changes.
+
+### Destructive DDL is always its own PR
+
+`DROP COLUMN`, `ALTER COLUMN ... NOT NULL` on existing data, FK constraints on existing data, `DROP TABLE`, `DROP TYPE` — these are **never** bundled with a feature PR. They land in their own PR after the feature has been live for at least one `dev→main` cycle. If the feature gets rolled back, the data is still there.
+
+### Additive vs destructive — quick reference
+
+| Additive (low risk, default flow OK)         | Destructive (high risk, separate PR)              |
+| -------------------------------------------- | ------------------------------------------------- |
+| `CREATE INDEX`                               | `DROP INDEX`                                      |
+| `CREATE TABLE`                               | `DROP TABLE`                                      |
+| `ADD COLUMN ... NULL` (no `NOT NULL`)        | `DROP COLUMN`                                     |
+| `CREATE TYPE`                                | `DROP TYPE`                                       |
+| New FK constraint where no orphan rows exist | `ALTER COLUMN ... NOT NULL` on populated table    |
+| `CREATE EXTENSION`                           | `DROP EXTENSION`                                  |
+
+When in doubt, treat as destructive.
+
+### Local verification before opening the PR
+
+For non-trivial migrations, run them locally before pushing:
+
+```
+supabase start                          # spins up a local Postgres
+supabase db reset                       # applies all migrations including yours
+npm test                                # confirm the test suite still passes
+```
+
+Local DB ≠ prod for data-dependent edge cases (rows that would violate a new constraint, for instance), but local validation catches ~95% of "the SQL is wrong" mistakes for free. Five minutes here saves a production rollback.
+
+### What an agent must NOT do
+
+- **Apply DDL to prod before opening the PR.** Use `apply_migration` only against a local Supabase, never against the prod project ref, until the PR is reviewed and merged.
+- **Bundle destructive DDL with feature code.** Always two PRs.
+- **Skip local verification** for migrations that touch more than one statement or change existing columns.
+
+### What we're not doing (yet)
+
+- **Supabase database branches** (Pro feature, ~\$25/mo). Would give true preview-DB parity but isn't justified at current scale.
+- **Separate staging Supabase project.** Same reasoning — extra cost / drift risk, not enough volume.
+
+If migration frequency picks up or a destructive change goes wrong, re-evaluate.
+
 ## What an agent should do
 
 - **Pick a branch type honestly.** A "fix" that adds a new code path is a `feat/`. A `chore/` that introduces user-visible behavior is a `feat/`. If unsure, default to the higher-stakes label.
@@ -101,6 +167,7 @@ The split exists because feature-branch PRs land often (multiple per day during 
 - **Never push directly to `dev` or `main`.** Always go through a PR.
 - **Never merge `dev → main` autonomously.** That step requires a human (manual visual check is part of the bar).
 - **Hotfixes still need a PR** — they just target `main`. After landing, open a follow-up to also merge the hotfix commit into `dev`.
+- **For DDL, follow the [migration governance rules above](#database-migrations).** Never apply to prod before the PR is reviewed and merged. If a feature needs the schema change to be testable, split into expand-and-contract PRs rather than bundling.
 
 ## Related
 
