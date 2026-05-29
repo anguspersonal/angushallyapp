@@ -20,9 +20,12 @@
  */
 
 import React from 'react';
+import Link from 'next/link';
 import { PersonaFooter, PersonaThemeToggle } from '@/components/persona';
 import styles from './teacher.module.css';
+import './teacher.surface.css';
 import { teacherFontClassNames } from './fonts';
+import { TeacherContact } from './TeacherContact';
 
 /** Transferable skills — the "what teaching taught me" narrative. */
 const lessons = [
@@ -279,23 +282,13 @@ const TeacherClient = () => {
                 </div>
             </section>
 
-            {/* ── CONTACT — SECTION PLACEHOLDER ──
-                Anchor target for the in-page nav. The in-surface contact FORM is
-                issue B2 (#132/#133/#134), built on top of the shared persona
-                ContactForm primitive; this shell deliberately ships only the
-                anchor + an empty section so B2 has a home to land in. No
-                /contact link here — that would pre-empt B2's scope. */}
-            <section className={styles.cta} id="contact" aria-label="Contact">
-                <div className={styles.sectionEye}>— Get in touch</div>
-                <h2 className={styles.h2}>Want to <em>talk teaching?</em></h2>
-                <p>
-                    A school role, an edtech problem, GCSE or A-Level tutoring, or just comparing
-                    notes on pedagogy — the teaching never really stopped, and I&rsquo;d love to hear from you.
-                </p>
-                <p className={styles.contactPlaceholder} data-placeholder="contact-form">
-                    An in-page contact form is on its way here.
-                </p>
-            </section>
+            {/* ── CONTACT — real, skinned section wired to useContactForm ──
+                Issue B2 (#132). Anchor target for the in-page nav. The shared
+                persona ContactForm primitive is driven by useContactForm with
+                source="teacher" (so leads are attributed to this persona) and a
+                one-line collection notice linking to /teacher/privacy. All
+                behaviour lives in the hook; this surface owns only the skin. */}
+            <TeacherContact />
 
             {/* ── FOOTER — shared persona chrome, themed for teacher ──
                 Slots: contact / privacy / socials / theme toggle / copyright,
@@ -307,7 +300,7 @@ const TeacherClient = () => {
                 className={styles.footer}
                 owner="Angus Hally"
                 contact={<a href="#contact">Get in touch</a>}
-                privacy={<span className={styles.footerMuted}>Privacy · coming soon</span>}
+                privacy={<Link href="/teacher/privacy">Privacy</Link>}
                 socials={
                     <a href="https://www.linkedin.com/in/angushally/" target="_blank" rel="noreferrer">
                         LinkedIn ↗

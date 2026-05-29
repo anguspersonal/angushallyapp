@@ -9,10 +9,15 @@
  *
  * Local draft state lets the user toggle freely, then commit with "Save
  * preferences" (or take the accept-all / reject shortcuts). Neutral & tokenized
- * — persona skins are D1 (#145/#146/#147).
+ * here; per-persona skins (D1, #145/#146/#147) layer on via the `data-surface`
+ * attribute below — the modal is mounted site-wide, so it resolves the active
+ * surface itself and exposes it for [data-surface="<persona>"] token overrides,
+ * with NO change to this component's CSS.
  */
 
 import * as React from 'react';
+import { usePathname } from 'next/navigation';
+import { resolveSurface } from '@/lib/surfaces';
 import { useConsentContext } from '@/providers/ConsentProvider';
 import {
   CONSENT_CATEGORIES,
@@ -23,6 +28,9 @@ import styles from './PreferenceCenter.module.css';
 export function PreferenceCenter() {
   const ctx = useConsentContext();
   const open = Boolean(ctx?.isPreferenceCenterOpen);
+  // Active persona surface, for [data-surface="<persona>"] token skinning.
+  const pathname = usePathname();
+  const surface = resolveSurface(pathname)?.surface;
 
   // Local draft, seeded from current choices each time the dialog opens.
   const [draft, setDraft] = React.useState<Record<string, boolean>>({});
@@ -63,6 +71,7 @@ export function PreferenceCenter() {
     <div
       className={styles.overlay}
       role="presentation"
+      data-surface={surface}
       onClick={(e) => {
         if (e.target === e.currentTarget) ctx.closePreferenceCenter();
       }}
