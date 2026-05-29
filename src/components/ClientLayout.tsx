@@ -35,14 +35,21 @@ function isProjectsDesktopPath(pathname: string | null): boolean {
   return pathname === '/projects';
 }
 
+function isTeacherPath(pathname: string | null): boolean {
+  // The `/teacher` persona (v2) ships a bespoke chalkboard design with its own
+  // top-nav and footer, so it owns the full viewport like the projects desktop.
+  return pathname === '/teacher';
+}
+
 /**
  * Maps a route to a surface attribute. Surface is orthogonal to colour-scheme:
  * components that care about it (Glass, GradientRoot) read it independently.
  * Add new surfaces here when introducing route-level visual systems.
  */
-function surfaceForPath(pathname: string | null): 'blog' | 'projects' | undefined {
+function surfaceForPath(pathname: string | null): 'blog' | 'projects' | 'teacher' | undefined {
   if (isBlogPath(pathname)) return 'blog';
   if (isProjectsDesktopPath(pathname)) return 'projects';
+  if (isTeacherPath(pathname)) return 'teacher';
   return undefined;
 }
 
@@ -120,6 +127,17 @@ function SurfaceShell({ children }: { children: React.ReactNode }) {
   if (surface === 'projects') {
     return (
       <div data-surface="projects">
+        <main>{children}</main>
+      </div>
+    );
+  }
+
+  // Surface "teacher" is the bespoke chalkboard persona. Like projects, the
+  // page owns the viewport and renders its own top-nav + footer, so the site
+  // Header, Footer, AppShell, and GradientRoot are all suppressed.
+  if (surface === 'teacher') {
+    return (
+      <div data-surface="teacher">
         <main>{children}</main>
       </div>
     );

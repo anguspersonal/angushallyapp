@@ -1,226 +1,292 @@
 'use client';
 
 /**
- * `/teacher` — Maths Teacher persona page.
+ * `/teacher` — Maths Teacher persona page (v2).
  *
- * Curated render of docs/cvs/maths-teacher-cv.md. Source material is
- * thin (one resume bullet, one milestone photo) — page is structured
- * around the "what teaching taught me" narrative + pedagogical
- * principles. Outcomes card is intentionally honest about evidence
- * pending. See docs/guides/persona-page-workflow.md.
+ * Bespoke chalkboard / 3blue1brown-ish design (own top-nav + footer, full-bleed
+ * via the "teacher" surface in ClientLayout). Content is the honest TeachFirst /
+ * Burnt Mill narrative from docs/cvs/maths-teacher-cv.md reskinned into the new
+ * visual system — no aspirational claims (no video series, cohort, or paid
+ * workshops). The exam-result evidence gap is surfaced candidly. See
+ * docs/guides/persona-page-workflow.md.
  */
 
 import React from 'react';
-import {
-    Title,
-    Text,
-    Paper,
-    Grid,
-    ThemeIcon,
-    Group,
-    Stack,
-    useMantineTheme,
-    Box,
-    Badge,
-} from '@mantine/core';
-import {
-    IconSchool,
-    IconBook,
-    IconStethoscope,
-    IconHeart,
-    IconRoute,
-    IconHourglass,
-    IconUsers,
-} from '@tabler/icons-react';
-import { motion } from 'framer-motion';
-import type { Variants } from 'framer-motion';
-import NextImage from 'next/image';
-import { Section } from '@/components/layout';
+import Link from 'next/link';
+import styles from './teacher.module.css';
+import { teacherFontClassNames } from './fonts';
 
-type Color = 'primary' | 'secondary' | 'accent' | 'success' | 'dark';
-
+/** Transferable skills — the "what teaching taught me" narrative. */
 const lessons = [
     {
-        icon: <IconUsers size={24} />,
-        title: 'The gap between your model and theirs',
-        body: 'Knowing where your understanding of a topic differs from the student’s — and reasoning across that gap — is the same skill that lets me brief engineers as a non-engineer and brief investors as a non-investor.',
-        color: 'primary' as Color,
+        tag: 'briefing skill',
+        title: <>The gap between <em>your model</em> and theirs</>,
+        body: "Knowing where your understanding of a topic differs from the student's — and reasoning across that gap — is the same skill that lets me brief engineers as a non-engineer and investors as a non-investor.",
+        bg: 'var(--accent)',
+        svg: (
+            <svg viewBox="0 0 320 180" preserveAspectRatio="none">
+                <circle cx="80" cy="100" r="40" fill="rgba(255,255,255,.18)" />
+                <circle cx="180" cy="80" r="56" fill="rgba(255,255,255,.32)" />
+                <circle cx="250" cy="120" r="28" fill="rgba(255,255,255,.5)" />
+            </svg>
+        ),
     },
     {
-        icon: <IconHeart size={24} />,
-        title: 'Composure under low-status conditions',
+        tag: 'performance discipline',
+        title: <>Composure under <em>low-status</em> conditions</>,
         body: 'Holding a Year 10 bottom set on a Friday afternoon is a particular kind of performance discipline. Everything since has had a lower difficulty floor.',
-        color: 'accent' as Color,
+        bg: 'var(--accent-3)',
+        svg: (
+            <svg viewBox="0 0 320 180" preserveAspectRatio="none">
+                <rect x="20" y="20" width="80" height="140" fill="rgba(255,255,255,.2)" />
+                <rect x="120" y="60" width="80" height="100" fill="rgba(255,255,255,.4)" />
+                <rect x="220" y="100" width="80" height="60" fill="rgba(255,255,255,.6)" />
+            </svg>
+        ),
     },
     {
-        icon: <IconRoute size={24} />,
-        title: 'Routine as a force multiplier',
-        body: 'Lesson structure — do-now, modelling, independent practice, plenary — is what makes the classroom function. The same shape underwrites a startup operating system, a code-review process, a meeting agenda.',
-        color: 'secondary' as Color,
+        tag: 'operating system',
+        title: <>Routine as a <em>force multiplier</em></>,
+        body: 'Lesson structure — do-now, modelling, independent practice, plenary — is what makes a classroom function. The same shape underwrites a startup operating system, a code-review process, a meeting agenda.',
+        bg: 'var(--accent-4)',
+        svg: (
+            <svg viewBox="0 0 320 180" preserveAspectRatio="none">
+                <path d="M 10 160 C 80 120, 160 160, 240 60 S 310 30, 310 30" fill="none" stroke="rgba(255,255,255,.7)" strokeWidth="6" />
+                <path d="M 10 160 C 80 150, 160 140, 240 110 S 310 100, 310 100" fill="none" stroke="rgba(255,255,255,.4)" strokeWidth="4" />
+            </svg>
+        ),
     },
     {
-        icon: <IconHourglass size={24} />,
-        title: 'Marking 31 books at midnight on Sunday',
+        tag: 'operator stamina',
+        title: <>Marking <em>31 books</em> at midnight</>,
         body: 'Operator stamina starts here. So does the willingness to do the unglamorous part of the job rather than perform around it.',
-        color: 'success' as Color,
+        bg: 'var(--accent-5)',
+        svg: (
+            <svg viewBox="0 0 320 180" preserveAspectRatio="none">
+                <path d="M 30 160 L 80 60 L 160 130 L 230 30 L 290 110" fill="none" stroke="rgba(31,34,51,.8)" strokeWidth="4" />
+                <circle cx="80" cy="60" r="6" fill="rgba(31,34,51,.9)" />
+                <circle cx="230" cy="30" r="6" fill="rgba(31,34,51,.9)" />
+            </svg>
+        ),
     },
 ];
 
+/** Pedagogical principles — "how I'd teach now". */
 const principles = [
-    'Diagnostic-first: find the misconception, then teach the correction. Don’t re-teach what’s already known.',
-    'Worked examples beat explanation. Modelling out loud beats both.',
-    'Spaced retrieval over re-exposure.',
-    'A student who can apply a concept in a non-routine context has really got it.',
-    'The single biggest determinant of A-Level outcomes is whether the student is willing to be wrong in front of you. Work on that before working on technique.',
+    {
+        glyph: 'var(--accent)',
+        title: <>Diagnostic <em>first.</em></>,
+        body: "Find the misconception, then teach the correction. Don't re-teach what's already known.",
+    },
+    {
+        glyph: 'var(--accent-3)',
+        title: <>Show, then <em>name.</em></>,
+        body: 'Worked examples beat explanation; modelling out loud beats both. The diagram earns the words.',
+    },
+    {
+        glyph: 'var(--accent-2)',
+        title: <>Retrieve, don't <em>re-expose.</em></>,
+        body: 'Spaced retrieval over re-reading. The effort of recall is where the learning actually happens.',
+    },
+    {
+        glyph: 'var(--accent-4)',
+        title: <>Test in the <em>wild.</em></>,
+        body: 'A student who can apply a concept in a non-routine context has really got it. Routine practice flatters everyone.',
+    },
+    {
+        glyph: 'var(--accent-5)',
+        title: <>Safe to be <em>wrong.</em></>,
+        body: 'The biggest determinant of A-Level outcomes is whether a student will be wrong in front of you. Build that before technique.',
+    },
 ];
 
-const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
-};
-const itemVariants: Variants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100, damping: 20 } },
-};
+/** Honest audiences for the page — not paid-workshop pitches. */
+const audiences = [
+    {
+        who: '— School leadership',
+        title: <>Heads & SLT weighing a <em>TeachFirst-trained</em> operator</>,
+        body: 'Two years of GCSE foundation and higher tier plus A-Level maths in a mixed-intake comprehensive, PGCE completed alongside the placement.',
+    },
+    {
+        who: '— TeachFirst network',
+        title: <>Fellow <em>ambassadors</em> and the programme</>,
+        body: "Burnt Mill Academy, Harlow, 2016–2018, is the throughline — the placement that the rest of the operating career is built on.",
+    },
+    {
+        who: '— Edtech ventures',
+        title: <>Founders building <em>for the classroom</em></>,
+        body: 'Someone who has actually marked the books and held the room, not just modelled the market — useful when the product has to survive contact with a real lesson.',
+    },
+    {
+        who: '— 1:1 tutoring',
+        title: <>Students & parents after <em>maths support</em></>,
+        body: 'GCSE or A-Level maths help from someone who taught both tiers, diagnostic-first and patient with the gap between confidence and competence.',
+    },
+];
 
 const TeacherPersonaPage = () => {
-    const theme = useMantineTheme();
-    const gradient = `linear-gradient(135deg, ${theme.colors.dark[7]}, ${theme.colors.dark[8]})`;
-
     return (
-        <Section width="wide" padY="default">
-            <Stack gap="xl">
-                {/* ---------- Hero ---------- */}
-                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
-                    <Grid gutter="xl" align="center">
-                        <Grid.Col span={{ base: 12, md: 7 }}>
-                            <Stack gap="xs">
-                                <Text fz="sm" tt="uppercase" fw={700} style={{ letterSpacing: '0.15em', color: theme.colors.accent[6] }}>
-                                    Maths Teacher
-                                </Text>
-                                <Title
-                                    order={1}
-                                    style={{
-                                        background: `linear-gradient(45deg, ${theme.colors.accent[6]}, ${theme.colors.primary[6]})`,
-                                        WebkitBackgroundClip: 'text',
-                                        WebkitTextFillColor: 'transparent',
-                                        fontSize: 'clamp(1.85rem, 6vw, 3rem)',
-                                        fontWeight: 800,
-                                        lineHeight: 1.1,
-                                    }}
-                                >
-                                    Two years teaching GCSE and A-Level maths in Harlow. The hardest thing I&rsquo;ve done.
-                                </Title>
-                                <Text size="lg" mt="md" c="gray">
-                                    TeachFirst leadership-development placement at Burnt Mill Academy, 2016&ndash;2018. Where I learned to operate &mdash; the product-and-operator instinct, the willingness to teach, the comfort with being wrong in public all trace back to those two years.
-                                </Text>
-                            </Stack>
-                        </Grid.Col>
-                        <Grid.Col span={{ base: 12, md: 5 }}>
-                            <Box style={{ position: 'relative', borderRadius: theme.radius.md, overflow: 'hidden', aspectRatio: '4/3' }}>
-                                <NextImage
-                                    src="/20180311_Teaching_Harlow_UK.jpeg"
-                                    alt="Angus teaching mathematics at Burnt Mill Academy in Harlow"
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, 40vw"
-                                    style={{ objectFit: 'cover' }}
-                                />
-                            </Box>
-                        </Grid.Col>
-                    </Grid>
-                </motion.div>
+        <div className={`${styles.page} ${teacherFontClassNames}`} id="top">
+            {/* ── TOP ── */}
+            <header className={styles.top}>
+                <Link className={styles.brand} href="/">
+                    <span className={styles.brandDot}>a</span>
+                    Hally <span className={styles.brandSuffix}>— teaching</span>
+                </Link>
+                <nav className={styles.nav}>
+                    <a href="#taught">What it taught me</a>
+                    <a href="#pedagogy">Pedagogy</a>
+                    <a href="#for">Who it&rsquo;s for</a>
+                    <a href="#contact">Get in touch</a>
+                </nav>
+                <Link className={styles.back} href="/personas">All personas →</Link>
+            </header>
 
-                {/* ---------- The placement ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
-                    <Paper shadow="sm" p="xl" radius="md" withBorder>
-                        <Group gap="md" mb="sm" align="flex-start">
-                            <ThemeIcon size={48} radius="md" color="accent" variant="light"><IconSchool size={26} /></ThemeIcon>
-                            <Stack gap={0}>
-                                <Title order={3}>Burnt Mill Academy &mdash; Harlow, Essex</Title>
-                                <Text fz="sm" c="gray">TeachFirst placement &middot; 2016&ndash;2018</Text>
-                            </Stack>
-                        </Group>
-                        <Text size="sm" c="gray" mb="md">
-                            A large secondary school serving a mixed-intake catchment in Essex. Mathematics department; GCSE foundation and higher tier classes plus A-Level mathematics. TeachFirst recruits high-performing graduates into challenging schools on a two-year training programme that combines a PGCE with deep operational immersion in a single school.
-                        </Text>
-                        <Group gap={6}>
-                            <Badge size="sm" variant="light" color="accent">GCSE Maths</Badge>
-                            <Badge size="sm" variant="light" color="accent">A-Level Maths</Badge>
-                            <Badge size="sm" variant="light" color="accent">PGCE alongside</Badge>
-                            <Badge size="sm" variant="light" color="accent">Two-year placement</Badge>
-                        </Group>
-                    </Paper>
-                </motion.div>
+            {/* ── HERO ── */}
+            <section className={styles.hero}>
+                <div className={styles.heroInner}>
+                    <div>
+                        <h1 className={styles.heroTitle}>
+                            Hello<span className={styles.wave}>👋</span><br />
+                            I&rsquo;m Angus.<br />
+                            I make <em>hard ideas</em> feel obvious.
+                        </h1>
+                        <p className={styles.lede}>
+                            I came up <em>through the classroom</em> before I built products — a
+                            GCSE and A-Level maths teacher at Burnt Mill Academy in Harlow, on a
+                            TeachFirst placement from 2016 to 2018. <em>The hardest thing I&rsquo;ve done,</em>{' '}
+                            and where I learned to operate. The teaching muscle never left.
+                        </p>
+                        <div className={styles.chips}>
+                            <span className={`${styles.chip} ${styles.chipLead}`}><span className={styles.dot} /> Two years in the classroom</span>
+                            <span className={styles.chip}>GCSE + A-Level maths</span>
+                            <span className={styles.chip}>TeachFirst · 2016–2018</span>
+                        </div>
+                    </div>
 
-                {/* ---------- Outcomes (honest placeholder) ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}>
-                    <Paper shadow="sm" p="xl" radius="md" withBorder style={{ borderStyle: 'dashed' }}>
-                        <Group gap="md" align="flex-start">
-                            <ThemeIcon size={48} radius="md" color="gray" variant="light"><IconStethoscope size={26} /></ThemeIcon>
-                            <Stack gap={4} style={{ flex: 1 }}>
-                                <Title order={4}>Cohort outcomes</Title>
-                                <Text fz="sm" c="gray">
-                                    Class-level exam-result deltas pending. The honest version of this page leads with where students started in mock results vs where they finished at GCSE/A-Level &mdash; once Angus surfaces the data from his TeachFirst archive, this card upgrades.
-                                </Text>
-                            </Stack>
-                        </Group>
-                    </Paper>
-                </motion.div>
+                    <div className={styles.blackboard} aria-hidden="true">
+                        <div className={styles.bbEq}>
+                            <span className="num">P</span><span className="op">(</span><span className="var">understanding</span><span className="op">)</span><br />
+                            <span className="op">=</span>
+                            <span className="num">f</span><span className="op">(</span><span className="var">diagnosis</span><span className="op">,</span> <span className="var">pacing</span><span className="op">)</span>
+                            <span className="op">+</span> <span className="ans">ε</span>
+                        </div>
+                        <div className={styles.bbPlot}>
+                            <svg viewBox="0 0 200 100" preserveAspectRatio="none">
+                                <path className="p1" d="M 2 88 C 30 70, 60 88, 90 50 S 150 12, 198 18" />
+                                <path className="p2" d="M 2 92 C 40 84, 80 60, 130 56 S 180 38, 198 26" />
+                            </svg>
+                        </div>
+                        <div className={styles.bbLabels}>
+                            <span>practice →</span>
+                            <span>← understanding</span>
+                        </div>
+                        <span className={styles.bbTag}>mind the gap</span>
+                    </div>
+                </div>
+            </section>
 
-                {/* ---------- What teaching taught me ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }}>
-                    <Paper shadow="sm" p="xl" radius="md" style={{ background: gradient, color: theme.white }}>
-                        <Title order={2} mb={4} ta="center" style={{ color: theme.white }}>What teaching taught me</Title>
-                        <Text ta="center" mb="xl" maw={640} mx="auto" style={{ color: theme.colors.gray[4] }}>
-                            The transferable skills. Why this CV is also relevant for an edtech ventures audience or anyone hiring an operator who has held a classroom.
-                        </Text>
-                        <motion.div variants={containerVariants} initial="hidden" animate="visible">
-                            <Grid gutter="lg">
-                                {lessons.map((l) => (
-                                    <Grid.Col key={l.title} span={{ base: 12, md: 6 }}>
-                                        <motion.div variants={itemVariants}>
-                                            <Paper p="lg" radius="md" style={{ background: `linear-gradient(135deg, ${theme.colors[l.color][9]}, ${theme.colors[l.color][7]})`, color: theme.white, height: '100%' }}>
-                                                <ThemeIcon size={44} radius="md" color={l.color} variant="filled" mb="sm">{l.icon}</ThemeIcon>
-                                                <Title order={3} size="h4" style={{ color: theme.white }} mb="xs">{l.title}</Title>
-                                                <Text fz="sm" style={{ color: theme.colors.gray[2] }}>{l.body}</Text>
-                                            </Paper>
-                                        </motion.div>
-                                    </Grid.Col>
-                                ))}
-                            </Grid>
-                        </motion.div>
-                    </Paper>
-                </motion.div>
+            {/* ── WHAT TEACHING TAUGHT ME ── */}
+            <section className={styles.lessons} id="taught">
+                <div className={styles.sectionEye}>— What teaching taught me</div>
+                <h2 className={styles.h2}>The skills that <em>outlasted</em> the classroom.</h2>
+                <p className={styles.deck}>
+                    Why this CV is also relevant to anyone hiring an operator who has held a
+                    room. Two years, one placement, the hardest job I&rsquo;ve had — here&rsquo;s what transferred.
+                </p>
 
-                {/* ---------- Pedagogical principles ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }}>
-                    <Paper shadow="sm" p="xl" radius="md" withBorder>
-                        <Group gap="md" mb="md">
-                            <ThemeIcon size={42} radius="md" color="accent" variant="light"><IconBook size={24} /></ThemeIcon>
-                            <Title order={3}>How I&rsquo;d teach now</Title>
-                        </Group>
-                        <Stack gap="sm">
-                            {principles.map((p, i) => (
-                                <Group key={i} gap="sm" align="flex-start" wrap="nowrap">
-                                    <Badge size="sm" variant="filled" color="accent" style={{ flexShrink: 0, marginTop: 2 }}>{i + 1}</Badge>
-                                    <Text size="sm" c="gray">{p}</Text>
-                                </Group>
-                            ))}
-                        </Stack>
-                    </Paper>
-                </motion.div>
+                <div className={styles.series}>
+                    {lessons.map((l, i) => (
+                        <article className={styles.lesson} key={i}>
+                            <div className={styles.thumb} style={{ background: l.bg }}>
+                                {l.svg}
+                                <span className={styles.thumbTag}>{l.tag}</span>
+                            </div>
+                            <h3>{l.title}</h3>
+                            <p>{l.body}</p>
+                        </article>
+                    ))}
+                </div>
+            </section>
 
-                {/* ---------- Continuing relevance ---------- */}
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }}>
-                    <Paper shadow="sm" p="xl" radius="md" withBorder>
-                        <Title order={4} mb="xs">Teaching never stopped.</Title>
-                        <Text size="sm" c="gray">
-                            I currently brief, mentor, and teach across a non-technical co-founder, a mobile engineer, clinical advisors, and investors. The teaching skill stayed live.
-                        </Text>
-                    </Paper>
-                </motion.div>
-            </Stack>
-        </Section>
+            {/* ── PEDAGOGY ── */}
+            <section className={styles.why} id="pedagogy">
+                <div className={styles.whyInner}>
+                    <div>
+                        <div className={styles.sectionEye}>— Pedagogy</div>
+                        <h2 className={styles.h2}>Five principles I&rsquo;d <em>still</em> teach by.</h2>
+                        <p className={styles.whyLede}>
+                            Two years in front of GCSE and A-Level classes taught me the
+                            difference between a lesson that <em>lands</em> and one that&rsquo;s forgotten by
+                            Monday. These are the principles I&rsquo;d bring to any room now — a
+                            classroom, a code review, an investor update.
+                        </p>
+                    </div>
+                    <div className={styles.reasons}>
+                        {principles.map((p, i) => (
+                            <div className={styles.reason} key={i}>
+                                <span className={styles.glyph} style={{ background: p.glyph }}>
+                                    {String(i + 1).padStart(2, '0')}
+                                </span>
+                                <div>
+                                    <h4>{p.title}</h4>
+                                    <p>{p.body}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── FOR WHOM ── */}
+            <section className={styles.for} id="for">
+                <div className={styles.sectionEye}>— Who this is for</div>
+                <h2 className={styles.h2}>Four rooms this <em>speaks to.</em></h2>
+
+                <div className={styles.forGrid}>
+                    {audiences.map((a, i) => (
+                        <div className={styles.audience} key={i}>
+                            <div className={styles.who}>{a.who}</div>
+                            <h3>{a.title}</h3>
+                            <p>{a.body}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ── HONEST NOTE ── */}
+            <section className={styles.note}>
+                <div className={styles.noteCard}>
+                    <span className={styles.mark}>*</span>
+                    <p>
+                        <strong>Straight talk:</strong> this page leads with the narrative, not the
+                        numbers. Class-level exam-result deltas, observation feedback, and progress
+                        data are still in my TeachFirst archive — once I surface them, they lead. I&rsquo;d
+                        rather flag the gap than paper over it.
+                    </p>
+                </div>
+            </section>
+
+            {/* ── CTA ── */}
+            <section className={styles.cta} id="contact">
+                <div className={styles.sectionEye}>— Get in touch</div>
+                <h2 className={styles.h2}>Want to <em>talk teaching?</em></h2>
+                <p>
+                    A school role, an edtech problem, GCSE or A-Level tutoring, or just comparing
+                    notes on pedagogy — the teaching never really stopped, and I&rsquo;d love to hear from you.
+                </p>
+                <Link className={styles.btn} href="/contact">
+                    <span>Start a conversation</span>
+                    <span className={styles.btnArr}>→</span>
+                </Link>
+            </section>
+
+            {/* ── FOOTER ── */}
+            <footer className={styles.footer}>
+                <span>© mmxxvi · angus hally · london</span>
+                <span><Link href="/personas">← all personas</Link></span>
+            </footer>
+        </div>
     );
 };
 
