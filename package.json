@@ -10,7 +10,9 @@
   "scripts": {
     "dev": "next dev",
     "dev:turbopack": "next dev --turbopack",
+    "prebuild": "node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs && node scripts/build-resume.mjs",
     "build": "next build",
+    "build:chat": "node scripts/build-chat-knowledge.mjs && node scripts/build-chat-routes.mjs",
     "start": "next start",
     "lint": "next lint && node scripts/check-breakpoints.mjs --quiet",
     "check:breakpoints": "node scripts/check-breakpoints.mjs",
@@ -22,12 +24,14 @@
     "fix-nextjs": "node scripts/fix-nextjs-build-errors.js",
     "fix-nextjs:clean": "node scripts/fix-nextjs-build-errors.js --clean-deps",
     "optimize-images": "node scripts/optimize-images.mjs",
+    "build:resume": "node scripts/build-resume.mjs",
     "clean:node": "bash scripts/clean-node.sh",
     "clean:next": "bash scripts/clean-next.sh",
     "clean:ports": "node scripts/clean-ports.js",
     "prepare": "husky"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.98.0",
     "@mantine/charts": "^8.1.3",
     "@mantine/core": "^8.1.3",
     "@mantine/form": "^8.1.3",
@@ -71,6 +75,7 @@
     "husky": "^9.1.7",
     "jsdom": "^24.0.0",
     "kill-port": "^2.0.1",
+    "puppeteer": "^25.0.4",
     "vitest": "^1.2.1"
   },
   "overrides": {

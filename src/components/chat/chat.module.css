@@ -1,0 +1,425 @@
+/*
+ * Chat UI styles. All breakpoints use var(--bp-*) per ADR-0032 §4 —
+ * no raw px breakpoints. Vertical sizing uses dvh (FR-RES-5) so iOS
+ * browser chrome doesn't bounce the layout.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Launcher (FAB)
+ *
+ * Mobile (base): 56px round, bottom-right with safe-area inset.
+ * Tablet+ (--bp-md and up): 48px round.
+ * ------------------------------------------------------------------------ */
+
+.launcher {
+  position: fixed;
+  right: calc(env(safe-area-inset-right, 0px) + 1rem);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  width: 56px;
+  height: 56px;
+  z-index: 200; /* above page content, below Mantine modals (300+) */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+@media (min-width: 62em) {
+  .launcher {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Panel
+ *
+ * Mobile (base): full-viewport sheet (FR-RES-5).
+ * Tablet (>= --bp-sm): anchored card, 420 x 640 capped to viewport (FR-RES-12).
+ * Desktop (>= --bp-lg): grows to 480 x 720 cap (FR-RES-15).
+ * ------------------------------------------------------------------------ */
+
+.panel {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: flex;
+  flex-direction: column;
+  background: var(--mantine-color-body);
+  color: var(--mantine-color-text);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  animation: chatPanelSlideUp 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
+}
+
+@media (min-width: 48em) {
+  .panel {
+    inset: auto 1rem 1rem auto;
+    width: min(420px, calc(100vw - 2rem));
+    height: min(640px, calc(100dvh - 6rem));
+    border-radius: var(--mantine-radius-md);
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 75em) {
+  .panel {
+    width: min(480px, calc(100vw - 2rem));
+    height: min(720px, calc(100dvh - 6rem));
+  }
+}
+
+@keyframes chatPanelSlideUp {
+  from {
+    transform: translateY(8%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Header
+ * ------------------------------------------------------------------------ */
+
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--mantine-color-body);
+  border-bottom: 1px solid var(--mantine-color-default-border);
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  letter-spacing: 0.01em;
+}
+
+/* ---------------------------------------------------------------------------
+ * Message list + scroll area
+ * ------------------------------------------------------------------------ */
+
+.scrollArea {
+  flex: 1;
+  min-height: 0;
+}
+
+.messageList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  /* Defensive: parent surfaces (GradientRoot, Section) set text-align:center
+   * for hero headlines. The chat is conversational copy — always left. */
+  text-align: left;
+}
+
+/* ---------------------------------------------------------------------------
+ * Messages
+ * ------------------------------------------------------------------------ */
+
+.message {
+  max-width: 85%;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--mantine-radius-md);
+  word-wrap: break-word;
+}
+
+.messageUser {
+  align-self: flex-end;
+  background: var(--mantine-primary-color-filled);
+  color: var(--mantine-primary-color-contrast);
+}
+
+.messageAssistant {
+  align-self: flex-start;
+  background: var(--mantine-color-default-hover);
+  color: var(--mantine-color-text);
+}
+
+.messageContent {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+/* Assistant markdown — same baseline as plain content, but with
+ * tight defaults for paragraphs and lists rendered by renderMarkdown.tsx. */
+.messageMarkdown {
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.messageMarkdown :global(p) {
+  margin: 0;
+}
+
+.messageMarkdown :global(p + p),
+.messageMarkdown :global(p + ul),
+.messageMarkdown :global(ul + p) {
+  margin-top: 0.5rem;
+}
+
+.messageMarkdown :global(ul) {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.messageMarkdown :global(li + li) {
+  margin-top: 0.15rem;
+}
+
+.messageMarkdown :global(a) {
+  color: var(--mantine-primary-color-filled);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.messageMarkdown :global(strong) {
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+ * Empty state
+ * ------------------------------------------------------------------------ */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+  text-align: left;
+}
+
+.emptyGreeting {
+  line-height: 1.4;
+  color: var(--mantine-color-dimmed);
+}
+
+.suggestedPrompts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 36em) {
+  .suggestedPrompts {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.suggestedPrompt {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+  min-height: 44px; /* WCAG 2.5.5 touch target */
+}
+
+.suggestedPrompt:hover,
+.suggestedPrompt:focus-visible {
+  background: var(--mantine-color-default-hover);
+}
+
+.privacyNote {
+  margin-top: 0.5rem;
+  line-height: 1.4;
+  color: var(--mantine-color-dimmed);
+}
+
+/* ---------------------------------------------------------------------------
+ * Typing indicator
+ * ------------------------------------------------------------------------ */
+
+.typingIndicator {
+  align-self: flex-start;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-default-hover);
+}
+
+/* ---------------------------------------------------------------------------
+ * Composer
+ *
+ * Sticky at the bottom, safe-area inset for the iOS home indicator.
+ * The Textarea owns its own internal sizing; we constrain font-size to
+ * keep iOS from auto-zooming on focus (FR-RES-18).
+ * ------------------------------------------------------------------------ */
+
+.composer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  padding: 0.75rem 1rem;
+  /*
+   * Combines the safe-area inset (iOS home indicator) with the visual-
+   * viewport keyboard inset set by ChatPanel's VisualViewport effect
+   * (FR-RES-16). When no keyboard is up, --chat-keyboard-inset is unset
+   * and the fallback (0px) wins.
+   */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--chat-keyboard-inset, 0px) + 0.75rem);
+  background: var(--mantine-color-body);
+  border-top: 1px solid var(--mantine-color-default-border);
+  flex-shrink: 0;
+}
+
+/* Inline error banner (rate_limited, session_cap_reached, etc). Shown
+ * in the message list when status === 'error'. */
+.errorBanner {
+  align-self: stretch;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--mantine-radius-sm);
+  background: var(--mantine-color-default-hover);
+  color: var(--mantine-color-text);
+  font-size: 0.85rem;
+}
+
+.composerInput {
+  flex: 1;
+}
+
+.composerTextarea {
+  font-size: 16px; /* anti-iOS-zoom; do not lower */
+  line-height: 1.4;
+}
+
+.composerButton {
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+/* ---------------------------------------------------------------------------
+ * Tool-use stack — vertical column of proposal cards after assistant text.
+ * ------------------------------------------------------------------------ */
+
+.toolUseStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+ * Nav suggestion button (`navigate` tool proposal)
+ * ------------------------------------------------------------------------ */
+
+.navButton {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  min-height: 44px; /* WCAG 2.5.5 */
+}
+
+/* On mobile, nav buttons stack full-width. From --bp-sm they can sit
+ * inline (FR-RES-25). */
+@media (max-width: 47.99em) {
+  .navButton {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Contact draft card (`draft_contact_message` tool proposal)
+ * ------------------------------------------------------------------------ */
+
+.contactDraftCard {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-body);
+}
+
+.contactDraftHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--mantine-color-dimmed);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.contactDraftSubject {
+  margin: 0;
+}
+
+.contactDraftBody {
+  margin: 0;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: var(--mantine-color-text);
+}
+
+.contactDraftButton {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  min-height: 36px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Resting state (spend-cap fallback FAQ)
+ * ------------------------------------------------------------------------ */
+
+.restingState {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.restingHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.restingIntro {
+  line-height: 1.4;
+  color: var(--mantine-color-dimmed);
+}
+
+.restingFaqList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.restingFaqItem {
+  border-top: 1px solid var(--mantine-color-default-border);
+  padding-top: 0.5rem;
+}
+
+.restingFaqQ {
+  margin: 0 0 0.15rem 0;
+}
+
+.restingFaqA {
+  margin: 0;
+  line-height: 1.4;
+  color: var(--mantine-color-dimmed);
+}

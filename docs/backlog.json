@@ -280,9 +280,9 @@
       "type": "tech-debt",
       "area": "database",
       "priority": "low",
-      "status": "not-started",
+      "status": "done",
       "issue": 59,
-      "notes": "Single-col user_id index is now shadowed by the composite (user_id, created_at DESC) for read paths. Verify no insert/duplicate-check path benefits from the single-col before dropping. Surfaced by QA review on PR #56."
+      "notes": "Dropped via supabase/migrations/20260520204500_drop_ix_bookmarks_user_id.sql and applied to Supabase 2026-05-20. Composite (user_id, created_at DESC) serves all single-col user_id read paths via its leading column. Surfaced by QA review on PR #56."
     },
     {
       "id": "db-connection-pool-tuning",
@@ -645,7 +645,7 @@
       "type": "tech-debt",
       "area": "frontend",
       "priority": "low",
-      "status": "not-started",
+      "status": "done",
       "issue": 60,
       "notes": "After PR #57 dropped the carousel, the remaining two files have no consumers and src/app/collab/page.tsx is `redirect('/')`. Delete the directory and the route together. Surfaced by QA review on PR #57."
     },
@@ -655,9 +655,9 @@
       "type": "tech-debt",
       "area": "devops",
       "priority": "low",
-      "status": "not-started",
+      "status": "done",
       "issue": 61,
-      "notes": "Local `npm run build` fails prerendering /contact without SUPABASE_URL set. Either add a .env.example, document the requirement, or skip prerender for routes that need server data when env is absent. Surfaced by QA review on PR #57."
+      "notes": "Docs landed: .env.example flags the build requirement and docs/guides/local-build.md explains the error, fix, and where to source values. Option-2 (auto-skip prerender when env missing) deferred — revisit if friction persists. Surfaced by QA review on PR #57."
     },
     {
       "id": "component-standardization",

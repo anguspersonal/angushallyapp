@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { CONTACT_DRAFT_STORAGE_KEY, type ContactDraft } from '@/components/chat/ContactDraftCard';
 import {
   Box,
   Title,
@@ -65,6 +66,40 @@ export default function ContactPage() {
       message: (value: string) => (value.trim().length < 10 ? 'Message must be at least 10 characters long' : null),
     },
   });
+
+  // Hand-off from the chatbot: if a draft was placed in sessionStorage by
+  // the ContactDraftCard (task 9 / FR-AGENT-8), prefill the form once on
+  // mount and clear the key. Form remains fully editable; reCAPTCHA flow
+  // is untouched.
+  useEffect(() => {
+    let raw: string | null = null;
+    try {
+      raw = sessionStorage.getItem(CONTACT_DRAFT_STORAGE_KEY);
+    } catch {
+      // Private-mode Safari can throw on sessionStorage access; degrade silently.
+      return;
+    }
+    if (!raw) return;
+    try {
+      const draft = JSON.parse(raw) as ContactDraft;
+      form.setValues({
+        name: typeof draft.name === 'string' ? draft.name : '',
+        email: typeof draft.email === 'string' ? draft.email : '',
+        subject: typeof draft.subject === 'string' ? draft.subject : '',
+        message: typeof draft.body === 'string' ? draft.body : '',
+      });
+    } catch (err) {
+      console.warn('[contact] failed to parse chat draft', err);
+    } finally {
+      try {
+        sessionStorage.removeItem(CONTACT_DRAFT_STORAGE_KEY);
+      } catch {
+        // ignore
+      }
+    }
+    // We intentionally exclude `form` from deps — only run once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (values: ContactFormValues) => {
     if (captchaRequired && !captchaValue) {

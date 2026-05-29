@@ -31,7 +31,6 @@ dist-ssr
 *.sln
 *.sw?
 .cursor/
-.claude/
 .kiro/
 .agents/
 *.swp
@@ -103,3 +102,9 @@ refactorlog.json
 
 .mcp.json
 .gstack/
+
+
+# Don't ignore claude/settings.json
+!.claude/settings.json
+.claude/settings.local.json
+.claude/worktrees/*

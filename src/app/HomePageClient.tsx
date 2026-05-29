@@ -10,6 +10,7 @@ import {
 import { Section, Stack } from '@/components/layout';
 import NextImage from 'next/image';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconChevronDown } from '@tabler/icons-react';
 import CareerTimeline from '../components/timeline/CareerTimeline';
 import { careerMilestones } from '@/data/careerMilestones';
@@ -159,6 +160,8 @@ export type HomePageClientProps = {
 
 export default function HomePageClient({ og }: HomePageClientProps) {
   const reduceMotion = useReducedMotion();
+  /** Phones — kill the scroll-scale on the HeyLina card (1.8x would overflow viewport). */
+  const isMobile = useMediaQuery('(max-width: 48em)');
   const nowSectionRef = React.useRef<HTMLElement | null>(null);
   const heyLinaCardRef = React.useRef<HTMLDivElement | null>(null);
   const [heyLinaCardHeight, setHeyLinaCardHeight] = React.useState(0);
@@ -297,12 +300,12 @@ export default function HomePageClient({ og }: HomePageClientProps) {
                   reduceMotion
                     ? undefined
                     : {
-                        scale: heyLinaScale,
+                        scale: isMobile ? 1 : heyLinaScale,
                         transformOrigin: 'top center',
-                        marginBottom: heyLinaSpacer,
+                        marginBottom: isMobile ? 0 : heyLinaSpacer,
                         position: 'relative',
                         zIndex: 5,
-                        willChange: 'transform',
+                        willChange: isMobile ? undefined : 'transform',
                       }
                 }
               >
@@ -381,7 +384,16 @@ export default function HomePageClient({ og }: HomePageClientProps) {
                         timeline?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                       }}
                     >
-                      How I got here
+                      How I got here{' '}
+                      <motion.span
+                        initial={{ rotate: 0 }}
+                        whileInView={{ rotate: [0, 20, -10, 20, -10, 0] }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.8, delay: 0.5 }}
+                        style={{ display: 'inline-block' }}
+                      >
+                        👋
+                      </motion.span>
                     </Text>
                     <motion.div
                       animate={{ y: [0, -7, 0] }}
@@ -426,6 +438,15 @@ export default function HomePageClient({ og }: HomePageClientProps) {
           <Stack gap="intra" style={{ alignItems: 'center', textAlign: 'center' }}>
             <Title order={2} className={styles.ctaTitle} style={{ color: 'var(--site-ink)' }}>
               Let&apos;s connect{' '}
+              <motion.span
+                initial={{ rotate: 0 }}
+                whileInView={{ rotate: [0, 20, -10, 20, -10, 0] }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                style={{ display: 'inline-block' }}
+              >
+                👋
+              </motion.span>
             </Title>
             <Text className={styles.ctaSubtitle} style={{ color: 'var(--mantine-color-dimmed)' }}>
               Whether you want to talk startups, data strategy, or just say hello, I&apos;d love to hear from you.

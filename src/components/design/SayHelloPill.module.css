@@ -3,7 +3,8 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 10px 20px;
+  padding: 12px 22px;
+  min-height: 44px;
   border-radius: 999px;
   font-size: 14px;
   font-weight: 500;

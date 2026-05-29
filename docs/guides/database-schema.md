@@ -3,11 +3,32 @@ Purpose: Human-friendly overview of your DB schemas.
 
 Content:
 
-List of logical schemas (identity, habit, crm, fsa, content)
+List of logical schemas (identity, habit, content, crm, fsa, raindrop, bookmarks)
 
 Key tables & relationships (ERD png thumbnail + link)
 
 Link to schema.dbml / schema-dbdiagram.dbml
+
+## Regenerating the DBML
+
+The canonical source files are `docs/assets/schema.dbml` (full, with named
+constraints) and `docs/assets/schema-dbdiagram.dbml` (dbdiagram.io-friendly
+variant). Both are re-authored from a live Supabase introspection, not edited
+by hand. To refresh after a migration:
+
+1. Connect to the live Supabase project (ref `kqowtjjhhjceghkohzda`).
+2. Introspect with `information_schema.columns`, `pg_indexes`, and
+   `pg_constraint` to capture columns, indexes, FKs, and CHECK constraints
+   across every schema (`identity`, `habit`, `content`, `crm`, `fsa`,
+   `raindrop`, `bookmarks`).
+3. Regenerate both DBML files from that snapshot and update the
+   `Last refreshed` date in their headers.
+4. Re-render `docs/assets/20250512_schema-angushallyapp.png` from
+   `schema-dbdiagram.dbml` in dbdiagram.io and commit it alongside.
+
+The DBML header comments record the source-of-truth method and the last
+refresh date — keep them current so the next person knows exactly how the
+file was produced.
 
 
 
@@ -256,7 +277,7 @@ Table bookmarks.bookmarks {
   updated_at timestamptz [not null, default: `now()`]
 
   Indexes {
-    (user_id) [name: 'ix_bookmarks_user_id']
+    (user_id, created_at) [name: 'idx_bookmarks_user_created_desc']
     (url) [name: 'ix_bookmarks_url']
     (tags) [name: 'ix_bookmarks_tags', type: 'gin']
     (source_type, source_id) [unique, name: 'uq_bookmarks_source']
