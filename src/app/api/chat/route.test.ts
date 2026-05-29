@@ -105,7 +105,15 @@ function makeRequest(body: unknown): NextRequest {
 
 const VALID_UUID = '11111111-2222-4222-9222-333333333333';
 
-function makeValidBody(overrides: Partial<{ sessionId: string; message: string; route: string; history: unknown[] }> = {}) {
+function makeValidBody(
+  overrides: Partial<{
+    sessionId: string;
+    message: string;
+    route: string;
+    history: unknown[];
+    surface: unknown;
+  }> = {},
+) {
   return {
     sessionId: VALID_UUID,
     message: 'Hello, what is this site about?',
@@ -305,6 +313,93 @@ describe('POST /api/chat', () => {
     });
     expect(typeof systemBlocks[0].text).toBe('string');
     expect((systemBlocks[0].text as string).length).toBeGreaterThan(100);
+  });
+
+  it('appends the persona block AFTER the cache breakpoint when the request carries a surface (#139)', async () => {
+    mockStream.deltas = ['ok'];
+    mockStream.finalMessage = {
+      content: [{ type: 'text', text: 'ok' }],
+      usage: { input_tokens: 1, output_tokens: 1 },
+    };
+
+    // Seed a persona instruction for a test surface, then send a request that
+    // carries that surface. The block must be appended as a trailing system
+    // block (after the cached static prompt) so the cached prefix is intact.
+    const { PERSONA_CHAT_INSTRUCTIONS } = await import('@/lib/chat/personaInstructions');
+    const TEST_SURFACE = '__route_test_persona__';
+    PERSONA_CHAT_INSTRUCTIONS[TEST_SURFACE] = 'Speak in the test persona voice.';
+
+    const { __resetRateLimiterForTests } = await import('@/lib/chat/rateLimiter');
+    __resetRateLimiterForTests();
+    const { POST } = await import('./route');
+    try {
+      await POST(
+        makeRequest(
+          makeValidBody({
+            sessionId: 'a1111111-2222-4222-9222-333333333333',
+            // Use a route with no KNOWLEDGE_BY_ROUTE entry so there's no
+            // page-context block in the middle — isolates the persona block as
+            // the trailing block and pins ordering.
+            route: '/__no_known_route__',
+            surface: TEST_SURFACE,
+          }),
+        ),
+      );
+
+      const args = mockStream.lastStreamArgs!;
+      const systemBlocks = args.system as Array<Record<string, unknown>>;
+      // First block: the cached static prompt with the ephemeral breakpoint.
+      expect(systemBlocks[0]).toMatchObject({ cache_control: { type: 'ephemeral' } });
+      // Last block: the persona block, AFTER the breakpoint, with NO
+      // cache_control of its own (so it never moves the breakpoint).
+      const lastBlock = systemBlocks[systemBlocks.length - 1];
+      expect(systemBlocks.length).toBeGreaterThanOrEqual(2);
+      expect(lastBlock.cache_control).toBeUndefined();
+      expect(lastBlock.text).toContain('# Persona behaviour');
+      expect(lastBlock.text).toContain('Speak in the test persona voice.');
+    } finally {
+      delete PERSONA_CHAT_INSTRUCTIONS[TEST_SURFACE];
+      __resetRateLimiterForTests();
+    }
+  });
+
+  it('omits the persona block entirely on the no-persona path (current behaviour unchanged) (#139)', async () => {
+    mockStream.deltas = ['ok'];
+    mockStream.finalMessage = {
+      content: [{ type: 'text', text: 'ok' }],
+      usage: { input_tokens: 1, output_tokens: 1 },
+    };
+
+    const { __resetRateLimiterForTests } = await import('@/lib/chat/rateLimiter');
+    __resetRateLimiterForTests();
+    const { POST } = await import('./route');
+    // No `surface` in the body, and an unknown route → no page context either.
+    await POST(
+      makeRequest(
+        makeValidBody({
+          sessionId: 'a2222222-3333-4333-9333-444444444444',
+          route: '/__no_known_route__',
+        }),
+      ),
+    );
+
+    const args = mockStream.lastStreamArgs!;
+    const systemBlocks = args.system as Array<Record<string, unknown>>;
+    // Only the single cached static prompt block — no persona, no page context.
+    expect(systemBlocks).toHaveLength(1);
+    expect(systemBlocks[0]).toMatchObject({ cache_control: { type: 'ephemeral' } });
+    for (const block of systemBlocks) {
+      expect(block.text).not.toContain('# Persona behaviour');
+    }
+    __resetRateLimiterForTests();
+  });
+
+  it('rejects a non-string surface as a malformed body (#139)', async () => {
+    const { POST } = await import('./route');
+    const res = await POST(
+      makeRequest({ ...makeValidBody(), surface: 123 }),
+    );
+    expect(res.status).toBe(400);
   });
 
   it('emits rate_limited when the per-IP bucket is exhausted (FR-RATE-1)', async () => {

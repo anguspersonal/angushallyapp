@@ -37,6 +37,14 @@ export type ChatRequestBody = {
   history: ChatHistoryEntry[];
   /** Pathname when the message was sent — used for analytics + grounding. */
   route: string;
+  /**
+   * Resolved surface identifier for the current route
+   * (`resolveSurface(pathname).surface`), used to layer a per-persona
+   * behavioural block onto the system prompt. Optional: absent / unknown
+   * surface → no persona block (current behaviour). See
+   * `buildPersonaInstructions` in src/lib/chat/personaInstructions.ts.
+   */
+  surface?: string;
 };
 
 /**
