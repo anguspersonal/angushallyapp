@@ -30,7 +30,24 @@ const DataFieldHero = () => {
         const mount = mountRef.current;
         if (!mount) return;
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        // Respect the user's motion preference. Honours runtime changes too:
+        // a vestibular-sensitive user toggling the OS setting flips this without
+        // a reload (mirrors the repo's [data-reduce-motion] convention, which
+        // the global CSS rule can't reach for a JS rAF loop).
+        const reduceMotionMQ = typeof window.matchMedia === 'function'
+            ? window.matchMedia('(prefers-reduced-motion: reduce)')
+            : null;
+        let reduceMotion = reduceMotionMQ?.matches ?? false;
+
+        let renderer: THREE.WebGLRenderer;
+        try {
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        } catch {
+            // No WebGL (blocked GPU, headless, rare browsers): fail gracefully —
+            // the static editorial copy + neutral hero stage stay visible behind
+            // this empty island. Nothing to clean up since nothing was created.
+            return;
+        }
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setClearColor(0x000000, 0);
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -64,7 +81,8 @@ const DataFieldHero = () => {
         envTex.colorSpace = THREE.SRGBColorSpace;
         const pmrem = new THREE.PMREMGenerator(renderer);
         pmrem.compileEquirectangularShader();
-        const env = pmrem.fromEquirectangular(envTex).texture;
+        const envRT = pmrem.fromEquirectangular(envTex);
+        const env = envRT.texture;
         scene.environment = env;
 
         const ambient = new THREE.AmbientLight(0xffffff, 0.35);
@@ -160,6 +178,10 @@ const DataFieldHero = () => {
             velX = (e.clientY - ly) * 0.01;
             rotY += velY; rotX += velX;
             lx = e.clientX; ly = e.clientY;
+            // Drag is a discrete, user-initiated interaction, so it stays live even
+            // under reduced motion — but the rAF loop is off then, so re-render the
+            // (static) frame here to reflect the new camera angle.
+            if (!running) renderFrame(0, clarity);
         };
         const stop = () => {
             dragging = false;
@@ -188,19 +210,10 @@ const DataFieldHero = () => {
         let acc = 0, frames = 0;
         let raf = 0;
 
-        const tick = () => {
-            const dt = clock.getDelta();
-            const t = clock.getElapsedTime();
-            acc += dt; frames++;
-            if (acc >= 0.5) {
-                if (fpsRef.current) fpsRef.current.textContent = String(Math.round(frames / acc));
-                acc = 0; frames = 0;
-            }
-
-            const clarityTarget = clarityTargetRef.current;
-            clarity += (clarityTarget - clarity) * (1 - Math.exp(-dt * 3.0));
-            if (Math.abs(clarityTarget - clarity) < 0.004) clarity = clarityTarget;
-
+        // Render one frame's worth of geometry at a fixed (`t`, `clarity`) without
+        // advancing the animation. Used for the reduced-motion static frame and
+        // (via the live loop) every animated frame.
+        const renderFrame = (t: number, clarity: number) => {
             if (stateRef.current) stateRef.current.textContent = clarity > 0.5 ? '— clarity —' : '— noise —';
             lineMat.opacity = 0.1 + 0.42 * clarity;
 
@@ -240,24 +253,105 @@ const DataFieldHero = () => {
             }
             lg.attributes.position.needsUpdate = true;
 
-            if (!dragging) {
-                velX *= 0.94; velY *= 0.94;
-                rotY += velY * 0.4; rotX += velX * 0.4;
-            }
-            pivot.rotation.y += dt * (0.12 - 0.07 * clarity);
             camera.position.x = Math.sin(rotY) * 7.6;
             camera.position.z = Math.cos(rotY) * 7.6;
             camera.position.y = Math.max(-4, Math.min(4, rotX * 2.4));
             camera.lookAt(0, 0, 0);
 
             renderer.render(scene, camera);
+        };
+
+        // Reduced-motion path: render a single ordered (clarity = 1) frame and
+        // stop. No rAF loop, no auto-rotate, no perpetual morph. Drag-to-rotate
+        // stays available (a discrete, user-initiated interaction, not motion we
+        // impose), so we still attach the pointer handlers above; we just don't
+        // spin the field on our own.
+        const renderStaticFrame = () => {
+            clarity = 1;
+            clarityTargetRef.current = 1;
+            if (fpsRef.current) fpsRef.current.textContent = '—';
+            renderFrame(0, 1);
+        };
+
+        const tick = () => {
+            const dt = clock.getDelta();
+            const t = clock.getElapsedTime();
+            acc += dt; frames++;
+            if (acc >= 0.5) {
+                if (fpsRef.current) fpsRef.current.textContent = String(Math.round(frames / acc));
+                acc = 0; frames = 0;
+            }
+
+            // ── advance interaction + animation state ──
+            const clarityTarget = clarityTargetRef.current;
+            clarity += (clarityTarget - clarity) * (1 - Math.exp(-dt * 3.0));
+            if (Math.abs(clarityTarget - clarity) < 0.004) clarity = clarityTarget;
+
+            if (!dragging) {
+                velX *= 0.94; velY *= 0.94;
+                rotY += velY * 0.4; rotX += velX * 0.4;
+            }
+            pivot.rotation.y += dt * (0.12 - 0.07 * clarity);
+
+            renderFrame(t, clarity);
             raf = requestAnimationFrame(tick);
         };
-        tick();
+
+        // ── run / idle control ──
+        // Only spin the loop while the hero is on-screen and the tab is visible:
+        // off-screen / backgrounded the 3D scene is pure GPU/CPU/battery waste,
+        // especially on the mid-tier mobile device ADR 0033 targets.
+        let running = false;
+        let onScreen = true;
+        const start = () => {
+            if (running || reduceMotion) return;
+            running = true;
+            clock.getDelta(); // drop the gap accumulated while idle so we don't jump
+            raf = requestAnimationFrame(tick);
+        };
+        const stopLoop = () => {
+            running = false;
+            cancelAnimationFrame(raf);
+        };
+        const syncRunState = () => {
+            if (reduceMotion) return;
+            if (onScreen && !document.hidden) start();
+            else stopLoop();
+        };
+
+        const io = new IntersectionObserver((entries) => {
+            onScreen = entries[0]?.isIntersecting ?? true;
+            syncRunState();
+        });
+        io.observe(mount);
+        const onVisibility = () => syncRunState();
+        document.addEventListener('visibilitychange', onVisibility);
+
+        // React to the OS motion preference changing at runtime.
+        const onMotionChange = () => {
+            reduceMotion = reduceMotionMQ?.matches ?? false;
+            if (reduceMotion) {
+                stopLoop();
+                renderStaticFrame();
+            } else {
+                syncRunState();
+            }
+        };
+        reduceMotionMQ?.addEventListener?.('change', onMotionChange);
+
+        if (reduceMotion) {
+            // Static ordered frame; no rAF, no auto-rotate, no perpetual morph.
+            renderStaticFrame();
+        } else {
+            syncRunState();
+        }
 
         return () => {
-            cancelAnimationFrame(raf);
+            stopLoop();
+            io.disconnect();
             ro.disconnect();
+            document.removeEventListener('visibilitychange', onVisibility);
+            reduceMotionMQ?.removeEventListener?.('change', onMotionChange);
             mount.removeEventListener('pointerdown', onPointerDown);
             mount.removeEventListener('pointermove', onPointerMove);
             mount.removeEventListener('pointerup', stop);
@@ -270,7 +364,9 @@ const DataFieldHero = () => {
             lineMat.dispose();
             envTex.dispose();
             env.dispose();
+            envRT.dispose();
             pmrem.dispose();
+            renderer.forceContextLoss();
             renderer.dispose();
         };
     }, []);
