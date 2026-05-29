@@ -4,6 +4,18 @@
  * (not :root) so the paper/terracotta palette and serif stack never leak into
  * the rest of the site. Font variables (--aipm-*) are supplied by next/font
  * via the className applied to the page root.
+ *
+ * Night/day (issue #131): two palettes scoped to this surface. The MORNING
+ * EDITION (warm paper, terracotta ink) is the default and the no-attribute
+ * value so there is no flash before hydration. The EVENING EDITION (deep
+ * espresso ground, warm parchment ink) overrides under
+ * `[data-mantine-color-scheme='dark']`, matching the site-wide convention used
+ * by `/dev` (see src/app/dev/dev.module.css) and globals.css. The toggle lives
+ * in this page's own nav + footer (PersonaThemeToggle) and flips the shared
+ * Mantine color-scheme — there is no separate preference store. Both modes are
+ * kept: a broadsheet reads naturally as an "evening edition", so neither is
+ * hidden. Only the ~7 surface tokens differ between modes; the terracotta
+ * accent is nudged warmer in the dark to stay legible on the espresso ground.
  */
 
 .page {
@@ -20,6 +32,16 @@
   --sans: var(--aipm-sans), -apple-system, system-ui, sans-serif;
   --mono: var(--aipm-mono), ui-monospace, Menlo, monospace;
 
+  /* Skin the shared persona chrome kit (PersonaFooter / PersonaThemeToggle)
+     from these tokens so the footer and toggle inherit the editorial palette
+     without forking the shared components. */
+  --persona-ink: var(--ink);
+  --persona-footer-bg: var(--paper-2);
+  --persona-footer-border: var(--rule);
+  --persona-footer-pad: 28px 48px;
+  --persona-footer-fineprint-size: 11px;
+  --persona-toggle-hover-bg: color-mix(in srgb, var(--ink) 8%, transparent);
+
   background: var(--paper);
   color: var(--ink);
   font-family: var(--serif);
@@ -27,6 +49,21 @@
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   min-height: 100vh;
+}
+
+/* EVENING EDITION — dark espresso ground with warm parchment ink. The serif
+   voice and terracotta accent carry through; only the surface inverts. Scoped
+   to this surface via the color-scheme attribute on an ancestor, so it never
+   touches the rest of the site. */
+[data-mantine-color-scheme="dark"] .page {
+  --paper: #161310;
+  --paper-2: #211c17;
+  --ink: #ece4d6;
+  --ink-soft: #c2b8a6;
+  --ink-dim: #8a8073;
+  --rule: #3a322a;
+  --accent: #e2703a; /* terracotta, warmed for the dark ground */
+  --accent-2: #c2562a;
 }
 
 .page a {
@@ -58,8 +95,28 @@
   letter-spacing: -0.005em;
   text-decoration: none !important;
 }
-.top nav { display: inline-flex; gap: 24px; }
-.back { color: var(--ink) !important; }
+/* In-page anchor nav (Hero / About / Work / Contact) + the theme toggle. */
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+}
+.nav a {
+  color: var(--ink-soft) !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+}
+.nav a:hover { color: var(--accent) !important; }
+
+/* PersonaThemeToggle, skinned for the editorial nav/footer. Colour is inherited
+   via --persona-ink; this just sizes it to sit on the baseline-aligned nav. */
+.themeToggle {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  margin: -8px 0;
+}
 
 /* ── volume / issue header ── */
 .masthead {
@@ -365,24 +422,56 @@
 }
 .corresp .col .addr a { color: var(--accent); }
 
-/* footer */
-.footer {
-  padding: 28px 48px;
-  border-top: 1px solid var(--rule);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+/* Holding note in the Contact section until the B2 contact form lands here
+   (#132/#133/#134). Deliberately understated — it should read as a galley
+   note, not a missing-content error. */
+.formPlaceholder {
+  margin-top: 22px !important;
+  padding: 14px 18px;
+  border: 1px dashed var(--rule);
+  font-family: var(--sans) !important;
+  font-style: normal !important;
+  font-size: 14px !important;
+  line-height: 22px !important;
+  color: var(--ink-dim) !important;
+  background: var(--paper-2);
+}
+
+/* footer — shared PersonaFooter, skinned via --persona-* tokens on .page.
+   Structure/layout comes from the shared component; this only sets the
+   editorial typography of the footer. The single discreet main-site link is
+   deliberately NOT given the editorial underline (the shared component keeps it
+   low-opacity), so it stays a quiet route out — not first-class nav. */
+.personaFooter {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--ink-dim);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.footer a {
+/* The discreet main-site link is the only footer anchor WITHOUT .footerLink.
+   The broad `.page a` rule above would give it the accent underline and break
+   its discreetness, so reset it back to the shared component's quiet default
+   (low-opacity, no underline until hover). */
+.personaFooter a:not(.footerLink) {
+  color: inherit !important;
+  text-decoration: none !important;
+  opacity: 0.6;
+}
+.personaFooter a:not(.footerLink):hover {
+  opacity: 1;
+}
+/* Slot links (contact / privacy / socials) carry this class so the editorial
+   treatment applies to them only, never to the discreet main-site link. */
+.footerLink {
   color: var(--ink) !important;
-  text-decoration: none;
+  text-decoration: none !important;
   border-bottom: 1px solid var(--ink);
   padding-bottom: 1px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.footerLink:hover {
+  color: var(--accent) !important;
+  border-color: var(--accent);
 }
 
 @media (max-width: 47.5em) {
@@ -391,11 +480,17 @@
   .hero,
   .resp,
   .refs,
-  .corresp,
-  .footer {
+  .corresp {
     padding-left: 22px;
     padding-right: 22px;
   }
+  /* Stack the nav under the brand on small screens. */
+  .top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .nav { gap: 16px; flex-wrap: wrap; }
   .article { padding: 56px 22px; }
   .byline { grid-template-columns: 1fr 1fr; gap: 16px; }
   .pull { margin: 36px 0; padding-left: 18px; font-size: 22px; line-height: 30px; }
