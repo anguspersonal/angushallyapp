@@ -7,6 +7,7 @@ import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { theme } from '../lib/theme';
 import { resolveSurface } from '../lib/surfaces';
 import { AuthProvider } from '../providers/AuthProvider';
+import { ConsentProvider } from '../providers/ConsentProvider';
 import { ErrorBoundary } from './ErrorBoundary';
 import Header from './Header';
 import Footer from './Footer';
@@ -15,6 +16,7 @@ import { homeHeroIntroCompleteMs } from '@/constants/homeHeroEntrance';
 import { BlogHeader } from '@/components/blog/BlogHeader';
 import { BlogFooter } from '@/components/blog/BlogFooter';
 import { ChatLauncher } from '@/components/chat/ChatLauncher';
+import { ConsentRoot } from '@/components/consent/ConsentRoot';
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -133,8 +135,14 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     <MantineProvider theme={theme} defaultColorScheme="auto">
       <ErrorBoundary>
         <AuthProvider>
-          <SurfaceShell>{children}</SurfaceShell>
-          <ChatLauncher />
+          <ConsentProvider>
+            {/* SurfaceShell owns per-surface chrome; ConsentRoot sits beside it
+                so the banner / preference center appear site-wide (default,
+                blog, projects, persona) without any surface knowing about it. */}
+            <SurfaceShell>{children}</SurfaceShell>
+            <ChatLauncher />
+            <ConsentRoot />
+          </ConsentProvider>
         </AuthProvider>
       </ErrorBoundary>
     </MantineProvider>
