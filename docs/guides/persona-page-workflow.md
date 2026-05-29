@@ -126,3 +126,74 @@ The recipe for adding a persona / route-level visual system:
 4. **Put styles in `src/app/<route>/<route>.module.css`** — route-scoped CSS module, keyed off the `data-surface` attribute where it needs to react to the surface.
 
 `data-surface` is orthogonal to colour-scheme: components that care (e.g. `Glass`, `GradientRoot`) read the attribute independently, so a persona can opt into bespoke treatment without the layout knowing the details.
+
+## Per-persona metadata: `personaMetadata()` + the server-wrapper pattern
+
+Each persona is a shareable destination, so it wants its own tab title, description, social-preview image, and favicon (PRD #123, user stories 26–29). Two pieces make this trivial and consistent:
+
+### 1. The pure helper — `personaMetadata(config)`
+
+[`src/lib/persona/personaMetadata.ts`](../../src/lib/persona/personaMetadata.ts) maps a small declarative config to a Next `Metadata` object:
+
+```ts
+import { personaMetadata } from '@/lib/persona/personaMetadata';
+
+export const metadata = personaMetadata({
+  title: 'Maths Teacher',
+  description: 'TeachFirst-trained maths teacher; measurable exam-result deltas.',
+  // everything below is optional — sensible site-wide defaults apply
+  ogImage: '/og/teacher.png',      // default: /AH_Logo.png
+  favicon: '/teacher.ico',         // default: /AH-logo-no-background.ico
+  // ogTitle defaults to "<title> · Angus Hally"; url is optional
+});
+```
+
+Only `title` and `description` are required; OG image, favicon, apple icon, OG title and canonical URL all fall back to the site defaults declared in `PERSONA_METADATA_DEFAULTS` (mirrored from the root layout). The helper is **pure** — no I/O, no Next runtime access — so the config → metadata mapping is unit-tested directly in [`personaMetadata.test.ts`](../../src/lib/persona/personaMetadata.test.ts). Adjusting a persona's metadata is a one-line config edit.
+
+### 2. The constraint — `'use client'` pages can't export `metadata`
+
+Next.js only honours an exported `metadata` (or `generateMetadata`) from a **Server Component**. The persona pages are `'use client'` (they use Mantine hooks, Framer Motion, `useMantineTheme`, etc.), and a module that opens with `'use client'` cannot also export `metadata` — Next ignores it, so the page silently falls back to the root layout's generic title and preview.
+
+### 3. The pattern — thin server wrapper over the client island
+
+Keep the existing client component, but make `page.tsx` a thin **Server Component** that (a) exports the metadata and (b) renders the client island as its only child. The interactive page becomes a sibling `*.client.tsx` module that owns the `'use client'` directive.
+
+```
+src/app/teacher/
+  page.tsx            ← Server Component: exports metadata, renders <TeacherClient/>
+  teacher.client.tsx  ← 'use client'  the existing interactive page, renamed
+  fonts.ts            ← unchanged (route-local typography)
+  teacher.module.css  ← unchanged (route-scoped styles)
+```
+
+`page.tsx` (server — note: **no** `'use client'`):
+
+```tsx
+import { personaMetadata } from '@/lib/persona/personaMetadata';
+import TeacherClient from './teacher.client';
+
+export const metadata = personaMetadata({
+  title: 'Maths Teacher',
+  description: 'TeachFirst-trained maths teacher; measurable exam-result deltas.',
+});
+
+export default function TeacherPage() {
+  return <TeacherClient />;
+}
+```
+
+`teacher.client.tsx` (the former `page.tsx` body, unchanged except the filename and that it is no longer the route entry):
+
+```tsx
+'use client';
+// …all the existing Mantine + Framer Motion page code…
+export default function TeacherClient() { /* … */ }
+```
+
+**Why this works and stays additive:**
+
+- The server wrapper renders nothing but the island, so the rendered output and the persona's bespoke chrome (driven by the surface registry) are byte-for-byte unchanged — only the document `<head>` gains the persona metadata.
+- Metadata is statically analysable by Next at build time (the wrapper is a Server Component with a static `metadata` export), so social crawlers get the persona title/description/preview without any client JS.
+- No shared layout or `ClientLayout` edit is needed; this is a per-route change, mirroring how each persona already owns its `fonts.ts` and CSS module.
+
+> Scope note: the helper and this pattern land on `dev` as foundation. **The persona pages adopt the wrapper on their own branches** (#117/#118/#119) — this foundation slice does not rename any persona `page.tsx`, so current routes are untouched.
