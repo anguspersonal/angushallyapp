@@ -1,0 +1,59 @@
+/*
+ * Neutral, skinnable defaults. Colour is inherited (currentColor / token) so a
+ * persona drives the look by setting --persona-ink on an ancestor or by
+ * passing a className. No persona-specific colours are baked in here.
+ */
+.toggle {
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 999px;
+  padding: 0;
+  background: transparent;
+  color: var(--persona-ink, currentColor);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.toggle:hover {
+  background: var(--persona-toggle-hover-bg, color-mix(in srgb, currentColor 10%, transparent));
+}
+
+.toggleAnimated {
+  transition:
+    transform 150ms ease,
+    background 150ms ease;
+}
+
+.toggleAnimated:hover {
+  transform: translateY(-1px);
+}
+
+.icon {
+  display: none;
+  color: currentColor;
+  stroke: currentColor;
+}
+
+.toggle svg,
+.icon svg {
+  color: currentColor;
+  stroke: currentColor;
+}
+
+/* The active icon flips with the shared color-scheme attribute, so the toggle
+   shows the action it will perform (sun while dark, moon while light). */
+[data-mantine-color-scheme='dark'] .sunIcon {
+  display: inline-flex;
+}
+
+[data-mantine-color-scheme='light'] .moonIcon {
+  display: inline-flex;
+}
