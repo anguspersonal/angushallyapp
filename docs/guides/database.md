@@ -144,7 +144,9 @@ The application will automatically use the appropriate configuration based on wh
 
 ## Migrations
 
-The database schema is managed using Knex.js migrations.
+For DDL governance (when to apply, expand-and-contract pattern, destructive-DDL rules), see [`../agents/branching.md#database-migrations`](../agents/branching.md#database-migrations). Active migrations live at `supabase/migrations/`.
+
+The legacy Knex.js migrations below pre-date the Supabase cutover and remain only for historical reference (the `server/` tree is labelled "Legacy / tooling" in [`architecture.md`](../architecture.md)):
 *   **Migration Files Location:** `../server/migrations/`
 *   **Knex Migrations Documentation:** [View Migrations README](../server/migrations/README.md)
     *   This file explains how to run migrations, create new ones, and outlines the existing migration history and specific schema versions.

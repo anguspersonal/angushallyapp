@@ -97,7 +97,7 @@ Each persona page has matching downstream artefacts:
 
 v1 ships consistent visual treatment across all persona pages: same Mantine gradient `Paper` cards, same Framer Motion staggered-entry pattern, same overall composition (hero → headline cards → 2-up/3-up content → narrative card). This is intentional — v1 is about content and the *workflow* working end-to-end.
 
-v2 should differentiate each persona visually. **`/teacher` is the first one shipped** (chalkboard / 3blue1brown-ish surface — see the table above) and is the reference for how far a persona can diverge from the shared template: it registers its own `teacher` surface in [src/components/ClientLayout.tsx](../../src/components/ClientLayout.tsx) (full-bleed, suppresses the global Header/Footer), loads route-scoped fonts via [src/app/teacher/fonts.ts](../../src/app/teacher/fonts.ts), and keeps its styling in a self-contained [teacher.module.css](../../src/app/teacher/teacher.module.css) with all custom properties on a single root class. Crucially, the *content* stays honest — the new look reskins the existing narrative rather than inventing workshops/cohorts/video series that don't exist.
+v2 should differentiate each persona visually. **`/teacher` is the first one shipped** (chalkboard / 3blue1brown-ish surface — see the table above) and is the reference for how far a persona can diverge from the shared template: it registers its own full-bleed `teacher` surface declaratively in the [surface registry](#surface-registry) ([src/lib/surfaces.ts](../../src/lib/surfaces.ts)) — suppressing the global Header/Footer without touching `ClientLayout` — loads route-scoped fonts via [src/app/teacher/fonts.ts](../../src/app/teacher/fonts.ts), and keeps its styling in a self-contained [teacher.module.css](../../src/app/teacher/teacher.module.css) with all custom properties on a single root class. Crucially, the *content* stays honest — the new look reskins the existing narrative rather than inventing workshops/cohorts/video series that don't exist.
 
 - **Custom hero per persona.** `/teacher` already gestures at this with the photo hero; `/strategist` similarly with the JLR Data Fest image. `/dev`, `/ai-pm`, `/harness`, `/debate` could each get a distinct hero treatment (graph viz / eval-flow diagram / terminal mock / debate-floor metaphor).
 - **Custom components per persona.** A reusable `<PersonaHero>` and `<PersonaProjectCard>` could be extracted, then each persona overrides parts. The current pages are self-contained `page.tsx` files of ~250-350 lines each — refactor to shared components is a natural v2 move.
@@ -109,3 +109,19 @@ Track v2 work as separate persona-specific PRs once content is settled.
 ## Footer integration
 
 The footer's "Work with me" column lists each persona as a link (`src/components/Footer.tsx`). The `/personas` hub is **deliberately not linked from the UI** — it stays accessible by direct URL only. Each persona page is built to feel like "this is my main thing" rather than "one stop on a tour"; the cross-link bars between persona pages that existed in early drafts were removed for this reason.
+
+## Surface registry
+
+Route-level visual chrome (which header/footer/background a route gets) lives in a single source of truth: [src/lib/surfaces.ts](../../src/lib/surfaces.ts). `ClientLayout` reads this registry via `resolveSurface(pathname)` and renders the matching `kind`. **`ClientLayout` should never need editing to add a persona** — adding or changing chrome is a one-line edit to the registry.
+
+The recipe for adding a persona / route-level visual system:
+
+1. **Append one entry to `src/lib/surfaces.ts`.** Each entry is a `SurfaceDef`: a `surface` string (written to `data-surface`), a `kind`, and a `match(pathname)` predicate.
+   - `kind: 'editorial'` → flat editorial chrome (`BlogHeader` + editorial footer + `GradientRoot`).
+   - `kind: 'fullBleed'` → the page owns the whole viewport; site chrome and `GradientRoot` are suppressed.
+   - **No entry** → default site chrome (Mantine `AppShell` + Glass header + `Footer`). Most routes want this.
+2. **Build the page** at `src/app/<route>/page.tsx`, which owns its own nav / hero / footer (for a `fullBleed` persona).
+3. **Put fonts in `src/app/<route>/fonts.ts`** — route-local, **not** `src/lib/fonts.ts`. Each persona owns its own typography so it can diverge without touching shared font config.
+4. **Put styles in `src/app/<route>/<route>.module.css`** — route-scoped CSS module, keyed off the `data-surface` attribute where it needs to react to the surface.
+
+`data-surface` is orthogonal to colour-scheme: components that care (e.g. `Glass`, `GradientRoot`) read the attribute independently, so a persona can opt into bespoke treatment without the layout knowing the details.
