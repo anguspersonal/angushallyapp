@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { resolveSurface } from '@/lib/surfaces';
 import type { ToolUseRecord } from '@/lib/chat/types';
 
 /**
@@ -204,6 +205,15 @@ export function useChat() {
       const abort = new AbortController();
       abortRef.current = abort;
 
+      // Resolve the route + persona surface at send time from the live
+      // pathname. The surface is looked up through the shared surface
+      // registry (single source of truth) so the server can layer the
+      // matching per-persona behavioural block onto the system prompt.
+      // Unknown/absent surface → omitted → no persona block (server falls
+      // back to today's behaviour).
+      const pathname = typeof window !== 'undefined' ? window.location.pathname : '/';
+      const surface = resolveSurface(pathname)?.surface;
+
       void (async () => {
         let receivedDone = false;
         try {
@@ -215,7 +225,8 @@ export function useChat() {
               sessionId,
               message: trimmed,
               history: historyForRequest,
-              route: typeof window !== 'undefined' ? window.location.pathname : '/',
+              route: pathname,
+              ...(surface ? { surface } : {}),
             }),
           });
 
