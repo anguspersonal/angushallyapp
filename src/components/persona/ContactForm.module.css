@@ -1,0 +1,124 @@
+/*
+ * Neutral, tokenized form styling. Every colour/spacing resolves through a
+ * --persona-* token with a currentColor / sensible fallback, so a persona
+ * skins the form by setting tokens on an ancestor (or via className) without
+ * forking this file. No persona-specific colours are baked in.
+ */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--persona-form-gap, 1rem);
+  width: 100%;
+  color: var(--persona-ink, currentColor);
+}
+
+.title {
+  margin: 0 0 0.25rem 0;
+  font-family: var(--persona-form-title-font, inherit);
+  font-size: var(--persona-form-title-size, 1.5rem);
+  font-weight: var(--persona-form-title-weight, 600);
+  color: var(--persona-ink, currentColor);
+}
+
+.intro {
+  font-size: 0.875rem;
+  opacity: 0.85;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--persona-form-label, currentColor);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--persona-ink, currentColor);
+  background: var(--persona-form-field-bg, transparent);
+  border: 1px solid
+    var(--persona-form-border, color-mix(in srgb, currentColor 25%, transparent));
+  border-radius: var(--persona-form-radius, 0.5rem);
+  padding: 0.625rem 0.75rem;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: color-mix(in srgb, currentColor 45%, transparent);
+}
+
+.input:focus-visible,
+.textarea:focus-visible {
+  outline: none;
+  border-color: var(--persona-accent, currentColor);
+  box-shadow: 0 0 0 2px
+    var(--persona-form-focus-ring, color-mix(in srgb, currentColor 20%, transparent));
+}
+
+.input[aria-invalid='true'],
+.textarea[aria-invalid='true'] {
+  border-color: var(--persona-form-error, #c0392b);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 7rem;
+}
+
+.recaptcha {
+  display: flex;
+  justify-content: var(--persona-form-recaptcha-justify, flex-start);
+}
+
+.submit {
+  align-self: var(--persona-form-submit-align, flex-start);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--persona-form-submit-ink, #fff);
+  background: var(--persona-accent, currentColor);
+  border: 0;
+  border-radius: var(--persona-form-radius, 0.5rem);
+  padding: 0.625rem 1.5rem;
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+.submit:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.fieldError {
+  font-size: 0.75rem;
+  color: var(--persona-form-error, #c0392b);
+}
+
+.error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--persona-form-error, #c0392b);
+}
+
+.success {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--persona-form-success, currentColor);
+}
