@@ -120,6 +120,7 @@ The recipe for adding a persona / route-level visual system:
    - `kind: 'editorial'` → flat editorial chrome (`BlogHeader` + editorial footer + `GradientRoot`).
    - `kind: 'fullBleed'` → the page owns the whole viewport; site chrome and `GradientRoot` are suppressed.
    - **No entry** → default site chrome (Mantine `AppShell` + Glass header + `Footer`). Most routes want this.
+   - **Use a prefix matcher so the persona owns its whole subtree.** A persona entry must match its index *and* anything beneath it — `match: (p) => p === '/<persona>' || p.startsWith('/<persona>/')` — so sub-pages like `/<persona>/privacy` render in the persona's own chrome rather than falling back to default site chrome. `/dev` is the reference implementation of this prefix matcher. (Contrast `/projects`, which is intentionally exact-match — its sub-routes are individual destinations and keep the default chrome.)
 2. **Build the page** at `src/app/<route>/page.tsx`, which owns its own nav / hero / footer (for a `fullBleed` persona).
 3. **Put fonts in `src/app/<route>/fonts.ts`** — route-local, **not** `src/lib/fonts.ts`. Each persona owns its own typography so it can diverge without touching shared font config.
 4. **Put styles in `src/app/<route>/<route>.module.css`** — route-scoped CSS module, keyed off the `data-surface` attribute where it needs to react to the surface.
