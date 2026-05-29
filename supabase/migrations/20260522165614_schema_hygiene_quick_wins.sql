@@ -34,12 +34,12 @@
 BEGIN;
 
 -- Sub-task 1
-ALTER TABLE identity.users DROP CONSTRAINT users_google_sub_key;
+ALTER TABLE identity.users DROP CONSTRAINT IF EXISTS users_google_sub_key;
 DROP INDEX IF EXISTS identity.ix_users_google_sub;
 
 -- Sub-task 3
 ALTER TABLE bookmarks.bookmark_categories
-  DROP CONSTRAINT uq_bookmark_categories,
+  DROP CONSTRAINT IF EXISTS uq_bookmark_categories,
   ADD CONSTRAINT uq_bookmark_categories PRIMARY KEY (bookmark_id, category_id);
 
 COMMIT;
