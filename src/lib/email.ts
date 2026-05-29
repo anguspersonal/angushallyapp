@@ -75,23 +75,35 @@ export function escapeHtml(input: string): string {
 
 /**
  * Sends an email to the app owner with the user's inquiry.
+ *
+ * `subject` is the visitor's own subject line (captured from the form as of
+ * issue #124; previously dropped). When present it is woven into both the
+ * email subject — so the owner sees the context at a glance — and the body.
+ * Reply-to is set to the visitor's address so the owner can reply directly.
  */
 export async function sendInquiryToOwner({
   name,
   email,
+  subject,
   message,
 }: {
   name: string;
   email: string;
+  subject?: string;
   message: string;
 }) {
   const ownerEmail = process.env.RECIPIENT_EMAIL;
   if (!ownerEmail) {
     throw new EmailConfigError('RECIPIENT_EMAIL is not configured');
   }
-  const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
-  const subject = `New Inquiry from ${name}`;
-  await sendEmail({ subject, text: body, to: ownerEmail, replyTo: email });
+  const trimmedSubject = subject?.trim();
+  const body = trimmedSubject
+    ? `Name: ${name}\nEmail: ${email}\nSubject: ${trimmedSubject}\n\nMessage:\n${message}`
+    : `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
+  const emailSubject = trimmedSubject
+    ? `New Inquiry from ${name}: ${trimmedSubject}`
+    : `New Inquiry from ${name}`;
+  await sendEmail({ subject: emailSubject, text: body, to: ownerEmail, replyTo: email });
 }
 
 /**
