@@ -12,24 +12,14 @@ vi.mock('@/lib/supabase/admin', () => ({
   getSupabaseAdmin: vi.fn(() => null), // no DB in route unit tests
 }));
 
-vi.mock('@/lib/email/envValidation', () => ({
-  validateEmailEnvOnce: vi.fn(() => []),
-}));
-
 import type { NextRequest } from 'next/server';
 import { POST } from './route';
-import { verifyRecaptchaSite } from '@/lib/recaptcha/siteVerify';
-import {
-  sendAcknowledgmentToUser,
-  sendInquiryToOwner,
-} from '@/lib/email';
-import { EmailConfigError } from '@/lib/email/errors';
+import { submitContact } from '@/lib/contact/submitContact';
 import { validateEmailEnvOnce } from '@/lib/email/envValidation';
+import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import { HttpError } from '@/lib/api/httpError';
 
-function makeRequest(
-  body: unknown,
-  opts: { malformed?: boolean } = {},
-): NextRequest {
+function makeRequest(body: unknown, opts: { malformed?: boolean } = {}): NextRequest {
   return {
     json: async () => {
       if (opts.malformed) throw new Error('bad json');
@@ -154,41 +144,10 @@ describe('POST /api/contact', () => {
       new HttpError(500, 'Email service misconfigured', 'email_misconfigured'),
     );
     const response = await POST(makeRequest(validBody));
-
-    expect(response.status).toBe(502);
-    expect(await response.json()).toEqual({
-      error: 'Email service unavailable',
-      code: 'email_unavailable',
-    });
-    // Operator must be able to see the underlying cause in logs.
-    expect(consoleErrorSpy).toHaveBeenCalled();
-    const [, payload] = consoleErrorSpy.mock.calls[0];
-    expect(payload).toMatchObject({ message: 'smtp down' });
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it('returns 500 with email_misconfigured code when send throws EmailConfigError', async () => {
-    vi.mocked(verifyRecaptchaSite).mockResolvedValue({ success: true });
-    vi.mocked(sendInquiryToOwner).mockRejectedValue(
-      new EmailConfigError('RECIPIENT_EMAIL is not configured'),
-    );
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-
-    const response = await POST(makeRequest(validBody));
-
     expect(response.status).toBe(500);
     expect(await response.json()).toEqual({
       error: 'Email service misconfigured',
       code: 'email_misconfigured',
     });
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it('calls validateEmailEnvOnce on every request (helper handles dedupe internally)', async () => {
-    vi.mocked(verifyRecaptchaSite).mockResolvedValue({ success: true });
-    await POST(makeRequest(validBody));
-    expect(validateEmailEnvOnce).toHaveBeenCalled();
   });
 });
