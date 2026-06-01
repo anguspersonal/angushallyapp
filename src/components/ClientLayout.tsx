@@ -8,6 +8,7 @@ import { theme } from '../lib/theme';
 import { resolveSurface } from '../lib/surfaces';
 import { AuthProvider } from '../providers/AuthProvider';
 import { ConsentProvider } from '../providers/ConsentProvider';
+import { AnalyticsProvider } from '../providers/AnalyticsProvider';
 import { ErrorBoundary } from './ErrorBoundary';
 import Header from './Header';
 import Footer from './Footer';
@@ -136,6 +137,11 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       <ErrorBoundary>
         <AuthProvider>
           <ConsentProvider>
+            {/* AnalyticsProvider sits inside ConsentProvider so it can read the
+                analytics consent gate; it initialises PostHog only after consent
+                (and only when a key is configured) and captures pageviews on
+                route change. Renders no chrome. */}
+            <AnalyticsProvider />
             {/* SurfaceShell owns per-surface chrome; ConsentRoot sits beside it
                 so the banner / preference center appear site-wide (default,
                 blog, projects, persona) without any surface knowing about it. */}

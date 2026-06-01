@@ -8,6 +8,7 @@ How-to guides, runbooks, and onboarding material. All non-ADR, non-vision, non-a
 - [`server-bootstrap.md`](./server-bootstrap.md) — how the Express server is assembled (legacy server workspace)
 - [`service-layer.md`](./service-layer.md) — service-layer patterns for Next.js + Supabase
 - [`observability.md`](./observability.md) — structured logging, error taxonomy, request context
+- [`analytics.md`](./analytics.md) — PostHog analytics: consent-gated, keyless-by-default, per-surface attribution
 - [`testing.md`](./testing.md) — running tests (vitest, jest, integration)
 
 ### Operations & runbooks

@@ -17,13 +17,12 @@
  * behavioural-instruction text is declared. To make a persona behave
  * distinctly in chat, add or fill an entry here — no other file changes.
  *
- * SEEDED EMPTY by design. The actual per-persona instruction text is authored
- * separately in the C1 slices (#142 / #143 / #144). Until a surface has a
- * non-empty entry here, `buildPersonaInstructions` returns null and the chat
- * behaves exactly as it does today (no persona block) — the unknown/absent
- * surface path is the current behaviour.
+ * Per-persona instruction text is authored in the C1 slices (#142 / #143 /
+ * #144). A surface with no entry (or an empty/blank one) yields null from
+ * `buildPersonaInstructions` and the chat behaves exactly as it does today (no
+ * persona block) — the unknown/absent surface path is the current behaviour.
  *
- * Closes part of #139 (C0 — persona-aware chat core).
+ * Core seam: #139 (C0 — persona-aware chat core). Teacher entry: #142 (C1).
  */
 
 /**
@@ -34,8 +33,8 @@
  * that will be wrapped in a `# Persona behaviour` block and appended after the
  * cache breakpoint.
  *
- * Empty string (or absent key) → no persona block for that surface. Seeded
- * empty here; the C1 per-persona slices fill in the real text.
+ * Empty string (or absent key) → no persona block for that surface. The C1
+ * per-persona slices fill in the real text per surface.
  */
 export const PERSONA_CHAT_INSTRUCTIONS: Record<string, string> = {
   // Per-persona behavioural text is authored in the C1 slices (#142 / #143 /
@@ -57,6 +56,32 @@ Tone: measured, candid, practitioner-first — like a working paper, not a pitch
 Emphasis: the work *around* the model — clinical/safety advisors, app-store operations, compliance and the evaluation trail (Lina Lab), pricing and positioning. When relevant, connect a question back to these "four boxes" and to the cadence of shipping weekly. Lean on the real, verifiable facts already on this page (HeyLina, Accenture, Anmut, the Lina Lab eval engine) rather than inventing detail.
 
 Keep replies concise and concrete. You are still the same site assistant with the same capabilities and the same rules — this only shapes voice and framing, nothing else.`,
+  // teacher (#142, C1) — FIRST-DRAFT behavioural text for owner refinement.
+  // Voice / framing ONLY. This LAYERS on the central prompt; it does NOT give
+  // the assistant a new identity, new rules, or new tools — it is still Angus's
+  // site assistant, just tuned to the chalkboard "maths teacher" surface.
+  teacher: `You are answering on Angus's Maths Teacher persona page — a
+chalkboard-styled corner of the site about his two years teaching GCSE and
+A-Level maths (TeachFirst, Burnt Mill Academy, 2016–2018) and the operator
+skills that outlasted the classroom.
+
+Voice and framing on this surface:
+- Sound like a good teacher explaining something: warm, plain, patient, never
+  condescending. Diagnose before you explain — check what the visitor is really
+  asking, then meet them where they are.
+- Favour the worked example over the abstract claim. A concrete instance, a
+  short analogy, or a "here's how that played out in the classroom" beats a
+  list of adjectives. Show, then name.
+- Lead with the honest narrative, not inflated metrics. This page is candid
+  that the hard exam-result data is still in an archive; mirror that candour —
+  never invent numbers, results, or credentials.
+- Keep it concise and high-signal. Define a term the first time you use it.
+- Frame the teaching experience as transferable operator skill (briefing
+  across a knowledge gap, composure, routine as a force multiplier) when it's
+  relevant, but stay grounded in what the page actually says.
+
+This only shapes tone and emphasis. Keep every existing rule, capability, and
+factual boundary from the central instructions exactly as they are.`,
 };
 
 /**
