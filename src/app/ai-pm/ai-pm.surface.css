@@ -1,0 +1,80 @@
+/*
+ * AI-PM surface skin for the GLOBALLY-MOUNTED overlays — the chat panel (C1,
+ * #144) and the consent banner + preference center (D1, #147).
+ *
+ * Why a plain global stylesheet and not the ai-pm CSS module: both the chat
+ * panel (ChatPanel) and the consent UI (ConsentRoot) are mounted at the
+ * ClientLayout root, OUTSIDE the persona page's `.page` subtree, so the
+ * module-scoped tokens in ai-pm.module.css never reach them. Each of those
+ * components instead stamps `data-surface="<surface>"` on its own root by
+ * reading the shared surface registry (resolveSurface(pathname)). We therefore
+ * skin them the same way the blog surface skins site chrome (globals.css):
+ * redefine the design tokens they ALREADY consume, scoped to
+ * `[data-surface='ai-pm']`, for both colour schemes. Presentation only — no
+ * component markup, logic, or shared component CSS is touched.
+ *
+ * Imported once from the ai-pm client island so it ships with this route.
+ *
+ * Palette mirrors ai-pm.module.css: warm paper + terracotta (morning) and deep
+ * espresso + warmed terracotta (evening).
+ */
+
+/* ── Chat panel (C1) + consent UI (D1) ──────────────────────────────────────
+   ChatPanel and the consent banner/preference-center each set data-surface on
+   their own root. Their CSS reads design tokens: the chat module reads Mantine
+   tokens (--mantine-color-*); the consent modules read --site-* / --button-*.
+   We override BOTH token families here, scoped to [data-surface='ai-pm'] and
+   the colour scheme, so each overlay repaints in the editorial palette without
+   forking any shared component CSS. */
+
+/* Morning edition (light) — warm paper, terracotta accent. */
+[data-mantine-color-scheme='light'] [data-surface='ai-pm'] {
+  --mantine-color-body: #f6f1e6;
+  --mantine-color-text: #1c1a16;
+  --mantine-color-dimmed: #847d6f;
+  --mantine-color-default-border: #cdc4ae;
+  --mantine-color-default-hover: #ece6d5;
+  --mantine-primary-color-filled: #c2410c;
+  --mantine-primary-color-filled-hover: #94501f;
+  --mantine-primary-color-contrast: #f6f1e6;
+
+  /* Consent UI tokens (--site-* / --button-*). */
+  --site-ink: #1c1a16;
+  --site-ink-muted: rgba(28, 26, 22, 0.78);
+  --site-ink-caption: rgba(28, 26, 22, 0.55);
+  --site-accent: #c2410c;
+  --site-bg-0: #f6f1e6;
+  --site-bg-1: #ece6d5;
+  --button-background-color: #c2410c;
+  --button-text-color: #f6f1e6;
+  --button-border-color: #c2410c;
+}
+
+/* Evening edition (dark) — espresso ground, warmed terracotta. */
+[data-mantine-color-scheme='dark'] [data-surface='ai-pm'] {
+  --mantine-color-body: #161310;
+  --mantine-color-text: #ece4d6;
+  --mantine-color-dimmed: #8a8073;
+  --mantine-color-default-border: #3a322a;
+  --mantine-color-default-hover: #211c17;
+  --mantine-primary-color-filled: #e2703a;
+  --mantine-primary-color-filled-hover: #c2562a;
+  --mantine-primary-color-contrast: #161310;
+
+  --site-ink: #ece4d6;
+  --site-ink-muted: rgba(236, 228, 214, 0.80);
+  --site-ink-caption: rgba(236, 228, 214, 0.58);
+  --site-accent: #e2703a;
+  --site-bg-0: #161310;
+  --site-bg-1: #211c17;
+  --button-background-color: #e2703a;
+  --button-text-color: #161310;
+  --button-border-color: #e2703a;
+}
+
+/* A couple of presentation touches that read as "editorial" without needing to
+   reach the module-hashed class names. The chat panel root is data-surface; its
+   dialog corners + border pick up the surface palette. */
+[data-surface='ai-pm'][role='dialog'] {
+  border: 1px solid var(--mantine-color-default-border);
+}

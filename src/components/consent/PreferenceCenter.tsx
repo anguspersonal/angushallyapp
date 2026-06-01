@@ -82,6 +82,7 @@ export function PreferenceCenter() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="consent-pc-title"
+        data-surface={surface}
       >
         <div className={styles.header}>
           <div>

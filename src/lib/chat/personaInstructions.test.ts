@@ -96,4 +96,19 @@ describe('buildPersonaInstructions', () => {
       expect(block.length).toBeLessThan(2000);
     });
   });
+
+  describe('ai-pm persona entry (#144 · C1)', () => {
+    it('produces a voice/framing block wrapped in the stable heading', () => {
+      const block = buildPersonaInstructions('ai-pm');
+      expect(block).not.toBeNull();
+      expect(block).toContain('# Persona behaviour');
+      // First-draft voice/framing for the AI-PM "field notes" page.
+      expect(block).toContain('field notes');
+    });
+
+    it('stays a small tail (caching gain preserved)', () => {
+      const block = buildPersonaInstructions('ai-pm')!;
+      expect(block.length).toBeLessThan(2000);
+    });
+  });
 });

@@ -1,0 +1,570 @@
+/*
+ * Editorial "field notes" treatment for the AI Product Manager persona (v2).
+ * Ported from the design brief. All custom properties are scoped to `.page`
+ * (not :root) so the paper/terracotta palette and serif stack never leak into
+ * the rest of the site. Font variables (--aipm-*) are supplied by next/font
+ * via the className applied to the page root.
+ *
+ * Night/day (issue #131): two palettes scoped to this surface. The MORNING
+ * EDITION (warm paper, terracotta ink) is the default and the no-attribute
+ * value so there is no flash before hydration. The EVENING EDITION (deep
+ * espresso ground, warm parchment ink) overrides under
+ * `[data-mantine-color-scheme='dark']`, matching the site-wide convention used
+ * by `/dev` (see src/app/dev/dev.module.css) and globals.css. The toggle lives
+ * in this page's own nav + footer (PersonaThemeToggle) and flips the shared
+ * Mantine color-scheme — there is no separate preference store. Both modes are
+ * kept: a broadsheet reads naturally as an "evening edition", so neither is
+ * hidden. Only the ~7 surface tokens differ between modes; the terracotta
+ * accent is nudged warmer in the dark to stay legible on the espresso ground.
+ */
+
+.page {
+  --paper: #f6f1e6;
+  --paper-2: #ece6d5;
+  --ink: #1c1a16;
+  --ink-soft: #443f37;
+  --ink-dim: #847d6f;
+  --rule: #cdc4ae;
+  --accent: #c2410c; /* Anthropic-ish terracotta */
+  --accent-2: #94501f;
+
+  --serif: var(--aipm-serif), "Iowan Old Style", Georgia, serif;
+  --sans: var(--aipm-sans), -apple-system, system-ui, sans-serif;
+  --mono: var(--aipm-mono), ui-monospace, Menlo, monospace;
+
+  /* Skin the shared persona chrome kit (PersonaFooter / PersonaThemeToggle)
+     from these tokens so the footer and toggle inherit the editorial palette
+     without forking the shared components. */
+  --persona-ink: var(--ink);
+  --persona-footer-bg: var(--paper-2);
+  --persona-footer-border: var(--rule);
+  --persona-footer-pad: 28px 48px;
+  --persona-footer-fineprint-size: 11px;
+  --persona-toggle-hover-bg: color-mix(in srgb, var(--ink) 8%, transparent);
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+/* EVENING EDITION — dark espresso ground with warm parchment ink. The serif
+   voice and terracotta accent carry through; only the surface inverts. Scoped
+   to this surface via the color-scheme attribute on an ancestor, so it never
+   touches the rest of the site. */
+[data-mantine-color-scheme="dark"] .page {
+  --paper: #161310;
+  --paper-2: #211c17;
+  --ink: #ece4d6;
+  --ink-soft: #c2b8a6;
+  --ink-dim: #8a8073;
+  --rule: #3a322a;
+  --accent: #e2703a; /* terracotta, warmed for the dark ground */
+  --accent-2: #c2562a;
+}
+
+.page a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.page a:hover { text-decoration-thickness: 2px; }
+.page ::selection { background: var(--accent); color: var(--paper); }
+
+/* ── nav ── */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 22px 48px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.brand {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--ink) !important;
+  letter-spacing: -0.005em;
+  text-decoration: none !important;
+}
+/* In-page anchor nav (Hero / About / Work / Contact) + the theme toggle. */
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+}
+.nav a {
+  color: var(--ink-soft) !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+}
+.nav a:hover { color: var(--accent) !important; }
+
+/* PersonaThemeToggle, skinned for the editorial nav/footer. Colour is inherited
+   via --persona-ink; this just sizes it to sit on the baseline-aligned nav. */
+.themeToggle {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  margin: -8px 0;
+}
+
+/* ── volume / issue header ── */
+.masthead {
+  padding: 48px 48px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.masthead .l span + span { margin-left: 18px; }
+.masthead .r { color: var(--ink); }
+
+/* ── hero / lede ── */
+.hero { padding: 64px 48px 80px; max-width: 1180px; margin: 0 auto; }
+
+.kicker {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  font-weight: 500;
+}
+.hero h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(48px, 7vw, 96px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+.hero h1 em { font-style: italic; font-weight: 300; color: var(--ink-soft); }
+.hero h1 .drop { color: var(--accent); }
+.deck {
+  margin-top: 36px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(22px, 1.9vw, 28px);
+  line-height: 1.45;
+  color: var(--ink-soft);
+  max-width: 44ch;
+}
+.byline {
+  margin-top: 56px;
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  gap: 36px;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.byline strong { color: var(--ink); font-weight: 500; }
+
+/* ── article body ── */
+.article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 48px;
+  font-size: 19px;
+  line-height: 32px;
+  color: var(--ink);
+}
+.article > p { margin: 0 0 24px; }
+.article > p:first-of-type::first-letter {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-style: normal;
+  float: left;
+  font-size: 72px;
+  line-height: 60px;
+  padding: 6px 12px 0 0;
+  color: var(--accent);
+}
+.article h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 38px;
+  margin: 56px 0 18px;
+  letter-spacing: -0.01em;
+}
+.article h2 .n {
+  display: block;
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.article em { font-style: italic; }
+.article strong { font-weight: 600; }
+.pull {
+  margin: 48px -40px;
+  padding: 4px 0 4px 32px;
+  border-left: 3px solid var(--accent);
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 28px;
+  line-height: 38px;
+  color: var(--ink);
+}
+
+/* sidebar figure */
+.figure {
+  margin: 32px 0;
+  padding: 22px 24px;
+  border: 1px solid var(--rule);
+  background: var(--paper-2);
+  font-family: var(--sans);
+}
+.figure .label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.figure h4 {
+  margin: 0 0 14px;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 26px;
+}
+.figure ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 15px;
+  line-height: 26px;
+  color: var(--ink-soft);
+}
+.figure ul li { margin-bottom: 6px; }
+.figure ul li strong { color: var(--ink); font-weight: 500; }
+.figure .caption {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+/* ── responsibilities grid ── */
+.resp {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 80px 48px;
+  background: var(--paper-2);
+}
+.respInner { max-width: 1180px; margin: 0 auto; }
+.resp .head {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 60px;
+  margin-bottom: 48px;
+  align-items: baseline;
+}
+.resp .head .l {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.resp .head h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+.resp .head h2 em { font-style: italic; font-weight: 300; color: var(--ink-soft); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--rule);
+}
+.item {
+  padding: 32px 24px;
+  border-bottom: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+}
+.item:nth-child(2n) { border-right: none; }
+.item .id {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  margin-bottom: 12px;
+}
+.item h3 {
+  margin: 0 0 12px;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 28px;
+}
+.item h3 em { font-style: italic; }
+.item p {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: var(--ink-soft);
+}
+
+/* ── references / citations ── */
+.refs { padding: 64px 48px 96px; max-width: 1180px; margin: 0 auto; }
+.refs h3 {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 24px;
+}
+.refs ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  column-count: 2;
+  column-gap: 56px;
+}
+.refs ol li {
+  padding: 12px 0;
+  border-top: 1px solid var(--rule);
+  break-inside: avoid;
+  font-family: var(--serif);
+  font-size: 14.5px;
+  line-height: 22px;
+  color: var(--ink-soft);
+}
+.refs ol li .n {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  margin-right: 8px;
+  letter-spacing: 0.05em;
+}
+.refs ol li em { font-style: italic; color: var(--ink); }
+
+/* ── correspondence / contact ── */
+.corresp {
+  border-top: 1px solid var(--rule);
+  padding: 96px 48px;
+  background: var(--paper);
+}
+.correspInner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  /* The left column is the editorial heading + address; the right is the live
+     B2 form. Top-align so the form sits beside the heading rather than baseline-
+     anchored to it. */
+  align-items: start;
+}
+.corresp h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 5vw, 68px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.corresp h2 em { font-style: italic; }
+.correspIntro {
+  margin: 28px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 19px;
+  line-height: 30px;
+  color: var(--ink-soft);
+}
+.corresp .addr {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  margin-top: 22px;
+  line-height: 22px;
+}
+.corresp .addr a { color: var(--accent); }
+
+/* ── B2 contact form (#134) ─────────────────────────────────────────────
+   The shared persona ContactForm (src/components/persona) is dressed entirely
+   through --persona-* tokens set HERE — the component itself is never forked.
+   These map the editorial palette/typography onto the neutral, tokenized form.
+   The whole block inherits the morning/evening palette because every token
+   resolves through the --ink/--accent/--rule vars defined on .page above. */
+.contactForm {
+  --persona-ink: var(--ink);
+  --persona-accent: var(--accent);
+  --persona-form-gap: 18px;
+  --persona-form-field-bg: var(--paper);
+  --persona-form-border: var(--rule);
+  --persona-form-radius: 4px;
+  --persona-form-label: var(--ink-soft);
+  --persona-form-focus-ring: color-mix(in srgb, var(--accent) 28%, transparent);
+  --persona-form-error: #c0392b;
+  --persona-form-success: var(--ink);
+  --persona-form-submit-ink: var(--paper);
+  --persona-form-submit-align: flex-start;
+  font-family: var(--sans);
+}
+/* The form's labels/inputs are sans (UI), not the body serif. */
+.contactForm :global(label) {
+  font-family: var(--sans);
+  letter-spacing: 0.02em;
+}
+.contactForm :global(input),
+.contactForm :global(textarea) {
+  font-family: var(--sans);
+}
+.contactForm :global(button[type='submit']) {
+  font-family: var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 12px 22px;
+}
+/* Success / error feedback in the editorial voice. */
+.contactForm :global([role='status']) {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--ink);
+}
+
+/* "What I collect" collection notice — the one-line privacy link (B2 AC). */
+.collectionNotice {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--ink-dim);
+}
+.collectionNotice a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Deferred-reCAPTCHA hint, shown until the user interacts / consents. */
+.recaptchaHint {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+}
+
+/* Holding note for the unconfigured-key fallback (no NEXT_PUBLIC_RECAPTCHA_SITE_KEY).
+   Deliberately understated — reads as a galley note, not a missing-content error. */
+.formPlaceholder {
+  margin: 14px 0 0;
+  padding: 14px 18px;
+  border: 1px dashed var(--rule);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--ink-dim);
+  background: var(--paper-2);
+}
+
+/* footer — shared PersonaFooter, skinned via --persona-* tokens on .page.
+   Structure/layout comes from the shared component; this only sets the
+   editorial typography of the footer. The single discreet main-site link is
+   deliberately NOT given the editorial underline (the shared component keeps it
+   low-opacity), so it stays a quiet route out — not first-class nav. */
+.personaFooter {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+/* The discreet main-site link is the only footer anchor WITHOUT .footerLink.
+   The broad `.page a` rule above would give it the accent underline and break
+   its discreetness, so reset it back to the shared component's quiet default
+   (low-opacity, no underline until hover). */
+.personaFooter a:not(.footerLink) {
+  color: inherit !important;
+  text-decoration: none !important;
+  opacity: 0.6;
+}
+.personaFooter a:not(.footerLink):hover {
+  opacity: 1;
+}
+/* Slot links (contact / privacy / socials) carry this class so the editorial
+   treatment applies to them only, never to the discreet main-site link. */
+.footerLink {
+  color: var(--ink) !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 1px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.footerLink:hover {
+  color: var(--accent) !important;
+  border-color: var(--accent);
+}
+
+@media (max-width: 47.5em) {
+  .top,
+  .masthead,
+  .hero,
+  .resp,
+  .refs,
+  .corresp {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  /* Stack the nav under the brand on small screens. */
+  .top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .nav { gap: 16px; flex-wrap: wrap; }
+  .article { padding: 56px 22px; }
+  .byline { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .pull { margin: 36px 0; padding-left: 18px; font-size: 22px; line-height: 30px; }
+  .grid { grid-template-columns: 1fr; }
+  .item:nth-child(n) { border-right: none; }
+  .refs ol { column-count: 1; }
+  .correspInner { grid-template-columns: 1fr; gap: 36px; }
+}
