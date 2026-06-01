@@ -178,9 +178,19 @@ _Posted by qa-review (round N of 3)._
 
 For inline-postable findings, batch them into the review using `POST /repos/{owner}/{repo}/pulls/{number}/reviews` with a `comments` array so they post atomically with the top-level body. Falling back to plain comments is fine if the line isn't in the diff hunk.
 
+### 6b. Clear the re-review gate
+
+This skill runs from a **label-gated trigger**: the routine fires while a PR carries the `needs-qa` label. To keep the dev↔QA loop deliberate — one review per "ready" signal, not one per push — remove the label after **every** review (approve, comment, or request-changes) so the loop pauses:
+
+```bash
+gh pr edit <number> --remove-label needs-qa 2>/dev/null || true
+```
+
+The developer (or `address-review`) re-adds `needs-qa` when the next batch of fixes is ready, which re-fires this skill for round N+1. **Always clear the gate.** Leaving `needs-qa` on after a review re-triggers you on the next push and burns through the round cap. (On escalation, the gate is cleared in "Round 3 escalation" below.)
+
 ### 7. Confirm to the user
 
-Report: round number, verdict, link to the posted review, counts by severity, rubric/AC status, and what (if anything) couldn't be posted inline.
+Report: round number, verdict, link to the posted review, counts by severity, rubric/AC status, whether the `needs-qa` gate was cleared, and what (if anything) couldn't be posted inline.
 
 ## Round 3 escalation
 
@@ -211,6 +221,12 @@ When `current_round > 3` (i.e. round 4 would start), do **not** do another revie
 
    ```bash
    gh label create needs-human --color FBCA04 --description "QA loop did not converge — needs human judgment" 2>/dev/null || true
+   ```
+
+   Then clear the re-review gate so the loop can't re-fire while it's with a human:
+
+   ```bash
+   gh pr edit <number> --remove-label needs-qa 2>/dev/null || true
    ```
 
 3. Tell the user clearly that the loop has stopped and a human is needed. Don't soften this — it's the whole point of having a termination condition.
@@ -260,6 +276,7 @@ Use agent discretion — for two PRs that touch the same files, serial in one co
 - **Self-PRs:** GitHub disallows self-approvals. If the PR author is the current `gh` user and the verdict is `approve`, downgrade to `comment` and note this in the body.
 - **Don't write the rubric unsolicited.** Offer to scaffold `.github/qa-rubric.md` if missing, but the user has to say yes.
 - **Always stamp the round marker.** Without `<!-- qa-review round:N -->` in the body, future rounds can't count and the escalation logic breaks.
+- **Label-gated re-review.** This skill is triggered by the `needs-qa` label. Remove it after every review (step 6b) so the loop pauses; the dev (or `address-review`) re-adds it when ready for the next round. Never leave `needs-qa` on after reviewing — that re-fires you on the next push and blows through the round cap.
 - **Companion skill:** the developer-side counterpart is `address-review`, which reads the latest qa-review and triages/actions/pushes back. Mention it in the review summary on rounds 1–2 if Critical/High findings exist.
 
 ## Why these constraints
