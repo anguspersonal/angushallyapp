@@ -149,6 +149,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
             <ChatLauncher />
             <ConsentRoot />
           </ConsentProvider>
+          <SurfaceShell>{children}</SurfaceShell>
+          <ChatLauncher />
         </AuthProvider>
       </ErrorBoundary>
     </MantineProvider>

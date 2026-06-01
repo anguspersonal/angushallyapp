@@ -105,9 +105,6 @@ refactorlog.json
 
 
 # Don't ignore claude/settings.json
-.claude/*
 !.claude/settings.json
-!.claude/skills/
-!.claude/agents/
-!.claude/commands/
-!.claude/rules/
+.claude/settings.local.json
+.claude/worktrees/*
