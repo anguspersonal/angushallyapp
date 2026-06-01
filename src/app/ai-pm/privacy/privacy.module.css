@@ -1,0 +1,297 @@
+/*
+ * Editorial "field notes" treatment for the AI-PM persona's privacy view
+ * (/ai-pm/privacy · issue #134 / B2). Mirrors the broadsheet language of the
+ * main /ai-pm page (src/app/ai-pm/ai-pm.module.css): the same paper/terracotta
+ * palette, serif voice, mono captions, and the morning/evening editions. The
+ * legal text itself is the SINGLE canonical source (src/lib/legal/privacyPolicy.ts,
+ * iterated as PRIVACY_POLICY_SECTIONS) — this file only dresses it in the
+ * persona's chrome; the wording is never forked.
+ *
+ * Tokens are scoped to `.page` (not :root) so the palette never leaks into the
+ * rest of the site, exactly as ai-pm.module.css does. The shared persona chrome
+ * kit (PersonaFooter / PersonaThemeToggle) is skinned from the --persona-*
+ * tokens set here.
+ */
+
+.page {
+  --paper: #f6f1e6;
+  --paper-2: #ece6d5;
+  --ink: #1c1a16;
+  --ink-soft: #443f37;
+  --ink-dim: #847d6f;
+  --rule: #cdc4ae;
+  --accent: #c2410c; /* Anthropic-ish terracotta */
+  --accent-2: #94501f;
+
+  --serif: var(--aipm-serif), "Iowan Old Style", Georgia, serif;
+  --sans: var(--aipm-sans), -apple-system, system-ui, sans-serif;
+  --mono: var(--aipm-mono), ui-monospace, Menlo, monospace;
+
+  /* Skin the shared persona chrome kit from these tokens (see ai-pm.module.css). */
+  --persona-ink: var(--ink);
+  --persona-footer-bg: var(--paper-2);
+  --persona-footer-border: var(--rule);
+  --persona-footer-pad: 28px 48px;
+  --persona-footer-fineprint-size: 11px;
+  --persona-toggle-hover-bg: color-mix(in srgb, var(--ink) 8%, transparent);
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+/* EVENING EDITION — dark espresso ground, warm parchment ink. Mirrors the main
+   page so the toggle flips both views consistently. */
+[data-mantine-color-scheme="dark"] .page {
+  --paper: #161310;
+  --paper-2: #211c17;
+  --ink: #ece4d6;
+  --ink-soft: #c2b8a6;
+  --ink-dim: #8a8073;
+  --rule: #3a322a;
+  --accent: #e2703a;
+  --accent-2: #c2562a;
+}
+
+.page a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.page a:hover { text-decoration-thickness: 2px; }
+.page ::selection { background: var(--accent); color: var(--paper); }
+
+/* ── nav (matches the main page masthead nav) ── */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 22px 48px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.brand {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--ink) !important;
+  letter-spacing: -0.005em;
+  text-decoration: none !important;
+}
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+}
+.nav a {
+  color: var(--ink-soft) !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+}
+.nav a:hover { color: var(--accent) !important; }
+
+.themeToggle {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  margin: -8px 0;
+}
+
+/* ── masthead ── */
+.masthead {
+  padding: 48px 48px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.masthead .l span + span { margin-left: 18px; }
+.masthead .r { color: var(--ink); }
+
+/* ── header / title block ── */
+.head {
+  padding: 64px 48px 40px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.kicker {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  font-weight: 500;
+}
+.head h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+.lede {
+  margin-top: 28px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(19px, 1.7vw, 23px);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 52ch;
+}
+
+/* DRAFT notice — a galley stamp, deliberately conspicuous but in-voice. Shown
+   while privacyPolicy.DRAFT is true (the renderer's responsibility, not the
+   data's). */
+.draftNotice {
+  margin: 28px auto 0;
+  max-width: 760px;
+  padding: 14px 18px;
+  border: 1px solid var(--accent);
+  border-left-width: 3px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+.draftNotice strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ── policy body ── */
+.body {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 48px 88px;
+}
+.section {
+  padding: 36px 0;
+  border-top: 1px solid var(--rule);
+}
+.section:first-child { border-top: none; padding-top: 8px; }
+.section h2 {
+  margin: 0 0 18px;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 32px;
+  letter-spacing: -0.01em;
+}
+.section h2 .n {
+  display: block;
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.section p {
+  margin: 0 0 16px;
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--ink);
+}
+.section p:last-child { margin-bottom: 0; }
+.lead {
+  margin-bottom: 10px !important;
+  color: var(--ink-soft) !important;
+}
+.section ul {
+  margin: 0 0 16px;
+  padding-left: 22px;
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 28px;
+  color: var(--ink-soft);
+}
+.section ul li { margin-bottom: 8px; }
+.section ul li::marker { color: var(--accent); }
+
+/* The cookie-preferences action — reuses the editorial accent link. */
+.manageRow {
+  margin-top: 8px;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+.manageButton {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.manageButton:hover { text-decoration-thickness: 2px; }
+
+/* ── footer links (match main page) ── */
+.personaFooter {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.personaFooter a:not(.footerLink) {
+  color: inherit !important;
+  text-decoration: none !important;
+  opacity: 0.6;
+}
+.personaFooter a:not(.footerLink):hover { opacity: 1; }
+.footerLink {
+  color: var(--ink) !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 1px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.footerLink:hover {
+  color: var(--accent) !important;
+  border-color: var(--accent);
+}
+
+@media (max-width: 47.5em) {
+  .top,
+  .masthead {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  .top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .nav { gap: 16px; flex-wrap: wrap; }
+  .head { padding: 48px 22px 32px; }
+  .draftNotice { margin-left: 22px; margin-right: 22px; }
+  .body { padding: 36px 22px 64px; }
+}
