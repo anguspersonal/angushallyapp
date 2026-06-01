@@ -8,6 +8,7 @@ How-to guides, runbooks, and onboarding material. All non-ADR, non-vision, non-a
 - [`server-bootstrap.md`](./server-bootstrap.md) — how the Express server is assembled (legacy server workspace)
 - [`service-layer.md`](./service-layer.md) — service-layer patterns for Next.js + Supabase
 - [`observability.md`](./observability.md) — structured logging, error taxonomy, request context
+- [`analytics.md`](./analytics.md) — PostHog analytics: consent-gated, keyless-by-default, per-surface attribution
 - [`testing.md`](./testing.md) — running tests (vitest, jest, integration)
 
 ### Operations & runbooks
@@ -20,6 +21,9 @@ How-to guides, runbooks, and onboarding material. All non-ADR, non-vision, non-a
 ### Migration guides
 - [`heroku-to-vercel-migration.md`](./heroku-to-vercel-migration.md) — Heroku → Vercel migration steps
 - [`server-to-next-mapping.md`](./server-to-next-mapping.md) — Express route → Next.js Route Handler mapping
+
+### Content & site
+- [`persona-page-workflow.md`](./persona-page-workflow.md) — research → markdown → rendered page workflow for persona-shaped pages (Developer CV, Math Teacher CV, Data Strategist CV, etc.)
 
 ### Project-specific
 - [`bookmark-integration-setup.md`](./bookmark-integration-setup.md) — Raindrop.io integration setup

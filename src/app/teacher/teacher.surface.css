@@ -1,0 +1,113 @@
+/*
+ * teacher.surface.css — persona-local, GLOBAL (non-module) skin for the shared
+ * chrome that is mounted OUTSIDE the teacher page tree but still carries the
+ * teacher surface: the chat panel (C1 / #142) and the consent banner +
+ * preference centre (D1 / #145).
+ *
+ * Why a plain global stylesheet rather than the route's CSS module:
+ *   - ChatPanel, ConsentBanner and PreferenceCenter live in ClientLayout
+ *     (beside SurfaceShell), so they are NOT descendants of teacher's `.page`
+ *     and cannot inherit its module-scoped palette. They DO, however, expose a
+ *     `data-surface="teacher"` attribute on their root, so we skin them by
+ *     overriding the design tokens they already consume, scoped to
+ *     `[data-surface='teacher']`. This mirrors the established
+ *     `[data-surface='blog']` token-override pattern in globals.css.
+ *   - We override TOKENS only. We do NOT touch the shared component CSS
+ *     (chat.module.css / ConsentBanner.module.css / PreferenceCenter.module.css)
+ *     — presentation only, no markup or logic change.
+ *
+ * Both colour schemes are covered: DAY (default block, warm-cream notebook) and
+ * NIGHT (the `[data-mantine-color-scheme='dark']` block, literal chalkboard),
+ * matching teacher.module.css. The chalk accents are shared across modes.
+ *
+ * FIRST DRAFT — colours are owner-polish candidates, kept deliberately close to
+ * the persona index palette so the surfaces read as one.
+ */
+
+/* ── Teacher chalkboard palette, as plain values (this file cannot read the
+   teacher module's scoped custom properties). Kept in sync with
+   teacher.module.css. ── */
+[data-surface='teacher'] {
+  --teacher-paper: #fbf3e6;
+  --teacher-paper-2: #f3e8d3;
+  --teacher-ink: #1f2233;
+  --teacher-ink-soft: #3d4159;
+  --teacher-ink-dim: #767995;
+  --teacher-rule: #d9cfb8;
+  --teacher-board: #1f2233;
+  --teacher-on-board: #fbf3e6;
+  --teacher-accent: #ff8a4c; /* orange */
+  --teacher-accent-2: #f7c948; /* yellow */
+  --teacher-accent-3: #5fb7e6; /* light blue */
+  --teacher-accent-4: #8f6dff; /* purple */
+}
+
+[data-mantine-color-scheme='dark'] [data-surface='teacher'] {
+  --teacher-paper: #14171f; /* dark slate board */
+  --teacher-paper-2: #1b1f2a;
+  --teacher-ink: #f3efe6; /* chalk white */
+  --teacher-ink-soft: #cbd0dd;
+  --teacher-ink-dim: #8a90a4;
+  --teacher-rule: rgba(243, 239, 230, 0.16);
+  --teacher-board: #232735;
+  --teacher-on-board: #f3efe6;
+}
+
+/* ============================================================================
+ * C1 — Chat panel (ChatPanel sets data-surface on its root `.panel`).
+ *
+ * The panel + composer + messages read Mantine tokens; we remap those tokens
+ * to the chalkboard palette under the teacher surface so the panel repaints
+ * without forking chat.module.css.
+ * ========================================================================== */
+[data-surface='teacher'] {
+  --mantine-color-body: var(--teacher-paper);
+  --mantine-color-text: var(--teacher-ink);
+  --mantine-color-dimmed: var(--teacher-ink-dim);
+  --mantine-color-default-border: var(--teacher-rule);
+  --mantine-color-default-hover: color-mix(in srgb, var(--teacher-ink) 8%, transparent);
+
+  /* User bubble + links use the chalk-orange accent on the dark board ink. */
+  --mantine-primary-color-filled: var(--teacher-accent);
+  --mantine-primary-color-filled-hover: color-mix(in srgb, var(--teacher-accent) 88%, #000);
+  --mantine-primary-color-contrast: var(--teacher-board);
+
+  font-family: var(--font-bricolage, system-ui, sans-serif);
+}
+
+/* The chat surface as a whole sits on warm paper; ensure the panel ground +
+   its sticky header/composer all take the paper, and the title reads in ink. */
+[data-surface='teacher'].mantine-focus-auto,
+[data-surface='teacher'] {
+  background: var(--teacher-paper);
+  color: var(--teacher-ink);
+}
+
+/* Assistant message bubbles: a faint raised panel above the paper so they read
+   as "chalk notes" without a hard border. */
+[data-surface='teacher'] [class*='messageAssistant'] {
+  background: var(--teacher-paper-2);
+  color: var(--teacher-ink);
+}
+
+/* ============================================================================
+ * D1 — Consent banner + preference centre.
+ *
+ * These read --site-* / --button-* tokens. Remap them to the chalkboard palette
+ * under the teacher surface so the banner + modal repaint into the persona's
+ * look. Presentation only — no edit to the shared consent component CSS.
+ * ========================================================================== */
+[data-surface='teacher'] {
+  --site-ink: var(--teacher-ink);
+  --site-ink-muted: var(--teacher-ink-soft);
+  --site-ink-caption: var(--teacher-ink-dim);
+  --site-accent: var(--teacher-accent);
+  --site-bg-0: var(--teacher-paper);
+  --site-bg-1: var(--teacher-paper-2);
+  --site-bg-2: var(--teacher-paper-2);
+
+  /* Primary "Accept all" / "Save" pill = chalk-orange with board-dark text. */
+  --button-background-color: var(--teacher-accent);
+  --button-text-color: var(--teacher-board);
+  --button-border-color: var(--teacher-accent);
+}

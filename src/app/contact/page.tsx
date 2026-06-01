@@ -20,6 +20,7 @@ import type { Variants } from 'framer-motion';
 import { api } from '@/lib/api/client';
 import { GlassContent } from '@/components/design/Glass';
 import { PrimaryPillButton } from '@/components/design/SayHelloPill';
+import { useConsentGate } from '@/lib/consent/useConsentGate';
 
 const formElementVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -44,10 +45,22 @@ export default function ContactPage() {
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
   const captchaRequired = Boolean(recaptchaSiteKey);
 
+  // Consent gate (issue #140): reCAPTCHA is categorised under "Security".
+  // It loads either when the user has consented to Security up-front, OR the
+  // moment they interact with the form — a legitimate anti-spam use that keeps
+  // the existing /contact flow working for everyone (see
+  // docs/consent-categorisation.md). We therefore never block submission; we
+  // only defer the *eager* script load until consent or interaction.
+  const securityConsented = useConsentGate('security');
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const markInteracted = () => setHasInteracted(true);
+  const recaptchaActive = captchaRequired && (securityConsented || hasInteracted);
+
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   // True once reCAPTCHA's script finishes loading. Gates the submit button so
   // users on slow networks can't click Send before the widget is interactive
-  // (issue #101).
+  // (issue #101). When the widget hasn't mounted yet (no consent + no
+  // interaction), there is nothing to wait for, so we treat it as ready.
   const [captchaReady, setCaptchaReady] = useState(!captchaRequired);
   const [status, setStatus] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,7 +114,22 @@ export default function ContactPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // When the reCAPTCHA widget becomes active (consent or interaction) and a key
+  // is configured, the script must finish loading before submit is allowed —
+  // reset readiness so the #101 gate applies once the widget mounts.
+  useEffect(() => {
+    if (recaptchaActive) {
+      setCaptchaReady(false);
+    }
+  }, [recaptchaActive]);
+
   const handleSubmit = async (values: ContactFormValues) => {
+    // Submitting is itself an interaction, so ensure the widget is mounted.
+    if (captchaRequired && !recaptchaActive) {
+      setHasInteracted(true);
+      form.setFieldError('captcha', 'Please complete the CAPTCHA.');
+      return;
+    }
     if (captchaRequired && !captchaValue) {
       // Single channel for this error — the field-level slot under the widget.
       // (Previously also surfaced via setStatus, which duplicated the message.)
@@ -144,7 +172,15 @@ export default function ContactPage() {
         </motion.div>
 
         <GlassContent p="xl">
-          <Box component="form" onSubmit={form.onSubmit(handleSubmit)}>
+          <Box
+            component="form"
+            onSubmit={form.onSubmit(handleSubmit)}
+            // First interaction with the form is a legitimate anti-spam signal
+            // that mounts the (Security-category) reCAPTCHA even without
+            // up-front consent (issue #140).
+            onFocusCapture={markInteracted}
+            onChangeCapture={markInteracted}
+          >
             <Stack gap="md">
               <motion.div custom={1} variants={formElementVariants}>
                 <TextInput
@@ -189,7 +225,12 @@ export default function ContactPage() {
 
               <motion.div custom={5} variants={formElementVariants}>
                 <Group justify="center" mt="md">
-                  {recaptchaSiteKey ? (
+                  {!recaptchaSiteKey ? (
+                    <Text size="sm" ta="center" style={{ color: 'var(--mantine-color-dimmed)' }}>
+                      Contact form verification is temporarily unavailable. Please email me directly at{' '}
+                      <Anchor href="mailto:angus.hally@gmail.com">angus.hally@gmail.com</Anchor>.
+                    </Text>
+                  ) : recaptchaActive ? (
                     <ReCAPTCHA
                       sitekey={recaptchaSiteKey}
                       onChange={(value: string | null) => setCaptchaValue(value)}
@@ -199,9 +240,11 @@ export default function ContactPage() {
                       {...({ asyncScriptOnLoad: () => setCaptchaReady(true) } as Record<string, unknown>)}
                     />
                   ) : (
-                    <Text size="sm" ta="center" style={{ color: 'var(--mantine-color-dimmed)' }}>
-                      Contact form verification is temporarily unavailable. Please email me directly at{' '}
-                      <Anchor href="mailto:angus.hally@gmail.com">angus.hally@gmail.com</Anchor>.
+                    // Security category not yet consented and no interaction
+                    // yet: defer the reCAPTCHA script. It loads the instant the
+                    // user starts filling the form (legitimate anti-spam use).
+                    <Text size="xs" ta="center" style={{ color: 'var(--mantine-color-dimmed)' }}>
+                      Spam protection loads when you start typing.
                     </Text>
                   )}
                 </Group>

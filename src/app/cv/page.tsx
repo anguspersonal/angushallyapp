@@ -4,10 +4,23 @@ import React, { useState } from 'react';
 import { Title, Text, Paper, Grid, List, ThemeIcon, rem, Badge, Group, Stack, useMantineTheme, Box } from '@mantine/core';
 import { Section } from '@/components/layout';
 import NextImage from 'next/image';
-import { IconDatabase, IconServer, IconTools, IconBrandReact, IconExternalLink, IconMapPin, IconBrain, IconBookmark, IconRun } from '@tabler/icons-react';
+import { IconDatabase, IconServer, IconTools, IconBrandReact, IconExternalLink, IconMapPin, IconBrain, IconBookmark, IconRun, IconCode, IconGitCommit, IconBrandGithub, IconCalendar } from '@tabler/icons-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import Link from 'next/link';
+import statsData from '@/data/code-stats.json';
+
+// --- code-stats formatting helpers (module scope; no hooks needed) ---
+const formatCompact = (n: number): string => {
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
+    if (n >= 1_000) return `${(n / 1_000).toFixed(n >= 10_000 ? 0 : 1)}k`;
+    return `${n}`;
+};
+const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const formatISODate = (iso: string): string => {
+    const d = new Date(iso);
+    return `${d.getUTCDate()} ${MONTH_SHORT[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+};
 
 interface Skill {
     title: string;
@@ -198,6 +211,70 @@ const SoftwareCV = () => {
                         >
                             Side Projects & Technical Skills
                         </Title>
+                    </motion.div>
+
+                    {/* ----- By the numbers (code stats) ----- */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                    >
+                        <Paper
+                            shadow="sm"
+                            p="xl"
+                            radius="md"
+                            style={{
+                                background: `linear-gradient(135deg, ${theme.colors.dark[7]}, ${theme.colors.dark[8]})`,
+                                color: theme.white
+                            }}
+                        >
+                            <Title order={2} mb={4} ta="center" style={{ color: theme.white }}>By the numbers</Title>
+                            <Text ta="center" mb="xl" style={{ color: theme.colors.gray[4] }}>
+                                Across {statsData.headline.reposContributedTo} GitHub repos · {statsData.activity.firstDay.slice(0, 4)}–{statsData.activity.lastDay.slice(0, 4)}
+                            </Text>
+                            <Grid gutter="xl">
+                                {[
+                                    { icon: <IconCode size={28} />, value: formatCompact(statsData.headline.totalLinesAdded), label: 'lines added', color: 'primary' as const },
+                                    { icon: <IconGitCommit size={28} />, value: statsData.headline.totalCommits.toLocaleString('en-GB'), label: 'commits', color: 'secondary' as const },
+                                    { icon: <IconBrandGithub size={28} />, value: `${statsData.headline.reposContributedTo}`, label: 'repos contributed to', color: 'accent' as const },
+                                    { icon: <IconCalendar size={28} />, value: `${statsData.activity.totalActiveDays}`, label: 'active days on GitHub', color: 'success' as const },
+                                ].map((stat) => (
+                                    <Grid.Col key={stat.label} span={{ base: 6, md: 3 }}>
+                                        <Stack align="center" gap="xs">
+                                            <ThemeIcon size={52} radius="md" color={stat.color}>
+                                                {stat.icon}
+                                            </ThemeIcon>
+                                            <Text fz="2.25rem" fw={800} style={{ color: theme.white, lineHeight: 1 }}>
+                                                {stat.value}
+                                            </Text>
+                                            <Text fz="sm" ta="center" style={{ color: theme.colors.gray[4] }}>
+                                                {stat.label}
+                                            </Text>
+                                        </Stack>
+                                    </Grid.Col>
+                                ))}
+                            </Grid>
+
+                            <Box mt="xl" pt="md" style={{ borderTop: `1px solid ${theme.colors.dark[5]}` }}>
+                                <Text fz="xs" tt="uppercase" ta="center" mb="sm" style={{ color: theme.colors.gray[5], letterSpacing: '0.1em' }}>
+                                    Top languages
+                                </Text>
+                                <Group gap="lg" justify="center">
+                                    {statsData.languagesRanked.slice(0, 5).map((lang) => (
+                                        <Group gap={6} key={lang.name}>
+                                            <Text fw={600} style={{ color: theme.white }}>{lang.name}</Text>
+                                            <Text fz="sm" style={{ color: theme.colors.gray[4] }}>
+                                                {Math.round(lang.pct * 100)}%
+                                            </Text>
+                                        </Group>
+                                    ))}
+                                </Group>
+                            </Box>
+
+                            <Text ta="center" mt="md" fz="xs" style={{ color: theme.colors.gray[6] }}>
+                                Computed locally from <code>git log --numstat</code> across all owned + asklina repos. Updated {formatISODate(statsData.generatedAt)}.
+                            </Text>
+                        </Paper>
                     </motion.div>
 
                     <motion.div

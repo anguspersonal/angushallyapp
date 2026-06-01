@@ -1,0 +1,386 @@
+/*
+ * teacher.module.css — chalkboard / 3blue1brown-ish design system for the
+ * `/teacher` persona (v2). Self-contained: all custom properties live on the
+ * `.page` root so nothing leaks into the rest of the site. Element selectors
+ * are descendant-scoped under `.page` for the same reason.
+ *
+ * Night / day (issue #129): BOTH modes are kept — they are the same metaphor
+ * read two ways. DAY is the default below: a warm-cream teacher's notebook
+ * (light paper, deep blue-black ink). NIGHT inverts it into a literal slate
+ * CHALKBOARD (dark slate ground, chalk-white ink, the accents reading as
+ * coloured chalk). Day is the no-attribute default so there is no flash before
+ * hydration on the common case; the NIGHT palette overrides the ~6 surface
+ * tokens under `[data-mantine-color-scheme='dark']`, matching the site-wide
+ * convention (see globals.css / dev.module.css). The toggle lives in this
+ * surface's own header (PersonaThemeToggle) and persists via the shared Mantine
+ * color-scheme key, exactly like the main site. Only the surface tokens differ
+ * between modes; the five chalk accents are shared so the identity is constant.
+ */
+
+.page {
+  --paper:   #fbf3e6;       /* DAY: warm cream notebook paper */
+  --paper-2: #f3e8d3;
+  --ink:     #1f2233;       /* deep blue-black ink */
+  --ink-soft:#3d4159;
+  --ink-dim: #767995;
+  --rule:    #d9cfb8;
+
+  --accent:  #ff8a4c;       /* orange */
+  --accent-2:#f7c948;       /* yellow */
+  --accent-3:#5fb7e6;       /* light blue */
+  --accent-4:#8f6dff;       /* purple */
+  --accent-5:#7bd07b;       /* green */
+
+  /* Stable "dark panel" tokens — the hero blackboard, the pedagogy band, and
+     the lesson thumbnails are chalkboards in BOTH modes, so they read off these
+     fixed values rather than the mode-flipping --ink / --paper pair. In NIGHT
+     they melt into the page; in DAY they pop as dark slate on warm paper. */
+  --board:    #1f2233;
+  --on-board: #fbf3e6;
+
+  --display: var(--font-bricolage), system-ui, sans-serif;
+  --serif:   var(--font-lora), "Iowan Old Style", Georgia, serif;
+  --mono:    var(--font-jetbrains-mono), ui-monospace, Menlo, monospace;
+
+  --easing: cubic-bezier(.2, .6, .2, 1);
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--display);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* NIGHT — literal chalkboard. The cream "paper" becomes dark slate and the
+   blue-black "ink" becomes chalk white, so the warm-paper sections and the
+   already-dark blackboard panels (`--ink` grounds) read as one continuous
+   board. `--rule` warms into a faint chalk dust line. The five chalk accents
+   are intentionally unchanged — coloured chalk reads true on slate. */
+[data-mantine-color-scheme='dark'] .page {
+  --paper:   #14171f;       /* NIGHT: dark slate board */
+  --paper-2: #1b1f2a;
+  --ink:     #f3efe6;       /* chalk white */
+  --ink-soft:#cbd0dd;
+  --ink-dim: #8a90a4;
+  --rule:    rgba(243, 239, 230, 0.16);
+  /* The dark panels lift one step above the page so they still read as framed
+     boards rather than vanishing into the slate. */
+  --board:    #232735;
+  --on-board: #f3efe6;
+}
+
+.page * { box-sizing: border-box; }
+.page a { color: var(--ink); text-decoration: none; }
+.page button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+.page ::selection { background: var(--accent); color: var(--board); }
+
+/* ── topbar ── */
+.top {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 22px 32px;
+  font-family: var(--display); font-size: 14px; font-weight: 500;
+  color: var(--ink-soft);
+}
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; }
+.brandDot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent-3); color: var(--board);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-style: italic; font-weight: 500;
+}
+.brandSuffix { color: var(--ink-dim); font-weight: 400; font-family: var(--serif); font-style: italic; font-size: 16px; }
+.nav { display: inline-flex; gap: 20px; }
+.nav a { color: var(--ink-soft); }
+.nav a:hover { color: var(--ink); }
+.back {
+  padding: 8px 14px; background: var(--ink); color: var(--paper);
+  border-radius: 999px; font-size: 12.5px;
+}
+.back:hover { background: var(--accent-4); }
+
+/* ── hero ── */
+.hero { padding: 84px 32px 64px; max-width: 1240px; margin: 0 auto; position: relative; }
+.heroInner { display: grid; grid-template-columns: 1.4fr 1fr; gap: 56px; align-items: center; }
+.heroTitle {
+  margin: 0;
+  font-family: var(--display); font-weight: 700;
+  font-size: clamp(54px, 8vw, 124px);
+  line-height: 0.92; letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.heroTitle em { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--accent); }
+.wave { display: inline-block; transform-origin: 70% 70%; animation: wave 2.4s ease-in-out infinite; }
+@keyframes wave {
+  0%, 50%, 100% { transform: rotate(0); }
+  10%, 30% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(10deg); }
+}
+.lede { margin-top: 28px; font-family: var(--serif); font-size: 20px; line-height: 1.55; color: var(--ink-soft); max-width: 46ch; }
+.lede em { color: var(--ink); font-style: italic; }
+
+.chips { display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px;
+  background: var(--paper-2); border: 1px solid var(--rule);
+  font-size: 12.5px; font-weight: 500; color: var(--ink-soft);
+}
+.chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-5); }
+.chipLead { background: var(--accent-5); color: var(--ink); border-color: transparent; }
+.chipLead .dot { background: var(--ink); }
+
+/* hero illustration — gentle chalkboard scene */
+.blackboard {
+  background: var(--board); color: var(--on-board);
+  border-radius: 14px; padding: 30px;
+  aspect-ratio: 1.1 / 1;
+  position: relative; overflow: hidden;
+  box-shadow: 0 24px 50px -22px rgba(31, 34, 51, .45),
+              0 0 0 6px var(--paper-2),
+              0 0 0 7px var(--rule);
+}
+.blackboard::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, .08), transparent 60%);
+}
+.bbEq { font-family: var(--serif); font-style: italic; font-size: 26px; line-height: 1.4; color: var(--on-board); }
+.bbEq :global(.num) { color: var(--accent); }
+.bbEq :global(.var) { color: var(--accent-3); }
+.bbEq :global(.op) { color: var(--accent-2); margin: 0 6px; }
+.bbEq :global(.ans) { color: var(--accent-5); }
+
+.bbPlot {
+  margin-top: 22px; position: relative; height: 110px;
+  border-bottom: 1.2px solid rgba(255, 255, 255, .4);
+  border-left: 1.2px solid rgba(255, 255, 255, .4);
+}
+.bbPlot svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.bbPlot path { fill: none; stroke-width: 2.5; stroke-linecap: round; }
+.bbPlot :global(.p1) { stroke: var(--accent); stroke-dasharray: 360; stroke-dashoffset: 360; animation: draw 4s var(--easing) infinite alternate; }
+.bbPlot :global(.p2) { stroke: var(--accent-3); stroke-dasharray: 360; stroke-dashoffset: 360; animation: draw 4s var(--easing) infinite alternate .8s; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+.bbLabels { margin-top: 12px; font-family: var(--mono); font-size: 11px; color: rgba(255, 255, 255, .6); display: flex; justify-content: space-between; }
+.bbTag {
+  position: absolute; bottom: 18px; right: 22px;
+  font-family: var(--display); font-style: italic; font-weight: 400;
+  color: var(--accent-2); font-size: 14px;
+  padding: 6px 10px; background: rgba(255, 255, 255, .06); border-radius: 999px;
+}
+
+/* ── shared section heads ── */
+.sectionEye {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-dim); margin-bottom: 18px;
+}
+.h2 {
+  margin: 0 0 14px;
+  font-family: var(--display); font-weight: 700;
+  font-size: clamp(36px, 5vw, 64px); line-height: 1.0; letter-spacing: -0.025em;
+  max-width: 18ch;
+}
+.h2 em { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--accent); }
+.deck { font-family: var(--serif); font-size: 18px; line-height: 1.55; color: var(--ink-soft); max-width: 56ch; }
+
+/* ── lessons / what teaching taught me ── */
+.lessons { padding: 96px 32px; max-width: 1240px; margin: 0 auto; }
+.series { margin-top: 56px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+.lesson {
+  background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px; padding: 22px;
+  transition: transform .35s var(--easing), box-shadow .35s var(--easing), border-color .35s var(--easing);
+  position: relative; overflow: hidden;
+}
+.lesson:hover { transform: translateY(-4px); box-shadow: 0 18px 36px -18px rgba(31, 34, 51, .25); border-color: var(--ink); }
+.thumb { aspect-ratio: 16/9; background: var(--board); border-radius: 8px; position: relative; overflow: hidden; margin-bottom: 18px; }
+.thumb svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.thumbTag {
+  position: absolute; left: 14px; top: 14px;
+  font-family: var(--mono); font-size: 10.5px; color: var(--on-board);
+  letter-spacing: 0.12em; background: rgba(0, 0, 0, .4); padding: 4px 8px; border-radius: 999px;
+}
+.lesson h3 { margin: 0 0 8px; font-size: 19px; font-weight: 600; line-height: 1.25; }
+.lesson h3 em { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--accent); }
+.lesson p { margin: 0; font-family: var(--serif); font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+
+/* ── why / pedagogy — always a chalkboard band (stable --board, both modes) ── */
+.why { padding: 96px 32px; background: var(--board); color: var(--on-board); }
+.whyInner { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+.why .sectionEye { color: var(--accent-2); }
+.why .h2 { color: var(--on-board); }
+.whyLede { font-family: var(--serif); font-size: 18px; line-height: 1.65; color: rgba(255, 255, 255, .78); }
+.whyLede em { color: var(--on-board); font-style: italic; }
+
+.reasons { display: grid; gap: 18px; }
+.reason {
+  display: grid; grid-template-columns: 56px 1fr; gap: 18px; align-items: start;
+  padding: 24px; border: 1px solid rgba(255, 255, 255, .12); border-radius: 14px;
+  transition: background .25s var(--easing);
+}
+.reason:hover { background: rgba(255, 255, 255, .04); }
+.glyph {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-weight: 700; font-size: 22px; color: var(--board);
+}
+.reason h4 { margin: 0 0 6px; font-size: 19px; font-weight: 600; }
+.reason h4 em { font-family: var(--serif); font-style: italic; color: var(--accent-2); font-weight: 500; }
+.reason p { margin: 0; font-size: 14.5px; line-height: 1.55; color: rgba(255, 255, 255, .6); }
+
+/* ── for whom ── */
+.for { padding: 96px 32px; max-width: 1240px; margin: 0 auto; }
+.forGrid { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.audience {
+  padding: 28px; border: 2px solid var(--rule); border-radius: 14px; background: var(--paper-2);
+  transition: border-color .25s var(--easing), transform .35s var(--easing);
+}
+.audience:hover { border-color: var(--ink); transform: translateY(-3px); }
+.who { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.audience h3 { margin: 0 0 10px; font-size: 24px; font-weight: 600; line-height: 1.2; }
+.audience h3 em { font-family: var(--serif); font-style: italic; font-weight: 500; }
+.audience p { margin: 0; font-family: var(--serif); font-size: 16px; line-height: 1.55; color: var(--ink-soft); }
+
+/* ── honest note ── */
+.note {
+  max-width: 1240px; margin: 0 auto; padding: 0 32px 24px;
+}
+.noteCard {
+  border: 1.5px dashed var(--rule); border-radius: 14px; padding: 24px 28px;
+  background: transparent; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: start;
+}
+.noteCard .mark { font-family: var(--serif); font-style: italic; font-size: 28px; color: var(--accent); line-height: 1; }
+.noteCard p { margin: 0; font-family: var(--serif); font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
+.noteCard strong { color: var(--ink); font-weight: 600; }
+
+/* ── cta ── */
+.cta { padding: 96px 32px 120px; text-align: center; max-width: 1240px; margin: 0 auto; }
+.cta .h2 { margin: 0 auto; }
+.cta p { font-family: var(--serif); font-size: 18px; line-height: 1.55; color: var(--ink-soft); max-width: 50ch; margin: 18px auto 32px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 16px 22px 16px 26px; border-radius: 999px;
+  background: var(--ink); color: var(--paper); font-size: 16px; font-weight: 500;
+  transition: background .25s, padding .25s;
+}
+.btn:hover { background: var(--accent-4); padding-right: 32px; }
+.btnArr {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--accent-2); color: var(--ink);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* ── footer — shared PersonaFooter kit, skinned via --persona-* tokens ──
+   The kit ships no colours; these tokens drive it. Day = the dark-ink utility
+   bar that closed the page before; night = a slightly-raised slate panel so it
+   reads as the bottom edge of the chalkboard. */
+.footer {
+  --persona-ink: var(--paper);
+  --persona-footer-bg: var(--ink);
+  --persona-footer-border: transparent;
+  --persona-footer-pad: 26px 32px;
+  --persona-footer-fineprint-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.footer a { color: var(--paper); }
+.footer a:hover { color: var(--accent-2); }
+[data-mantine-color-scheme='dark'] .footer {
+  --persona-footer-bg: var(--paper-2);
+  --persona-footer-border: var(--rule);
+  --persona-ink: var(--ink);
+}
+[data-mantine-color-scheme='dark'] .footer a { color: var(--ink); }
+.footerMuted { opacity: 0.6; }
+
+/* ── theme toggle (in the top bar) ── */
+.themeToggle {
+  --persona-ink: var(--ink-soft);
+  width: 38px; height: 38px; min-width: 38px; min-height: 38px;
+  border: 1px solid var(--rule); border-radius: 999px;
+}
+.themeToggle:hover { color: var(--ink); border-color: var(--ink); }
+
+/* ── contact section (issue B2) — shared persona ContactForm, skinned via the
+   --persona-* tokens it reads, so the chalkboard palette flows in without
+   forking ContactForm.module.css. Day = ink-on-paper fields; night inherits
+   the flipped --ink / --paper automatically. ── */
+.contactForm {
+  --persona-ink: var(--ink);
+  --persona-accent: var(--accent);
+  --persona-form-gap: 0.9rem;
+  --persona-form-field-bg: var(--paper-2);
+  --persona-form-border: var(--rule);
+  --persona-form-radius: 12px;
+  --persona-form-label: var(--ink-soft);
+  --persona-form-focus-ring: color-mix(in srgb, var(--accent) 35%, transparent);
+  --persona-form-submit-ink: var(--board);
+  --persona-form-submit-align: center;
+  --persona-form-recaptcha-justify: center;
+  --persona-form-success: var(--accent-5);
+  --persona-form-error: #d6594a;
+
+  max-width: 560px;
+  margin: 8px auto 0;
+  text-align: left;
+}
+
+/* The shared form left-aligns labels/fields; the CTA section is centred, so
+   reset inherited centring inside the form card. */
+.contactFormInner {
+  font-family: var(--display);
+}
+
+.contactFormInner :global(label),
+.contactFormInner :global(input),
+.contactFormInner :global(textarea) {
+  font-family: var(--display);
+}
+
+/* One-line "what we collect" notice above the fields, linking to the privacy
+   notice (B2 acceptance criterion). */
+.collectionNotice {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  color: var(--ink-dim);
+}
+
+.collectionNoticeLink {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.collectionNoticeLink:hover {
+  color: var(--accent-4);
+}
+
+.recaptchaHint {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-dim);
+}
+
+@media (max-width: 56.25em) {
+  .heroInner, .whyInner, .forGrid, .series { grid-template-columns: 1fr; }
+  .series { gap: 14px; }
+  .blackboard { aspect-ratio: 1.3 / 1; }
+  .nav { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave,
+  .bbPlot :global(.p1),
+  .bbPlot :global(.p2) { animation: none; }
+  .bbPlot :global(.p1),
+  .bbPlot :global(.p2) { stroke-dashoffset: 0; }
+  .lesson,
+  .audience,
+  .btn,
+  .reason { transition: none; }
+}

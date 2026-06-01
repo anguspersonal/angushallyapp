@@ -7,6 +7,7 @@ import {
   IconBrandLinkedin,
   IconBrandGithub,
 } from '@tabler/icons-react';
+import { ConsentManageLink } from './consent/ConsentManageLink';
 import styles from './Footer.module.css';
 
 type FooterLink = { label: string; href: string };
@@ -17,12 +18,20 @@ const mainLinks: FooterLink[] = [
   { label: 'Projects', href: '/projects' },
   { label: 'Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
+  { label: 'Privacy', href: '/privacy' },
 ];
 
+// Each entry surfaces a single persona "lens". The /personas hub is
+// intentionally not linked in the UI — it's still URL-accessible but
+// nav should make each lens feel like it's its own thing, not a
+// stop on a tour. See docs/guides/persona-page-workflow.md.
 const workWithMeLinks: FooterLink[] = [
-  { label: 'Consulting', href: '/work-with-me/consulting' },
-  { label: 'Web Development', href: '/work-with-me/webdev' },
-  { label: 'Maths Tutoring', href: '/work-with-me/maths' },
+  { label: 'Developer', href: '/dev' },
+  { label: 'AI Product Manager', href: '/ai-pm' },
+  { label: 'Data Strategist', href: '/strategist' },
+  { label: 'Maths Teacher', href: '/teacher' },
+  { label: 'Harness Engineer', href: '/harness' },
+  { label: 'Debate Coach', href: '/debate' },
 ];
 
 const CONTACT_EMAIL = 'angus.hally@gmail.com';
@@ -63,6 +72,11 @@ function Footer() {
                 {link.label}
               </Link>
             ))}
+            {/* Re-opens the consent preference center so choices stay revocable
+                site-wide (issue #140). */}
+            <ConsentManageLink className={styles.colLink}>
+              Cookie preferences
+            </ConsentManageLink>
           </div>
           <div>
             <h5 className={styles.colHeading}>Work with me</h5>

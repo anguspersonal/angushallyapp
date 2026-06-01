@@ -35,6 +35,7 @@ import { upsertSession, writeTurn } from '@/lib/chat/persistence';
 import { DEFAULT_RATE_LIMIT, consume } from '@/lib/chat/rateLimiter';
 import { isDailySpendOverCap } from '@/lib/chat/spendCap';
 import { SSE_HEADERS, createSseStream } from '@/lib/chat/streamServer';
+import { buildPersonaInstructions } from '@/lib/chat/personaInstructions';
 import { buildPageContext, buildSystemPrompt } from '@/lib/chat/systemPrompt';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import {
@@ -63,22 +64,41 @@ const UUID_REGEX =
 // ---------- IP resolution ----------------------------------------------------
 
 /**
- * Read the client IP from request headers.
+ * Read the client IP from request headers, trusting only the value the
+ * platform itself appended — never a client-controlled one.
  *
- * On Vercel, the inbound `X-Forwarded-For` is stripped/overwritten by the
- * platform before our function is invoked, so the leftmost value is the
- * real client IP. On non-Vercel hosts (and edge runtimes where Vercel
- * does not rewrite headers), the leftmost value can be set by the client
- * itself. If hosting changes, replace this with the rightmost trusted-proxy
- * hop or the platform's equivalent `req.ip` accessor.
+ * On Vercel, the platform *appends* its resolved client IP to whatever
+ * `X-Forwarded-For` the caller sent (documented example:
+ * `"82.96.66.32, 12.34.56.78"`), so the chain is
+ * `<client-set hops...>, <Vercel-resolved IP>`. The **leftmost** entry is
+ * therefore attacker-controlled and must not be used as a trust anchor;
+ * the **rightmost** entry is the hop Vercel added and is trustworthy.
+ * Vercel also exposes a single-value `x-real-ip` header carrying the same
+ * resolved IP, which we prefer as the primary source.
+ *
+ * Using a client-controlled value here would let a caller rotate
+ * `X-Forwarded-For` to mint a fresh rate-limit bucket per request and
+ * defeat the per-IP cap (FR-RATE-1). See
+ * https://vercel.com/docs/edge-network/headers/request-headers#x-forwarded-for
+ *
+ * If hosting changes to a stack that prepends (rather than appends) the
+ * trusted hop, revisit which end of the chain is trustworthy.
  */
-function resolveClientIp(request: NextRequest): string {
+export function resolveClientIp(request: NextRequest): string {
+  // Prefer the platform's single-value header — not chainable, so not spoofable.
+  const realIp = request.headers.get('x-real-ip')?.trim();
+  if (realIp) return realIp;
+
+  // Fall back to the rightmost X-Forwarded-For hop (the value the trusted
+  // proxy appended), NOT the leftmost (which the client can set freely).
   const xff = request.headers.get('x-forwarded-for');
   if (xff) {
-    const first = xff.split(',')[0]?.trim();
-    if (first) return first;
+    const hops = xff.split(',').map((s) => s.trim()).filter(Boolean);
+    const trusted = hops[hops.length - 1];
+    if (trusted) return trusted;
   }
-  return request.headers.get('x-real-ip') ?? 'unknown';
+
+  return 'unknown';
 }
 
 // ---------- request validation ----------------------------------------------
@@ -105,7 +125,7 @@ function validateBody(payload: unknown): ValidatedBody {
     return { ok: false, reason: 'body must be a JSON object' };
   }
   const raw = payload as Record<string, unknown>;
-  const { sessionId, message, history, route } = raw;
+  const { sessionId, message, history, route, surface } = raw;
 
   if (typeof sessionId !== 'string' || !UUID_REGEX.test(sessionId)) {
     return { ok: false, reason: 'sessionId must be a uuid' };
@@ -122,6 +142,11 @@ function validateBody(payload: unknown): ValidatedBody {
   if (typeof route !== 'string') {
     return { ok: false, reason: 'route must be a string' };
   }
+  // `surface` is optional (older clients won't send it; absent → no persona
+  // block). When present it must be a string; anything else is malformed.
+  if (surface !== undefined && typeof surface !== 'string') {
+    return { ok: false, reason: 'surface must be a string when present' };
+  }
 
   return {
     ok: true,
@@ -130,6 +155,7 @@ function validateBody(payload: unknown): ValidatedBody {
       message,
       history: history as ChatHistoryEntry[],
       route,
+      ...(surface !== undefined ? { surface } : {}),
     },
   };
 }
@@ -253,16 +279,23 @@ export async function POST(request: NextRequest): Promise<Response> {
     });
   }
 
-  // 3. Resolve hashed IP. If the pepper is missing in dev, fall back to a
-  //    stable placeholder rather than 500 — persistence is best-effort and
-  //    we'd rather degrade than crash the bot.
+  // 3. Resolve hashed IP. The pepper is a hard requirement: the ip_hash
+  //    column must never hold a raw IP (FR-PERS-7, "no raw IP storage"), and
+  //    the hash is also the rate-limit bucket key. If hashing fails (missing
+  //    CHAT_IP_HASH_PEPPER), fail closed with `unconfigured` — mirroring the
+  //    ANTHROPIC_API_KEY path above — rather than silently persisting the raw
+  //    IP. envValidation already warns at boot; this guarantees the data side
+  //    effect can't happen.
   const rawIp = resolveClientIp(request);
   let ipHash: string;
   try {
     ipHash = hashIp(rawIp);
   } catch (err) {
-    console.error('[chat/route] ipHash failed — using fallback', err);
-    ipHash = `unhashed:${rawIp}`;
+    console.error('[chat/route] ipHash failed — refusing to persist raw IP', err);
+    return streamErrorResponse({
+      event: 'error',
+      data: { code: 'unconfigured', message: 'CHAT_IP_HASH_PEPPER not set' },
+    });
   }
 
   // 4. Rate limit (per-IP, in-memory).
@@ -356,6 +389,12 @@ export async function POST(request: NextRequest): Promise<Response> {
       //     for the page the user is on. Appended AFTER the cache breakpoint
       //     so it doesn't invalidate the cached prefix — the cached block
       //     covers the bulk of the tokens and this tail is ≤ ~50 tokens.
+      //   - Third block (optional): per-persona behavioural instructions for
+      //     the current surface. Same seam as the page-context block —
+      //     appended AFTER the breakpoint so the cached prefix is preserved
+      //     (no cache-hit regression). Absent/unknown surface → no block, so
+      //     the assistant behaves exactly as before. The block is keyed off
+      //     the surface registry; see src/lib/chat/personaInstructions.ts.
       system: [
         {
           type: 'text',
@@ -365,6 +404,12 @@ export async function POST(request: NextRequest): Promise<Response> {
         ...(() => {
           const pageContext = buildPageContext(body.route);
           return pageContext ? [{ type: 'text' as const, text: pageContext }] : [];
+        })(),
+        ...(() => {
+          const personaInstructions = buildPersonaInstructions(body.surface);
+          return personaInstructions
+            ? [{ type: 'text' as const, text: personaInstructions }]
+            : [];
         })(),
       ],
       messages: [
