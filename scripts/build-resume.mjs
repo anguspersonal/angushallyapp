@@ -9,6 +9,12 @@
  * The Download button on the /projects desktop serves /resume.pdf directly,
  * so re-running this is how you ship a new CV.
  *
+ * This is a LOCAL/MANUAL step — it is deliberately NOT part of `prebuild`.
+ * Vercel's build image lacks the shared libraries headless Chrome needs
+ * (e.g. libnspr4.so), so launching Puppeteer there fails the deploy. The
+ * generated public/resume.pdf is committed to the repo and served directly,
+ * so after editing public/resume.html, run this locally and commit the PDF.
+ *
  * Usage:
  *   bun run build:resume
  *   node scripts/build-resume.mjs
