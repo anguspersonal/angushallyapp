@@ -95,6 +95,8 @@ Each persona page has matching downstream artefacts:
 
 ## v2 backlog (after v1 ships)
 
+> **Design brief for v2:** [persona-page-design-philosophy.md](./persona-page-design-philosophy.md) — buyer × direction matrix, reference set, three guiding pushbacks. The bullets below are the structural backlog; the philosophy doc names what each persona's visual direction should be.
+
 v1 ships consistent visual treatment across all persona pages: same Mantine gradient `Paper` cards, same Framer Motion staggered-entry pattern, same overall composition (hero → headline cards → 2-up/3-up content → narrative card). This is intentional — v1 is about content and the *workflow* working end-to-end.
 
 v2 should differentiate each persona visually. **`/teacher` is the first one shipped** (chalkboard / 3blue1brown-ish surface — see the table above) and is the reference for how far a persona can diverge from the shared template: it registers its own full-bleed `teacher` surface declaratively in the [surface registry](#surface-registry) ([src/lib/surfaces.ts](../../src/lib/surfaces.ts)) — suppressing the global Header/Footer without touching `ClientLayout` — loads route-scoped fonts via [src/app/teacher/fonts.ts](../../src/app/teacher/fonts.ts), and keeps its styling in a self-contained [teacher.module.css](../../src/app/teacher/teacher.module.css) with all custom properties on a single root class. Crucially, the *content* stays honest — the new look reskins the existing narrative rather than inventing workshops/cohorts/video series that don't exist.
