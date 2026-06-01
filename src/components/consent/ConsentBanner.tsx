@@ -9,13 +9,12 @@
  *   - Reject non-essential
  *   - Manage (opens the preference center)
  *
- * Neutral & tokenized — no persona skin here (that's D1, #145/#146/#147). It
- * exposes the current surface as `data-surface` (resolved through the shared
- * surface registry, exactly like ChatPanel) so a persona can skin the banner
- * via [data-surface="<persona>"] CSS WITHOUT this component owning any persona
- * colours. When the route has no surface the attribute is omitted, so the
- * neutral default is unchanged. Presentation-only: no consent logic depends on
- * it. Links to /privacy (content lands in #126).
+ * Neutral & tokenized here. Per-persona skins (D1, #145/#146/#147) layer on via
+ * the `data-surface` attribute below: the banner is mounted site-wide (outside
+ * SurfaceShell), so it resolves the active surface itself and exposes it as
+ * `data-surface` — exactly as ChatPanel does — letting a persona repaint it by
+ * overriding the --site-* / --button-* tokens it already reads, with NO change
+ * to this component's CSS. Links to /privacy (content from #126).
  */
 
 import * as React from 'react';
@@ -27,6 +26,9 @@ import styles from './ConsentBanner.module.css';
 
 export function ConsentBanner() {
   const ctx = useConsentContext();
+  // Expose the active persona surface so personas can skin the banner via
+  // [data-surface="<persona>"] token overrides. Omitted on surfaceless routes
+  // (default chrome), so today's neutral look is unchanged there.
   const pathname = usePathname();
   const surface = resolveSurface(pathname)?.surface;
 

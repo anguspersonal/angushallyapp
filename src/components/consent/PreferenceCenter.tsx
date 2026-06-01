@@ -29,6 +29,7 @@ import styles from './PreferenceCenter.module.css';
 export function PreferenceCenter() {
   const ctx = useConsentContext();
   const open = Boolean(ctx?.isPreferenceCenterOpen);
+  // Active persona surface, for [data-surface="<persona>"] token skinning.
   const pathname = usePathname();
   const surface = resolveSurface(pathname)?.surface;
 

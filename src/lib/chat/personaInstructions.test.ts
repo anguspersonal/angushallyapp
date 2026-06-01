@@ -32,18 +32,24 @@ describe('buildPersonaInstructions', () => {
       expect(buildPersonaInstructions('not-a-registered-surface')).toBeNull();
     });
 
-    it('every registered entry is either empty (no block) or a valid wrapped block', () => {
-      // C0 shipped seeded empty; the C1 slices fill in real per-persona text.
-      // The behaviour-additive contract still holds per surface: an empty/blank
-      // entry yields no block (today's behaviour), and a non-empty entry yields
-      // a well-formed block — never anything in between.
+    it('every registered entry is either blank (no block) or a well-formed block', () => {
+      // The C1 slices fill in real per-persona text (#142/#143/#144), so the
+      // registry is no longer universally empty. The behaviour-additive
+      // contract still holds per entry: a blank/whitespace entry yields no
+      // block (today's behaviour for that surface), and any non-empty entry
+      // yields exactly one stable `# Persona behaviour` block — voice/framing
+      // layered after the cache breakpoint, never a second identity.
       for (const surface of Object.keys(PERSONA_CHAT_INSTRUCTIONS)) {
         const block = buildPersonaInstructions(surface);
-        if (PERSONA_CHAT_INSTRUCTIONS[surface].trim()) {
+        const raw = PERSONA_CHAT_INSTRUCTIONS[surface]?.trim() ?? '';
+        if (!raw) {
+          expect(block).toBeNull();
+        } else {
           expect(block).not.toBeNull();
           expect(block).toContain('# Persona behaviour');
-        } else {
-          expect(block).toBeNull();
+          expect(block).toContain(raw);
+          // Stays a small tail relative to the cached prompt.
+          expect(block!.length).toBeLessThan(2000);
         }
       }
     });

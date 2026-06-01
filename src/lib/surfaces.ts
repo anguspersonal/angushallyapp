@@ -34,6 +34,7 @@ export const SURFACES: SurfaceDef[] = [
   // matcher (`p === '/<persona>' || p.startsWith('/<persona>/')`).
   { surface: 'dev', kind: 'fullBleed', match: (p) => p === '/dev' || p.startsWith('/dev/') },
   { surface: 'strategist', kind: 'fullBleed', match: (p) => p === '/strategist' || p.startsWith('/strategist/') },
+  { surface: 'teacher', kind: 'fullBleed', match: (p) => p === '/teacher' || p.startsWith('/teacher/') },
 ];
 
 export function resolveSurface(pathname: string | null | undefined): SurfaceDef | undefined {
