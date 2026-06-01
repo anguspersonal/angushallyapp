@@ -33,6 +33,7 @@ export const SURFACES: SurfaceDef[] = [
   // the reference persona surface; further personas should follow this prefix
   // matcher (`p === '/<persona>' || p.startsWith('/<persona>/')`).
   { surface: 'dev', kind: 'fullBleed', match: (p) => p === '/dev' || p.startsWith('/dev/') },
+  { surface: 'teacher', kind: 'fullBleed', match: (p) => p === '/teacher' || p.startsWith('/teacher/') },
 ];
 
 export function resolveSurface(pathname: string | null | undefined): SurfaceDef | undefined {
