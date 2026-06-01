@@ -1,0 +1,54 @@
+# Lint, typecheck, and test gate for pull requests.
+# Mirrors the local `npm run lint` / `typecheck` / `test` scripts so CI
+# reflects what the Husky pre-commit hook runs.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Cancel superseded runs on the same ref to save minutes and surface the latest result.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: a CI gate only needs to read the code.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Vitest runs in jsdom, not a real browser — skip puppeteer's ~150MB Chromium download.
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+      # No git hooks needed in CI.
+      HUSKY: "0"
+      CI: "true"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # `!cancelled()` lets typecheck and test still run (and report) even if an
+      # earlier check failed — one push surfaces every failure, not just the first.
+      - name: Typecheck
+        if: ${{ !cancelled() }}
+        run: npm run typecheck
+
+      - name: Test
+        if: ${{ !cancelled() }}
+        run: npm test
