@@ -8,11 +8,11 @@ import {
 /**
  * Behavioural tests for the per-persona chat layer (#139, C0).
  *
- * The registry ships seeded EMPTY (the real per-persona text is authored in
- * #142 / #143 / #144), so these tests inject a temporary entry to exercise the
- * selection + wrapping behaviour, then restore the registry. We assert the
- * external contract — given a surface, the block that comes out — not the
- * literal text of any persona, which lives elsewhere.
+ * The registry shipped seeded EMPTY in C0; the C1 per-persona slices (#142 /
+ * #143 / #144) fill in real text. These tests inject a temporary entry to
+ * exercise the selection + wrapping behaviour, then restore the registry. We
+ * assert the external contract — given a surface, the block that comes out —
+ * not the literal text of any persona, which lives elsewhere.
  */
 describe('buildPersonaInstructions', () => {
   const TEST_SURFACE = '__test_persona__';

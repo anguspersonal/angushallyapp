@@ -29,6 +29,20 @@ describe('resolveSurface', () => {
       // exact path and paths under `/dev/` belong to the subtree.
       expect(resolveSurface('/development')).toBeUndefined();
     });
+
+    it('resolves the strategist index to its full-bleed surface', () => {
+      // The strategist persona (issue #130) registers with the same prefix
+      // matcher as /dev, so it owns its index and any future sub-pages.
+      const def = resolveSurface('/strategist');
+      expect(def?.surface).toBe('strategist');
+      expect(def?.kind).toBe('fullBleed');
+    });
+
+    it('resolves a strategist sub-route to the same surface', () => {
+      const def = resolveSurface('/strategist/privacy');
+      expect(def?.surface).toBe('strategist');
+      expect(def?.kind).toBe('fullBleed');
+    });
   });
 
   describe('/projects stays exact-match', () => {

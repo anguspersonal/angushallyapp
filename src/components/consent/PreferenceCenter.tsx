@@ -9,10 +9,11 @@
  *
  * Local draft state lets the user toggle freely, then commit with "Save
  * preferences" (or take the accept-all / reject shortcuts). Neutral & tokenized
- * here; per-persona skins (D1, #145/#146/#147) layer on via the `data-surface`
- * attribute below — the modal is mounted site-wide, so it resolves the active
- * surface itself and exposes it for [data-surface="<persona>"] token overrides,
- * with NO change to this component's CSS.
+ * — persona skins are D1 (#145/#146/#147). It exposes the current surface as
+ * `data-surface` (resolved through the shared surface registry, like ChatPanel)
+ * so a persona can skin it via [data-surface="<persona>"] CSS without this
+ * component owning persona colours. Presentation-only: no consent logic reads
+ * it; the attribute is omitted on surfaceless routes (neutral default unchanged).
  */
 
 import * as React from 'react';

@@ -1,0 +1,668 @@
+/*
+ * `/strategist` — editorial "data field" re-skin.
+ *
+ * Ink-on-paper, steel accents, Archivo display + Space Mono labels. A
+ * deliberately distinct signature from the dark Mantine persona pages.
+ * Font variables (--font-archivo / --font-space-mono) are applied via
+ * `strategistFontClassNames` on the page root, so they stay scoped here.
+ *
+ * Light + dark palette (PRD #123 · issue #130). The colour tokens on `.page`
+ * are the LIGHT "paper" palette and also serve as the no-attribute default
+ * (the editorial identity is fundamentally ink-on-paper, so it is the natural
+ * pre-hydration ground). The DARK "ink-room" palette overrides them under
+ * `[data-mantine-color-scheme='dark']`, matching the site-wide convention
+ * (see /dev's dev.module.css, globals.css, GradientRoot.module.css). The
+ * day/night toggle is the shared `PersonaThemeToggle`, wired in the page's nav
+ * and footer — toggling it flips the same Mantine color-scheme attribute the
+ * main site uses, so only these ~7 surface tokens change between modes. Both
+ * modes suit the steel-sphere hero (the WebGL renderer is alpha-transparent
+ * and sits on whatever ground the CSS provides), so neither mode is hidden.
+ *
+ * Tokens are scoped to the strategist surface: the route renders inside
+ * `[data-surface="strategist"]` (set by ClientLayout's fullBleed shell), and
+ * `.page` is this route-local CSS module, so nothing here can leak site-wide.
+ */
+
+.page {
+    --paper: #ffffff;
+    --paper-2: #faf9f6;
+    --ink: #0c0c0a;
+    --ink-2: #2a2823;
+    --gray: #9d9a92;
+    --hair: #e6e4de;
+    --steel: #b9bdc4;
+    --grot: var(--font-archivo), "Archivo", -apple-system, system-ui, sans-serif;
+    --mono: var(--font-space-mono), "Space Mono", ui-monospace, Menlo, monospace;
+    --easing: cubic-bezier(0.16, 0.84, 0.24, 1);
+
+    /* Skin the shared persona chrome kit (footer + theme toggle) off the same
+       palette so it tracks light/dark without forking those components. */
+    --persona-ink: var(--ink);
+    --persona-footer-bg: var(--paper-2);
+    --persona-footer-border: var(--hair);
+    --persona-toggle-hover-bg: color-mix(in srgb, var(--ink) 9%, transparent);
+
+    /* Skin the shared persona ContactForm (issue #133 / B2). The form reads
+       these --persona-* tokens (see ContactForm.module.css), so the editorial
+       ink-on-paper look tracks light/dark without forking that component.
+       Square corners + mono labels + an ink-filled submit match the page. */
+    --persona-accent: var(--ink);
+    --persona-form-gap: 1.1rem;
+    --persona-form-radius: 0;
+    --persona-form-label: var(--gray);
+    --persona-form-border: var(--hair);
+    --persona-form-field-bg: var(--paper);
+    --persona-form-focus-ring: color-mix(in srgb, var(--ink) 18%, transparent);
+    --persona-form-submit-ink: var(--paper);
+    --persona-form-error: #b42318;
+    --persona-form-success: var(--ink);
+
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--grot);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* DARK "ink-room" palette — near-black ground, paper-coloured ink, steel kept
+   cool. The steel-sphere hero reads as polished metal on charcoal; only the
+   surface tokens invert. */
+[data-mantine-color-scheme='dark'] .page {
+    --paper: #0c0d0f;
+    --paper-2: #14161a;
+    --ink: #f2f1ec;
+    --ink-2: #b9b7ae;
+    --gray: #6f6e68;
+    --hair: #26282d;
+    --steel: #aeb3bb;
+    --persona-toggle-hover-bg: color-mix(in srgb, var(--ink) 14%, transparent);
+    /* Brighter error red so validation copy reads on the dark ink-room ground. */
+    --persona-form-error: #ff6b5e;
+}
+
+.page ::selection {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.lbl {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin: 0;
+}
+
+/* ─────────────────────────── Hero ─────────────────────────── */
+
+.heroStage {
+    position: relative;
+    width: 100%;
+    height: min(88vh, 820px);
+    min-height: 520px;
+    overflow: hidden;
+    background: var(--paper);
+    border-bottom: 1px solid var(--hair);
+}
+
+.canvasMount {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    cursor: grab;
+    touch-action: none;
+}
+
+.canvasMount.dragging {
+    cursor: grabbing;
+}
+
+.heroCopy {
+    position: absolute;
+    left: clamp(18px, 3vw, 40px);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 6;
+    pointer-events: none;
+    max-width: 32ch;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    background: var(--ink);
+    border-radius: 50%;
+}
+
+.heroTitle {
+    margin: 22px 0 0;
+    font-family: var(--grot);
+    font-weight: 800;
+    font-size: clamp(40px, 6.4vw, 104px);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+}
+
+.heroLede {
+    margin: 22px 0 0;
+    font-size: clamp(14px, 1.15vw, 17px);
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 34ch;
+}
+
+.heroMeta {
+    position: absolute;
+    right: clamp(18px, 3vw, 40px);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 6;
+    text-align: right;
+    pointer-events: none;
+}
+
+.heroMeta .lbl + .lbl {
+    margin-top: 7px;
+}
+
+.metaV {
+    color: var(--ink);
+}
+
+.metaState {
+    margin-top: 14px;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+/* the one big toggle */
+.control {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: clamp(24px, 6vh, 52px);
+    z-index: 12;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 16px 14px 26px;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper);
+    cursor: pointer;
+    transition: box-shadow 0.3s var(--easing), transform 0.2s var(--easing);
+}
+
+.toggle:hover {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+}
+
+.toggleT {
+    font-family: var(--mono);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+}
+
+.track {
+    width: 58px;
+    height: 30px;
+    border-radius: 999px;
+    border: 1.5px solid var(--ink);
+    position: relative;
+    transition: background 0.45s var(--easing);
+}
+
+.knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--ink);
+    transition: transform 0.55s var(--easing), background 0.45s;
+}
+
+.toggleOn .track {
+    background: var(--ink);
+}
+
+.toggleOn .knob {
+    transform: translateX(28px);
+    background: var(--paper);
+}
+
+/* ─────────────────────── Page body ─────────────────────── */
+
+.body {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: clamp(48px, 8vh, 96px) clamp(18px, 3vw, 40px) clamp(64px, 10vh, 120px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(56px, 9vh, 104px);
+}
+
+.sectionHead {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--hair);
+}
+
+.sectionNum {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--gray);
+    flex: none;
+}
+
+.sectionTitle {
+    margin: 0;
+    font-family: var(--grot);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    font-size: clamp(22px, 3vw, 34px);
+    line-height: 1;
+    color: var(--ink);
+}
+
+.sectionNote {
+    margin: -12px 0 28px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 64ch;
+}
+
+/* Engagements grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--hair);
+    border: 1px solid var(--hair);
+}
+
+.card {
+    background: var(--paper);
+    padding: clamp(20px, 2.4vw, 32px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: background 0.25s var(--easing);
+}
+
+.card:hover {
+    background: var(--paper-2);
+}
+
+.cardHead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.cardTitle {
+    margin: 0;
+    font-family: var(--grot);
+    font-weight: 700;
+    font-size: clamp(17px, 1.5vw, 21px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+}
+
+.cardMeta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    white-space: nowrap;
+    flex: none;
+}
+
+.cardBody {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-2);
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 6px;
+}
+
+.tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    padding: 4px 10px;
+}
+
+/* Frameworks grid */
+.fwGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.fwCard {
+    border-top: 2px solid var(--ink);
+    padding-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fwSub {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray);
+}
+
+.fwTitle {
+    margin: 0;
+    font-family: var(--grot);
+    font-weight: 700;
+    font-size: clamp(18px, 1.6vw, 22px);
+    color: var(--ink);
+}
+
+.fwBody {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-2);
+}
+
+/* Closing bridge */
+.bridge {
+    border: 1px solid var(--hair);
+    border-left: 3px solid var(--ink);
+    padding: clamp(24px, 3vw, 40px);
+    background: var(--paper-2);
+}
+
+.bridgeTitle {
+    margin: 0 0 10px;
+    font-family: var(--grot);
+    font-weight: 800;
+    font-size: clamp(20px, 2.4vw, 30px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+}
+
+.bridgeBody {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 70ch;
+}
+
+@media (max-width: 48em) {
+    .heroCopy {
+        top: 12%;
+        transform: none;
+        max-width: none;
+        right: clamp(18px, 3vw, 40px);
+    }
+
+    .heroTitle {
+        font-size: 13vw;
+    }
+
+    .heroMeta {
+        display: none;
+    }
+
+    .grid,
+    .fwGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ─────────────────── In-page anchor nav ─────────────────── */
+/* Persona-local anchors (Hero / About / Work / Contact) — NOT first-class
+   site nav. Sticky editorial bar; the single route back to the main site is
+   the discreet link in the footer, per PRD #123 (personas are standalone). */
+.navBar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px clamp(18px, 3vw, 40px);
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--hair);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.brandGem {
+    width: 9px;
+    height: 9px;
+    background: var(--ink);
+    transform: rotate(45deg);
+}
+
+.brandDim {
+    color: var(--gray);
+}
+
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: clamp(14px, 2.4vw, 30px);
+}
+
+.navLink {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: color 0.2s var(--easing), border-color 0.2s var(--easing);
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+}
+
+.navLinkN {
+    font-size: 9px;
+    color: var(--gray);
+}
+
+.navToggle {
+    flex: none;
+    color: var(--ink);
+}
+
+@media (max-width: 40em) {
+    .navLinks {
+        display: none;
+    }
+}
+
+/* ───────────────────────── About ───────────────────────── */
+.aboutLede {
+    margin: 0;
+    font-family: var(--grot);
+    font-weight: 600;
+    font-size: clamp(18px, 2vw, 26px);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    max-width: 56ch;
+}
+
+.aboutBody {
+    margin: 18px 0 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 64ch;
+}
+
+/* ──────────────────────── Contact ───────────────────────
+   The real contact form (issue #133 / B2). `StrategistContact` renders the
+   shared persona `ContactForm`, themed through the --persona-* tokens set on
+   `.page` above. These classes add the editorial layout + the collection
+   notice / reCAPTCHA hint affordances the tokens don't cover. */
+.contact {
+    scroll-margin-top: 84px;
+}
+
+.contactLede {
+    margin: 0 0 28px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: 60ch;
+}
+
+.contactForm {
+    max-width: 560px;
+}
+
+/* The shared form, given a mono label scale + a square editorial submit. */
+.form :global(label) {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.form :global(button[type='submit']) {
+    font-family: var(--mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 13px 28px;
+}
+
+/* One-line "what we collect" notice rendered as the form intro. */
+.contactNotice {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--gray);
+}
+
+.contactNoticeLink {
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--hair);
+    transition: color 0.2s var(--easing), border-color 0.2s var(--easing);
+}
+
+.contactNoticeLink:hover,
+.contactNoticeLink:focus-visible {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+}
+
+/* reCAPTCHA deferral / readiness hint. */
+.contactHint {
+    margin: 4px 0 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+}
+
+/* Anchored sections sit below the sticky nav. */
+.body > section[id] {
+    scroll-margin-top: 84px;
+}
+
+/* ──────────────────────── Footer ────────────────────────
+   The shared PersonaFooter, skinned via the persona tokens set on `.page`
+   (--persona-ink / --persona-footer-*). This className adds only the bits the
+   tokens don't cover — link affordances and a slightly tighter type scale. */
+.footer {
+    font-family: var(--mono);
+}
+
+.footerLink {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s var(--easing), border-color 0.2s var(--easing);
+}
+
+.footerLink:hover,
+.footerLink:focus-visible {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+}
+
+.footerToggle {
+    color: var(--ink);
+}
